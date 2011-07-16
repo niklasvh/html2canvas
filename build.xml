@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="html2canvas" basedir=".">
+    <property name="src.dir" location="src"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="build.dir" location="build"/>
+    <property name="dist"  location="dist"/>
+    
+    
+    <property name="jquery-externs" value="jquery-1.4.4.externs.js"/>
+    
+    
+    <property name="JS_NAME" value="html2canvas.js"/>
+    <property name="JS_NAME_MIN" value="html2canvas.min.js"/>
+    <property name="JQUERY_PLUGIN_NAME" value="jquery.plugin.html2canvas.js"/>
+    
+
+    <path id="sourcefiles">
+        <fileset dir="${src.dir}" includes="LICENSE"/>
+        <fileset dir="." includes="LICENSE"/>
+        <fileset dir="${src.dir}" includes="Core.js"/>
+        <fileset dir="${src.dir}" includes="Background.js"/>
+        <fileset dir="${src.dir}" includes="Border.js"/>
+        <fileset dir="${src.dir}" includes="Draw.js"/>
+        <fileset dir="${src.dir}" includes="Images.js"/>
+        <fileset dir="${src.dir}" includes="Text.js"/>
+        <fileset dir="${src.dir}" includes="Traversing.js"/>
+        <fileset dir="${src.dir}" includes="Util.js"/>       
+    </path>
+    
+    <path id="jquery-plugin">
+        <fileset dir="${src.dir}" includes="LICENSE"/>
+        <fileset dir="." includes="LICENSE"/>
+        <fileset dir="${src.dir}/plugins" includes="${JQUERY_PLUGIN_NAME}"/>    
+    </path>
+ 
+    <path id="minified">
+        <fileset dir="${src.dir}" includes="LICENSE"/>
+        <fileset dir="${build.dir}" includes="tmp.js"/>    
+    </path>
+    
+    <target name="plugins">
+        <concat fixlastline="yes" destfile="${build.dir}/${JQUERY_PLUGIN_NAME}">
+            <path refid="jquery-plugin"/>
+        </concat>
+    </target>
+ 
+    
+    <target name="source">
+        <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
+            <path refid="sourcefiles"/>
+        </concat>
+    </target>
+    
+    
+    <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+           classpath="${lib.dir}/compiler.jar"/>
+  
+    <target name="release">
+            
+        <jscomp compilationLevel="simple" warning="verbose" 
+            debug="false" 
+            output="${build.dir}/tmp.js">
+            <externs dir="${lib.dir}">
+                <file name="${jquery-externs}"/>
+            </externs>
+            <sources dir="${build.dir}">
+                <file name="${JS_NAME}" />
+            </sources>
+        </jscomp>
+        
+        <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME_MIN}">
+            <path refid="minified"/>
+        </concat>  
+
+    </target>
+</project>
+

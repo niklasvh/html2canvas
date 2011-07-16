@@ -9,13 +9,15 @@
         <title>Background attribute tests</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="#" type="text/css" rel="stylesheet"> 
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-        <script type="text/javascript" src="../html2canvas.min.js"></script>
-        <script type="text/javascript" src="../jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
         <script type="text/javascript">
             $(window).ready(function() {
           
-                $('body').html2canvas();
+                $('body').html2canvas({
+                    logging:true
+                });
             });
         </script>
 
