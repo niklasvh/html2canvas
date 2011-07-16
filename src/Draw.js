@@ -98,7 +98,7 @@ html2canvas.prototype.newElement = function(el){
  */ 
                
 html2canvas.prototype.printText = function(currentText,x,y){
-    if (this.trim(currentText).length>0){					
+    if (this.trim(currentText).length>0){	
         this.ctx.fillText(currentText,x,y);
     }           
 }
@@ -106,6 +106,7 @@ html2canvas.prototype.printText = function(currentText,x,y){
 
 // Drawing a rectangle 								
 html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
+    
     if (bgcolor!="transparent"){
         this.ctx.fillStyle = bgcolor;
         this.ctx.fillRect (x, y, w, h);

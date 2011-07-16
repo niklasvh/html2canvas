@@ -63,11 +63,15 @@ function html2canvas(el, userOptions) {
     
     // test how to measure text bounding boxes
     this.useRangeBounds = false;
+    
+    // Check disabled as Opera doesn't provide bounds.height/bottom even though it supports the method.
+    // TODO take the check back into use, but fix the issue for Opera
+    /*
     if (document.createRange){
         var r = document.createRange();
         this.useRangeBounds = new Boolean(r.getBoundingClientRect);
-    }
-     
+    }*/
+  
     // Start script
     this.init();	
 }
@@ -143,6 +147,8 @@ html2canvas.prototype.start = function(){
           
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
         this.log('Started parsing');
+        this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+        document.getElementsByTagName('body')[0].style.overflow = "hidden";
         this.newElement(this.element);		
           
         this.parseElement(this.element);                         
@@ -157,7 +163,8 @@ html2canvas.prototype.start = function(){
 
 html2canvas.prototype.finish = function(){
     this.log("Finished rendering");
-       
+    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
+    
     if (this.opts.renderViewport){
         // let's crop it to viewport only then
         var newCanvas = document.createElement('canvas');
@@ -194,11 +201,11 @@ html2canvas.prototype.drawBackground = function(el,bounds){
                 case "repeat-x":
                     this.drawbackgroundRepeatX(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
                     break;
-                            
+                         
                 case "repeat-y":
                     this.drawbackgroundRepeatY(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
                     break;
-                            
+                          
                 case "no-repeat":
                         
                     this.drawBackgroundRepeat(image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
@@ -499,7 +506,7 @@ html2canvas.prototype.newElement = function(el){
  */ 
                
 html2canvas.prototype.printText = function(currentText,x,y){
-    if (this.trim(currentText).length>0){					
+    if (this.trim(currentText).length>0){	
         this.ctx.fillText(currentText,x,y);
     }           
 }
@@ -507,6 +514,7 @@ html2canvas.prototype.printText = function(currentText,x,y){
 
 // Drawing a rectangle 								
 html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
+    
     if (bgcolor!="transparent"){
         this.ctx.fillStyle = bgcolor;
         this.ctx.fillRect (x, y, w, h);
@@ -643,13 +651,19 @@ html2canvas.prototype.newText = function(el,textNode){
                 wrapElement.appendChild(oldTextNode.cloneNode(true));
                 parent.replaceChild(wrapElement,oldTextNode);
                     
-                var bounds = this.getBounds(wrapElement);
+                       
     
+     
                     
+                var bounds = this.getBounds(wrapElement);
+
+    
                 parent.replaceChild(backupText,wrapElement);      
             }
                
-      
+               
+       
+
            
                                  
             this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom);

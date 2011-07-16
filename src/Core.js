@@ -33,11 +33,15 @@ function html2canvas(el, userOptions) {
     
     // test how to measure text bounding boxes
     this.useRangeBounds = false;
+    
+    // Check disabled as Opera doesn't provide bounds.height/bottom even though it supports the method.
+    // TODO take the check back into use, but fix the issue for Opera
+    /*
     if (document.createRange){
         var r = document.createRange();
         this.useRangeBounds = new Boolean(r.getBoundingClientRect);
-    }
-     
+    }*/
+  
     // Start script
     this.init();	
 }
@@ -113,6 +117,8 @@ html2canvas.prototype.start = function(){
           
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
         this.log('Started parsing');
+        this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+        document.getElementsByTagName('body')[0].style.overflow = "hidden";
         this.newElement(this.element);		
           
         this.parseElement(this.element);                         
@@ -127,7 +133,8 @@ html2canvas.prototype.start = function(){
 
 html2canvas.prototype.finish = function(){
     this.log("Finished rendering");
-       
+    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
+    
     if (this.opts.renderViewport){
         // let's crop it to viewport only then
         var newCanvas = document.createElement('canvas');

@@ -61,13 +61,19 @@ html2canvas.prototype.newText = function(el,textNode){
                 wrapElement.appendChild(oldTextNode.cloneNode(true));
                 parent.replaceChild(wrapElement,oldTextNode);
                     
-                var bounds = this.getBounds(wrapElement);
+                       
     
+     
                     
+                var bounds = this.getBounds(wrapElement);
+
+    
                 parent.replaceChild(backupText,wrapElement);      
             }
                
-      
+               
+       
+
            
                                  
             this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom);
