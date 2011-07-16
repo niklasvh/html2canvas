@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <!--
+    * @author Niklas von Hertzen <niklas at hertzen.com>
+    * @created 6.7.2011 
+    * @website http://hertzen.com
+    -->
+    <head>
+        <title>html2canvas - screenshots with JavaScript</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="http://hertzen.com/min/g=css" media="screen" rel="stylesheet" type="text/css" >
+
+        <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script> 
+
+        <style>
+            body,html{
+                background: #262626;
+            }
+        </style>
+        <script type="text/javascript" src="http://www.hertzen.com/js/ganalytics-heatmap.js"></script>
+
+        <script type="text/javascript" src="build/html2canvas.js"></script>
+        <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {
+          
+                var saveCanvas;
+                var hideCanvas;
+                $('.buttons').children().button();
+                $('button').click(function(){
+                 
+                 
+                    $(this).unbind('click');
+                    html2canvas($('body').get(0),{
+                        logging:true,
+                        ready:function(canvas){
+                            saveCanvas = $(canvas).css('position','absolute')
+                            .css('left',0).css('top',0);
+                            $('body').append(canvas);
+                            
+                            hideCanvas = $('<div />')
+                            .css({
+                                position:'fixed',
+                                right:10,
+                                top:10,
+                                background: 'red',
+                                color:'white',
+                                padding:10,
+                                fontSize:16,
+                                cursor:'pointer',
+                                borderRadius:5
+                            }).text('Hide screenshot').click(function(){
+                                $(hideCanvas).hide();
+                                $(canvas).hide();
+                                
+                            });
+                            
+                            $('button').bind('click',function(){
+                                $(hideCanvas).show();
+                                $(canvas).show();             
+                            });
+                            $('body').append(hideCanvas);
+                            
+                            
+                        }
+                    });
+                });
+            });
+
+            var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-188600-10']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();   
+        </script>
+
+        <style>
+            .examples li{
+                list-style-type:none;
+                float:left; 
+                width:120px;
+
+            }
+
+            h3{
+                clear:both;
+            }
+
+            .share{
+                float:right;
+            }
+
+            .share div{
+                float:right;
+            }
+
+            h1{
+                float:left;
+            }
+            p{
+                clear:both;
+            }
+
+        </style>
+
+
+        <meta property="og:title" content="html2canvas - screenshots with JavaScript" />
+        <meta property="og:url" content="http://html2canvas.hertzen.com/" />
+        <meta property="og:image" content="http://html2canvas.hertzen.com/image.jpg" />
+        <meta property="og:site_name" content="Hertzen" />
+        <meta property="fb:admins" content="516961119" />
+
+
+        <meta property="og:type" content="website" />
+    </head>
+    <body>
+        <div class="wrapper" style="width:1000px;">
+            <div id="content" style="margin:10px auto;">
+                <div class="wrappost" style="width:100%;">
+                    <div class="post entry">
+                        <div class="entry">
+                            <h1>html2canvas - Screenshots with JavaScript</h1>
+                            <div class="share">
+                                <div style="margin-left:17px;">
+                                    <!-- Place this tag in your head or just before your close body tag -->
+                                    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+                                    <!-- Place this tag where you want the +1 button to render -->
+                                    <g:plusone size="tall"></g:plusone>
+                                </div>
+
+                                <div>
+
+                                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://html2canvas.hertzen.com/" data-text="html2canvas - screenshots with #JavaScript" data-count="vertical" data-via="niklasvh">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                                </div>
+
+                            </div>
+                            <p>
+                                This script allows you to take "screenshots" of webpages or parts of it, directly on the users browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
+
+                            </p>
+                            <h2>How does it work?</h2>
+                            <p>The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements. However, as many elements are displayed differently on different browsers and operating systems (such as form elements such as radio buttons or checkboxes) as well as 
+                            </p> 
+                            <p>     It does <b>not require any rendering from the server</b>, as the whole image is created on the <b>clients browser</b>. However, for browsers without <code>canvas</code> support alternatives such as <a href="http://flashcanvas.net/">flashcanvas</a> or <a href="http://excanvas.sourceforge.net/">ExplorerCanvas</a> are necessary to create the image. 
+                                Additionally, to render <code>iframe</code> content or images situated outside of the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a> a proxy will be necessary to load the content to the users browser.
+
+
+                                The script is still in a very experimental state, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made. However, please do test it out and report your findings, especially if something should be working, but is displaying it incorrectly.
+                            </p>
+
+                            <p>The minified version of the script is currently less than <b>6kb</b> (less than <b>2.5kb</b> gzipped). It currently still has jQuery as a dependancy, but that will get removed soon.</p>
+
+
+                            <h2>Browser compatibility</h2>
+                            <p>The script should work fine on the following browsers:</p>
+                            <ul>
+                                <li>Firefox 3.5+</li>
+                                <li>Google Chrome</li>
+                                <li>&gt;=IE9 (Older versions compatible with the use of flashcanvas)</li> 
+                            </ul>
+                            <p>Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.</p>
+
+                            <h2>So what isn't included yet?</h2>
+                            <p>
+                                There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon. There is no support for opacity or z-index layering yet either and <code>object</code> content such as Flash will most likely never be supported.
+
+                            </p>
+
+                            <div class="buttons">
+
+                                <button>Create screenshot of this page</button>
+
+                                <a href="https://github.com/niklasvh/html2canvas">Download on GitHub</a>
+
+                            </div><br />
+
+                            <h2>Examples</h2>
+                            <p>The screenshot gets overlayed on top of the page. You can toggle the visibility of the canvas by clicking anywhere on the page.</p>
+                            <ul class="examples">
+
+                                <li><a href="demo.html" title="Basic" target="_blank"><img src="images/1.jpg" alt="Basic" /></a></li>
+
+                                <li><a href="tests/templates/dusky/index.html" title="Dusky template" target="_blank"><img src="images/8.jpg" alt="Dusky template" /></a></li>
+                                <li><a href="tests/templates/combination/index.html" title="Combination template" target="_blank"><img src="images/6.jpg" alt="Combination template" /></a></li>               
+                                <li><a href="tests/templates/projection/index.html" title="Projection template" target="_blank"><img src="images/9.jpg" alt="Projection template" /></a></li>
+                                <li><a href="tests/templates/facing/index.html" title="Facing template" target="_blank"><img src="images/11.jpg" alt="Facing template" /></a></li>
+
+                                <li><a href="tests/templates/palmtrees/index.html" title="Palmtrees template" target="_blank"><img src="images/7.jpg" alt="Palmtrees template" /></a></li>
+                                <li><a href="tests/templates/artificial/index.html" title="Artificial template" target="_blank"><img src="images/10.jpg" alt="Artificial template" /></a></li>
+
+                            </ul>
+
+                            <div style="clear:both;"></div>
+                            <h3>Tests</h3>
+                            <ul>
+                                <li><a href="demo2.html">CSS tests</li>
+                                <li><a href="demo3.html">More CSS tests</li>
+                                <li><a href="tests/background.html">Background tests</li>
+                                <li><a href="tests/text.html">Text tests</li>
+                            </ul>
+
+                            <p>Any <a href="http://www.twitter.com/niklasvh">comments or feedback</a> is greatly appreciated.</p>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
