@@ -26,6 +26,10 @@ The script should work fine on the following browsers:
         
 Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.
 
-===So what isn't included yet?===
+###So what isn't included yet?###
     
 There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon. There is no support for opacity or z-index layering yet either and <code>object</code> content such as Flash will most likely never be supported.
+
+### Examples ###
+
+For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a>.
