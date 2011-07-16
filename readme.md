@@ -21,7 +21,7 @@ The minified version of the script is currently less than <b>6kb</b> (less than 
 
 The script should work fine on the following browsers:
  - Firefox 3.5+
- - Google Chrome & Opera
+ - Google Chrome 
  - >=IE9 (Older versions compatible with the use of flashcanvas)
         
 Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.
