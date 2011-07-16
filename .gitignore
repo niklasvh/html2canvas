@@ -1,4 +1,5 @@
-/nbproject/private/
+/nbproject/
 /images/
 /tests/templates/
 /dist/
+/build/tmp.js
