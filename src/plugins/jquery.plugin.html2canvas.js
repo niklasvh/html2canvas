@@ -62,7 +62,8 @@
                 fontSize:12,
                 borderRadius:12,
                 width:'auto',
-                height:'auto'
+                height:'auto',
+                textDecoration:'none'
             }).hide().fadeIn().appendTo('body');
         }
 
