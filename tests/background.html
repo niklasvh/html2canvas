@@ -1,0 +1,90 @@
+<!--
+* @author Niklas von Hertzen <niklas at hertzen.com>
+* @created 15.7.2011 
+* @website http://hertzen.com
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="#" type="text/css" rel="stylesheet"> 
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+        <script type="text/javascript" src="../html2canvas.min.js"></script>
+        <script type="text/javascript" src="../jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {
+          
+                $('body').html2canvas();
+            });
+        </script>
+
+        <style>
+
+            .small div{
+                width:100px;
+                height:100px;     
+                  float:left;
+                  margin:10px;
+                  border:1px solid #000;
+            }
+
+            .medium div{
+                width:200px;
+                height:200px;    
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+            
+            .small, .medium{
+                clear:both;
+            }
+            
+            div{         
+                display:block;           
+            }
+        </style>
+
+    </head>
+    <body>
+       
+        <div class="medium">
+            <div style="background:url(image.jpg);"></div>
+            <div style="background:url(image.jpg) repeat-x;"></div>
+            <div style="background:url(image.jpg) repeat-y;"></div>
+            <div style="background:url(image.jpg) no-repeat;"></div>
+        </div>
+        <div class="small">
+            <div style="background:url(image.jpg);"></div>
+            <div style="background:url(image.jpg) repeat-x;"></div>
+            <div style="background:url(image.jpg) repeat-y;"></div>
+            <div style="background:url(image.jpg) no-repeat;"></div>
+        </div>
+        
+        
+        <div class="medium">
+            <div style="background:url(image.jpg) center center;"></div>
+            <div style="background:url(image.jpg) repeat-x center center;"></div>
+            <div style="background:url(image.jpg) repeat-y center center;"></div>
+            <div style="background:url(image.jpg) no-repeat center center;"></div>
+        </div>
+
+        
+         <div class="small">
+            <div style="background:url(image.jpg) center center;"></div>
+            <div style="background:url(image.jpg) repeat-x center center;"></div>
+            <div style="background:url(image.jpg) repeat-y center center;"></div>
+            <div style="background:url(image.jpg) no-repeat center center;"></div>
+        </div>
+ 
+         <div class="medium">
+            <div style="background:url(image.jpg) 50px 50px;"></div>
+            <div style="background:url(image.jpg) repeat-x 50px 50px;"></div>
+            <div style="background:url(image.jpg) repeat-y 50px 50px;"></div>
+            <div style="background:url(image.jpg) no-repeat 50px 50px;"></div>
+        </div>
+        
+        
+    </body>
+</html>
