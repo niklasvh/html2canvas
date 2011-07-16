@@ -32,7 +32,7 @@
                  
                  
                     $(this).unbind('click');
-                    html2canvas($('body').get(0),{
+                    new html2canvas($('body').get(0),{
                         logging:true,
                         ready:function(canvas){
                             saveCanvas = $(canvas).css('position','absolute')
