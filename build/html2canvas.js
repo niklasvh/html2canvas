@@ -59,6 +59,7 @@ function html2canvas(el, userOptions) {
     this.imagesLoaded = 0;
     this.images = [];
     this.fontData = [];
+    this.numDraws = 0;
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
@@ -75,7 +76,9 @@ function html2canvas(el, userOptions) {
     }*/
   
     // Start script
-    this.init();	
+    this.init();
+    
+    return this;
 }
 	
         
@@ -174,7 +177,7 @@ html2canvas.prototype.finish = function(){
         newCanvas.height = window.innerHeight;
             
     }
-    this.opts.ready(this.canvas);          
+    this.opts.ready(this);          
 }
 
 
@@ -396,6 +399,7 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         width-sourceX, // destination width
         height-sourceY // destination height
         );
+    this.numDraws++;
 }
 /*
  * Function to provide border details for an element
@@ -506,6 +510,7 @@ html2canvas.prototype.newElement = function(el){
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
+            
             this.ctx.drawImage(
                 image,
                 0, //sx
@@ -518,6 +523,7 @@ html2canvas.prototype.newElement = function(el){
                 bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh
         
                 );
+                    this.numDraws++;
         }else{
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
@@ -539,6 +545,7 @@ html2canvas.prototype.newElement = function(el){
 html2canvas.prototype.printText = function(currentText,x,y){
     if (this.trim(currentText).length>0){	
         this.ctx.fillText(currentText,x,y);
+        this.numDraws++;
     }           
 }
 
@@ -549,6 +556,7 @@ html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
     if (bgcolor!="transparent"){
         this.ctx.fillStyle = bgcolor;
         this.ctx.fillRect (x, y, w, h);
+        this.numDraws++;
     }
 }
 /*

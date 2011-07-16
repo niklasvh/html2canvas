@@ -216,4 +216,5 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         width-sourceX, // destination width
         height-sourceY // destination height
         );
+    this.numDraws++;
 }
