@@ -43,7 +43,8 @@ function html2canvas(el, userOptions) {
         ready: function (canvas) {
             document.body.appendChild(canvas);
         },
-        renderViewport: true		
+        flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
+        renderViewport: false		
     });
     
     this.element = el;
@@ -89,26 +90,25 @@ html2canvas.prototype.init = function(){
     this.canvas.width = $(document).width();
     this.canvas.height = $(document).height();
         
-        
+
+             
 
     if (!this.canvas.getContext){
+           
+        // TODO include Flashcanvas
+        /*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/
             
-    // TODO include Flashcanvas
-    /*
-          
-            var script = document.createElement('script');
-            script.type = "text/javascript";
-            script.src = "flashcanvas.js";
-            var s = document.getElementsByTagName('script')[0]; 
-            s.parentNode.insertBefore(script, s);
-         
-         
-            if (typeof FlashCanvas != "undefined") {
-               
-                FlashCanvas.initElement(canvas);
-                ctx = canvas.getContext('2d');
-            }	
-            */
     }else{
         this.ctx = this.canvas.getContext('2d');
     }
@@ -220,7 +220,7 @@ html2canvas.prototype.drawBackground = function(el,bounds){
                     bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;                
                         
                         
-                    for(bgy=(bounds.top+bgp.top);bgy<=bounds.height+bounds.top;){  
+                    for(bgy=(bounds.top+bgp.top);bgy<bounds.height+bounds.top;){  
            
                         
            
@@ -289,17 +289,25 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
     top,
     left,
     percentage;
-           
 
-    if (bgposition[0].indexOf("%")!=-1){   
+    if (bgposition.length==1){
+        var val = bgposition,
+        bgposition = [];
+        
+        bgposition[0] = val,
+        bgposition[1] = val;
+    }  
 
+    if (bgposition[0].toString().indexOf("%")!=-1){   
+   
         percentage = (parseFloat(bgposition[0])/100);        
         left =  ((bounds.width * percentage)-(image.width*percentage));
+      
     }else{
         left = parseInt(bgposition[0],10);
     }
-        
-    if (bgposition[1].indexOf("%")!=-1){  
+
+    if (bgposition[1].toString().indexOf("%")!=-1){  
 
         percentage = (parseFloat(bgposition[1])/100);     
         top =  ((bounds.height * percentage)-(image.height*percentage));
@@ -325,7 +333,7 @@ html2canvas.prototype.drawbackgroundRepeatY = function(image,bgp,x,y,w,h){
     bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;                
         
         
-    for(bgy=(y+bgp.top);bgy<=h+y;){   
+    for(bgy=(y+bgp.top);bgy<h+y;){   
             
          
         if ( Math.floor(bgy+image.height)>h+y){
@@ -349,7 +357,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
     bgp.left = bgp.left-Math.ceil(bgp.left/image.width)*image.width;                
         
         
-    for(bgx=(x+bgp.left);bgx<=w+x;){   
+    for(bgx=(x+bgp.left);bgx<w+x;){   
 
         if (Math.floor(bgx+image.width)>w+x){
             width = (w+x)-bgx;
@@ -375,7 +383,7 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
     if (ely-y>0){
         sourceY = ely-y;
     }
-        
+
     this.ctx.drawImage(
         image,
         sourceX, // source X
