@@ -13,7 +13,8 @@ function html2canvas(el, userOptions) {
         ready: function (canvas) {
             document.body.appendChild(canvas);
         },
-        renderViewport: true		
+        flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
+        renderViewport: false		
     });
     
     this.element = el;
@@ -59,26 +60,25 @@ html2canvas.prototype.init = function(){
     this.canvas.width = $(document).width();
     this.canvas.height = $(document).height();
         
-        
+
+             
 
     if (!this.canvas.getContext){
+           
+        // TODO include Flashcanvas
+        /*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/
             
-    // TODO include Flashcanvas
-    /*
-          
-            var script = document.createElement('script');
-            script.type = "text/javascript";
-            script.src = "flashcanvas.js";
-            var s = document.getElementsByTagName('script')[0]; 
-            s.parentNode.insertBefore(script, s);
-         
-         
-            if (typeof FlashCanvas != "undefined") {
-               
-                FlashCanvas.initElement(canvas);
-                ctx = canvas.getContext('2d');
-            }	
-            */
     }else{
         this.ctx = this.canvas.getContext('2d');
     }
