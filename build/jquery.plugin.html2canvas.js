@@ -41,8 +41,9 @@
         timeoutTimer,
         timer = date.getTime();
         
-        new html2canvas(this.get(0),{
-            ready:function(canvas){
+        new html2canvas(this.get(0), {
+            loggine: true,
+            ready: function(canvas) {
                 
                 var finishTime = new Date();
                // console.log((finishTime.getTime()-timer)/1000);

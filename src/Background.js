@@ -22,11 +22,11 @@ html2canvas.prototype.drawBackground = function(el,bounds){
                 case "repeat-x":
                     this.drawbackgroundRepeatX(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
                     break;
-                            
+                         
                 case "repeat-y":
                     this.drawbackgroundRepeatY(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
                     break;
-                            
+                          
                 case "no-repeat":
                         
                     this.drawBackgroundRepeat(image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
