@@ -12,7 +12,7 @@
         timer = date.getTime();
         
         new html2canvas(this.get(0), {
-            loggine: true,
+            logging: true,
             ready: function(canvas) {
                 
                 var finishTime = new Date();
