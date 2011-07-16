@@ -160,7 +160,8 @@ function html2canvas(el,userOptions) {
           
         if (el.nodeType==1 || typeof el.nodeType == "undefined"){
             var background_image = getCSS(el,'background-image');
-            if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit"){
+           
+            if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,4)!="-moz"){
                 var src = backgroundImageUrl(background_image);                    
                 preloadImage(src);                    
             }
