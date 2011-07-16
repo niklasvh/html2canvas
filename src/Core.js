@@ -13,6 +13,7 @@ function html2canvas(el, userOptions) {
         ready: function (canvas) {
             document.body.appendChild(canvas);
         },
+        iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false		
     });
@@ -30,7 +31,7 @@ function html2canvas(el, userOptions) {
     this.fontData = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
-  
+    this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
     // test how to measure text bounding boxes
     this.useRangeBounds = false;
