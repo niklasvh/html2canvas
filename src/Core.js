@@ -57,7 +57,7 @@ html2canvas.prototype.init = function(){
         
     // TODO remove jQuery dependency
     this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height()+10;
+    this.canvas.height = $(document).height();
         
         
 
