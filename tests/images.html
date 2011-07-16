@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Image tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="#" type="text/css" rel="stylesheet"> 
+
+        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {       
+                $('body').html2canvas();
+            });
+        </script>
+
+        <style>
+            .small{
+                font-size:14px;
+            }
+
+            .medium{
+                font-size:18px;
+            }
+            .large{
+                font-size:24px;
+            }
+            div{
+                float:left;
+            }
+            h2 {
+                clear:both;
+            }
+        </style>
+
+    </head>
+    <body>         
+        
+        <img src="image.jpg" />
+         <img src="image.jpg" style="width:50px;height:400px;" />
+         <img src="image.jpg" style="width:500px;"  />
+         <img src="image.jpg" style="width:500px;height:40px;" />
+         
+         
+         <img src="image.jpg" style="padding:20px;border:5px solid black;" />
+
+         <img src="image.jpg" style="padding-bottom:20px;border-top:5px solid black;clear:both;" />
+         
+         
+         <img src="image.jpg" style="padding-top:20px;border-top:5px solid black;clear:both;width:50px;" />
+               <img src="image.jpg" style="padding-top:20px;border-top:5px solid black;clear:both;width:50px;height:25px;" />   
+    </body>
+</html>
