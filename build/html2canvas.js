@@ -56,6 +56,7 @@ function html2canvas(el, userOptions) {
     image;
     this.imagesLoaded = 0;
     this.images = [];
+    this.fontData = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
   
@@ -581,10 +582,7 @@ html2canvas.prototype.preloadImage = function(src){
     
             
 html2canvas.prototype.newText = function(el,textNode){
-				
-                               
-
-        
+       
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
     var color = this.getCSS(el,"color");
@@ -608,15 +606,17 @@ html2canvas.prototype.newText = function(el,textNode){
                 break;
         }
             
+            
+        if (text_decoration!="none"){
+            var metrics = this.fontMetrics(family,size);
+            
+        }    
+        
           
           
         this.ctx.font = bold+" "+font_style+" "+size+" "+family;
         this.ctx.fillStyle = color;
-          
-       
-		 			
-               		
-                
+              
         var oldTextNode = textNode;
         for(var c=0;c<text.length;c++){
             var newTextNode = oldTextNode.splitText(1);
@@ -656,16 +656,16 @@ html2canvas.prototype.newText = function(el,textNode){
                     
             switch(text_decoration) {
                 case "underline":	
-                    // guesstimate the y-position of the line
-                    // TODO try and find a more accurate way to find the baseline of the text
-                    this.newRect(bounds.left,Math.round(bounds.bottom-(bounds.height/7)),bounds.width,1,color);
+                    // Draws a line at the baseline of the font
+                    // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                    this.newRect(bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
                     break;
                 case "overline":
                     this.newRect(bounds.left,bounds.top,bounds.width,1,color);
                     break;
                 case "line-through":
                     // TODO try and find exact position for line-through
-                    this.newRect(bounds.left,Math.round(bounds.top+(bounds.height/2)),bounds.width,1,color);
+                    this.newRect(bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
                     break;
                     
             }	
@@ -681,11 +681,85 @@ html2canvas.prototype.newText = function(el,textNode){
 			
 }
 
+/*
+ * Function to find baseline for font with a specicic size
+ */
+html2canvas.prototype.fontMetrics = function(font,fontSize){
+    
+    
+    var findMetrics = this.fontData.indexOf(font+"-"+fontSize);
+    
+    if (findMetrics>-1){
+        return this.fontData[findMetrics+1];
+    }
+    
+    var container = document.createElement('div');
+    document.getElementsByTagName('body')[0].appendChild(container);
+    
+    // jquery to speed this up, TODO remove jquery dependancy
+    $(container).css({
+        visibility:'hidden',
+        fontFamily:font,
+        fontSize:fontSize,
+        margin:0,
+        padding:0
+    });
+    
+
+    
+    var img = document.createElement('img');
+    img.src = "http://html2canvas.hertzen.com/images/8.jpg";
+    img.width = 1;
+    img.height = 1;
+    
+    $(img).css({
+        margin:0,
+        padding:0
+    });
+    var span = document.createElement('span');
+    
+    $(span).css({
+        fontFamily:font,
+        fontSize:fontSize,
+        margin:0,
+        padding:0
+    });
+    
+    
+    span.appendChild(document.createTextNode('Hidden Text'));
+    container.appendChild(span);
+    container.appendChild(img);
+    var baseline = (img.offsetTop-span.offsetTop)+1;
+    
+    container.removeChild(span);
+    container.appendChild(document.createTextNode('Hidden Text'));
+    
+    $(container).css('line-height','normal');
+    $(img).css("vertical-align","super");
+    var middle = (img.offsetTop-container.offsetTop)+1;  
+    
+    var metricsObj = {
+        baseline: baseline,
+        lineWidth: 1,
+        middle: middle
+    };
+    
+    
+    this.fontData.push(font+"-"+fontSize);
+    this.fontData.push(metricsObj);
+    
+    $(container).remove();
+    
+    
+    
+    return metricsObj;
+    
+}
 
 
 /*
-     * Function to apply text-transform attribute to text
-     */    
+ * Function to apply text-transform attribute to text
+ */    
 html2canvas.prototype.textTransform = function(text,transform){
     switch(transform){
         case "lowercase":

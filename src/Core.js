@@ -26,6 +26,7 @@ function html2canvas(el, userOptions) {
     image;
     this.imagesLoaded = 0;
     this.images = [];
+    this.fontData = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
   
