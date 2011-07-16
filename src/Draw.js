@@ -89,6 +89,7 @@ html2canvas.prototype.newElement = function(el){
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
+            
             this.ctx.drawImage(
                 image,
                 0, //sx
@@ -101,6 +102,7 @@ html2canvas.prototype.newElement = function(el){
                 bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh
         
                 );
+                    this.numDraws++;
         }else{
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
@@ -122,6 +124,7 @@ html2canvas.prototype.newElement = function(el){
 html2canvas.prototype.printText = function(currentText,x,y){
     if (this.trim(currentText).length>0){	
         this.ctx.fillText(currentText,x,y);
+        this.numDraws++;
     }           
 }
 
@@ -132,5 +135,6 @@ html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
     if (bgcolor!="transparent"){
         this.ctx.fillStyle = bgcolor;
         this.ctx.fillRect (x, y, w, h);
+        this.numDraws++;
     }
 }

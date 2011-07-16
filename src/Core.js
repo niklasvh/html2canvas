@@ -29,6 +29,7 @@ function html2canvas(el, userOptions) {
     this.imagesLoaded = 0;
     this.images = [];
     this.fontData = [];
+    this.numDraws = 0;
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
@@ -45,7 +46,9 @@ function html2canvas(el, userOptions) {
     }*/
   
     // Start script
-    this.init();	
+    this.init();
+    
+    return this;
 }
 	
         
@@ -144,6 +147,6 @@ html2canvas.prototype.finish = function(){
         newCanvas.height = window.innerHeight;
             
     }
-    this.opts.ready(this.canvas);          
+    this.opts.ready(this);          
 }
 
