@@ -43,6 +43,7 @@ function html2canvas(el, userOptions) {
         ready: function (canvas) {
             document.body.appendChild(canvas);
         },
+        iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false		
     });
@@ -60,7 +61,7 @@ function html2canvas(el, userOptions) {
     this.fontData = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     
-  
+    this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
     // test how to measure text bounding boxes
     this.useRangeBounds = false;
@@ -434,8 +435,8 @@ html2canvas.prototype.newElement = function(el){
 			
 
     /*
-         *  TODO add support for different border-style's than solid   
-         */            
+     *  TODO add support for different border-style's than solid   
+     */            
     var borders = this.getBorderData(el);    
             
     this.each(borders,function(borderSide,borderData){
@@ -473,7 +474,18 @@ html2canvas.prototype.newElement = function(el){
                 
     });
 
-     
+
+
+    if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
+        if (this.opts.iframeDefault=="default"){
+            bgcolor = "#efefef";
+            /*
+             * TODO write X over frame
+             */
+        }else{
+            bgcolor = this.opts.iframeDefault;           
+        }
+    }
                
     // draw base element bgcolor       
     this.newRect(
@@ -546,13 +558,15 @@ html2canvas.prototype.getImages = function(el) {
         
     var self = this;
     
-    // TODO remove jQuery dependancy
-    this.each($(el).contents(),function(i,element){    
-        var ignRe = new RegExp("("+this.ignoreElements+")");
-        if (!ignRe.test(element.nodeName)){
-            self.getImages(element);
-        }
-    })
+    if (!this.ignoreRe.test(el.nodeName)){
+        // TODO remove jQuery dependancy
+        this.each($(el).contents(),function(i,element){    
+            var ignRe = new RegExp("("+this.ignoreElements+")");
+            if (!ignRe.test(element.nodeName)){
+                self.getImages(element);
+            }
+        })
+    }
           
     if (el.nodeType==1 || typeof el.nodeType == "undefined"){
         var background_image = this.getCSS(el,'background-image');
@@ -826,8 +840,8 @@ html2canvas.prototype.trim = function(text) {
  
     
 html2canvas.prototype.parseElement = function(element){
-    var _ = this;
-    this.each(element.children,function(index,el){		
+    var _ = this;    
+    this.each(element.children,function(index,el){	   
         _.parsing(el);	
     });
         
@@ -838,13 +852,15 @@ html2canvas.prototype.parseElement = function(element){
 
         
 html2canvas.prototype.parsing = function(el){
-        
-    var ignRe = new RegExp("("+this.ignoreElements+")");
+    
     var _ = this;
-    if (!ignRe.test(el.nodeName)){
+    
+    this.newElement(el);
+   
+    if (!this.ignoreRe.test(el.nodeName)){
             
          		
-        this.newElement(el);
+        
         // TODO remove jQuery dependancy
 
         var contents = $(el).contents();

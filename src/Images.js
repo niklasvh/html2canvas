@@ -5,13 +5,15 @@ html2canvas.prototype.getImages = function(el) {
         
     var self = this;
     
-    // TODO remove jQuery dependancy
-    this.each($(el).contents(),function(i,element){    
-        var ignRe = new RegExp("("+this.ignoreElements+")");
-        if (!ignRe.test(element.nodeName)){
-            self.getImages(element);
-        }
-    })
+    if (!this.ignoreRe.test(el.nodeName)){
+        // TODO remove jQuery dependancy
+        this.each($(el).contents(),function(i,element){    
+            var ignRe = new RegExp("("+this.ignoreElements+")");
+            if (!ignRe.test(element.nodeName)){
+                self.getImages(element);
+            }
+        })
+    }
           
     if (el.nodeType==1 || typeof el.nodeType == "undefined"){
         var background_image = this.getCSS(el,'background-image');

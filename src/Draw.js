@@ -18,8 +18,8 @@ html2canvas.prototype.newElement = function(el){
 			
 
     /*
-         *  TODO add support for different border-style's than solid   
-         */            
+     *  TODO add support for different border-style's than solid   
+     */            
     var borders = this.getBorderData(el);    
             
     this.each(borders,function(borderSide,borderData){
@@ -57,7 +57,18 @@ html2canvas.prototype.newElement = function(el){
                 
     });
 
-     
+
+
+    if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
+        if (this.opts.iframeDefault=="default"){
+            bgcolor = "#efefef";
+            /*
+             * TODO write X over frame
+             */
+        }else{
+            bgcolor = this.opts.iframeDefault;           
+        }
+    }
                
     // draw base element bgcolor       
     this.newRect(

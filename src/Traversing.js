@@ -1,8 +1,8 @@
  
     
 html2canvas.prototype.parseElement = function(element){
-    var _ = this;
-    this.each(element.children,function(index,el){		
+    var _ = this;    
+    this.each(element.children,function(index,el){	   
         _.parsing(el);	
     });
         
@@ -13,13 +13,15 @@ html2canvas.prototype.parseElement = function(element){
 
         
 html2canvas.prototype.parsing = function(el){
-        
-    var ignRe = new RegExp("("+this.ignoreElements+")");
+    
     var _ = this;
-    if (!ignRe.test(el.nodeName)){
+    
+    this.newElement(el);
+   
+    if (!this.ignoreRe.test(el.nodeName)){
             
          		
-        this.newElement(el);
+        
         // TODO remove jQuery dependancy
 
         var contents = $(el).contents();

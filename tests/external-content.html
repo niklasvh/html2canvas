@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>External content tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="#" type="text/css" rel="stylesheet"> 
+
+        <script type="text/javascript" src="../external/jquery-1.6.2.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {       
+                $('body').html2canvas();
+            });
+        </script>
+
+
+    </head>
+    <body>         
+        <h1>Iframe</h1>
+        <iframe src="http://www.google.com" style="width:400px;height:300px;border:5px solid black;"></iframe>
+    </body>
+</html>
