@@ -87,7 +87,7 @@ html2canvas.prototype.init = function(){
         
     // TODO remove jQuery dependency
     this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height()+10;
+    this.canvas.height = $(document).height();
         
         
 
@@ -486,7 +486,18 @@ html2canvas.prototype.newElement = function(el){
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
-            this.ctx.drawImage(image,x+parseInt(_.getCSS(el,'padding-left'),10),y+parseInt(_.getCSS(el,'padding-top'),10));
+            this.ctx.drawImage(
+                image,
+                0, //sx
+                0, //sy
+                image.width, //sw
+                image.height, //sh
+                x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
+                y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
+                bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
+                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh
+        
+                );
         }else{
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
