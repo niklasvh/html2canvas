@@ -1,11 +1,9 @@
  
     
-html2canvas.prototype.parseElement = function(element,ctx){
+html2canvas.prototype.parseElement = function(element,stack){
     var _ = this;    
     this.each(element.children,function(index,el){	      
-        _.parsing(el,{
-            ctx:ctx
-        });	     
+        _.parsing(el,stack);	     
     });
         
     this.canvasRenderer(this.contextStacks);

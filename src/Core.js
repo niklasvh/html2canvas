@@ -100,11 +100,15 @@ html2canvas.prototype.start = function(){
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
        
-        var ctx = this.newElement(this.element, this.ctx) || this.ctx;		
+        var stack = this.newElement(this.element,{ 
+            ctx:this.ctx,
+            opacity:this.getCSS(this.element,"opacity")
+        
+        }) || this.ctx;		
+    }
           
-        this.parseElement(this.element,ctx);      
-     
-    }            
+    this.parseElement(this.element,stack);      
+         
 }
 
 

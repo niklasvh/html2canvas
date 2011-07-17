@@ -19,29 +19,19 @@ html2canvas.prototype.newElement = function(el,parentStack){
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
     var opacity = this.getCSS(el,"opacity");   
-    
-    //if (this.getCSS(el,"position")!="static"){
-          
-          /*
-        this.contextStacks.push(ctx);
+
+      
+    var stack = {
+        ctx: new this.storageContext(),
+        zIndex: zindex,
+        opacity: opacity*parentStack.opacity
+    };
+       
+    var stackLength =  this.contextStacks.push(stack);
         
-        ctx = new this.storageContext(); 
-        */
-       
-       
-    
-       
-       var stack = {
-           ctx: new this.storageContext(),
-           zIndex: zindex,
-           opacity: opacity
-       };
-       
-        var stackLength =  this.contextStacks.push(stack);
-        
-        var ctx = this.contextStacks[stackLength-1].ctx; 
-    //}
-			
+    var ctx = this.contextStacks[stackLength-1].ctx; 
+
+    this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     /*
      *  TODO add support for different border-style's than solid   
@@ -138,7 +128,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     
          
 
-        return this.contextStacks[stackLength-1];
+    return this.contextStacks[stackLength-1];
 
 			
 				
