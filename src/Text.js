@@ -7,7 +7,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
   
     var bold = this.getCSS(el,"font-weight");
     var font_style = this.getCSS(el,"font-style");
-
+    var font_variant = this.getCSS(el,"font-variant");
      
     var text_decoration = this.getCSS(el,"text-decoration");
                
@@ -32,7 +32,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         
           
         this.setContextVariable(ctx,"fillStyle",color);  
-        this.setContextVariable(ctx,"font",bold+" "+font_style+" "+size+" "+family);
+        this.setContextVariable(ctx,"font",font_variant+" "+bold+" "+font_style+" "+size+" "+family);
         //ctx.font = bold+" "+font_style+" "+size+" "+family;
         //ctx.fillStyle = color;
               
