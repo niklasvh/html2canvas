@@ -45,7 +45,8 @@ function html2canvas(el, userOptions) {
         },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
-        renderViewport: false		
+        renderViewport: false,
+        reorderZ: true
     });
     
     this.element = el;
@@ -60,7 +61,10 @@ function html2canvas(el, userOptions) {
     this.images = [];
     this.fontData = [];
     this.numDraws = 0;
+    this.contextStacks = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
+    this.needReorder = false;
+    this.blockElements = new RegExp("(BR|PARAM)");
     
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -88,43 +92,15 @@ html2canvas.prototype.init = function(){
      
     var _ = this;
        
-    this.canvas = document.createElement('canvas');
-        
-    // TODO remove jQuery dependency
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
-        
-
-             
-
-    if (!this.canvas.getContext){
-           
-        // TODO include Flashcanvas
-        /*
-        var script = document.createElement('script');
-        script.type = "text/javascript";
-        script.src = this.opts.flashCanvasPath;
-        var s = document.getElementsByTagName('script')[0]; 
-        s.parentNode.insertBefore(script, s);
-
-        if (typeof FlashCanvas != "undefined") {
-                
-            FlashCanvas.initElement(this.canvas);
-            this.ctx = this.canvas.getContext('2d');
-        }	*/
-            
-    }else{
-        this.ctx = this.canvas.getContext('2d');
-    }
-        
+    this.ctx = new this.stackingContext($(document).width(),$(document).height());    
+              
     if (!this.ctx){
         // canvas not initialized, let's kill it here
         this.log('Canvas not available');
         return;
     }
        
-    // set common settings for canvas
-    this.ctx.textBaseline = "bottom";
+    this.canvas = this.ctx.canvas;
         
     this.log('Finding background images');
         
@@ -153,17 +129,92 @@ html2canvas.prototype.start = function(){
         this.log('Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
-        this.newElement(this.element);		
+       
+        var ctx = this.newElement(this.element, this.ctx) || this.ctx;		
           
-        this.parseElement(this.element);                         
+        this.parseElement(this.element,ctx);      
+     
     }            
 }
 
 
+html2canvas.prototype.stackingContext = function(width,height){
+    this.canvas = document.createElement('canvas');
+        
+    // TODO remove jQuery dependency
+    this.canvas.width = $(document).width();
+    this.canvas.height = $(document).height();
+    
+    if (!this.canvas.getContext){
+           
+    // TODO include Flashcanvas
+    /*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/
+            
+    }else{
+        this.ctx = this.canvas.getContext('2d');
+    }    
+    
+    // set common settings for canvas
+    this.ctx.textBaseline = "bottom";
+    
+    return this.ctx;
+          
+}
+
+html2canvas.prototype.storageContext = function(width,height){
+    this.storage = [];
+
+    
+    
+    // todo simplify this whole section
+    this.fillRect = function(x, y, w, h){
+        this.storage.push(
+        {
+            type: "function",
+            name:"fillRect",
+            arguments:[x,y,w,h]            
+        });
+        
+    };
+        
+    this.drawImage = function(image,sx,sy,sw,sh,dx,dy,dw,dh){     
+        this.storage.push(
+        {
+            type: "function",
+            name:"drawImage",
+            arguments:[image,sx,sy,sw,sh,dx,dy,dw,dh]            
+        });
+    };
+    
+    this.fillText = function(currentText,x,y){
+        
+        this.storage.push(
+        {
+            type: "function",
+            name:"fillText",
+            arguments:[currentText,x,y]            
+        });      
+    }  
+    
+    return this;
+    
+}
+
 
 /*
- * Finished rendering, send callback
- */ 
+* Finished rendering, send callback
+*/ 
 
 html2canvas.prototype.finish = function(){
     this.log("Finished rendering");
@@ -183,7 +234,7 @@ html2canvas.prototype.finish = function(){
 
 
     
-html2canvas.prototype.drawBackground = function(el,bounds){
+html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
      
     var background_image = this.getCSS(el,"background-image");
@@ -203,16 +254,16 @@ html2canvas.prototype.drawBackground = function(el,bounds){
             switch(background_repeat){
 					
                 case "repeat-x":
-                    this.drawbackgroundRepeatX(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
+                    this.drawbackgroundRepeatX(ctx,image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
                     break;
                          
                 case "repeat-y":
-                    this.drawbackgroundRepeatY(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
+                    this.drawbackgroundRepeatY(ctx,image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
                     break;
                           
                 case "no-repeat":
                         
-                    this.drawBackgroundRepeat(image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
+                    this.drawBackgroundRepeat(ctx,image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
                     // ctx.drawImage(image,(bounds.left+bgp.left),(bounds.top+bgp.top));	                      
                     break;
                         
@@ -246,7 +297,7 @@ html2canvas.prototype.drawBackground = function(el,bounds){
                             add = 0;
                         }
                                               
-                        this.drawbackgroundRepeatX(image,bgp,bounds.left,bgy,bounds.width,height);  
+                        this.drawbackgroundRepeatX(ctx,image,bgp,bounds.left,bgy,bounds.width,height);  
                         if (add>0){
                             bgp.top += add;
                         }
@@ -329,7 +380,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
 
 
     
-html2canvas.prototype.drawbackgroundRepeatY = function(image,bgp,x,y,w,h){
+html2canvas.prototype.drawbackgroundRepeatY = function(ctx,image,bgp,x,y,w,h){
         
     var height,
     width = Math.min(image.width,w),bgy;   
@@ -345,14 +396,14 @@ html2canvas.prototype.drawbackgroundRepeatY = function(image,bgp,x,y,w,h){
         }else{
             height = image.height;
         }
-        this.drawBackgroundRepeat(image,x+bgp.left,bgy,width,height,x,y);   
+        this.drawBackgroundRepeat(ctx,image,x+bgp.left,bgy,width,height,x,y);   
       
         bgy = Math.floor(bgy+image.height); 
                               
     } 
 }
     
-html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
+html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
                            
     var height = Math.min(image.height,h),
     width,bgx;             
@@ -369,7 +420,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
             width = image.width;
         }
                 
-        this.drawBackgroundRepeat(image,bgx,(y+bgp.top),width,height,x,y);       
+        this.drawBackgroundRepeat(ctx,image,bgx,(y+bgp.top),width,height,x,y);       
              
         bgx = Math.floor(bgx+image.width); 
 
@@ -377,7 +428,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
     } 
 }
     
-html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx,ely){
+html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height,elx,ely){
     var sourceX = 0,
     sourceY=0;
     if (elx-x>0){
@@ -388,7 +439,8 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         sourceY = ely-y;
     }
 
-    this.ctx.drawImage(
+    this.drawImage(
+        ctx,
         image,
         sourceX, // source X
         sourceY, // source Y 
@@ -399,7 +451,6 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         width-sourceX, // destination width
         height-sourceY // destination height
         );
-    this.numDraws++;
 }
 /*
  * Function to provide border details for an element
@@ -423,7 +474,7 @@ html2canvas.prototype.getBorderData = function(el){
 
 
 
-html2canvas.prototype.newElement = function(el){
+html2canvas.prototype.newElement = function(el,parentStack){
 					
     var bounds = this.getBounds(el);    
             
@@ -435,14 +486,40 @@ html2canvas.prototype.newElement = function(el){
     image;       
     var bgcolor = this.getCSS(el,"background-color");
 
+    var zindex = this.formatZ(this.getCSS(el,"z-index"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+    
+    //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
+    
+    var opacity = this.getCSS(el,"opacity");   
+    
+    //if (this.getCSS(el,"position")!="static"){
+          
+          /*
+        this.contextStacks.push(ctx);
+        
+        ctx = new this.storageContext(); 
+        */
        
+       
+    
+       
+       var stack = {
+           ctx: new this.storageContext(),
+           zIndex: zindex,
+           opacity: opacity
+       };
+       
+        var stackLength =  this.contextStacks.push(stack);
+        
+        var ctx = this.contextStacks[stackLength-1].ctx; 
+    //}
 			
 
     /*
      *  TODO add support for different border-style's than solid   
      */            
     var borders = this.getBorderData(el);    
-            
+    
     this.each(borders,function(borderSide,borderData){
         if (borderData.width>0){
             var bx = x,
@@ -470,7 +547,7 @@ html2canvas.prototype.newElement = function(el){
                     break;
             }		
                    
-            _.newRect(bx,by,bw,bh,borderData.color);	
+            _.newRect(ctx,bx,by,bw,bh,borderData.color);	
                 
                     
           
@@ -483,7 +560,7 @@ html2canvas.prototype.newElement = function(el){
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
-            /*
+        /*
              * TODO write X over frame
              */
         }else{
@@ -493,6 +570,7 @@ html2canvas.prototype.newElement = function(el){
                
     // draw base element bgcolor       
     this.newRect(
+        ctx,
         x+borders[3].width,
         y+borders[0].width,
         w-(borders[1].width+borders[3].width),
@@ -505,13 +583,15 @@ html2canvas.prototype.newElement = function(el){
         top: y+borders[0].width,
         width: w-(borders[1].width+borders[3].width),
         height: h-(borders[0].width+borders[2].width)
-    });
+    }
+    ,ctx);
         
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
             
-            this.ctx.drawImage(
+            this.drawImage(
+                ctx,
                 image,
                 0, //sx
                 0, //sy
@@ -520,15 +600,18 @@ html2canvas.prototype.newElement = function(el){
                 x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
                 y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
                 bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh
-        
+                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
                 );
-                    this.numDraws++;
+           
         }else{
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
     }
-            
+    
+         
+
+        return this.contextStacks[stackLength-1];
+
 			
 				
 }
@@ -542,22 +625,39 @@ html2canvas.prototype.newElement = function(el){
  * Function to draw the text on the canvas
  */ 
                
-html2canvas.prototype.printText = function(currentText,x,y){
+html2canvas.prototype.printText = function(currentText,x,y,ctx){
     if (this.trim(currentText).length>0){	
-        this.ctx.fillText(currentText,x,y);
+        
+        ctx.fillText(currentText,x,y);
         this.numDraws++;
     }           
 }
 
 
 // Drawing a rectangle 								
-html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
+html2canvas.prototype.newRect = function(ctx,x,y,w,h,bgcolor){
     
     if (bgcolor!="transparent"){
-        this.ctx.fillStyle = bgcolor;
-        this.ctx.fillRect (x, y, w, h);
+        this.setContextVariable(ctx,"fillStyle",bgcolor);
+        ctx.fillRect (x, y, w, h);
         this.numDraws++;
     }
+}
+
+html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
+    ctx.drawImage(
+        image,
+        sx, //sx
+        sy, //sy
+        sw, //sw
+        sh, //sh
+        dx, //dx
+        dy, // dy
+        dw, //dw
+        dh //dh      
+        );
+    this.numDraws++; 
+    
 }
 /*
  * Function to find all images from <img> and background-image   
@@ -629,8 +729,127 @@ html2canvas.prototype.preloadImage = function(src){
           
 }
     
+
+
+html2canvas.prototype.canvasRenderer = function(queue){
+    var _ = this;
+
+    queue = this.sortQueue(queue);
+
+    this.each(queue,function(i,storageContext){
+       
+        if (storageContext.ctx.storage){
+            _.each(storageContext.ctx.storage,function(a,renderItem){
+                
+                switch(renderItem.type){
+                    case "variable":
+                        _.ctx[renderItem.name] = renderItem.arguments;              
+                        break;
+                    case "function":
+                        if (renderItem.name=="fillRect"){
+                            _.ctx.fillRect(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2],renderItem.arguments[3]);
+                        }else if(renderItem.name=="fillText"){
+                            _.ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
+                        }else if(renderItem.name=="drawImage"){
+                            _.ctx.drawImage(
+                                renderItem.arguments[0],
+                                renderItem.arguments[1],
+                                renderItem.arguments[2],
+                                renderItem.arguments[3],
+                                renderItem.arguments[4],
+                                renderItem.arguments[5],
+                                renderItem.arguments[6],
+                                renderItem.arguments[7],
+                                renderItem.arguments[8]
+                                );
+                        }else{
+                            this.log(renderItem);
+                        }
+                       
+  
+                        break;
+                    default:
+                               
+                }
+                
+                  
+            });
+
+        }
+       
+    });
+    
+    
+};     
+
+/*
+ * Sort elements based on z-index and position attributes
+ */
+
+
+html2canvas.prototype.sortQueue = function(queue){
+    if (!this.opts.reorderZ || !this.needReorder) return queue;
+    
+    var longest = 0;
+    this.each(queue,function(i,e){
+        if (longest<e.zIndex.length){
+            longest = e.zIndex.length;
+        }
+    });
+    
+    var counter = 0;
+    //console.log(((queue.length).toString().length)-(count.length).toString().length);
+    this.each(queue,function(i,e){
+        
+        var more = ((queue.length).toString().length)-((counter).toString().length);
+        while(longest>e.zIndex.length){
+            e.zIndex += "0";
+        }
+        e.zIndex = e.zIndex+counter;
+        
+        while((longest+more+(counter).toString().length)>e.zIndex.length){
+            e.zIndex += "0";
+        }
+        counter++;
+    //     console.log(e.zIndex);
+    });
+    
+   
+    
+    queue = queue.sort(function(a,b){
+        
+        if (a.zIndex < b.zIndex) return -1; 
+        if (a.zIndex > b.zIndex) return 1;
+        return 0; 
+    });
+    
+    
+    /*
+
+    console.log('after');
+    this.each(queue,function(i,e){
+        console.log(i+":"+e.zIndex); 
+       // console.log(e.ctx.storage); 
+    });    */
+    
+    return queue;
+}
+
+html2canvas.prototype.setContextVariable = function(ctx,variable,value){
+    if (!ctx.storage){
+        ctx[variable] = value;
+    }else{
+        ctx.storage.push(
+        {
+            type: "variable",
+            name:variable,
+            arguments:value            
+        });
+    }
+  
+}
             
-html2canvas.prototype.newText = function(el,textNode){
+html2canvas.prototype.newText = function(el,textNode,ctx){
        
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
@@ -662,9 +881,10 @@ html2canvas.prototype.newText = function(el,textNode){
         }    
         
           
-          
-        this.ctx.font = bold+" "+font_style+" "+size+" "+family;
-        this.ctx.fillStyle = color;
+        this.setContextVariable(ctx,"fillStyle",color);  
+        this.setContextVariable(ctx,"font",bold+" "+font_style+" "+size+" "+family);
+        //ctx.font = bold+" "+font_style+" "+size+" "+family;
+        //ctx.fillStyle = color;
               
         var oldTextNode = textNode;
         for(var c=0;c<text.length;c++){
@@ -707,20 +927,20 @@ html2canvas.prototype.newText = function(el,textNode){
 
            
                                  
-            this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom);
+            this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
             switch(text_decoration) {
                 case "underline":	
                     // Draws a line at the baseline of the font
                     // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                    this.newRect(bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
                     break;
                 case "overline":
-                    this.newRect(bounds.left,bounds.top,bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
                     break;
                 case "line-through":
                     // TODO try and find exact position for line-through
-                    this.newRect(bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
                     break;
                     
             }	
@@ -847,58 +1067,69 @@ html2canvas.prototype.trim = function(text) {
 }
  
     
-html2canvas.prototype.parseElement = function(element){
+html2canvas.prototype.parseElement = function(element,ctx){
     var _ = this;    
     this.each(element.children,function(index,el){	   
-        _.parsing(el);	
+        _.parsing(el,{
+            ctx:ctx
+        });	
     });
         
-
+    this.canvasRenderer(this.contextStacks);
     this.finish();
 }
 
 
         
-html2canvas.prototype.parsing = function(el){
+html2canvas.prototype.parsing = function(el,stack){
     
     var _ = this;
     
-    this.newElement(el);
+    //if (!this.blockElements.test(el.nodeName)){
+        
+        stack = this.newElement(el,stack) || stack;
+    
+    
+        var ctx = stack.ctx;
+    
    
-    if (!this.ignoreRe.test(el.nodeName)){
+        if (!this.ignoreRe.test(el.nodeName)){
             
          		
         
-        // TODO remove jQuery dependancy
+            // TODO remove jQuery dependancy
 
-        var contents = $(el).contents();
+            var contents = this.contentsInZ(el);
             
         
-        if (contents.length == 1){
+            if (contents.length == 1){
 	
-            // check nodeType
-            if (contents[0].nodeType==1){
-                // it's an element, so let's look inside it
-                this.parsing(contents[0]);
-            }else if (contents[0].nodeType==3){   
-                // it's a text node, so lets print the text
-                this.newText(el,contents[0]);
-            }
-        }else{
-		
-            this.each(contents,function(cid,cel){
-					
-                if (cel.nodeType==1){
-                    // element
-                    _.parsing(cel);								
-                }else if (cel.nodeType==3){                   
-                    _.newText(el,cel);								
-                }              
-						
-            });
+                // check nodeType
+                if (contents[0].nodeType==1){
+                    // it's an element, so let's look inside it
+                    this.parsing(contents[0],stack);
+                }else if (contents[0].nodeType==3){   
+                    // it's a text node, so lets print the text
                 
-        }
-    }	
+                    this.newText(el,contents[0],stack.ctx);
+                }
+            }else{
+		
+                this.each(contents,function(cid,cel){
+					
+                    if (cel.nodeType==1){
+                        // element
+                        _.parsing(cel,stack);								
+                    }else if (cel.nodeType==3){   
+                        _.newText(el,cel,ctx);
+                    }              
+						
+                });
+                
+            }
+        }	
+    
+   // }
 }
     
 
@@ -910,7 +1141,7 @@ html2canvas.prototype.log = function(a){
         var logger = window.console.log || function(log){
             alert(log);
         };
-        /*
+    /*
         if (typeof(window.console) != "undefined" && console.log){
             console.log(a);
         }else{
@@ -961,6 +1192,21 @@ html2canvas.prototype.each = function(arrayLoop,callbackFunc){
 }
 
 
+/*
+ * Function to get childNodes of an element in the order they should be rendered (based on z-index)
+ * reference http://www.w3.org/TR/CSS21/zindex.html
+ */
+
+html2canvas.prototype.contentsInZ = function(el){
+    
+    // TODO remove jQuery dependency
+    
+    var contents = $(el).contents();
+    
+    return contents;
+ 
+}
+
     
 /*
  * Function for fetching the element attribute
@@ -979,8 +1225,46 @@ html2canvas.prototype.extendObj = function(options,defaults){
     }
     return defaults;           
 }
-    
 
+
+html2canvas.prototype.leadingZero = function(num,size){
+    
+    var s = "000000000" + num;
+    return s.substr(s.length-size);    
+}    
+    
+html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
+    
+    if (!parentZ){
+        parentZ = "0";
+    }
+
+
+    if (position!="static" && parentZ.charAt(0)=="0"){
+        this.needReorder = true;
+        parentZ = "1"+parentZ.slice(1);        
+    }
+
+    if (zindex=="auto"){
+        var parentPosition = this.getCSS(parentNode,"position");
+        if (parentPosition!="static" && typeof parentPosition != "undefined"){
+            zindex = 0;
+        }else{
+            return parentZ;
+        }
+    }
+    
+    var b = this.leadingZero(this.numDraws,9);  
+    
+    
+    var s = this.leadingZero(zindex+1,9);
+
+    // var s = "000000000" + num;
+    return parentZ+""+""+s+""+b;
+    
+    
+    
+}
     
 /*
  * Get element childNodes

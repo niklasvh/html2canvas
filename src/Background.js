@@ -1,6 +1,6 @@
 
     
-html2canvas.prototype.drawBackground = function(el,bounds){
+html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
      
     var background_image = this.getCSS(el,"background-image");
@@ -20,16 +20,16 @@ html2canvas.prototype.drawBackground = function(el,bounds){
             switch(background_repeat){
 					
                 case "repeat-x":
-                    this.drawbackgroundRepeatX(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
+                    this.drawbackgroundRepeatX(ctx,image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                     
                     break;
                          
                 case "repeat-y":
-                    this.drawbackgroundRepeatY(image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
+                    this.drawbackgroundRepeatY(ctx,image,bgp,bounds.left,bounds.top,bounds.width,bounds.height);                                             
                     break;
                           
                 case "no-repeat":
                         
-                    this.drawBackgroundRepeat(image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
+                    this.drawBackgroundRepeat(ctx,image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
                     // ctx.drawImage(image,(bounds.left+bgp.left),(bounds.top+bgp.top));	                      
                     break;
                         
@@ -63,7 +63,7 @@ html2canvas.prototype.drawBackground = function(el,bounds){
                             add = 0;
                         }
                                               
-                        this.drawbackgroundRepeatX(image,bgp,bounds.left,bgy,bounds.width,height);  
+                        this.drawbackgroundRepeatX(ctx,image,bgp,bounds.left,bgy,bounds.width,height);  
                         if (add>0){
                             bgp.top += add;
                         }
@@ -146,7 +146,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
 
 
     
-html2canvas.prototype.drawbackgroundRepeatY = function(image,bgp,x,y,w,h){
+html2canvas.prototype.drawbackgroundRepeatY = function(ctx,image,bgp,x,y,w,h){
         
     var height,
     width = Math.min(image.width,w),bgy;   
@@ -162,14 +162,14 @@ html2canvas.prototype.drawbackgroundRepeatY = function(image,bgp,x,y,w,h){
         }else{
             height = image.height;
         }
-        this.drawBackgroundRepeat(image,x+bgp.left,bgy,width,height,x,y);   
+        this.drawBackgroundRepeat(ctx,image,x+bgp.left,bgy,width,height,x,y);   
       
         bgy = Math.floor(bgy+image.height); 
                               
     } 
 }
     
-html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
+html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
                            
     var height = Math.min(image.height,h),
     width,bgx;             
@@ -186,7 +186,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
             width = image.width;
         }
                 
-        this.drawBackgroundRepeat(image,bgx,(y+bgp.top),width,height,x,y);       
+        this.drawBackgroundRepeat(ctx,image,bgx,(y+bgp.top),width,height,x,y);       
              
         bgx = Math.floor(bgx+image.width); 
 
@@ -194,7 +194,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(image,bgp,x,y,w,h){
     } 
 }
     
-html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx,ely){
+html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height,elx,ely){
     var sourceX = 0,
     sourceY=0;
     if (elx-x>0){
@@ -205,7 +205,8 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         sourceY = ely-y;
     }
 
-    this.ctx.drawImage(
+    this.drawImage(
+        ctx,
         image,
         sourceX, // source X
         sourceY, // source Y 
@@ -216,5 +217,4 @@ html2canvas.prototype.drawBackgroundRepeat = function(image,x,y,width,height,elx
         width-sourceX, // destination width
         height-sourceY // destination height
         );
-    this.numDraws++;
 }
