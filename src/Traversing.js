@@ -2,10 +2,10 @@
     
 html2canvas.prototype.parseElement = function(element,ctx){
     var _ = this;    
-    this.each(element.children,function(index,el){	   
+    this.each(element.children,function(index,el){	      
         _.parsing(el,{
             ctx:ctx
-        });	
+        });	     
     });
         
     this.canvasRenderer(this.contextStacks);
@@ -15,10 +15,12 @@ html2canvas.prototype.parseElement = function(element,ctx){
 
         
 html2canvas.prototype.parsing = function(el,stack){
+   
+    if (this.getCSS(el,'display') != "none" && this.getCSS(el,'visibility')!="hidden"){ 
+
+        var _ = this;
     
-    var _ = this;
-    
-    //if (!this.blockElements.test(el.nodeName)){
+        //if (!this.blockElements.test(el.nodeName)){
         
         stack = this.newElement(el,stack) || stack;
     
@@ -61,7 +63,7 @@ html2canvas.prototype.parsing = function(el,stack){
                 
             }
         }	
-    
-   // }
+    }
+// }
 }
     

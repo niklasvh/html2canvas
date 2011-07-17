@@ -1,0 +1,39 @@
+<!--
+* @author Niklas von Hertzen <niklas at hertzen.com>
+* @created 16.7.2011 
+* @website http://hertzen.com
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Visible elements tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="#" type="text/css" rel="stylesheet"> 
+
+        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {       
+                new html2canvas($('body').get(0));
+            });
+        </script>
+
+        <style>
+            div{
+                border:2px solid black;
+            }
+        </style>
+
+    </head>
+    <body>           
+        <h1>Display:none and visible:hidden tests</h1>
+        <div>This should be visible </div>
+        <div style="display:none">display:none, This should be <b>hidden</b></div>
+        <div style="visibility:hidden">visibility:hidden, This should be <b>hidden</b></div>
+        <hr />
+        <div style="display:none">display:none, This should be <b>hidden</b></div>
+        <div style="visibility:hidden">visibility:hidden, This should be <b>hidden</b></div>
+        
+    </body>
+</html>
