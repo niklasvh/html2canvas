@@ -18,8 +18,10 @@ The script is still in a very experimental state, so I don't recommend using it 
 ###Browser compatibility###
 
 The script should work fine on the following browsers:
+
 * Firefox 3.5+
 * Google Chrome 
+* Newer versions of Opera (exactly how new is yet to be determined)
 * >=IE9 (Older versions compatible with the use of flashcanvas)
         
 Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.
