@@ -10,8 +10,8 @@ function html2canvas(el, userOptions) {
     
     this.opts = this.extendObj(options, {          
         logging: false,
-        ready: function (canvas) {
-            document.body.appendChild(canvas);
+        ready: function (stack) {
+            document.body.appendChild(stack.canvas);
         },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",

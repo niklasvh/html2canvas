@@ -3,7 +3,7 @@
 
 
 html2canvas.prototype.newElement = function(el,parentStack){
-					
+		
     var bounds = this.getBounds(el);    
             
     var x = bounds.left;
