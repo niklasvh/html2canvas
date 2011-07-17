@@ -1,5 +1,5 @@
 /* 
- * html2canvas v0.12 <http://html2canvas.hertzen.com>
+ * html2canvas v0.20 <http://html2canvas.hertzen.com>
  * Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
  * http://www.twitter.com/niklasvh 
  * 
