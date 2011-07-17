@@ -28,7 +28,8 @@ Note that the compatibility will most likely be increased in future builds, as m
 
 ###So what isn't included yet?###
     
-There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon. There is no support for opacity or z-index layering yet either and <code>object</code> content such as Flash will most likely never be supported.
+There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon. 
+ There is no support for <code>frame</code> and <code>object</code> content such as Flash.
 
 ### Examples ###
 
