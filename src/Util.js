@@ -7,7 +7,7 @@ html2canvas.prototype.log = function(a){
         var logger = window.console.log || function(log){
             alert(log);
         };
-        /*
+    /*
         if (typeof(window.console) != "undefined" && console.log){
             console.log(a);
         }else{
@@ -58,6 +58,21 @@ html2canvas.prototype.each = function(arrayLoop,callbackFunc){
 }
 
 
+/*
+ * Function to get childNodes of an element in the order they should be rendered (based on z-index)
+ * reference http://www.w3.org/TR/CSS21/zindex.html
+ */
+
+html2canvas.prototype.contentsInZ = function(el){
+    
+    // TODO remove jQuery dependency
+    
+    var contents = $(el).contents();
+    
+    return contents;
+ 
+}
+
     
 /*
  * Function for fetching the element attribute
@@ -76,8 +91,46 @@ html2canvas.prototype.extendObj = function(options,defaults){
     }
     return defaults;           
 }
-    
 
+
+html2canvas.prototype.leadingZero = function(num,size){
+    
+    var s = "000000000" + num;
+    return s.substr(s.length-size);    
+}    
+    
+html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
+    
+    if (!parentZ){
+        parentZ = "0";
+    }
+
+
+    if (position!="static" && parentZ.charAt(0)=="0"){
+        this.needReorder = true;
+        parentZ = "1"+parentZ.slice(1);        
+    }
+
+    if (zindex=="auto"){
+        var parentPosition = this.getCSS(parentNode,"position");
+        if (parentPosition!="static" && typeof parentPosition != "undefined"){
+            zindex = 0;
+        }else{
+            return parentZ;
+        }
+    }
+    
+    var b = this.leadingZero(this.numDraws,9);  
+    
+    
+    var s = this.leadingZero(zindex+1,9);
+
+    // var s = "000000000" + num;
+    return parentZ+""+""+s+""+b;
+    
+    
+    
+}
     
 /*
  * Get element childNodes

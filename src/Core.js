@@ -15,7 +15,8 @@ function html2canvas(el, userOptions) {
         },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
-        renderViewport: false		
+        renderViewport: false,
+        reorderZ: true
     });
     
     this.element = el;
@@ -30,7 +31,10 @@ function html2canvas(el, userOptions) {
     this.images = [];
     this.fontData = [];
     this.numDraws = 0;
+    this.contextStacks = [];
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
+    this.needReorder = false;
+    this.blockElements = new RegExp("(BR|PARAM)");
     
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -58,43 +62,15 @@ html2canvas.prototype.init = function(){
      
     var _ = this;
        
-    this.canvas = document.createElement('canvas');
-        
-    // TODO remove jQuery dependency
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
-        
-
-             
-
-    if (!this.canvas.getContext){
-           
-        // TODO include Flashcanvas
-        /*
-        var script = document.createElement('script');
-        script.type = "text/javascript";
-        script.src = this.opts.flashCanvasPath;
-        var s = document.getElementsByTagName('script')[0]; 
-        s.parentNode.insertBefore(script, s);
-
-        if (typeof FlashCanvas != "undefined") {
-                
-            FlashCanvas.initElement(this.canvas);
-            this.ctx = this.canvas.getContext('2d');
-        }	*/
-            
-    }else{
-        this.ctx = this.canvas.getContext('2d');
-    }
-        
+    this.ctx = new this.stackingContext($(document).width(),$(document).height());    
+              
     if (!this.ctx){
         // canvas not initialized, let's kill it here
         this.log('Canvas not available');
         return;
     }
        
-    // set common settings for canvas
-    this.ctx.textBaseline = "bottom";
+    this.canvas = this.ctx.canvas;
         
     this.log('Finding background images');
         
@@ -123,17 +99,92 @@ html2canvas.prototype.start = function(){
         this.log('Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
-        this.newElement(this.element);		
+       
+        var ctx = this.newElement(this.element, this.ctx) || this.ctx;		
           
-        this.parseElement(this.element);                         
+        this.parseElement(this.element,ctx);      
+     
     }            
 }
 
 
+html2canvas.prototype.stackingContext = function(width,height){
+    this.canvas = document.createElement('canvas');
+        
+    // TODO remove jQuery dependency
+    this.canvas.width = $(document).width();
+    this.canvas.height = $(document).height();
+    
+    if (!this.canvas.getContext){
+           
+    // TODO include Flashcanvas
+    /*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/
+            
+    }else{
+        this.ctx = this.canvas.getContext('2d');
+    }    
+    
+    // set common settings for canvas
+    this.ctx.textBaseline = "bottom";
+    
+    return this.ctx;
+          
+}
+
+html2canvas.prototype.storageContext = function(width,height){
+    this.storage = [];
+
+    
+    
+    // todo simplify this whole section
+    this.fillRect = function(x, y, w, h){
+        this.storage.push(
+        {
+            type: "function",
+            name:"fillRect",
+            arguments:[x,y,w,h]            
+        });
+        
+    };
+        
+    this.drawImage = function(image,sx,sy,sw,sh,dx,dy,dw,dh){     
+        this.storage.push(
+        {
+            type: "function",
+            name:"drawImage",
+            arguments:[image,sx,sy,sw,sh,dx,dy,dw,dh]            
+        });
+    };
+    
+    this.fillText = function(currentText,x,y){
+        
+        this.storage.push(
+        {
+            type: "function",
+            name:"fillText",
+            arguments:[currentText,x,y]            
+        });      
+    }  
+    
+    return this;
+    
+}
+
 
 /*
- * Finished rendering, send callback
- */ 
+* Finished rendering, send callback
+*/ 
 
 html2canvas.prototype.finish = function(){
     this.log("Finished rendering");

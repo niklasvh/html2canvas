@@ -22,6 +22,7 @@
         <fileset dir="${src.dir}" includes="Border.js"/>
         <fileset dir="${src.dir}" includes="Draw.js"/>
         <fileset dir="${src.dir}" includes="Images.js"/>
+        <fileset dir="${src.dir}" includes="Renderer.js"/>     
         <fileset dir="${src.dir}" includes="Text.js"/>
         <fileset dir="${src.dir}" includes="Traversing.js"/>
         <fileset dir="${src.dir}" includes="Util.js"/>       

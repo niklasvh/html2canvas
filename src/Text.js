@@ -1,5 +1,5 @@
             
-html2canvas.prototype.newText = function(el,textNode){
+html2canvas.prototype.newText = function(el,textNode,ctx){
        
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
@@ -31,9 +31,10 @@ html2canvas.prototype.newText = function(el,textNode){
         }    
         
           
-          
-        this.ctx.font = bold+" "+font_style+" "+size+" "+family;
-        this.ctx.fillStyle = color;
+        this.setContextVariable(ctx,"fillStyle",color);  
+        this.setContextVariable(ctx,"font",bold+" "+font_style+" "+size+" "+family);
+        //ctx.font = bold+" "+font_style+" "+size+" "+family;
+        //ctx.fillStyle = color;
               
         var oldTextNode = textNode;
         for(var c=0;c<text.length;c++){
@@ -76,20 +77,20 @@ html2canvas.prototype.newText = function(el,textNode){
 
            
                                  
-            this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom);
+            this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
             switch(text_decoration) {
                 case "underline":	
                     // Draws a line at the baseline of the font
                     // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                    this.newRect(bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
                     break;
                 case "overline":
-                    this.newRect(bounds.left,bounds.top,bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
                     break;
                 case "line-through":
                     // TODO try and find exact position for line-through
-                    this.newRect(bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                    this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
                     break;
                     
             }	

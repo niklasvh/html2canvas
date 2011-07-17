@@ -2,7 +2,7 @@
 
 
 
-html2canvas.prototype.newElement = function(el){
+html2canvas.prototype.newElement = function(el,parentStack){
 					
     var bounds = this.getBounds(el);    
             
@@ -14,14 +14,40 @@ html2canvas.prototype.newElement = function(el){
     image;       
     var bgcolor = this.getCSS(el,"background-color");
 
+    var zindex = this.formatZ(this.getCSS(el,"z-index"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+    
+    //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
+    
+    var opacity = this.getCSS(el,"opacity");   
+    
+    //if (this.getCSS(el,"position")!="static"){
+          
+          /*
+        this.contextStacks.push(ctx);
+        
+        ctx = new this.storageContext(); 
+        */
        
+       
+    
+       
+       var stack = {
+           ctx: new this.storageContext(),
+           zIndex: zindex,
+           opacity: opacity
+       };
+       
+        var stackLength =  this.contextStacks.push(stack);
+        
+        var ctx = this.contextStacks[stackLength-1].ctx; 
+    //}
 			
 
     /*
      *  TODO add support for different border-style's than solid   
      */            
     var borders = this.getBorderData(el);    
-            
+    
     this.each(borders,function(borderSide,borderData){
         if (borderData.width>0){
             var bx = x,
@@ -49,7 +75,7 @@ html2canvas.prototype.newElement = function(el){
                     break;
             }		
                    
-            _.newRect(bx,by,bw,bh,borderData.color);	
+            _.newRect(ctx,bx,by,bw,bh,borderData.color);	
                 
                     
           
@@ -62,7 +88,7 @@ html2canvas.prototype.newElement = function(el){
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
-            /*
+        /*
              * TODO write X over frame
              */
         }else{
@@ -72,6 +98,7 @@ html2canvas.prototype.newElement = function(el){
                
     // draw base element bgcolor       
     this.newRect(
+        ctx,
         x+borders[3].width,
         y+borders[0].width,
         w-(borders[1].width+borders[3].width),
@@ -84,13 +111,15 @@ html2canvas.prototype.newElement = function(el){
         top: y+borders[0].width,
         width: w-(borders[1].width+borders[3].width),
         height: h-(borders[0].width+borders[2].width)
-    });
+    }
+    ,ctx);
         
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
             
-            this.ctx.drawImage(
+            this.drawImage(
+                ctx,
                 image,
                 0, //sx
                 0, //sy
@@ -99,15 +128,18 @@ html2canvas.prototype.newElement = function(el){
                 x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
                 y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
                 bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh
-        
+                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
                 );
-                    this.numDraws++;
+           
         }else{
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
     }
-            
+    
+         
+
+        return this.contextStacks[stackLength-1];
+
 			
 				
 }
@@ -121,20 +153,37 @@ html2canvas.prototype.newElement = function(el){
  * Function to draw the text on the canvas
  */ 
                
-html2canvas.prototype.printText = function(currentText,x,y){
+html2canvas.prototype.printText = function(currentText,x,y,ctx){
     if (this.trim(currentText).length>0){	
-        this.ctx.fillText(currentText,x,y);
+        
+        ctx.fillText(currentText,x,y);
         this.numDraws++;
     }           
 }
 
 
 // Drawing a rectangle 								
-html2canvas.prototype.newRect = function(x,y,w,h,bgcolor){
+html2canvas.prototype.newRect = function(ctx,x,y,w,h,bgcolor){
     
     if (bgcolor!="transparent"){
-        this.ctx.fillStyle = bgcolor;
-        this.ctx.fillRect (x, y, w, h);
+        this.setContextVariable(ctx,"fillStyle",bgcolor);
+        ctx.fillRect (x, y, w, h);
         this.numDraws++;
     }
+}
+
+html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
+    ctx.drawImage(
+        image,
+        sx, //sx
+        sy, //sy
+        sw, //sw
+        sh, //sh
+        dx, //dx
+        dy, // dy
+        dw, //dw
+        dh //dh      
+        );
+    this.numDraws++; 
+    
 }
