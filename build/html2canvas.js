@@ -40,8 +40,8 @@ function html2canvas(el, userOptions) {
     
     this.opts = this.extendObj(options, {          
         logging: false,
-        ready: function (canvas) {
-            document.body.appendChild(canvas);
+        ready: function (stack) {
+            document.body.appendChild(stack.canvas);
         },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
@@ -130,11 +130,15 @@ html2canvas.prototype.start = function(){
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
        
-        var ctx = this.newElement(this.element, this.ctx) || this.ctx;		
+        var stack = this.newElement(this.element,{ 
+            ctx:this.ctx,
+            opacity:this.getCSS(this.element,"opacity")
+        
+        }) || this.ctx;		
+    }
           
-        this.parseElement(this.element,ctx);      
-     
-    }            
+    this.parseElement(this.element,stack);      
+         
 }
 
 
@@ -475,7 +479,7 @@ html2canvas.prototype.getBorderData = function(el){
 
 
 html2canvas.prototype.newElement = function(el,parentStack){
-					
+		
     var bounds = this.getBounds(el);    
             
     var x = bounds.left;
@@ -491,29 +495,19 @@ html2canvas.prototype.newElement = function(el,parentStack){
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
     var opacity = this.getCSS(el,"opacity");   
-    
-    //if (this.getCSS(el,"position")!="static"){
-          
-          /*
-        this.contextStacks.push(ctx);
+
+      
+    var stack = {
+        ctx: new this.storageContext(),
+        zIndex: zindex,
+        opacity: opacity*parentStack.opacity
+    };
+       
+    var stackLength =  this.contextStacks.push(stack);
         
-        ctx = new this.storageContext(); 
-        */
-       
-       
-    
-       
-       var stack = {
-           ctx: new this.storageContext(),
-           zIndex: zindex,
-           opacity: opacity
-       };
-       
-        var stackLength =  this.contextStacks.push(stack);
-        
-        var ctx = this.contextStacks[stackLength-1].ctx; 
-    //}
-			
+    var ctx = this.contextStacks[stackLength-1].ctx; 
+
+    this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     /*
      *  TODO add support for different border-style's than solid   
@@ -610,7 +604,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     
          
 
-        return this.contextStacks[stackLength-1];
+    return this.contextStacks[stackLength-1];
 
 			
 				
@@ -1067,12 +1061,10 @@ html2canvas.prototype.trim = function(text) {
 }
  
     
-html2canvas.prototype.parseElement = function(element,ctx){
+html2canvas.prototype.parseElement = function(element,stack){
     var _ = this;    
-    this.each(element.children,function(index,el){	   
-        _.parsing(el,{
-            ctx:ctx
-        });	
+    this.each(element.children,function(index,el){	      
+        _.parsing(el,stack);	     
     });
         
     this.canvasRenderer(this.contextStacks);
@@ -1082,10 +1074,12 @@ html2canvas.prototype.parseElement = function(element,ctx){
 
         
 html2canvas.prototype.parsing = function(el,stack){
+   
+    if (this.getCSS(el,'display') != "none" && this.getCSS(el,'visibility')!="hidden"){ 
+
+        var _ = this;
     
-    var _ = this;
-    
-    //if (!this.blockElements.test(el.nodeName)){
+        //if (!this.blockElements.test(el.nodeName)){
         
         stack = this.newElement(el,stack) || stack;
     
@@ -1128,8 +1122,8 @@ html2canvas.prototype.parsing = function(el,stack){
                 
             }
         }	
-    
-   // }
+    }
+// }
 }
     
 
