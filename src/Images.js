@@ -32,7 +32,7 @@ html2canvas.prototype.getImages = function(el) {
     
 html2canvas.prototype.loadImage = function(src){	
         
-    var imgIndex = this.images.indexOf(src);
+    var imgIndex = this.getIndex(this.images,src);
     if (imgIndex!=-1){
         return this.images[imgIndex+1];
     }else{
@@ -42,10 +42,13 @@ html2canvas.prototype.loadImage = function(src){
 }
 
 
+
+
         
 html2canvas.prototype.preloadImage = function(src){
-        
-    if (this.images.indexOf(src)==-1){
+
+
+    if (this.getIndex(this.images,src)==-1){
         this.images.push(src);
                    
         var img = new Image();   
