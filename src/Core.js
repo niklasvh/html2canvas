@@ -18,6 +18,7 @@ function html2canvas(el, userOptions) {
         renderViewport: false,
         reorderZ: true,
         throttle:true,
+        letterRendering:false,
         renderOrder: "canvas flash html"
     });
     
