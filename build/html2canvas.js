@@ -43,6 +43,9 @@ function html2canvas(el, userOptions) {
         ready: function (stack) {
             document.body.appendChild(stack.canvas);
         },
+        storageReady: function(obj){
+            obj.Renderer(obj.contextStacks);
+        },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false,
@@ -770,7 +773,9 @@ html2canvas.prototype.preloadImage = function(src){
 html2canvas.prototype.Renderer = function(queue){
      
     var _ = this;
-     
+    
+    this.log('Renderer initiated');
+    
     this.each(this.opts.renderOrder.split(" "),function(i,renderer){
         
         switch(renderer){
@@ -778,6 +783,7 @@ html2canvas.prototype.Renderer = function(queue){
                 _.canvas = document.createElement('canvas');
                 if (_.canvas.getContext){
                     _.canvasRenderer(queue);
+                    _.log('Using canvas renderer');
                     return false;
                 }               
                 break;
@@ -789,15 +795,25 @@ html2canvas.prototype.Renderer = function(queue){
                 var s = document.getElementsByTagName('script')[0]; 
                 s.parentNode.insertBefore(script, s);
                         
-                         
+                   */      
                 if (typeof FlashCanvas != "undefined") {  
-                    _.canvas = document.createElement('canvas');
+                    _.canvas = initCanvas(document.getElementById("testflash"));
                     FlashCanvas.initElement(_.canvas);
+                    _.ctx = _.canvas.getContext("2d");
+                   // _.canvas = document.createElement('canvas');
+                    //
+                    _.log('Using Flashcanvas renderer');
                     _.canvasRenderer(queue);
+                    
                     return false;
-                }  */
+                }  
                 
                 break;
+                case "html":
+                    // TODO add renderer
+                    _log("Using HTML renderer");
+                    return false;
+                    break;
              
              
         }
@@ -805,6 +821,9 @@ html2canvas.prototype.Renderer = function(queue){
          
          
     });
+    
+    this.log('No renderer chosen, rendering quit');
+    return this;
      
 // this.canvasRenderer(queue);
      
@@ -983,12 +1002,15 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
     // apply text-transform:ation to the text
     textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
     var text = this.trim(textNode.nodeValue);		
-			
+	
     //text = $.trim(text);
     if (text.length>0){
         switch(bold){
-            case "401":
+            case 401:
                 bold = "bold";
+                break;
+                case 400:
+                bold = "normal";
                 break;
         }
             
@@ -1002,6 +1024,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         renderList,
         renderWords = false;
         
+        	
         text_align = text_align.replace(["-webkit-auto"],["auto"])
         
         
@@ -1212,8 +1235,9 @@ html2canvas.prototype.parseElement = function(element,stack){
     this.each(element.children,function(index,el){	      
         _.parsing(el,stack);	     
     });
-        
-    this.Renderer(this.contextStacks);
+    
+    this.log('Render queue stored');
+    this.opts.storageReady(this);
     this.finish();
 }
 
@@ -1278,9 +1302,11 @@ html2canvas.prototype.log = function(a){
     
     if (this.opts.logging){
         
-        var logger = window.console.log || function(log){
-            alert(log);
-        };
+        if (window.console && window.console.log){
+           console.log(a);     
+        }else{
+            alert(a);
+        }
     /*
         if (typeof(window.console) != "undefined" && console.log){
             console.log(a);
