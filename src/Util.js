@@ -53,7 +53,7 @@ html2canvas.prototype.getBounds = function(el){
 html2canvas.prototype.each = function(arrayLoop,callbackFunc){
     callbackFunc = callbackFunc || function(){};
     for (var i=0;i<arrayLoop.length;i++){       
-        callbackFunc(i,arrayLoop[i]);
+        if (callbackFunc(i,arrayLoop[i]) === false) return;
     }
 }
 
@@ -149,4 +149,18 @@ html2canvas.prototype.getContents = function(el){
  */
 html2canvas.prototype.getCSS = function(el,attribute){
     return $(el).css(attribute);
+}
+
+
+html2canvas.prototype.getIndex = function(array,src){
+    
+    if (array.indexOf){
+        return array.indexOf(src);
+    }else{
+        for(var i = 0; i < array.length; i++){
+            if(this[i] == src) return i;
+        }
+        return -1;
+    }
+    
 }
