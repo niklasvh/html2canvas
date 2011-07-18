@@ -1,7 +1,9 @@
 html2canvas.prototype.Renderer = function(queue){
      
     var _ = this;
-     
+    
+    this.log('Renderer initiated');
+    
     this.each(this.opts.renderOrder.split(" "),function(i,renderer){
         
         switch(renderer){
@@ -9,6 +11,7 @@ html2canvas.prototype.Renderer = function(queue){
                 _.canvas = document.createElement('canvas');
                 if (_.canvas.getContext){
                     _.canvasRenderer(queue);
+                    _.log('Using canvas renderer');
                     return false;
                 }               
                 break;
@@ -20,15 +23,25 @@ html2canvas.prototype.Renderer = function(queue){
                 var s = document.getElementsByTagName('script')[0]; 
                 s.parentNode.insertBefore(script, s);
                         
-                         
+                   */      
                 if (typeof FlashCanvas != "undefined") {  
-                    _.canvas = document.createElement('canvas');
+                    _.canvas = initCanvas(document.getElementById("testflash"));
                     FlashCanvas.initElement(_.canvas);
+                    _.ctx = _.canvas.getContext("2d");
+                   // _.canvas = document.createElement('canvas');
+                    //
+                    _.log('Using Flashcanvas renderer');
                     _.canvasRenderer(queue);
+                    
                     return false;
-                }  */
+                }  
                 
                 break;
+                case "html":
+                    // TODO add renderer
+                    _log("Using HTML renderer");
+                    return false;
+                    break;
              
              
         }
@@ -36,6 +49,9 @@ html2canvas.prototype.Renderer = function(queue){
          
          
     });
+    
+    this.log('No renderer chosen, rendering quit');
+    return this;
      
 // this.canvasRenderer(queue);
      
