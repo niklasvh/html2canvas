@@ -18,12 +18,15 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
     // apply text-transform:ation to the text
     textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
     var text = this.trim(textNode.nodeValue);		
-			
+	
     //text = $.trim(text);
     if (text.length>0){
         switch(bold){
-            case "401":
+            case 401:
                 bold = "bold";
+                break;
+                case 400:
+                bold = "normal";
                 break;
         }
             
@@ -37,6 +40,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         renderList,
         renderWords = false;
         
+        	
         text_align = text_align.replace(["-webkit-auto"],["auto"])
         
         
