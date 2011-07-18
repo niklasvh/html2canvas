@@ -14,7 +14,10 @@ html2canvas.prototype.newElement = function(el,parentStack){
     image;       
     var bgcolor = this.getCSS(el,"background-color");
 
-    var zindex = this.formatZ(this.getCSS(el,"z-index"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+
+    parentStack = parentStack || {};
+
+    var zindex = this.formatZ(this.getCSS(el,"zIndex"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
     
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
@@ -33,46 +36,8 @@ html2canvas.prototype.newElement = function(el,parentStack){
 
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
-    /*
-     *  TODO add support for different border-style's than solid   
-     */            
-    var borders = this.getBorderData(el);    
-    
-    this.each(borders,function(borderSide,borderData){
-        if (borderData.width>0){
-            var bx = x,
-            by = y,
-            bw = w,
-            bh = h-(borders[2].width);
-            switch(borderSide){
-                case 0:
-                    // top border
-                    bh = borders[0].width;
-                    break;
-                case 1:
-                    // right border
-                    bx = x+w-(borders[1].width);
-                    bw = borders[1].width;                              
-                    break;
-                case 2:
-                    // bottom border
-                    by = (by+h)-(borders[2].width);
-                    bh = borders[2].width;
-                    break;
-                case 3:
-                    // left border
-                    bw = borders[3].width;  
-                    break;
-            }		
-                   
-            _.newRect(ctx,bx,by,bw,bh,borderData.color);	
-                
-                    
-          
-        }
-                
-    });
-
+    // draw element borders
+    var borders = this.drawBorders(el, ctx, bounds.left, bounds.top, bounds.width, bounds.height);
 
 
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
