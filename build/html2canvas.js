@@ -1005,15 +1005,16 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         text_align = text_align.replace(["-webkit-auto"],["auto"])
         
         
-        if (this.opts.letterRendering == false && /^(left|right|justify|center|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
+        if (this.opts.letterRendering == false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
            // this.setContextVariable(ctx,"textAlign",text_align);  
             renderWords = true;
-            renderList = textNode.nodeValue.split(/\b/);
+            renderList = textNode.nodeValue.split(/(\b| )/);
             
         }else{
-            this.setContextVariable(ctx,"textAlign","left");
+          //  this.setContextVariable(ctx,"textAlign","left");
             renderList = textNode.nodeValue.split("");
         }
+       
        
         
         this.setContextVariable(ctx,"fillStyle",color);  
@@ -1024,6 +1025,8 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
               
         var oldTextNode = textNode;
         for(var c=0;c<renderList.length;c++){
+            
+            // TODO only do the splitting for non-range prints
             var newTextNode = oldTextNode.splitText(renderList[c].length);
             
 
