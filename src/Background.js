@@ -105,8 +105,8 @@ html2canvas.prototype.backgroundImageUrl = function(src){
  */
     
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
-
-    var bgposition = this.getCSS(el,"background-position").split(" "),
+    var bgpos = this.getCSS(el,"backgroundPosition") || "0 0";
+    var bgposition = bgpos.split(" "),
     top,
     left,
     percentage;
