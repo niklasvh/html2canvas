@@ -5,8 +5,9 @@ html2canvas.prototype.parseElement = function(element,stack){
     this.each(element.children,function(index,el){	      
         _.parsing(el,stack);	     
     });
-        
-    this.Renderer(this.contextStacks);
+    
+    this.log('Render queue stored');
+    this.opts.storageReady(this);
     this.finish();
 }
 
