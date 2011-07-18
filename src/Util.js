@@ -4,9 +4,11 @@ html2canvas.prototype.log = function(a){
     
     if (this.opts.logging){
         
-        var logger = window.console.log || function(log){
-            alert(log);
-        };
+        if (window.console && window.console.log){
+           console.log(a);     
+        }else{
+            alert(a);
+        }
     /*
         if (typeof(window.console) != "undefined" && console.log){
             console.log(a);
