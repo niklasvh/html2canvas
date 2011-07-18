@@ -48,6 +48,7 @@ function html2canvas(el, userOptions) {
         renderViewport: false,
         reorderZ: true,
         throttle:true,
+        letterRendering:false,
         renderOrder: "canvas flash html"
     });
     
@@ -974,11 +975,14 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
     var font_variant = this.getCSS(el,"font-variant");
      
     var text_decoration = this.getCSS(el,"text-decoration");
-               
+    var text_align = this.getCSS(el,"text-align");  
+    
+    
+    var letter_spacing = this.getCSS(el,"letter-spacing");
              
     // apply text-transform:ation to the text
     textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
-    var text = textNode.nodeValue;		
+    var text = this.trim(textNode.nodeValue);		
 			
     //text = $.trim(text);
     if (text.length>0){
@@ -994,15 +998,34 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
             
         }    
         
-          
+        var font = font_variant+" "+bold+" "+font_style+" "+size+" "+family,
+        renderList,
+        renderWords = false;
+        
+        text_align = text_align.replace(["-webkit-auto"],["auto"])
+        
+        
+        if (this.opts.letterRendering == false && /^(left|right|justify|center|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
+           // this.setContextVariable(ctx,"textAlign",text_align);  
+            renderWords = true;
+            renderList = textNode.nodeValue.split(/\b/);
+            
+        }else{
+            this.setContextVariable(ctx,"textAlign","left");
+            renderList = textNode.nodeValue.split("");
+        }
+       
+        
         this.setContextVariable(ctx,"fillStyle",color);  
-        this.setContextVariable(ctx,"font",font_variant+" "+bold+" "+font_style+" "+size+" "+family);
-        //ctx.font = bold+" "+font_style+" "+size+" "+family;
-        //ctx.fillStyle = color;
+        this.setContextVariable(ctx,"font",font);
+        
+        
+
               
         var oldTextNode = textNode;
-        for(var c=0;c<text.length;c++){
-            var newTextNode = oldTextNode.splitText(1);
+        for(var c=0;c<renderList.length;c++){
+            var newTextNode = oldTextNode.splitText(renderList[c].length);
+            
 
             if (this.support.rangeBounds){
                 // getBoundingClientRect is supported for ranges
@@ -1020,16 +1043,13 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
                 }
             }else{
                 // it isn't supported, so let's wrap it inside an element instead and the bounds there
+                
                 var parent = oldTextNode.parentNode;
                 var wrapElement = document.createElement('wrapper');
                 var backupText = oldTextNode.cloneNode(true);
                 wrapElement.appendChild(oldTextNode.cloneNode(true));
                 parent.replaceChild(wrapElement,oldTextNode);
-                    
-                       
-    
-     
-                    
+                                    
                 var bounds = this.getBounds(wrapElement);
 
     
@@ -1144,6 +1164,9 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     return metricsObj;
     
 }
+
+
+
 
 
 /*
