@@ -6,7 +6,7 @@ html2canvas.prototype.parseElement = function(element,stack){
         _.parsing(el,stack);	     
     });
         
-    this.canvasRenderer(this.contextStacks);
+    this.Renderer(this.contextStacks);
     this.finish();
 }
 
