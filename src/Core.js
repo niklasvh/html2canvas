@@ -13,6 +13,9 @@ function html2canvas(el, userOptions) {
         ready: function (stack) {
             document.body.appendChild(stack.canvas);
         },
+        storageReady: function(obj){
+            obj.Renderer(obj.contextStacks);
+        },
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false,
