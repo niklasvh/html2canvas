@@ -40,7 +40,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         for(var c=0;c<text.length;c++){
             var newTextNode = oldTextNode.splitText(1);
 
-            if (this.useRangeBounds){
+            if (this.support.rangeBounds){
                 // getBoundingClientRect is supported for ranges
                 if (document.createRange){
                     var range = document.createRange();
