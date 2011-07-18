@@ -46,7 +46,9 @@ function html2canvas(el, userOptions) {
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false,
-        reorderZ: true
+        reorderZ: true,
+        throttle:true,
+        renderOrder: "canvas flash html"
     });
     
     this.element = el;
@@ -65,20 +67,44 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
-    
+
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
-    // test how to measure text bounding boxes
-    this.useRangeBounds = false;
     
-    // Check disabled as Opera doesn't provide bounds.height/bottom even though it supports the method.
-    // TODO take the check back into use, but fix the issue for Opera
-    /*
+    this.support = {
+        rangeBounds: false
+        
+    };
+    
+    // Test whether we can use ranges to measure bounding boxes
+    // Opera doesn't provide valid bounds.height/bottom even though it supports the method.
+
+    
     if (document.createRange){
         var r = document.createRange();
-        this.useRangeBounds = new Boolean(r.getBoundingClientRect);
-    }*/
+        //this.support.rangeBounds = new Boolean(r.getBoundingClientRect);
+        if (r.getBoundingClientRect){
+            var testElement = document.createElement('boundtest');
+            testElement.style.height = "123px";
+            testElement.style.display = "block";
+            document.getElementsByTagName('body')[0].appendChild(testElement);
+            
+            r.selectNode(testElement);
+            var rangeBounds = r.getBoundingClientRect();
+            var rangeHeight = rangeBounds.height;
+
+            if (rangeHeight==123){
+                this.support.rangeBounds = true;
+            }
+            document.getElementsByTagName('body')[0].removeChild(testElement);
+
+            
+        }
+        
+    }
   
+   
+    
     // Start script
     this.init();
     
@@ -91,7 +117,7 @@ function html2canvas(el, userOptions) {
 html2canvas.prototype.init = function(){
      
     var _ = this;
-       
+    /*
     this.ctx = new this.stackingContext($(document).width(),$(document).height());    
               
     if (!this.ctx){
@@ -101,7 +127,7 @@ html2canvas.prototype.init = function(){
     }
        
     this.canvas = this.ctx.canvas;
-        
+        */
     this.log('Finding background images');
         
     this.getImages(this.element);
@@ -129,25 +155,23 @@ html2canvas.prototype.start = function(){
         this.log('Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
-       
-        var stack = this.newElement(this.element,{ 
-            ctx:this.ctx,
-            opacity:this.getCSS(this.element,"opacity")
+        var rootStack = new this.storageContext($(document).width(),$(document).height());  
+        rootStack.opacity = this.getCSS(this.element,"opacity");
+        var stack = this.newElement(this.element,rootStack);
         
-        }) || this.ctx;		
+        
+        this.parseElement(this.element,stack);  
     }
-          
-    this.parseElement(this.element,stack);      
-         
+        
 }
 
 
 html2canvas.prototype.stackingContext = function(width,height){
     this.canvas = document.createElement('canvas');
         
-    // TODO remove jQuery dependency
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
+
+    this.canvas.width = width;
+    this.canvas.height = width;
     
     if (!this.canvas.getContext){
            
@@ -178,8 +202,9 @@ html2canvas.prototype.stackingContext = function(width,height){
 
 html2canvas.prototype.storageContext = function(width,height){
     this.storage = [];
-
-    
+    this.width = width;
+    this.height = height;
+    //this.zIndex;
     
     // todo simplify this whole section
     this.fillRect = function(x, y, w, h){
@@ -221,9 +246,11 @@ html2canvas.prototype.storageContext = function(width,height){
 */ 
 
 html2canvas.prototype.finish = function(){
-    this.log("Finished rendering");
-    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
     
+    this.log("Finished rendering");
+    
+    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
+    /*
     if (this.opts.renderViewport){
         // let's crop it to viewport only then
         var newCanvas = document.createElement('canvas');
@@ -231,7 +258,7 @@ html2canvas.prototype.finish = function(){
         newCanvas.width = window.innerWidth;
         newCanvas.height = window.innerHeight;
             
-    }
+    }*/
     this.opts.ready(this);          
 }
 
@@ -343,8 +370,8 @@ html2canvas.prototype.backgroundImageUrl = function(src){
  */
     
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
-
-    var bgposition = this.getCSS(el,"background-position").split(" "),
+    var bgpos = this.getCSS(el,"backgroundPosition") || "0 0";
+    var bgposition = bgpos.split(" "),
     top,
     left,
     percentage;
@@ -475,44 +502,13 @@ html2canvas.prototype.getBorderData = function(el){
             
 }
 
-
-
-
-html2canvas.prototype.newElement = function(el,parentStack){
-		
-    var bounds = this.getBounds(el);    
-            
-    var x = bounds.left;
-    var y = bounds.top;
-    var w = bounds.width;
-    var h = bounds.height;   
-    var _ = this,
-    image;       
-    var bgcolor = this.getCSS(el,"background-color");
-
-    var zindex = this.formatZ(this.getCSS(el,"z-index"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
     
-    //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
-    
-    var opacity = this.getCSS(el,"opacity");   
-
-      
-    var stack = {
-        ctx: new this.storageContext(),
-        zIndex: zindex,
-        opacity: opacity*parentStack.opacity
-    };
-       
-    var stackLength =  this.contextStacks.push(stack);
-        
-    var ctx = this.contextStacks[stackLength-1].ctx; 
-
-    this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
-
     /*
      *  TODO add support for different border-style's than solid   
      */            
     var borders = this.getBorderData(el);    
+    var _ = this;
     
     this.each(borders,function(borderSide,borderData){
         if (borderData.width>0){
@@ -548,7 +544,51 @@ html2canvas.prototype.newElement = function(el,parentStack){
         }
                 
     });
+    
+    return borders;
+    
+};
 
+
+
+
+
+html2canvas.prototype.newElement = function(el,parentStack){
+		
+    var bounds = this.getBounds(el);    
+            
+    var x = bounds.left;
+    var y = bounds.top;
+    var w = bounds.width;
+    var h = bounds.height;   
+    var _ = this,
+    image;       
+    var bgcolor = this.getCSS(el,"background-color");
+
+
+    parentStack = parentStack || {};
+
+    var zindex = this.formatZ(this.getCSS(el,"zIndex"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+    
+    //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
+    
+    var opacity = this.getCSS(el,"opacity");   
+
+      
+    var stack = {
+        ctx: new this.storageContext(),
+        zIndex: zindex,
+        opacity: opacity*parentStack.opacity
+    };
+       
+    var stackLength =  this.contextStacks.push(stack);
+        
+    var ctx = this.contextStacks[stackLength-1].ctx; 
+
+    this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
+
+    // draw element borders
+    var borders = this.drawBorders(el, ctx, bounds.left, bounds.top, bounds.width, bounds.height);
 
 
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
@@ -687,7 +727,7 @@ html2canvas.prototype.getImages = function(el) {
     
 html2canvas.prototype.loadImage = function(src){	
         
-    var imgIndex = this.images.indexOf(src);
+    var imgIndex = this.getIndex(this.images,src);
     if (imgIndex!=-1){
         return this.images[imgIndex+1];
     }else{
@@ -697,10 +737,13 @@ html2canvas.prototype.loadImage = function(src){
 }
 
 
+
+
         
 html2canvas.prototype.preloadImage = function(src){
-        
-    if (this.images.indexOf(src)==-1){
+
+
+    if (this.getIndex(this.images,src)==-1){
         this.images.push(src);
                    
         var img = new Image();   
@@ -723,13 +766,90 @@ html2canvas.prototype.preloadImage = function(src){
           
 }
     
+html2canvas.prototype.Renderer = function(queue){
+     
+    var _ = this;
+     
+    this.each(this.opts.renderOrder.split(" "),function(i,renderer){
+        
+        switch(renderer){
+            case "canvas":
+                _.canvas = document.createElement('canvas');
+                if (_.canvas.getContext){
+                    _.canvasRenderer(queue);
+                    return false;
+                }               
+                break;
+            case "flash":
+                /*
+                var script = document.createElement('script');
+                script.type = "text/javascript";
+                script.src = _.opts.flashCanvasPath;
+                var s = document.getElementsByTagName('script')[0]; 
+                s.parentNode.insertBefore(script, s);
+                        
+                         
+                if (typeof FlashCanvas != "undefined") {  
+                    _.canvas = document.createElement('canvas');
+                    FlashCanvas.initElement(_.canvas);
+                    _.canvasRenderer(queue);
+                    return false;
+                }  */
+                
+                break;
+             
+             
+        }
+         
+         
+         
+    });
+     
+// this.canvasRenderer(queue);
+     
+/*
+     if (!this.canvas.getContext){
+           
+           
+     }*/
+// TODO include Flashcanvas
+/*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/ 
+    
+}
+
+
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
     var _ = this;
 
     queue = this.sortQueue(queue);
+    
+    
+    
+        
 
+    this.canvas.width = $(document).width();
+    this.canvas.height = $(document).height();
+    
+    this.ctx = this.canvas.getContext("2d");
+    
+    // set common settings for canvas
+    this.ctx.textBaseline = "bottom";
+    
+  
+    
     this.each(queue,function(i,storageContext){
        
         if (storageContext.ctx.storage){
@@ -884,7 +1004,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         for(var c=0;c<text.length;c++){
             var newTextNode = oldTextNode.splitText(1);
 
-            if (this.useRangeBounds){
+            if (this.support.rangeBounds){
                 // getBoundingClientRect is supported for ranges
                 if (document.createRange){
                     var range = document.createRange();
@@ -1067,7 +1187,7 @@ html2canvas.prototype.parseElement = function(element,stack){
         _.parsing(el,stack);	     
     });
         
-    this.canvasRenderer(this.contextStacks);
+    this.Renderer(this.contextStacks);
     this.finish();
 }
 
@@ -1181,7 +1301,7 @@ html2canvas.prototype.getBounds = function(el){
 html2canvas.prototype.each = function(arrayLoop,callbackFunc){
     callbackFunc = callbackFunc || function(){};
     for (var i=0;i<arrayLoop.length;i++){       
-        callbackFunc(i,arrayLoop[i]);
+        if (callbackFunc(i,arrayLoop[i]) === false) return;
     }
 }
 
@@ -1277,4 +1397,18 @@ html2canvas.prototype.getContents = function(el){
  */
 html2canvas.prototype.getCSS = function(el,attribute){
     return $(el).css(attribute);
+}
+
+
+html2canvas.prototype.getIndex = function(array,src){
+    
+    if (array.indexOf){
+        return array.indexOf(src);
+    }else{
+        for(var i = 0; i < array.length; i++){
+            if(this[i] == src) return i;
+        }
+        return -1;
+    }
+    
 }
