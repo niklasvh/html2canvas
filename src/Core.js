@@ -16,7 +16,9 @@ function html2canvas(el, userOptions) {
         iframeDefault: "default",
         flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
         renderViewport: false,
-        reorderZ: true
+        reorderZ: true,
+        throttle:true,
+        renderOrder: "canvas flash html"
     });
     
     this.element = el;
@@ -35,20 +37,44 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
-    
+
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
-    // test how to measure text bounding boxes
-    this.useRangeBounds = false;
     
-    // Check disabled as Opera doesn't provide bounds.height/bottom even though it supports the method.
-    // TODO take the check back into use, but fix the issue for Opera
-    /*
+    this.support = {
+        rangeBounds: false
+        
+    };
+    
+    // Test whether we can use ranges to measure bounding boxes
+    // Opera doesn't provide valid bounds.height/bottom even though it supports the method.
+
+    
     if (document.createRange){
         var r = document.createRange();
-        this.useRangeBounds = new Boolean(r.getBoundingClientRect);
-    }*/
+        //this.support.rangeBounds = new Boolean(r.getBoundingClientRect);
+        if (r.getBoundingClientRect){
+            var testElement = document.createElement('boundtest');
+            testElement.style.height = "123px";
+            testElement.style.display = "block";
+            document.getElementsByTagName('body')[0].appendChild(testElement);
+            
+            r.selectNode(testElement);
+            var rangeBounds = r.getBoundingClientRect();
+            var rangeHeight = rangeBounds.height;
+
+            if (rangeHeight==123){
+                this.support.rangeBounds = true;
+            }
+            document.getElementsByTagName('body')[0].removeChild(testElement);
+
+            
+        }
+        
+    }
   
+   
+    
     // Start script
     this.init();
     
@@ -61,7 +87,7 @@ function html2canvas(el, userOptions) {
 html2canvas.prototype.init = function(){
      
     var _ = this;
-       
+    /*
     this.ctx = new this.stackingContext($(document).width(),$(document).height());    
               
     if (!this.ctx){
@@ -71,7 +97,7 @@ html2canvas.prototype.init = function(){
     }
        
     this.canvas = this.ctx.canvas;
-        
+        */
     this.log('Finding background images');
         
     this.getImages(this.element);
@@ -99,25 +125,23 @@ html2canvas.prototype.start = function(){
         this.log('Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
-       
-        var stack = this.newElement(this.element,{ 
-            ctx:this.ctx,
-            opacity:this.getCSS(this.element,"opacity")
+        var rootStack = new this.storageContext($(document).width(),$(document).height());  
+        rootStack.opacity = this.getCSS(this.element,"opacity");
+        var stack = this.newElement(this.element,rootStack);
         
-        }) || this.ctx;		
+        
+        this.parseElement(this.element,stack);  
     }
-          
-    this.parseElement(this.element,stack);      
-         
+        
 }
 
 
 html2canvas.prototype.stackingContext = function(width,height){
     this.canvas = document.createElement('canvas');
         
-    // TODO remove jQuery dependency
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
+
+    this.canvas.width = width;
+    this.canvas.height = width;
     
     if (!this.canvas.getContext){
            
@@ -148,8 +172,9 @@ html2canvas.prototype.stackingContext = function(width,height){
 
 html2canvas.prototype.storageContext = function(width,height){
     this.storage = [];
-
-    
+    this.width = width;
+    this.height = height;
+    //this.zIndex;
     
     // todo simplify this whole section
     this.fillRect = function(x, y, w, h){
@@ -191,9 +216,11 @@ html2canvas.prototype.storageContext = function(width,height){
 */ 
 
 html2canvas.prototype.finish = function(){
-    this.log("Finished rendering");
-    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
     
+    this.log("Finished rendering");
+    
+    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
+    /*
     if (this.opts.renderViewport){
         // let's crop it to viewport only then
         var newCanvas = document.createElement('canvas');
@@ -201,7 +228,7 @@ html2canvas.prototype.finish = function(){
         newCanvas.width = window.innerWidth;
         newCanvas.height = window.innerHeight;
             
-    }
+    }*/
     this.opts.ready(this);          
 }
 
