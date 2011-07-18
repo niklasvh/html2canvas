@@ -1,10 +1,87 @@
+html2canvas.prototype.Renderer = function(queue){
+     
+    var _ = this;
+     
+    this.each(this.opts.renderOrder.split(" "),function(i,renderer){
+        
+        switch(renderer){
+            case "canvas":
+                _.canvas = document.createElement('canvas');
+                if (_.canvas.getContext){
+                    _.canvasRenderer(queue);
+                    return false;
+                }               
+                break;
+            case "flash":
+                /*
+                var script = document.createElement('script');
+                script.type = "text/javascript";
+                script.src = _.opts.flashCanvasPath;
+                var s = document.getElementsByTagName('script')[0]; 
+                s.parentNode.insertBefore(script, s);
+                        
+                         
+                if (typeof FlashCanvas != "undefined") {  
+                    _.canvas = document.createElement('canvas');
+                    FlashCanvas.initElement(_.canvas);
+                    _.canvasRenderer(queue);
+                    return false;
+                }  */
+                
+                break;
+             
+             
+        }
+         
+         
+         
+    });
+     
+// this.canvasRenderer(queue);
+     
+/*
+     if (!this.canvas.getContext){
+           
+           
+     }*/
+// TODO include Flashcanvas
+/*
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = this.opts.flashCanvasPath;
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(script, s);
+
+        if (typeof FlashCanvas != "undefined") {
+                
+            FlashCanvas.initElement(this.canvas);
+            this.ctx = this.canvas.getContext('2d');
+        }	*/ 
+    
+}
+
+
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
     var _ = this;
 
     queue = this.sortQueue(queue);
+    
+    
+    
+        
 
+    this.canvas.width = $(document).width();
+    this.canvas.height = $(document).height();
+    
+    this.ctx = this.canvas.getContext("2d");
+    
+    // set common settings for canvas
+    this.ctx.textBaseline = "bottom";
+    
+  
+    
     this.each(queue,function(i,storageContext){
        
         if (storageContext.ctx.storage){
