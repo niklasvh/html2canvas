@@ -22,9 +22,19 @@ function html2canvas(el, userOptions) {
         reorderZ: true,
         throttle:true,
         letterRendering:false,
+        proxyUrl: null,
+        logger: function(a){
+            if (window.console && window.console.log){
+                window.console.log(a);     
+            }else{
+                alert(a);
+            }
+        },
+        canvasWidth:0,
+        canvasHeight:0,
         renderOrder: "canvas flash html"
     });
-    
+
     this.element = el;
     
     var imageLoaded,
@@ -41,6 +51,7 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
+    this.pageOrigin = window.location.protocol + window.location.hostname;
 
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -102,16 +113,22 @@ html2canvas.prototype.init = function(){
        
     this.canvas = this.ctx.canvas;
         */
-    this.log('Finding background images');
+    this.log('Finding background-images');
         
+    this.images.push('start');
+    
     this.getImages(this.element);
             
     this.log('Finding images');
-    this.each(document.images,function(i,e){
+    // console.log(this.element.ownerDocument);
+   
+    
+   
+    this.each(this.element.ownerDocument.images,function(i,e){
         _.preloadImage(_.getAttr(e,'src'));
     });
-      
-        
+    this.images.splice(0,1);  
+    //  console.log(this.images);   
     if (this.images.length == 0){
         this.start();
     }  
@@ -124,9 +141,10 @@ html2canvas.prototype.init = function(){
  */
  
 html2canvas.prototype.start = function(){
-          
+    //     console.log(this.images);
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
-        this.log('Started parsing');
+        
+        this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
         var rootStack = new this.storageContext($(document).width(),$(document).height());  

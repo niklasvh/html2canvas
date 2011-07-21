@@ -1,6 +1,7 @@
 /nbproject/
 /images/
 /tests/templates/
+/tests/cache/
 /dist/
 /build/tmp.js
 index.html
