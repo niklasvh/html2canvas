@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JavaScript screenshot creator</title>
+
+        <style type="text/css">
+            a {
+color: #0B0B0B;
+background-color: #FDF9EE;
+padding: 0 8px;
+text-decoration: none;
+font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+a:hover {
+color: #0B0B0B;
+background-color: #EFEBDE;
+padding: 0 8px;
+text-decoration: none;
+font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+            body {
+font: normal 14px/19px Arial, Helvetica, sans-serif;
+background-color: white;
+color: #4E4628;
+}
+            
+            textarea {
+background-color: #EFEBDE;
+color: #0B0B0B;
+border: #C3BCA4 1px solid;
+
+
+
+
+font: normal 11px Arial, Helvetica, sans-serif;
+width:500px;
+height:150px;
+}
+
+h2 {
+background-color: white;
+color: #0B0B0B;
+font: normal 28px/46px Georgia, "Times New Roman", Times, serif;
+margin:0;
+clear:both;
+}
+
+h3 {
+
+color: #786E4E;
+padding: 0 0 10px 55px;
+
+
+height: 37px;
+font: normal 24px/30px Georgia, "Times New Roman", Times, serif;
+}
+ul{
+    float:left;
+    margin:0;
+
+}
+
+table{
+    margin:0 auto;
+    width:400px;
+    border:1px solid black;
+}
+#content{
+    clear:both;
+    text-align:center;
+}
+
+#about{
+    padding:0 10px;
+   width:450px;
+    float:left;
+}
+            
+            </style>
+
+        <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="build/html2canvas.js?22"></script>
+        <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript"> 
+            
+            var date = new Date();
+            var message,
+            timeoutTimer,
+            timer;
+            
+            function addRow(table,field,val){
+               var tr = $('<tr />').appendTo( $(table));
+               
+               tr.append($('<td />').css('font-weight','bold').text(field)).append($('<td />').text(val));
+                
+                
+                
+            }
+            
+            function throwMessage(msg,duration){
+            
+                window.clearTimeout(timeoutTimer);
+                timeoutTimer = window.setTimeout(function(){
+                    message.fadeOut(function(){
+                        message.remove();   
+                    });                   
+                },duration || 2000);
+                $(message).remove();
+                message = $('<div />').html(msg).css({
+                    margin:0,
+                    padding:10,
+                    background: "#000",
+                    opacity:0.7,
+                    position:"fixed",
+                    top:10,
+                    right:10,
+                    fontFamily: 'Tahoma' ,
+                    color:'#fff',
+                    fontSize:12,
+                    borderRadius:12,
+                    width:'auto',
+                    height:'auto',
+                    textAlign:'center',
+                    textDecoration:'none'
+                }).hide().fadeIn().appendTo('body');
+            }
+            
+            $(function(){
+                
+                $('ul li a').click(function(e){
+                    e.preventDefault();
+                    $('#url').val(this.href);
+                    $('button').click();                  
+                })
+                
+                var iframe,d;
+                
+                
+
+                
+                $('input[type="button"]').click(function(){
+                    $(iframe.contentWindow).unbind('load');
+                    $(iframe).contents().find('body').html2canvas({
+                        canvasHeight: d.body.scrollHeight,
+                        canvasWidth: d.body.scrollWidth,
+                        logging:true
+                                            
+                    });             
+                    
+                });
+                
+                $('button').click(function(){
+                    
+                    $(this).prop('disabled',true);
+                    var url = $('#url').val();
+                    $('#content').append($('<img />').attr('src','loading.gif').css('margin-top',40));
+                    
+                    var urlParts = document.createElement('a');
+                    urlParts.href = url;
+                    
+                    $.ajax({
+                        data: {
+                            xhr2:false,
+                            url:urlParts.href
+                            
+                        },
+                        url: "http://html2canvas.appspot.com",
+                        dataType: "jsonp",
+                        success: function(html){
+                            
+                            
+                            iframe = document.createElement('iframe');
+                            $(iframe).css({
+                                'visibility':'hidden'
+                            }).width($(window).width()).height($(window).height());
+                            $('#content').append(iframe);
+                            d = iframe.contentWindow.document; 
+                           
+                            d.open();
+                            
+                            $(iframe.contentWindow).load(function(){
+
+                                timer = date.getTime();
+                                
+                                $(iframe).contents().find('body').html2canvas({
+                                    canvasHeight: d.body.scrollHeight,
+                                    canvasWidth: d.body.scrollWidth,
+                                    logging:true,
+                                    logger:function(msg){
+                                      $('#logger').val(function(e,i){
+                                          return i+"\n"+msg;
+                                      });
+                                        
+                                    },
+                                    ready: function(renderer) {
+                                        $("#content").empty();               
+                                        var finishTime = new Date();
+                      
+                                          var table = $('<table />');  
+                                        $('#content')
+                                        .append('<h2>Screenshot</h2>')
+                                        .append(renderer.canvas)
+                                        .append('<h3>Details</h3>')
+                                        .append(table);
+                                        
+                                        
+                                        
+                                         addRow(table,"Creation time",((finishTime.getTime()-timer)/1000) + " seconds");
+                                         addRow(table,"Total draws", renderer.numDraws);
+                                         addRow(table,"Context stacks", renderer.contextStacks.length);
+                                         addRow(table,"Loaded images", renderer.images.length/2);
+                                         addRow(table,"Performed z-index reorder", renderer.needReorder);
+                                          addRow(table,"Used rangeBounds", renderer.support.rangeBounds);
+                              
+
+
+                                        throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)/1000) + " seconds<br />Total of "+renderer.numDraws+" draws performed",4000);
+                
+                
+                                 
+                                    }
+                                            
+                                });
+
+                            });
+
+                            $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/");
+                            html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />");
+
+                            d.write(html);
+
+                            d.close();
+                         
+                        }
+        
+        
+                    });
+                    
+
+                });
+                   
+               
+                    
+          
+            
+            });        
+        </script> 
+        <base />
+    </head>
+    <body>
+        <div style="float:left;width:500px;">
+        <h1>JavaScript screenshot creator</h1>
+        <label for="url">Website URL:</label>
+        <input type="url" id="url" value="http://www.yahoo.com" /><button>Get screenshot!</button>
+        <!-- <input type="button" value="Try anyway" />--><br />
+        
+        <small>Tested with Google Chrome 12, Firefox 4 and Opera 12</small>
+        </div>
+        <div style="float:right;">
+                                       <div style="margin-left:17px;float:right;"> 
+                                    <!-- Place this tag in your head or just before your close body tag --> 
+                                    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script> 
+ 
+                                    <!-- Place this tag where you want the +1 button to render --> 
+                                    <g:plusone size="tall"></g:plusone> 
+                                </div> 
+ 
+                                <div style="float:right;"> 
+ 
+                                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://html2canvas.hertzen.com/" data-text="html2canvas - screenshots with #JavaScript" data-count="vertical" data-via="niklasvh">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> 
+                                </div> 
+        </div>
+        
+        
+        <div style="clear:both;"></div>
+        <h3>Recommended (tested) pages:</h3>
+        
+        <ul>
+            
+            <li><a href="http://www.yahoo.com">yahoo.com</a></li>
+            <li><a href="http://www.google.com">google.com</a></li>
+            <li><a href="https://github.com/niklasvh/html2canvas">github.com</a></li>
+            <li><a href="http://www.smashingmagazine.com">smashingmagazine.com</a></li>
+            <li><a href="http://www.cnn.com">cnn.com</a></li>           
+            <li><a href="http://www.facebook.com/google">facebook.com/google</a></li>
+            <li><a href="http://www.youtube.com/">youtube.com</a></li>
+
+
+            <li><a href="http://eu.battle.net/en/">battle.net</a></li>
+
+
+        </ul>
+        <div style="float:left;">
+        <textarea id="logger"></textarea>
+        </div>
+        <div id="about"><b> About</b><br />
+            The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
+            There are a lot of problems of loading external pages, even with a proxy, and as such many pages will not render at all. If you wish to try the script properly, I recommend you get a copy of the source from <a href="https://github.com/niklasvh/html2canvas">here</a> instead.
+        </div>
+        <div id="content"></div>
+
+    </body>
+</html>

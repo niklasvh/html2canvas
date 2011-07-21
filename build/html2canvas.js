@@ -1,5 +1,5 @@
 /* 
- * html2canvas v0.20 <http://html2canvas.hertzen.com>
+ * html2canvas v0.25 <http://html2canvas.hertzen.com>
  * Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
  * http://www.twitter.com/niklasvh 
  * 
@@ -52,9 +52,19 @@ function html2canvas(el, userOptions) {
         reorderZ: true,
         throttle:true,
         letterRendering:false,
+        proxyUrl: null,
+        logger: function(a){
+            if (window.console && window.console.log){
+                window.console.log(a);     
+            }else{
+                alert(a);
+            }
+        },
+        canvasWidth:0,
+        canvasHeight:0,
         renderOrder: "canvas flash html"
     });
-    
+
     this.element = el;
     
     var imageLoaded,
@@ -71,6 +81,7 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
+    this.pageOrigin = window.location.protocol + window.location.hostname;
 
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -132,16 +143,22 @@ html2canvas.prototype.init = function(){
        
     this.canvas = this.ctx.canvas;
         */
-    this.log('Finding background images');
+    this.log('Finding background-images');
         
+    this.images.push('start');
+    
     this.getImages(this.element);
             
     this.log('Finding images');
-    this.each(document.images,function(i,e){
+    // console.log(this.element.ownerDocument);
+   
+    
+   
+    this.each(this.element.ownerDocument.images,function(i,e){
         _.preloadImage(_.getAttr(e,'src'));
     });
-      
-        
+    this.images.splice(0,1);  
+    //  console.log(this.images);   
     if (this.images.length == 0){
         this.start();
     }  
@@ -154,9 +171,10 @@ html2canvas.prototype.init = function(){
  */
  
 html2canvas.prototype.start = function(){
-          
+    //     console.log(this.images);
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
-        this.log('Started parsing');
+        
+        this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
         this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
         document.getElementsByTagName('body')[0].style.overflow = "hidden";
         var rootStack = new this.storageContext($(document).width(),$(document).height());  
@@ -275,15 +293,14 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
     var background_image = this.getCSS(el,"background-image");
     var background_repeat = this.getCSS(el,"background-repeat");
         
-    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false){
-            
+    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
+         
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
 					
 
         var bgp = this.getBackgroundPosition(el,bounds,image),
         bgy;
-
 
         if (image){
             switch(background_repeat){
@@ -297,10 +314,70 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                     break;
                           
                 case "no-repeat":
-                        
-                    this.drawBackgroundRepeat(ctx,image,bgp.left+bounds.left,bgp.top+bounds.top,Math.min(bounds.width,image.width),Math.min(bounds.height,image.height),bounds.left,bounds.top);
-                    // ctx.drawImage(image,(bounds.left+bgp.left),(bounds.top+bgp.top));	                      
-                    break;
+                    /*
+                    this.drawBackgroundRepeat(
+                        ctx,
+                        image,
+                        bgp.left+bounds.left, // sx
+                        bgp.top+bounds.top, // sy
+                        Math.min(bounds.width,image.width),
+                        Math.min(bounds.height,image.height),
+                        bounds.left,
+                        bounds.top
+                        );*/
+                            
+      
+                    // console.log($(el).css('background-image'));
+                    var bgw = bounds.width-bgp.left,
+                    bgh = bounds.height-bgp.top,
+                    bgsx = bgp.left,
+                    bgsy = bgp.top,
+                    bgdx = bgp.left+bounds.left,
+                    bgdy = bgp.top+bounds.top;
+
+                    //
+                    //     bgw = Math.min(bgw,image.width);
+                    //  bgh = Math.min(bgh,image.height);     
+                    
+                    if (bgsx<0){
+                        bgsx = Math.abs(bgsx);
+                        bgdx += bgsx; 
+                        bgw = Math.min(bounds.width,image.width-bgsx);
+                    }else{
+                        bgw = Math.min(bgw,image.width);
+                        bgsx = 0;
+                    }
+                           
+                    if (bgsy<0){
+                        bgsy = Math.abs(bgsy);
+                        bgdy += bgsy; 
+                        // bgh = bgh-bgsy;
+                        bgh = Math.min(bounds.height,image.height-bgsy);
+                    }else{
+                        bgh = Math.min(bgh,image.height); 
+                        bgsy = 0;
+                    }    
+    
+                  
+                    //   bgh = Math.abs(bgh);
+                    //   bgw = Math.abs(bgw);
+                    if (bgh>0 && bgw > 0){        
+                        this.drawImage(
+                            ctx,
+                            image,
+                            bgsx, // source X : 0 
+                            bgsy, // source Y : 1695
+                            bgw, // source Width : 18
+                            bgh, // source Height : 1677
+                            bgdx, // destination X :906
+                            bgdy, // destination Y : 1020
+                            bgw, // destination width : 18
+                            bgh // destination height : 1677
+                            );
+                            
+                        // ctx.drawImage(image,(bounds.left+bgp.left),(bounds.top+bgp.top));	                      
+                        break;
+                    }
                         
                 default:
                     var height,
@@ -365,6 +442,8 @@ html2canvas.prototype.backgroundImageUrl = function(src){
         src = src.substr(4);
         src = src.substr(0,src.length-1);  
     }
+    
+    
     return src;            
 }
     
@@ -375,8 +454,9 @@ html2canvas.prototype.backgroundImageUrl = function(src){
     
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
     var bgpos = this.getCSS(el,"backgroundPosition") || "0 0";
+   // var bgpos = $(el).css("backgroundPosition") || "0 0";
     var bgposition = bgpos.split(" "),
-    top,
+    topPos,
     left,
     percentage;
 
@@ -387,6 +467,8 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
         bgposition[0] = val,
         bgposition[1] = val;
     }  
+
+    
 
     if (bgposition[0].toString().indexOf("%")!=-1){   
    
@@ -400,15 +482,29 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
     if (bgposition[1].toString().indexOf("%")!=-1){  
 
         percentage = (parseFloat(bgposition[1])/100);     
-        top =  ((bounds.height * percentage)-(image.height*percentage));
+        topPos =  ((bounds.height * percentage)-(image.height*percentage));
     }else{
-        top = parseInt(bgposition[1],10);
+        
+        topPos = parseInt(bgposition[1],10);
+        
     }
+    
+
+    
+    
+    var returnObj = {}
+    /*
+        "top": topPos,
+        "left": left
+    };*/
+    
+
+    returnObj.top = topPos;
+    returnObj.left = left;
+    
+
           
-    return {
-        top: top,
-        left: left
-    };
+    return returnObj;
          
 }
 
@@ -627,7 +723,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
-            
+          //   console.log(image.width);
             this.drawImage(
                 ctx,
                 image,
@@ -641,7 +737,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
                 bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
                 );
            
-        }else{
+        }else {
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
     }
@@ -717,7 +813,8 @@ html2canvas.prototype.getImages = function(el) {
     if (el.nodeType==1 || typeof el.nodeType == "undefined"){
         var background_image = this.getCSS(el,'background-image');
            
-        if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,4)!="-moz"){
+        if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
+            
             var src = this.backgroundImageUrl(background_image);                    
             this.preloadImage(src);                    
         }
@@ -748,28 +845,83 @@ html2canvas.prototype.preloadImage = function(src){
 
 
     if (this.getIndex(this.images,src)==-1){
-        this.images.push(src);
-                   
-        var img = new Image();   
-        // TODO remove jQuery dependancy
-        var _ = this;
-        $(img).load(function(){
-            _.imagesLoaded++;               
-            _.start();        
+        if (this.isSameOrigin(src)){
+            this.images.push(src);
+            //     console.log('a'+src);
+            var img = new Image();   
+            // TODO remove jQuery dependancy
+            var _ = this;
+            $(img).load(function(){
+                _.imagesLoaded++;               
+                _.start();        
                 
-        });	
-        img.onerror = function(){
-            _.images.splice(_.images.indexOf(img.src),2);
-            _.imagesLoaded++;
-            _.start();                           
+            });	
+            img.onerror = function(){
+                _.images.splice(_.images.indexOf(img.src),2);
+                //  _.imagesLoaded++;
+                _.start();                           
+            }
+            img.src = src; 
+            this.images.push(img);
+        }else if (this.opts.proxyUrl){
+            //    console.log('b'+src);
+            this.images.push(src);
+            var img = new Image();   
+            this.proxyGetImage(src,img);
+            this.images.push(img);
         }
-        img.src = src; 
-        this.images.push(img);
-                  
     }     
           
 }
+
+html2canvas.prototype.proxyGetImage = function(url,img){
+    var _ = this;
     
+    var link = document.createElement("a");
+    link.href = url;
+    url = link.href; // work around for pages with base href="" set
+
+    
+    // todo remove jQuery dependency and enable xhr2 requests where available (no need for base64 / json)
+    $.ajax({
+        data:{
+            xhr2:false,
+            url:url
+        },
+        url: this.opts.proxyUrl,
+        dataType: "jsonp",
+        success: function(a){
+            
+            if (a.substring(0,6)=="error:"){
+                _.images.splice(_.images.indexOf(url),2);
+                _.start();  
+                _.log('Proxy was unable to load '+url+' '+a);
+            }else{
+                // document.createElement(a);
+                // console.log(img);
+                img.onload = function(){
+                    //   console.log('w'+img.width);
+                    _.imagesLoaded++;               
+                    _.start();   
+               
+                }
+            
+                img.src = a; 
+            }
+
+
+        },
+        error: function(){
+           
+            _.images.splice(_.images.indexOf(url),2);
+            //  _.imagesLoaded++;
+            _.start();          
+        }
+        
+        
+    });
+    
+}
 html2canvas.prototype.Renderer = function(queue){
      
     var _ = this;
@@ -795,25 +947,26 @@ html2canvas.prototype.Renderer = function(queue){
                 var s = document.getElementsByTagName('script')[0]; 
                 s.parentNode.insertBefore(script, s);
                         
-                   */      
+                    
                 if (typeof FlashCanvas != "undefined") {  
                     _.canvas = initCanvas(document.getElementById("testflash"));
                     FlashCanvas.initElement(_.canvas);
                     _.ctx = _.canvas.getContext("2d");
-                   // _.canvas = document.createElement('canvas');
+                    // _.canvas = document.createElement('canvas');
                     //
                     _.log('Using Flashcanvas renderer');
                     _.canvasRenderer(queue);
                     
                     return false;
                 }  
+                     */    
                 
                 break;
-                case "html":
-                    // TODO add renderer
-                    _log("Using HTML renderer");
-                    return false;
-                    break;
+            case "html":
+                // TODO add renderer
+                _.log("Using HTML renderer");
+                return false;
+                break;
              
              
         }
@@ -822,7 +975,7 @@ html2canvas.prototype.Renderer = function(queue){
          
     });
     
-    this.log('No renderer chosen, rendering quit');
+//    this.log('No renderer chosen, rendering quit');
     return this;
      
 // this.canvasRenderer(queue);
@@ -849,6 +1002,11 @@ html2canvas.prototype.Renderer = function(queue){
 }
 
 
+html2canvas.prototype.throttler = function(queue){
+    
+    
+    };
+
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
@@ -859,9 +1017,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     
         
-
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
+  
+    this.canvas.width = Math.max($(document).width(),this.opts.canvasWidth);   
+    this.canvas.height = Math.max($(document).height(),this.opts.canvasHeight);
     
     this.ctx = this.canvas.getContext("2d");
     
@@ -885,6 +1043,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
                         }else if(renderItem.name=="fillText"){
                             _.ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
                         }else if(renderItem.name=="drawImage"){
+                          //  console.log(renderItem);
+                         // console.log(renderItem.arguments[0].width);
+                          if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
                             _.ctx.drawImage(
                                 renderItem.arguments[0],
                                 renderItem.arguments[1],
@@ -896,6 +1057,7 @@ html2canvas.prototype.canvasRenderer = function(queue){
                                 renderItem.arguments[7],
                                 renderItem.arguments[8]
                                 );
+                              }      
                         }else{
                             this.log(renderItem);
                         }
@@ -1298,21 +1460,11 @@ html2canvas.prototype.parsing = function(el,stack){
     
 
 // Simple logger
-html2canvas.prototype.log = function(a){
-    
+html2canvas.prototype.log = function(a){    
     if (this.opts.logging){
         
-        if (window.console && window.console.log){
-           console.log(a);     
-        }else{
-            alert(a);
-        }
-    /*
-        if (typeof(window.console) != "undefined" && console.log){
-            console.log(a);
-        }else{
-            alert(a);
-        }*/
+        this.opts.logger(a);
+
     }
 }                    
 
@@ -1464,3 +1616,12 @@ html2canvas.prototype.getIndex = function(array,src){
     }
     
 }
+
+
+html2canvas.prototype.isSameOrigin = function(url){
+    var link = document.createElement("a");
+    link.href = url;
+
+    return ((link.protocol + link.hostname) == this.pageOrigin);
+}
+

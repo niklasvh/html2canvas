@@ -4,15 +4,16 @@
  */
 			
 (function( $ ){
-    $.fn.html2canvas = function() {
+    $.fn.html2canvas = function(options) {
   
         var date = new Date();
         var message,
         timeoutTimer,
         timer = date.getTime();
         
-        new html2canvas(this.get(0), {
-            logging: true,
+        var object = $.extend({},{
+            logging: false,
+            proxyUrl: "http://html2canvas.appspot.com/", // running html2canvas-python proxy
             ready: function(renderer) {
                 
                 var finishTime = new Date();
@@ -49,7 +50,9 @@
                 });
             }
             
-        });
+        },options)
+        
+        new html2canvas(this.get(0), object);
         
         
         function throwMessage(msg,duration){

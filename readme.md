@@ -33,4 +33,4 @@ There are still a lot of CSS properties missing, including most CSS3 properties 
 
 ### Examples ###
 
-For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a>.
+For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.

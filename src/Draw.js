@@ -72,7 +72,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
-            
+          //   console.log(image.width);
             this.drawImage(
                 ctx,
                 image,
@@ -86,7 +86,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
                 bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
                 );
            
-        }else{
+        }else {
             this.log("Error loading <img>:" + _.getAttr(el,'src'));
         }
     }

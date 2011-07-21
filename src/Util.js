@@ -1,20 +1,10 @@
 
 // Simple logger
-html2canvas.prototype.log = function(a){
-    
+html2canvas.prototype.log = function(a){    
     if (this.opts.logging){
         
-        if (window.console && window.console.log){
-           console.log(a);     
-        }else{
-            alert(a);
-        }
-    /*
-        if (typeof(window.console) != "undefined" && console.log){
-            console.log(a);
-        }else{
-            alert(a);
-        }*/
+        this.opts.logger(a);
+
     }
 }                    
 
@@ -165,4 +155,12 @@ html2canvas.prototype.getIndex = function(array,src){
         return -1;
     }
     
+}
+
+
+html2canvas.prototype.isSameOrigin = function(url){
+    var link = document.createElement("a");
+    link.href = url;
+
+    return ((link.protocol + link.hostname) == this.pageOrigin);
 }

@@ -23,25 +23,26 @@ html2canvas.prototype.Renderer = function(queue){
                 var s = document.getElementsByTagName('script')[0]; 
                 s.parentNode.insertBefore(script, s);
                         
-                   */      
+                    
                 if (typeof FlashCanvas != "undefined") {  
                     _.canvas = initCanvas(document.getElementById("testflash"));
                     FlashCanvas.initElement(_.canvas);
                     _.ctx = _.canvas.getContext("2d");
-                   // _.canvas = document.createElement('canvas');
+                    // _.canvas = document.createElement('canvas');
                     //
                     _.log('Using Flashcanvas renderer');
                     _.canvasRenderer(queue);
                     
                     return false;
                 }  
+                     */    
                 
                 break;
-                case "html":
-                    // TODO add renderer
-                    _log("Using HTML renderer");
-                    return false;
-                    break;
+            case "html":
+                // TODO add renderer
+                _.log("Using HTML renderer");
+                return false;
+                break;
              
              
         }
@@ -50,7 +51,7 @@ html2canvas.prototype.Renderer = function(queue){
          
     });
     
-    this.log('No renderer chosen, rendering quit');
+//    this.log('No renderer chosen, rendering quit');
     return this;
      
 // this.canvasRenderer(queue);
@@ -77,6 +78,11 @@ html2canvas.prototype.Renderer = function(queue){
 }
 
 
+html2canvas.prototype.throttler = function(queue){
+    
+    
+    };
+
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
@@ -87,9 +93,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     
         
-
-    this.canvas.width = $(document).width();
-    this.canvas.height = $(document).height();
+  
+    this.canvas.width = Math.max($(document).width(),this.opts.canvasWidth);   
+    this.canvas.height = Math.max($(document).height(),this.opts.canvasHeight);
     
     this.ctx = this.canvas.getContext("2d");
     
@@ -113,6 +119,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
                         }else if(renderItem.name=="fillText"){
                             _.ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
                         }else if(renderItem.name=="drawImage"){
+                          //  console.log(renderItem);
+                         // console.log(renderItem.arguments[0].width);
+                          if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
                             _.ctx.drawImage(
                                 renderItem.arguments[0],
                                 renderItem.arguments[1],
@@ -124,6 +133,7 @@ html2canvas.prototype.canvasRenderer = function(queue){
                                 renderItem.arguments[7],
                                 renderItem.arguments[8]
                                 );
+                              }      
                         }else{
                             this.log(renderItem);
                         }
