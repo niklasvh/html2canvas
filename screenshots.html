@@ -5,83 +5,84 @@
 
         <style type="text/css">
             a {
-color: #0B0B0B;
-background-color: #FDF9EE;
-padding: 0 8px;
-text-decoration: none;
-font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
-}
+                color: #0B0B0B;
+                background-color: #FDF9EE;
+                padding: 0 8px;
+                text-decoration: none;
+                font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
+            }
 
-a:hover {
-color: #0B0B0B;
-background-color: #EFEBDE;
-padding: 0 8px;
-text-decoration: none;
-font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
-}
+            a:hover {
+                color: #0B0B0B;
+                background-color: #EFEBDE;
+                padding: 0 8px;
+                text-decoration: none;
+                font: normal 12px/16px "Trebuchet MS", Arial, Helvetica, sans-serif;
+            }
             body {
-font: normal 14px/19px Arial, Helvetica, sans-serif;
-background-color: white;
-color: #4E4628;
-}
-            
+                font: normal 14px/19px Arial, Helvetica, sans-serif;
+                background-color: white;
+                color: #4E4628;
+            }
+
             textarea {
-background-color: #EFEBDE;
-color: #0B0B0B;
-border: #C3BCA4 1px solid;
+                background-color: #EFEBDE;
+                color: #0B0B0B;
+                border: #C3BCA4 1px solid;
 
 
 
 
-font: normal 11px Arial, Helvetica, sans-serif;
-width:500px;
-height:150px;
-}
+                font: normal 11px Arial, Helvetica, sans-serif;
+                width:300px;
+                height:150px;
+            }
 
-h2 {
-background-color: white;
-color: #0B0B0B;
-font: normal 28px/46px Georgia, "Times New Roman", Times, serif;
-margin:0;
-clear:both;
-}
+            h2 {
+                background-color: white;
+                color: #0B0B0B;
+                font: normal 28px/46px Georgia, "Times New Roman", Times, serif;
+                margin:0;
+                clear:both;
+            }
 
-h3 {
+            h3 {
 
-color: #786E4E;
-padding: 0 0 10px 55px;
+                color: #786E4E;
+                padding: 0 0 10px 55px;
 
 
-height: 37px;
-font: normal 24px/30px Georgia, "Times New Roman", Times, serif;
-}
-ul{
-    float:left;
-    margin:0;
+                height: 37px;
+                font: normal 24px/30px Georgia, "Times New Roman", Times, serif;
+            }
+            ul{
+                float:left;
+                margin:0;
 
-}
+            }
 
-table{
-    margin:0 auto;
-    width:400px;
-    border:1px solid black;
-}
-#content{
-    clear:both;
-    text-align:center;
-}
+            table{
+                margin:0 auto;
+                width:400px;
+                border:1px solid black;
+            }
+            #content{
+                clear:both;
+                text-align:center;
+            }
 
-#about{
-    padding:0 10px;
-   width:450px;
-    float:left;
-}
-            
-            </style>
+            #about{
+                padding:0 10px;
+                width:450px;
+                float:left;
+            }
+
+        </style>
 
         <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
         <script type="text/javascript" src="build/html2canvas.js?22"></script>
         <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript" src="http://www.hertzen.com/js/ganalytics-heatmap.js"></script>
         <script type="text/javascript"> 
             
             var date = new Date();
@@ -90,9 +91,9 @@ table{
             timer;
             
             function addRow(table,field,val){
-               var tr = $('<tr />').appendTo( $(table));
+                var tr = $('<tr />').appendTo( $(table));
                
-               tr.append($('<td />').css('font-weight','bold').text(field)).append($('<td />').text(val));
+                tr.append($('<td />').css('font-weight','bold').text(field)).append($('<td />').text(val));
                 
                 
                 
@@ -187,17 +188,19 @@ table{
                                     canvasHeight: d.body.scrollHeight,
                                     canvasWidth: d.body.scrollWidth,
                                     logging:true,
+                                    proxyUrl: "http://html2canvas.appspot.com",
                                     logger:function(msg){
-                                      $('#logger').val(function(e,i){
-                                          return i+"\n"+msg;
-                                      });
+                                        $('#logger').val(function(e,i){
+                                            return i+"\n"+msg;
+                                        });
                                         
                                     },
                                     ready: function(renderer) {
+                                        $('button').prop('disabled',false);
                                         $("#content").empty();               
                                         var finishTime = new Date();
                       
-                                          var table = $('<table />');  
+                                        var table = $('<table />');  
                                         $('#content')
                                         .append('<h2>Screenshot</h2>')
                                         .append(renderer.canvas)
@@ -206,12 +209,12 @@ table{
                                         
                                         
                                         
-                                         addRow(table,"Creation time",((finishTime.getTime()-timer)/1000) + " seconds");
-                                         addRow(table,"Total draws", renderer.numDraws);
-                                         addRow(table,"Context stacks", renderer.contextStacks.length);
-                                         addRow(table,"Loaded images", renderer.images.length/2);
-                                         addRow(table,"Performed z-index reorder", renderer.needReorder);
-                                          addRow(table,"Used rangeBounds", renderer.support.rangeBounds);
+                                        addRow(table,"Creation time",((finishTime.getTime()-timer)/1000) + " seconds");
+                                        addRow(table,"Total draws", renderer.numDraws);
+                                        addRow(table,"Context stacks", renderer.contextStacks.length);
+                                        addRow(table,"Loaded images", renderer.images.length/2);
+                                        addRow(table,"Performed z-index reorder", renderer.needReorder);
+                                        addRow(table,"Used rangeBounds", renderer.support.rangeBounds);
                               
 
 
@@ -227,7 +230,11 @@ table{
 
                             $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/");
                             html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />");
-
+                            if ($("#disablejs").prop('checked')){
+                                html = html.replace(/\<script/gi,"<!--<script");
+                                html = html.replace(/\<\/script\>/gi,"<\/script>-->");
+                            }
+                            // console.log(html);
                             d.write(html);
 
                             d.close();
@@ -246,53 +253,66 @@ table{
             
             });        
         </script> 
+        <script type="text/javascript">
+            
+            
+            var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-188600-10']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();   
+
+        </script>
         <base />
     </head>
     <body>
-        <div style="float:left;width:500px;">
-        <h1>JavaScript screenshot creator</h1>
-        <label for="url">Website URL:</label>
-        <input type="url" id="url" value="http://www.yahoo.com" /><button>Get screenshot!</button>
-        <!-- <input type="button" value="Try anyway" />--><br />
+    <!--    <div style="background:red;padding:10px;color:#fff">
+            App engine proxy is <a href="http://twitter.com/#!/Niklasvh/status/96265826713350144">temporarily out of use</a> due to exceeded bandwidth use. Please try again tomorrow or meanwhile check other examples <a href="http://html2canvas.hertzen.com/">here</a>.
+        </div>-->
         
-        <small>Tested with Google Chrome 12, Firefox 4 and Opera 12</small>
+        <div style="float:left;width:500px;">
+            <h1>JavaScript screenshot creator</h1>
+            <label for="url">Website URL:</label>
+            <input type="url" id="url" value="http://www.yahoo.com" /><button>Get screenshot!</button>
+            <!-- <input type="button" value="Try anyway" />--><br />
+
+
+            <label for="disablejs">Disable JavaScript (recommended, doesn't work well with the proxy)</label> <input type="checkbox" id="disablejs" checked /><br />
+            <small>Tested with Google Chrome 12, Firefox 4 and Opera 11.5</small>
         </div>
         <div style="float:right;">
-                                       <div style="margin-left:17px;float:right;"> 
-                                    <!-- Place this tag in your head or just before your close body tag --> 
-                                    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script> 
- 
-                                    <!-- Place this tag where you want the +1 button to render --> 
-                                    <g:plusone size="tall"></g:plusone> 
-                                </div> 
- 
-                                <div style="float:right;"> 
- 
-                                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://html2canvas.hertzen.com/" data-text="html2canvas - screenshots with #JavaScript" data-count="vertical" data-via="niklasvh">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> 
-                                </div> 
+            <div style="margin-left:17px;float:right;"> 
+                <!-- Place this tag in your head or just before your close body tag --> 
+                <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script> 
+
+                <!-- Place this tag where you want the +1 button to render --> 
+                <g:plusone size="tall"></g:plusone> 
+            </div> 
+
+            <div style="float:right;"> 
+
+                <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://html2canvas.hertzen.com/" data-text="html2canvas - screenshots with #JavaScript" data-count="vertical" data-via="niklasvh">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> 
+            </div> 
         </div>
-        
-        
+
+
         <div style="clear:both;"></div>
         <h3>Recommended (tested) pages:</h3>
-        
+
         <ul>
-            
+
             <li><a href="http://www.yahoo.com">yahoo.com</a></li>
             <li><a href="http://www.google.com">google.com</a></li>
             <li><a href="https://github.com/niklasvh/html2canvas">github.com</a></li>
             <li><a href="http://www.smashingmagazine.com">smashingmagazine.com</a></li>
-            <li><a href="http://www.cnn.com">cnn.com</a></li>           
+            <li><a href="http://www.mashable.com">mashable.com</a></li>           
             <li><a href="http://www.facebook.com/google">facebook.com/google</a></li>
             <li><a href="http://www.youtube.com/">youtube.com</a></li>
+            <li><a href="http://www.cnn.com/">cnn.com</a></li>
 
-
+<li><a href="http://www.engadget.com/">engadget.com (lot of elements, very slow)</a></li>
             <li><a href="http://eu.battle.net/en/">battle.net</a></li>
 
 
         </ul>
         <div style="float:left;">
-        <textarea id="logger"></textarea>
+            <textarea id="logger"></textarea>
         </div>
         <div id="about"><b> About</b><br />
             The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
