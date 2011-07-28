@@ -17,7 +17,13 @@ html2canvas.prototype.getBorderData = function(el){
             
 }
 
-html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
+html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
+    
+    
+    var x = bounds.left;
+    var y = bounds.top;
+    var w = bounds.width;
+    var h = bounds.height;
     
     /*
      *  TODO add support for different border-style's than solid   
@@ -52,7 +58,21 @@ html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
                     break;
             }		
                    
-            _.newRect(ctx,bx,by,bw,bh,borderData.color);	
+            var borderBounds = {
+                left:bx,
+                top:by,
+                width: bw,
+                height:bh
+            };
+                   
+            if (clip){
+               borderBounds = _.clipBounds(borderBounds,clip);
+            }
+                   
+                   
+            if (borderBounds.width>0 && borderBounds.height>0){       
+            _.newRect(ctx,bx,by,borderBounds.width,borderBounds.height,borderData.color);
+            }
                 
                     
           

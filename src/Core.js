@@ -32,6 +32,7 @@ function html2canvas(el, userOptions) {
         },
         canvasWidth:0,
         canvasHeight:0,
+        useOverflow: true,
         renderOrder: "canvas flash html"
     });
 
@@ -51,7 +52,7 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
-    this.pageOrigin = window.location.protocol + window.location.hostname;
+    this.pageOrigin = window.location.protocol + window.location.host;
 
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -145,8 +146,8 @@ html2canvas.prototype.start = function(){
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
         
         this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-        this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-        document.getElementsByTagName('body')[0].style.overflow = "hidden";
+          this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+           document.getElementsByTagName('body')[0].style.overflow = "hidden";
         var rootStack = new this.storageContext($(document).width(),$(document).height());  
         rootStack.opacity = this.getCSS(this.element,"opacity");
         var stack = this.newElement(this.element,rootStack);
@@ -208,6 +209,8 @@ html2canvas.prototype.storageContext = function(width,height){
         });
         
     };
+    
+
         
     this.drawImage = function(image,sx,sy,sw,sh,dx,dy,dw,dh){     
         this.storage.push(

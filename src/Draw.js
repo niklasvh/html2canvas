@@ -1,7 +1,3 @@
-
-
-
-
 html2canvas.prototype.newElement = function(el,parentStack){
 		
     var bounds = this.getBounds(el);    
@@ -14,21 +10,41 @@ html2canvas.prototype.newElement = function(el,parentStack){
     image;       
     var bgcolor = this.getCSS(el,"background-color");
 
-
+    var cssPosition = this.getCSS(el,"position");
     parentStack = parentStack || {};
 
-    var zindex = this.formatZ(this.getCSS(el,"zIndex"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+    var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
     
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
     var opacity = this.getCSS(el,"opacity");   
 
-      
+
     var stack = {
         ctx: new this.storageContext(),
         zIndex: zindex,
-        opacity: opacity*parentStack.opacity
+        opacity: opacity*parentStack.opacity,
+        cssPosition: cssPosition
     };
+ 
+    // TODO correct overflow for absolute content residing under a static position
+    if (parentStack.clip){
+        stack.clip = $.extend({}, parentStack.clip);
+        //stack.clip = parentStack.clip;
+        stack.clip.height = stack.clip.height - parentStack.borders[2].width;
+    } 
+ 
+ 
+    if (this.opts.useOverflow && /(hidden|scroll|auto)/.test(this.getCSS(el,"overflow")) && !/(BODY)/i.test(el.nodeName)){
+        if (stack.clip){
+            stack.clip = this.clipBounds(stack.clip,bounds);
+        }else{
+            stack.clip = bounds;
+        }
+        
+
+
+    }   
        
     var stackLength =  this.contextStacks.push(stack);
         
@@ -37,9 +53,17 @@ html2canvas.prototype.newElement = function(el,parentStack){
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     // draw element borders
-    var borders = this.drawBorders(el, ctx, bounds.left, bounds.top, bounds.width, bounds.height);
-
-
+    var borders = this.drawBorders(el, ctx, bounds);
+    stack.borders = borders;
+    
+    // let's modify clip area for child elements, so borders dont get overwritten
+    
+    /*
+    if (stack.clip){
+        stack.clip.width = stack.clip.width-(borders[1].width); 
+        stack.clip.height = stack.clip.height-(borders[2].width); 
+    }
+*/
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
@@ -51,28 +75,41 @@ html2canvas.prototype.newElement = function(el,parentStack){
         }
     }
                
-    // draw base element bgcolor       
-    this.newRect(
-        ctx,
-        x+borders[3].width,
-        y+borders[0].width,
-        w-(borders[1].width+borders[3].width),
-        h-(borders[0].width+borders[2].width),
-        bgcolor
-        );
-           
-    this.drawBackground(el,{
+    // draw base element bgcolor   
+
+    var bgbounds = {
         left: x+borders[3].width,
         top: y+borders[0].width,
         width: w-(borders[1].width+borders[3].width),
         height: h-(borders[0].width+borders[2].width)
+    };
+
+    //if (this.withinBounds(stack.clip,bgbounds)){  
+        
+    if (stack.clip){
+        bgbounds = this.clipBounds(bgbounds,stack.clip);
+        
+    //}    
+    
     }
-    ,ctx);
+    
+    if (bgbounds.height>0 && bgbounds.width>0){
+        this.newRect(
+            ctx,
+            bgbounds.left,
+            bgbounds.top,
+            bgbounds.width,
+            bgbounds.height,
+            bgcolor
+            );
+           
+        this.drawBackground(el,bgbounds,ctx);     
+    }
         
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
-          //   console.log(image.width);
+            //   console.log(image.width);
             this.drawImage(
                 ctx,
                 image,

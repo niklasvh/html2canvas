@@ -51,7 +51,7 @@ html2canvas.prototype.Renderer = function(queue){
          
     });
     
-//    this.log('No renderer chosen, rendering quit');
+    //    this.log('No renderer chosen, rendering quit');
     return this;
      
 // this.canvasRenderer(queue);
@@ -84,6 +84,186 @@ html2canvas.prototype.throttler = function(queue){
     };
 
 
+html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
+    
+    // set common settings for canvas
+    ctx.textBaseline = "bottom";
+    var _ = this;
+     
+     
+    if (storageContext.clip){
+        ctx.save();
+        ctx.beginPath();
+       // console.log(storageContext);
+        ctx.rect(storageContext.clip.left,storageContext.clip.top,storageContext.clip.width,storageContext.clip.height);
+        ctx.clip();
+        
+    }
+        
+    if (storageContext.ctx.storage){
+        _.each(storageContext.ctx.storage,function(a,renderItem){
+
+          
+            switch(renderItem.type){
+                case "variable":
+                    ctx[renderItem.name] = renderItem.arguments;              
+                    break;
+                case "function":
+                    if (renderItem.name=="fillRect"){
+                        ctx.fillRect(
+                            renderItem.arguments[0]-(storageContext.canvasPosition.x || 0),
+                            renderItem.arguments[1]-(storageContext.canvasPosition.y || 0),
+                            renderItem.arguments[2],
+                            renderItem.arguments[3]
+                            );
+                    }else if(renderItem.name=="fillText"){
+                        // console.log(renderItem.arguments[0]);
+
+                        ctx.fillText(renderItem.arguments[0],renderItem.arguments[1]-(storageContext.canvasPosition.x || 0),renderItem.arguments[2]-(storageContext.canvasPosition.y || 0));
+                    /*
+                                                if (renderItem.arguments[0]=="Highlights"){
+                            console.log(renderItem);
+                            console.log(storageContext);
+                            $('body').append(ctx.canvas);
+                        }*/
+                    }else if(renderItem.name=="drawImage"){
+                        //  console.log(renderItem);
+                        // console.log(renderItem.arguments[0].width);
+                        if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
+                            ctx.drawImage(
+                                renderItem.arguments[0],
+                                renderItem.arguments[1],
+                                renderItem.arguments[2],
+                                renderItem.arguments[3],
+                                renderItem.arguments[4],
+                                renderItem.arguments[5]-(storageContext.canvasPosition.x || 0),
+                                renderItem.arguments[6]-(storageContext.canvasPosition.y || 0),
+                                renderItem.arguments[7],
+                                renderItem.arguments[8]
+                                );
+                        }      
+                    }else{
+                        _.log(renderItem);
+                    }
+                       
+  
+                    break;
+                default:
+                               
+            }
+                
+                
+        });
+
+    }  
+        if (storageContext.clip){
+            ctx.restore();
+        }
+    
+}
+
+/*
+html2canvas.prototype.canvasRenderContextChildren = function(storageContext,parentctx){
+    var ctx = storageContext.canvas.getContext('2d');         
+
+    storageContext.canvasPosition = storageContext.canvasPosition || {};             
+    this.canvasRenderContext(storageContext,ctx);
+    
+    
+    for (var s = 0; s<this.queue.length;){
+        if (storageContext.parentStack && this.queue[s].canvas === storageContext.parentStack.canvas){
+            var substorageContext = this.queue.splice(s,1)[0]; 
+            
+            if (substorageContext.ctx.storage[5] && substorageContext.ctx.storage[5].arguments[0]=="Highlights"){    
+               console.log('ssssssadasda');
+            }    
+            
+            this.canvasRenderContextChildren(substorageContext,ctx);
+        //   this.canvasRenderContext(substorageContext,ctx);
+        //    this.canvasRenderStorage(this.queue,ctx);
+            
+                    
+        }else{
+            s++;
+        }
+                  
+    }
+    
+    
+    
+            
+    if (storageContext.ctx.storage[5] && storageContext.ctx.storage[5].arguments[0]=="Highlights"){    
+        $('body').append(parentctx.canvas);
+    }    
+    //var parentctx = this.canvas.getContext("2d");
+            
+    if (storageContext.canvas.width>0 && storageContext.canvas.height > 0){
+        parentctx.drawImage(storageContext.canvas,(storageContext.canvasPosition.x || 0),(storageContext.canvasPosition.y || 0));
+    }
+    
+    
+}
+*/
+html2canvas.prototype.canvasRenderStorage = function(queue,parentctx){
+    
+
+    
+  
+    for (var i = 0; i<queue.length;){
+        var storageContext = queue.splice(0,1)[0];
+        
+       
+       
+        // storageContext.removeOverflow = storageContext.removeOverflow || {};
+        /*
+        if (storageContext.canvas){
+            this.canvasRenderContextChildren(storageContext,parentctx);
+        
+            var ctx = storageContext.canvas.getContext('2d');         
+
+            storageContext.canvasPosition = storageContext.canvasPosition || {};             
+            this.canvasRenderContext(storageContext,ctx);
+            
+            for (var s = 0; s<this.queue.length;){
+                if (this.queue[s].canvas === storageContext.canvas){
+                    var substorageContext = this.queue.splice(s,1)[0];
+                    substorageContext.canvasPosition = storageContext.canvasPosition || {};     
+                    
+                    this.canvasRenderContext(substorageContext,ctx);
+                // this.canvasRenderStorage(this.queue,ctx);
+                    
+                }else{
+                    s++;
+                }
+                  
+            }
+            
+            
+            //var parentctx = this.canvas.getContext("2d");
+            
+            if (storageContext.canvas.width>0 && storageContext.canvas.height > 0){
+                parentctx.drawImage(storageContext.canvas,(storageContext.canvasPosition.x || 0),(storageContext.canvasPosition.y || 0));
+            }
+            ctx = parentctx;
+            
+        }else{
+        */
+        storageContext.canvasPosition = storageContext.canvasPosition || {};             
+        this.canvasRenderContext(storageContext,parentctx);           
+    //  }
+        
+        
+    /*
+        if (storageContext.newCanvas){
+            var ctx = _.canvas.getContext("2d");
+            ctx.drawImage(canvas,(storageContext.removeOverflow.left || 0),(storageContext.removeOverflow.top || 0));
+            _.ctx = ctx;
+        }*/
+       
+       
+   
+    }
+}
 
 html2canvas.prototype.canvasRenderer = function(queue){
     var _ = this;
@@ -99,58 +279,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     this.ctx = this.canvas.getContext("2d");
     
-    // set common settings for canvas
-    this.ctx.textBaseline = "bottom";
+    this.canvasRenderStorage(queue,this.ctx);
     
-  
-    
-    this.each(queue,function(i,storageContext){
-       
-        if (storageContext.ctx.storage){
-            _.each(storageContext.ctx.storage,function(a,renderItem){
-                
-                switch(renderItem.type){
-                    case "variable":
-                        _.ctx[renderItem.name] = renderItem.arguments;              
-                        break;
-                    case "function":
-                        if (renderItem.name=="fillRect"){
-                            _.ctx.fillRect(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2],renderItem.arguments[3]);
-                        }else if(renderItem.name=="fillText"){
-                            _.ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
-                        }else if(renderItem.name=="drawImage"){
-                          //  console.log(renderItem);
-                         // console.log(renderItem.arguments[0].width);
-                          if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
-                            _.ctx.drawImage(
-                                renderItem.arguments[0],
-                                renderItem.arguments[1],
-                                renderItem.arguments[2],
-                                renderItem.arguments[3],
-                                renderItem.arguments[4],
-                                renderItem.arguments[5],
-                                renderItem.arguments[6],
-                                renderItem.arguments[7],
-                                renderItem.arguments[8]
-                                );
-                              }      
-                        }else{
-                            this.log(renderItem);
-                        }
-                       
-  
-                        break;
-                    default:
-                               
-                }
-                
-                  
-            });
 
-        }
-       
-    });
-    
     
 };     
 
