@@ -1,5 +1,5 @@
 /* 
- * html2canvas v0.25 <http://html2canvas.hertzen.com>
+ * html2canvas v0.26 <http://html2canvas.hertzen.com>
  * Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
  * http://www.twitter.com/niklasvh 
  * 
@@ -62,6 +62,7 @@ function html2canvas(el, userOptions) {
         },
         canvasWidth:0,
         canvasHeight:0,
+        useOverflow: true,
         renderOrder: "canvas flash html"
     });
 
@@ -81,7 +82,7 @@ function html2canvas(el, userOptions) {
     this.ignoreElements = "IFRAME|OBJECT|PARAM";
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
-    this.pageOrigin = window.location.protocol + window.location.hostname;
+    this.pageOrigin = window.location.protocol + window.location.host;
 
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     
@@ -175,8 +176,8 @@ html2canvas.prototype.start = function(){
     if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
         
         this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-        this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-        document.getElementsByTagName('body')[0].style.overflow = "hidden";
+          this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+           document.getElementsByTagName('body')[0].style.overflow = "hidden";
         var rootStack = new this.storageContext($(document).width(),$(document).height());  
         rootStack.opacity = this.getCSS(this.element,"opacity");
         var stack = this.newElement(this.element,rootStack);
@@ -238,6 +239,8 @@ html2canvas.prototype.storageContext = function(width,height){
         });
         
     };
+    
+
         
     this.drawImage = function(image,sx,sy,sw,sh,dx,dy,dw,dh){     
         this.storage.push(
@@ -602,7 +605,13 @@ html2canvas.prototype.getBorderData = function(el){
             
 }
 
-html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
+html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
+    
+    
+    var x = bounds.left;
+    var y = bounds.top;
+    var w = bounds.width;
+    var h = bounds.height;
     
     /*
      *  TODO add support for different border-style's than solid   
@@ -637,7 +646,21 @@ html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
                     break;
             }		
                    
-            _.newRect(ctx,bx,by,bw,bh,borderData.color);	
+            var borderBounds = {
+                left:bx,
+                top:by,
+                width: bw,
+                height:bh
+            };
+                   
+            if (clip){
+               borderBounds = _.clipBounds(borderBounds,clip);
+            }
+                   
+                   
+            if (borderBounds.width>0 && borderBounds.height>0){       
+            _.newRect(ctx,bx,by,borderBounds.width,borderBounds.height,borderData.color);
+            }
                 
                     
           
@@ -648,10 +671,6 @@ html2canvas.prototype.drawBorders = function(el,ctx, x, y, w, h){
     return borders;
     
 };
-
-
-
-
 
 html2canvas.prototype.newElement = function(el,parentStack){
 		
@@ -665,21 +684,41 @@ html2canvas.prototype.newElement = function(el,parentStack){
     image;       
     var bgcolor = this.getCSS(el,"background-color");
 
-
+    var cssPosition = this.getCSS(el,"position");
     parentStack = parentStack || {};
 
-    var zindex = this.formatZ(this.getCSS(el,"zIndex"),this.getCSS(el,"position"),parentStack.zIndex,el.parentNode);
+    var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
     
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
     var opacity = this.getCSS(el,"opacity");   
 
-      
+
     var stack = {
         ctx: new this.storageContext(),
         zIndex: zindex,
-        opacity: opacity*parentStack.opacity
+        opacity: opacity*parentStack.opacity,
+        cssPosition: cssPosition
     };
+ 
+    // TODO correct overflow for absolute content residing under a static position
+    if (parentStack.clip){
+        stack.clip = $.extend({}, parentStack.clip);
+        //stack.clip = parentStack.clip;
+        stack.clip.height = stack.clip.height - parentStack.borders[2].width;
+    } 
+ 
+ 
+    if (this.opts.useOverflow && /(hidden|scroll|auto)/.test(this.getCSS(el,"overflow")) && !/(BODY)/i.test(el.nodeName)){
+        if (stack.clip){
+            stack.clip = this.clipBounds(stack.clip,bounds);
+        }else{
+            stack.clip = bounds;
+        }
+        
+
+
+    }   
        
     var stackLength =  this.contextStacks.push(stack);
         
@@ -688,9 +727,17 @@ html2canvas.prototype.newElement = function(el,parentStack){
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     // draw element borders
-    var borders = this.drawBorders(el, ctx, bounds.left, bounds.top, bounds.width, bounds.height);
-
-
+    var borders = this.drawBorders(el, ctx, bounds);
+    stack.borders = borders;
+    
+    // let's modify clip area for child elements, so borders dont get overwritten
+    
+    /*
+    if (stack.clip){
+        stack.clip.width = stack.clip.width-(borders[1].width); 
+        stack.clip.height = stack.clip.height-(borders[2].width); 
+    }
+*/
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
@@ -702,28 +749,41 @@ html2canvas.prototype.newElement = function(el,parentStack){
         }
     }
                
-    // draw base element bgcolor       
-    this.newRect(
-        ctx,
-        x+borders[3].width,
-        y+borders[0].width,
-        w-(borders[1].width+borders[3].width),
-        h-(borders[0].width+borders[2].width),
-        bgcolor
-        );
-           
-    this.drawBackground(el,{
+    // draw base element bgcolor   
+
+    var bgbounds = {
         left: x+borders[3].width,
         top: y+borders[0].width,
         width: w-(borders[1].width+borders[3].width),
         height: h-(borders[0].width+borders[2].width)
+    };
+
+    //if (this.withinBounds(stack.clip,bgbounds)){  
+        
+    if (stack.clip){
+        bgbounds = this.clipBounds(bgbounds,stack.clip);
+        
+    //}    
+    
     }
-    ,ctx);
+    
+    if (bgbounds.height>0 && bgbounds.width>0){
+        this.newRect(
+            ctx,
+            bgbounds.left,
+            bgbounds.top,
+            bgbounds.width,
+            bgbounds.height,
+            bgcolor
+            );
+           
+        this.drawBackground(el,bgbounds,ctx);     
+    }
         
     if (el.nodeName=="IMG"){
         image = _.loadImage(_.getAttr(el,'src'));
         if (image){
-          //   console.log(image.width);
+            //   console.log(image.width);
             this.drawImage(
                 ctx,
                 image,
@@ -975,7 +1035,7 @@ html2canvas.prototype.Renderer = function(queue){
          
     });
     
-//    this.log('No renderer chosen, rendering quit');
+    //    this.log('No renderer chosen, rendering quit');
     return this;
      
 // this.canvasRenderer(queue);
@@ -1008,6 +1068,186 @@ html2canvas.prototype.throttler = function(queue){
     };
 
 
+html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
+    
+    // set common settings for canvas
+    ctx.textBaseline = "bottom";
+    var _ = this;
+     
+     
+    if (storageContext.clip){
+        ctx.save();
+        ctx.beginPath();
+       // console.log(storageContext);
+        ctx.rect(storageContext.clip.left,storageContext.clip.top,storageContext.clip.width,storageContext.clip.height);
+        ctx.clip();
+        
+    }
+        
+    if (storageContext.ctx.storage){
+        _.each(storageContext.ctx.storage,function(a,renderItem){
+
+          
+            switch(renderItem.type){
+                case "variable":
+                    ctx[renderItem.name] = renderItem.arguments;              
+                    break;
+                case "function":
+                    if (renderItem.name=="fillRect"){
+                        ctx.fillRect(
+                            renderItem.arguments[0]-(storageContext.canvasPosition.x || 0),
+                            renderItem.arguments[1]-(storageContext.canvasPosition.y || 0),
+                            renderItem.arguments[2],
+                            renderItem.arguments[3]
+                            );
+                    }else if(renderItem.name=="fillText"){
+                        // console.log(renderItem.arguments[0]);
+
+                        ctx.fillText(renderItem.arguments[0],renderItem.arguments[1]-(storageContext.canvasPosition.x || 0),renderItem.arguments[2]-(storageContext.canvasPosition.y || 0));
+                    /*
+                                                if (renderItem.arguments[0]=="Highlights"){
+                            console.log(renderItem);
+                            console.log(storageContext);
+                            $('body').append(ctx.canvas);
+                        }*/
+                    }else if(renderItem.name=="drawImage"){
+                        //  console.log(renderItem);
+                        // console.log(renderItem.arguments[0].width);
+                        if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
+                            ctx.drawImage(
+                                renderItem.arguments[0],
+                                renderItem.arguments[1],
+                                renderItem.arguments[2],
+                                renderItem.arguments[3],
+                                renderItem.arguments[4],
+                                renderItem.arguments[5]-(storageContext.canvasPosition.x || 0),
+                                renderItem.arguments[6]-(storageContext.canvasPosition.y || 0),
+                                renderItem.arguments[7],
+                                renderItem.arguments[8]
+                                );
+                        }      
+                    }else{
+                        _.log(renderItem);
+                    }
+                       
+  
+                    break;
+                default:
+                               
+            }
+                
+                
+        });
+
+    }  
+        if (storageContext.clip){
+            ctx.restore();
+        }
+    
+}
+
+/*
+html2canvas.prototype.canvasRenderContextChildren = function(storageContext,parentctx){
+    var ctx = storageContext.canvas.getContext('2d');         
+
+    storageContext.canvasPosition = storageContext.canvasPosition || {};             
+    this.canvasRenderContext(storageContext,ctx);
+    
+    
+    for (var s = 0; s<this.queue.length;){
+        if (storageContext.parentStack && this.queue[s].canvas === storageContext.parentStack.canvas){
+            var substorageContext = this.queue.splice(s,1)[0]; 
+            
+            if (substorageContext.ctx.storage[5] && substorageContext.ctx.storage[5].arguments[0]=="Highlights"){    
+               console.log('ssssssadasda');
+            }    
+            
+            this.canvasRenderContextChildren(substorageContext,ctx);
+        //   this.canvasRenderContext(substorageContext,ctx);
+        //    this.canvasRenderStorage(this.queue,ctx);
+            
+                    
+        }else{
+            s++;
+        }
+                  
+    }
+    
+    
+    
+            
+    if (storageContext.ctx.storage[5] && storageContext.ctx.storage[5].arguments[0]=="Highlights"){    
+        $('body').append(parentctx.canvas);
+    }    
+    //var parentctx = this.canvas.getContext("2d");
+            
+    if (storageContext.canvas.width>0 && storageContext.canvas.height > 0){
+        parentctx.drawImage(storageContext.canvas,(storageContext.canvasPosition.x || 0),(storageContext.canvasPosition.y || 0));
+    }
+    
+    
+}
+*/
+html2canvas.prototype.canvasRenderStorage = function(queue,parentctx){
+    
+
+    
+  
+    for (var i = 0; i<queue.length;){
+        var storageContext = queue.splice(0,1)[0];
+        
+       
+       
+        // storageContext.removeOverflow = storageContext.removeOverflow || {};
+        /*
+        if (storageContext.canvas){
+            this.canvasRenderContextChildren(storageContext,parentctx);
+        
+            var ctx = storageContext.canvas.getContext('2d');         
+
+            storageContext.canvasPosition = storageContext.canvasPosition || {};             
+            this.canvasRenderContext(storageContext,ctx);
+            
+            for (var s = 0; s<this.queue.length;){
+                if (this.queue[s].canvas === storageContext.canvas){
+                    var substorageContext = this.queue.splice(s,1)[0];
+                    substorageContext.canvasPosition = storageContext.canvasPosition || {};     
+                    
+                    this.canvasRenderContext(substorageContext,ctx);
+                // this.canvasRenderStorage(this.queue,ctx);
+                    
+                }else{
+                    s++;
+                }
+                  
+            }
+            
+            
+            //var parentctx = this.canvas.getContext("2d");
+            
+            if (storageContext.canvas.width>0 && storageContext.canvas.height > 0){
+                parentctx.drawImage(storageContext.canvas,(storageContext.canvasPosition.x || 0),(storageContext.canvasPosition.y || 0));
+            }
+            ctx = parentctx;
+            
+        }else{
+        */
+        storageContext.canvasPosition = storageContext.canvasPosition || {};             
+        this.canvasRenderContext(storageContext,parentctx);           
+    //  }
+        
+        
+    /*
+        if (storageContext.newCanvas){
+            var ctx = _.canvas.getContext("2d");
+            ctx.drawImage(canvas,(storageContext.removeOverflow.left || 0),(storageContext.removeOverflow.top || 0));
+            _.ctx = ctx;
+        }*/
+       
+       
+   
+    }
+}
 
 html2canvas.prototype.canvasRenderer = function(queue){
     var _ = this;
@@ -1023,58 +1263,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     this.ctx = this.canvas.getContext("2d");
     
-    // set common settings for canvas
-    this.ctx.textBaseline = "bottom";
+    this.canvasRenderStorage(queue,this.ctx);
     
-  
-    
-    this.each(queue,function(i,storageContext){
-       
-        if (storageContext.ctx.storage){
-            _.each(storageContext.ctx.storage,function(a,renderItem){
-                
-                switch(renderItem.type){
-                    case "variable":
-                        _.ctx[renderItem.name] = renderItem.arguments;              
-                        break;
-                    case "function":
-                        if (renderItem.name=="fillRect"){
-                            _.ctx.fillRect(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2],renderItem.arguments[3]);
-                        }else if(renderItem.name=="fillText"){
-                            _.ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
-                        }else if(renderItem.name=="drawImage"){
-                          //  console.log(renderItem);
-                         // console.log(renderItem.arguments[0].width);
-                          if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
-                            _.ctx.drawImage(
-                                renderItem.arguments[0],
-                                renderItem.arguments[1],
-                                renderItem.arguments[2],
-                                renderItem.arguments[3],
-                                renderItem.arguments[4],
-                                renderItem.arguments[5],
-                                renderItem.arguments[6],
-                                renderItem.arguments[7],
-                                renderItem.arguments[8]
-                                );
-                              }      
-                        }else{
-                            this.log(renderItem);
-                        }
-                       
-  
-                        break;
-                    default:
-                               
-                }
-                
-                  
-            });
 
-        }
-       
-    });
-    
     
 };     
 
@@ -1145,8 +1336,8 @@ html2canvas.prototype.setContextVariable = function(ctx,variable,value){
   
 }
             
-html2canvas.prototype.newText = function(el,textNode,ctx){
-       
+html2canvas.prototype.newText = function(el,textNode,stack){
+    var ctx = stack.ctx;
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
     var color = this.getCSS(el,"color");
@@ -1171,7 +1362,7 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
             case 401:
                 bold = "bold";
                 break;
-                case 400:
+            case 400:
                 bold = "normal";
                 break;
         }
@@ -1191,21 +1382,30 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
         
         
         if (this.opts.letterRendering == false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
-           // this.setContextVariable(ctx,"textAlign",text_align);  
+            // this.setContextVariable(ctx,"textAlign",text_align);  
             renderWords = true;
             renderList = textNode.nodeValue.split(/(\b| )/);
             
         }else{
-          //  this.setContextVariable(ctx,"textAlign","left");
+            //  this.setContextVariable(ctx,"textAlign","left");
             renderList = textNode.nodeValue.split("");
         }
+       
+       
        
        
         
         this.setContextVariable(ctx,"fillStyle",color);  
         this.setContextVariable(ctx,"font",font);
         
+        /*
+        if (stack.clip){
+        ctx.rect (stack.clip.left, stack.clip.top, stack.clip.width, stack.clip.height);
+        ctx.clip();
+        }
+*/
         
+      
 
               
         var oldTextNode = textNode;
@@ -1213,60 +1413,66 @@ html2canvas.prototype.newText = function(el,textNode,ctx){
             
             // TODO only do the splitting for non-range prints
             var newTextNode = oldTextNode.splitText(renderList[c].length);
-            
-
-            if (this.support.rangeBounds){
-                // getBoundingClientRect is supported for ranges
-                if (document.createRange){
-                    var range = document.createRange();
-                    range.selectNode(oldTextNode);
-                }else{
-                    // TODO add IE support
-                    var range = document.body.createTextRange();
-                }
-                if (range.getBoundingClientRect()){
-                    var bounds = range.getBoundingClientRect();
-                }else{
-                    var bounds = {};
-                }
-            }else{
-                // it isn't supported, so let's wrap it inside an element instead and the bounds there
+           
+            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
                 
-                var parent = oldTextNode.parentNode;
-                var wrapElement = document.createElement('wrapper');
-                var backupText = oldTextNode.cloneNode(true);
-                wrapElement.appendChild(oldTextNode.cloneNode(true));
-                parent.replaceChild(wrapElement,oldTextNode);
+               
+           
+
+                if (this.support.rangeBounds){
+                    // getBoundingClientRect is supported for ranges
+                    if (document.createRange){
+                        var range = document.createRange();
+                        range.selectNode(oldTextNode);
+                    }else{
+                        // TODO add IE support
+                        var range = document.body.createTextRange();
+                    }
+                    if (range.getBoundingClientRect()){
+                        var bounds = range.getBoundingClientRect();
+                    }else{
+                        var bounds = {};
+                    }
+                }else{
+                    // it isn't supported, so let's wrap it inside an element instead and the bounds there
+                
+                    var parent = oldTextNode.parentNode;
+                    var wrapElement = document.createElement('wrapper');
+                    var backupText = oldTextNode.cloneNode(true);
+                    wrapElement.appendChild(oldTextNode.cloneNode(true));
+                    parent.replaceChild(wrapElement,oldTextNode);
                                     
-                var bounds = this.getBounds(wrapElement);
+                    var bounds = this.getBounds(wrapElement);
 
     
-                parent.replaceChild(backupText,wrapElement);      
-            }
+                    parent.replaceChild(backupText,wrapElement);      
+                }
                
                
        
 
-           
-                                 
-            this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
+        //   console.log(range);
+          //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
+                this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
-            switch(text_decoration) {
-                case "underline":	
-                    // Draws a line at the baseline of the font
-                    // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                    this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
-                    break;
-                case "overline":
-                    this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
-                    break;
-                case "line-through":
-                    // TODO try and find exact position for line-through
-                    this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
-                    break;
+                switch(text_decoration) {
+                    case "underline":	
+                        // Draws a line at the baseline of the font
+                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                        this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                        break;
+                    case "overline":
+                        this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
+                        break;
+                    case "line-through":
+                        // TODO try and find exact position for line-through
+                        this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                        break;
                     
-            }	
+                }	
                 
+            }
+            
             oldTextNode = newTextNode;
                   
                   
@@ -1305,6 +1511,8 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
 
     
     var img = document.createElement('img');
+    
+    // TODO add another image
     img.src = "http://html2canvas.hertzen.com/images/8.jpg";
     img.width = 1;
     img.height = 1;
@@ -1410,50 +1618,28 @@ html2canvas.prototype.parsing = function(el,stack){
     if (this.getCSS(el,'display') != "none" && this.getCSS(el,'visibility')!="hidden"){ 
 
         var _ = this;
-    
-        //if (!this.blockElements.test(el.nodeName)){
-        
+      
         stack = this.newElement(el,stack) || stack;
-    
-    
+        
         var ctx = stack.ctx;
-    
-   
+      
         if (!this.ignoreRe.test(el.nodeName)){
-            
-         		
-        
-            // TODO remove jQuery dependancy
-
-            var contents = this.contentsInZ(el);
-            
-        
-            if (contents.length == 1){
-	
-                // check nodeType
-                if (contents[0].nodeType==1){
-                    // it's an element, so let's look inside it
-                    this.parsing(contents[0],stack);
-                }else if (contents[0].nodeType==3){   
-                    // it's a text node, so lets print the text
-                
-                    this.newText(el,contents[0],stack.ctx);
-                }
-            }else{
-		
-                this.each(contents,function(cid,cel){
+            // TODO remove jQuery dependancy	
+            this.each(this.contentsInZ(el),function(cid,node){
 					
-                    if (cel.nodeType==1){
-                        // element
-                        _.parsing(cel,stack);								
-                    }else if (cel.nodeType==3){   
-                        _.newText(el,cel,ctx);
-                    }              
+                if (node.nodeType==1){
+                    // element
+                    _.parsing(node,stack);								
+                }else if (node.nodeType==3){   
+                    _.newText(el,node,stack);
+                }              
 						
-                });
+            });
                 
-            }
         }	
+        
+
+        
     }
 // }
 }
@@ -1468,6 +1654,35 @@ html2canvas.prototype.log = function(a){
     }
 }                    
 
+html2canvas.prototype.withinBounds = function(src,dst){
+    if (!src) return true;
+    // return true; 
+    return (
+        (src.left <= dst.left || dst.left+dst.width < src.left) &&
+        (src.top <= dst.top || dst.top+dst.height < src.top)
+        );
+ 
+    
+}
+
+
+html2canvas.prototype.clipBounds = function(src,dst){
+ 
+ var x = Math.max(src.left,dst.left);
+ var y = Math.max(src.top,dst.top);
+ 
+ var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
+ var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
+ 
+ return {
+     left:x,
+     top:y,
+     width:x2-x,
+     height:y2-y
+ };
+ 
+}
+
 
 /**
  * Function to provide bounds for element
@@ -1478,9 +1693,17 @@ html2canvas.prototype.getBounds = function(el){
     window.scroll(0,0);
         
     if (el.getBoundingClientRect){	
-        var bounds = el.getBoundingClientRect();	
-        bounds.top = bounds.top;
-        bounds.left = bounds.left;
+        var clientRect = el.getBoundingClientRect();	
+        var bounds = {};
+        // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
+        // TODO add scroll position to bounds, so no scrolling of window necessary
+        bounds.top = clientRect.top;
+        bounds.left = clientRect.left;
+        bounds.width = clientRect.width;
+        bounds.height = clientRect.height;
+        
+        
+        
         return bounds;
     }else{
             
@@ -1622,6 +1845,6 @@ html2canvas.prototype.isSameOrigin = function(url){
     var link = document.createElement("a");
     link.href = url;
 
-    return ((link.protocol + link.hostname) == this.pageOrigin);
+    return ((link.protocol + link.host) == this.pageOrigin);
 }
 

@@ -8,6 +8,35 @@ html2canvas.prototype.log = function(a){
     }
 }                    
 
+html2canvas.prototype.withinBounds = function(src,dst){
+    if (!src) return true;
+    // return true; 
+    return (
+        (src.left <= dst.left || dst.left+dst.width < src.left) &&
+        (src.top <= dst.top || dst.top+dst.height < src.top)
+        );
+ 
+    
+}
+
+
+html2canvas.prototype.clipBounds = function(src,dst){
+ 
+ var x = Math.max(src.left,dst.left);
+ var y = Math.max(src.top,dst.top);
+ 
+ var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
+ var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
+ 
+ return {
+     left:x,
+     top:y,
+     width:x2-x,
+     height:y2-y
+ };
+ 
+}
+
 
 /**
  * Function to provide bounds for element
@@ -18,9 +47,17 @@ html2canvas.prototype.getBounds = function(el){
     window.scroll(0,0);
         
     if (el.getBoundingClientRect){	
-        var bounds = el.getBoundingClientRect();	
-        bounds.top = bounds.top;
-        bounds.left = bounds.left;
+        var clientRect = el.getBoundingClientRect();	
+        var bounds = {};
+        // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
+        // TODO add scroll position to bounds, so no scrolling of window necessary
+        bounds.top = clientRect.top;
+        bounds.left = clientRect.left;
+        bounds.width = clientRect.width;
+        bounds.height = clientRect.height;
+        
+        
+        
         return bounds;
     }else{
             
@@ -162,5 +199,5 @@ html2canvas.prototype.isSameOrigin = function(url){
     var link = document.createElement("a");
     link.href = url;
 
-    return ((link.protocol + link.hostname) == this.pageOrigin);
+    return ((link.protocol + link.host) == this.pageOrigin);
 }
