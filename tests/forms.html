@@ -1,0 +1,72 @@
+<!--
+* @author Niklas von Hertzen <niklas at hertzen.com>
+* @created 16.7.2011 
+* @website http://hertzen.com
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Form tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="#" type="text/css" rel="stylesheet"> 
+
+        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {       
+                $('body').html2canvas();
+            });
+        </script>
+        <style>
+
+        </style>
+
+    </head>
+    <body>        
+        <input type="text" value="textbox" />
+        <input type="text" value="textbox" style="border:5px solid navy;" />
+        <input type="text" value="textbox" style="border:5px solid navy;height:40px;" />
+
+        <input type="text" value="textbox" style="border:5px solid navy;height:40px;padding:10px;" />
+
+        <input type="text" value="textbox" style="padding:10px;" />
+        <input type="text" value="textbox" style="padding:10px;text-align:right;" />
+        <hr />
+        <select>
+            <option value="1">Value 1</option>
+            <option value="2">Value 2</option>
+            <option value="3">Value 3</option>
+        </select>
+        <select>
+
+        </select>
+        <select>
+            <option value="">2</option>
+        </select>
+
+
+        <select>
+            <option value="1">Value 1</option>
+            <option value="2" selected>Value 2 with something else</option>
+            <option value="3">Value 3</option>
+        </select>
+        <hr />
+        <input type="submit" value="Submit" />
+        <input type="Button" value="Button" />
+        <input type="Reset" value="Reset" />
+
+
+        <input type="submit" value="Submit" style="width:200px;" />
+        <input type="Button" value="Button" style="width:200px;height:50px;"  />
+        <input type="Reset" value="Reset" style="width:200px;height:50px;text-align:left;"  />
+        
+        <hr />
+        
+        <textarea>  </textarea>
+        <textarea style="border-width:10px;"></textarea>
+        
+                <textarea> text </textarea>
+        <textarea style="border-width:10px;">text</textarea>
+    </body>
+</html>
