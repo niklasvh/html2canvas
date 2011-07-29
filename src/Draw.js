@@ -63,7 +63,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
         stack.clip.width = stack.clip.width-(borders[1].width); 
         stack.clip.height = stack.clip.height-(borders[2].width); 
     }
-*/
+     */
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
@@ -106,26 +106,59 @@ html2canvas.prototype.newElement = function(el,parentStack){
         this.drawBackground(el,bgbounds,ctx);     
     }
         
-    if (el.nodeName=="IMG"){
-        image = _.loadImage(_.getAttr(el,'src'));
-        if (image){
-            //   console.log(image.width);
-            this.drawImage(
-                ctx,
-                image,
-                0, //sx
-                0, //sy
-                image.width, //sw
-                image.height, //sh
-                x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
-                y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
-                bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
-                );
+    switch(el.nodeName){
+        case "IMG":
+            image = _.loadImage(_.getAttr(el,'src'));
+            if (image){
+                //   console.log(image.width);
+                this.drawImage(
+                    ctx,
+                    image,
+                    0, //sx
+                    0, //sy
+                    image.width, //sw
+                    image.height, //sh
+                    x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
+                    y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
+                    bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
+                    bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
+                    );
            
-        }else {
-            this.log("Error loading <img>:" + _.getAttr(el,'src'));
-        }
+            }else {
+                this.log("Error loading <img>:" + _.getAttr(el,'src'));
+            }
+            break;
+        case "INPUT":
+            // TODO add all relevant type's, i.e. HTML5 new stuff
+            // todo add support for placeholder attribute for browsers which support it
+            if (/^(text|url|email|submit|button|reset)$/.test(el.type) && el.value.length > 0){
+                
+                this.renderFormValue(el,bounds,stack);
+                
+
+                /*
+                 this just doesn't work well enough
+                
+                this.newText(el,{
+                    nodeValue:el.value,
+                    splitText: function(){
+                        return this;
+                    },
+                    formValue:true
+                },stack);
+                 */
+            }
+            break;
+        case "TEXTAREA":
+            if (el.value.length > 0){
+            this.renderFormValue(el,bounds,stack);
+            }
+            break;
+                    case "SELECT":
+                         if (el.options.length > 0){
+            this.renderFormValue(el,bounds,stack);
+            }
+            break;
     }
     
          
@@ -142,8 +175,8 @@ html2canvas.prototype.newElement = function(el,parentStack){
 
 
 /*
- * Function to draw the text on the canvas
- */ 
+* Function to draw the text on the canvas
+*/ 
                
 html2canvas.prototype.printText = function(currentText,x,y,ctx){
     if (this.trim(currentText).length>0){	

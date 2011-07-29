@@ -22,18 +22,18 @@ html2canvas.prototype.withinBounds = function(src,dst){
 
 html2canvas.prototype.clipBounds = function(src,dst){
  
- var x = Math.max(src.left,dst.left);
- var y = Math.max(src.top,dst.top);
+    var x = Math.max(src.left,dst.left);
+    var y = Math.max(src.top,dst.top);
  
- var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
- var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
+    var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
+    var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
  
- return {
-     left:x,
-     top:y,
-     width:x2-x,
-     height:y2-y
- };
+    return {
+        left:x,
+        top:y,
+        width:x2-x,
+        height:y2-y
+    };
  
 }
 
@@ -65,8 +65,8 @@ html2canvas.prototype.getBounds = function(el){
         var p = $(el).offset();       
           
         return {               
-            left: p.left + parseInt(this.getCSS(el,"border-left-width"),10),
-            top: p.top + parseInt(this.getCSS(el,"border-top-width"),10),
+            left: p.left + this.getCSS(el,"border-left-width",true),
+            top: p.top + this.getCSS(el,"border-top-width",true),
             width:$(el).innerWidth(),
             height:$(el).innerHeight()                
         }
@@ -145,7 +145,7 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
         if (parentPosition!="static" && typeof parentPosition != "undefined"){
             zindex = 0;
         }
-        /*else{
+    /*else{
             return parentZ;
         }*/
     }
@@ -177,8 +177,12 @@ html2canvas.prototype.getContents = function(el){
  * Function for fetching the css attribute
  * TODO remove jQuery dependancy
  */
-html2canvas.prototype.getCSS = function(el,attribute){
-    return $(el).css(attribute);
+html2canvas.prototype.getCSS = function(el,attribute,intOnly){
+    if (intOnly){
+        return parseInt($(el).css(attribute),10); 
+    }else{
+        return $(el).css(attribute);
+    }
 }
 
 

@@ -1,5 +1,5 @@
             
-html2canvas.prototype.newText = function(el,textNode,stack){
+html2canvas.prototype.newText = function(el,textNode,stack,form){
     var ctx = stack.ctx;
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
@@ -14,7 +14,7 @@ html2canvas.prototype.newText = function(el,textNode,stack){
     
     
     var letter_spacing = this.getCSS(el,"letter-spacing");
-             
+
     // apply text-transform:ation to the text
     textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
     var text = this.trim(textNode.nodeValue);		
@@ -68,79 +68,81 @@ html2canvas.prototype.newText = function(el,textNode,stack){
         }
 */
         
-      
 
-              
-        var oldTextNode = textNode;
-        for(var c=0;c<renderList.length;c++){
             
-            // TODO only do the splitting for non-range prints
-            var newTextNode = oldTextNode.splitText(renderList[c].length);
+         
+            var oldTextNode = textNode;
+            for(var c=0;c<renderList.length;c++){
+            
+                // TODO only do the splitting for non-range prints
+            
+                var newTextNode = oldTextNode.splitText(renderList[c].length);
            
-            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
+                if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
                 
                
            
 
-                if (this.support.rangeBounds){
-                    // getBoundingClientRect is supported for ranges
-                    if (document.createRange){
-                        var range = document.createRange();
-                        range.selectNode(oldTextNode);
+                    if (this.support.rangeBounds){
+                        // getBoundingClientRect is supported for ranges
+                        if (document.createRange){
+                            var range = document.createRange();
+                            range.selectNode(oldTextNode);
+                        }else{
+                            // TODO add IE support
+                            var range = document.body.createTextRange();
+                        }
+                        if (range.getBoundingClientRect()){
+                            var bounds = range.getBoundingClientRect();
+                        }else{
+                            var bounds = {};
+                        }
                     }else{
-                        // TODO add IE support
-                        var range = document.body.createTextRange();
-                    }
-                    if (range.getBoundingClientRect()){
-                        var bounds = range.getBoundingClientRect();
-                    }else{
-                        var bounds = {};
-                    }
-                }else{
-                    // it isn't supported, so let's wrap it inside an element instead and the bounds there
+                        // it isn't supported, so let's wrap it inside an element instead and the bounds there
                 
-                    var parent = oldTextNode.parentNode;
-                    var wrapElement = document.createElement('wrapper');
-                    var backupText = oldTextNode.cloneNode(true);
-                    wrapElement.appendChild(oldTextNode.cloneNode(true));
-                    parent.replaceChild(wrapElement,oldTextNode);
+                        var parent = oldTextNode.parentNode;
+                        var wrapElement = document.createElement('wrapper');
+                        var backupText = oldTextNode.cloneNode(true);
+                        wrapElement.appendChild(oldTextNode.cloneNode(true));
+                        parent.replaceChild(wrapElement,oldTextNode);
                                     
-                    var bounds = this.getBounds(wrapElement);
+                        var bounds = this.getBounds(wrapElement);
 
     
-                    parent.replaceChild(backupText,wrapElement);      
-                }
+                        parent.replaceChild(backupText,wrapElement);      
+                    }
                
                
        
 
-        //   console.log(range);
-          //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
-                this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
+                    //   console.log(range);
+                    //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
+                    this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
-                switch(text_decoration) {
-                    case "underline":	
-                        // Draws a line at the baseline of the font
-                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                        this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
-                        break;
-                    case "overline":
-                        this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
-                        break;
-                    case "line-through":
-                        // TODO try and find exact position for line-through
-                        this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
-                        break;
+                    switch(text_decoration) {
+                        case "underline":	
+                            // Draws a line at the baseline of the font
+                            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                            this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                            break;
+                        case "overline":
+                            this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
+                            break;
+                        case "line-through":
+                            // TODO try and find exact position for line-through
+                            this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                            break;
                     
-                }	
+                    }	
                 
-            }
+                }
             
-            oldTextNode = newTextNode;
+                oldTextNode = newTextNode;
                   
                   
                   
-        }
+            }
+        
          
 					
     }
