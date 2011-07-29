@@ -1,5 +1,5 @@
 /* 
- * html2canvas v0.26 <http://html2canvas.hertzen.com>
+ * html2canvas v0.27 <http://html2canvas.hertzen.com>
  * Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
  * http://www.twitter.com/niklasvh 
  * 
@@ -737,7 +737,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
         stack.clip.width = stack.clip.width-(borders[1].width); 
         stack.clip.height = stack.clip.height-(borders[2].width); 
     }
-*/
+     */
     if (this.ignoreRe.test(el.nodeName) && this.opts.iframeDefault != "transparent"){ 
         if (this.opts.iframeDefault=="default"){
             bgcolor = "#efefef";
@@ -780,26 +780,59 @@ html2canvas.prototype.newElement = function(el,parentStack){
         this.drawBackground(el,bgbounds,ctx);     
     }
         
-    if (el.nodeName=="IMG"){
-        image = _.loadImage(_.getAttr(el,'src'));
-        if (image){
-            //   console.log(image.width);
-            this.drawImage(
-                ctx,
-                image,
-                0, //sx
-                0, //sy
-                image.width, //sw
-                image.height, //sh
-                x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
-                y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
-                bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
-                );
+    switch(el.nodeName){
+        case "IMG":
+            image = _.loadImage(_.getAttr(el,'src'));
+            if (image){
+                //   console.log(image.width);
+                this.drawImage(
+                    ctx,
+                    image,
+                    0, //sx
+                    0, //sy
+                    image.width, //sw
+                    image.height, //sh
+                    x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
+                    y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
+                    bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
+                    bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
+                    );
            
-        }else {
-            this.log("Error loading <img>:" + _.getAttr(el,'src'));
-        }
+            }else {
+                this.log("Error loading <img>:" + _.getAttr(el,'src'));
+            }
+            break;
+        case "INPUT":
+            // TODO add all relevant type's, i.e. HTML5 new stuff
+            // todo add support for placeholder attribute for browsers which support it
+            if (/^(text|url|email|submit|button|reset)$/.test(el.type) && el.value.length > 0){
+                
+                this.renderFormValue(el,bounds,stack);
+                
+
+                /*
+                 this just doesn't work well enough
+                
+                this.newText(el,{
+                    nodeValue:el.value,
+                    splitText: function(){
+                        return this;
+                    },
+                    formValue:true
+                },stack);
+                 */
+            }
+            break;
+        case "TEXTAREA":
+            if (el.value.length > 0){
+            this.renderFormValue(el,bounds,stack);
+            }
+            break;
+                    case "SELECT":
+                         if (el.options.length > 0){
+            this.renderFormValue(el,bounds,stack);
+            }
+            break;
     }
     
          
@@ -816,8 +849,8 @@ html2canvas.prototype.newElement = function(el,parentStack){
 
 
 /*
- * Function to draw the text on the canvas
- */ 
+* Function to draw the text on the canvas
+*/ 
                
 html2canvas.prototype.printText = function(currentText,x,y,ctx){
     if (this.trim(currentText).length>0){	
@@ -851,6 +884,44 @@ html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
         dh //dh      
         );
     this.numDraws++; 
+    
+}
+html2canvas.prototype.renderFormValue = function(el,bounds,stack){
+    
+    var valueWrap = document.createElement('valuewrap'),
+    _ = this;
+                
+    this.each(['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],function(i,style){                 
+        valueWrap.style[style] = _.getCSS(el,style);
+    });
+                
+    valueWrap.style.borderColor = "black";            
+    valueWrap.style.borderStyle = "solid";  
+    valueWrap.style.display = "block";
+    valueWrap.style.position = "absolute";
+    if (/^(submit|reset|button|text|password)$/.test(el.type) || el.nodeName == "SELECT"){
+        valueWrap.style.lineHeight = _.getCSS(el,"height");
+    }
+  
+                
+    valueWrap.style.top = bounds.top+"px";
+    valueWrap.style.left = bounds.left+"px";
+    if (el.nodeName == "SELECT"){
+        // TODO increase accuracy of text position
+        var textValue = el.options[el.selectedIndex].text;
+    } else{   
+        var textValue = el.value;
+        
+    }
+    var textNode = document.createTextNode(textValue);
+    
+    valueWrap.appendChild(textNode);
+    $('body').append(valueWrap);
+                
+    this.newText(el,textNode,stack);
+                
+    $(valueWrap).remove();
+   
     
 }
 /*
@@ -1331,7 +1402,7 @@ html2canvas.prototype.setContextVariable = function(ctx,variable,value){
   
 }
             
-html2canvas.prototype.newText = function(el,textNode,stack){
+html2canvas.prototype.newText = function(el,textNode,stack,form){
     var ctx = stack.ctx;
     var family = this.getCSS(el,"font-family");
     var size = this.getCSS(el,"font-size");
@@ -1346,7 +1417,7 @@ html2canvas.prototype.newText = function(el,textNode,stack){
     
     
     var letter_spacing = this.getCSS(el,"letter-spacing");
-             
+
     // apply text-transform:ation to the text
     textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
     var text = this.trim(textNode.nodeValue);		
@@ -1400,79 +1471,81 @@ html2canvas.prototype.newText = function(el,textNode,stack){
         }
 */
         
-      
 
-              
-        var oldTextNode = textNode;
-        for(var c=0;c<renderList.length;c++){
             
-            // TODO only do the splitting for non-range prints
-            var newTextNode = oldTextNode.splitText(renderList[c].length);
+         
+            var oldTextNode = textNode;
+            for(var c=0;c<renderList.length;c++){
+            
+                // TODO only do the splitting for non-range prints
+            
+                var newTextNode = oldTextNode.splitText(renderList[c].length);
            
-            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
+                if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
                 
                
            
 
-                if (this.support.rangeBounds){
-                    // getBoundingClientRect is supported for ranges
-                    if (document.createRange){
-                        var range = document.createRange();
-                        range.selectNode(oldTextNode);
+                    if (this.support.rangeBounds){
+                        // getBoundingClientRect is supported for ranges
+                        if (document.createRange){
+                            var range = document.createRange();
+                            range.selectNode(oldTextNode);
+                        }else{
+                            // TODO add IE support
+                            var range = document.body.createTextRange();
+                        }
+                        if (range.getBoundingClientRect()){
+                            var bounds = range.getBoundingClientRect();
+                        }else{
+                            var bounds = {};
+                        }
                     }else{
-                        // TODO add IE support
-                        var range = document.body.createTextRange();
-                    }
-                    if (range.getBoundingClientRect()){
-                        var bounds = range.getBoundingClientRect();
-                    }else{
-                        var bounds = {};
-                    }
-                }else{
-                    // it isn't supported, so let's wrap it inside an element instead and the bounds there
+                        // it isn't supported, so let's wrap it inside an element instead and the bounds there
                 
-                    var parent = oldTextNode.parentNode;
-                    var wrapElement = document.createElement('wrapper');
-                    var backupText = oldTextNode.cloneNode(true);
-                    wrapElement.appendChild(oldTextNode.cloneNode(true));
-                    parent.replaceChild(wrapElement,oldTextNode);
+                        var parent = oldTextNode.parentNode;
+                        var wrapElement = document.createElement('wrapper');
+                        var backupText = oldTextNode.cloneNode(true);
+                        wrapElement.appendChild(oldTextNode.cloneNode(true));
+                        parent.replaceChild(wrapElement,oldTextNode);
                                     
-                    var bounds = this.getBounds(wrapElement);
+                        var bounds = this.getBounds(wrapElement);
 
     
-                    parent.replaceChild(backupText,wrapElement);      
-                }
+                        parent.replaceChild(backupText,wrapElement);      
+                    }
                
                
        
 
-        //   console.log(range);
-          //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
-                this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
+                    //   console.log(range);
+                    //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
+                    this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
-                switch(text_decoration) {
-                    case "underline":	
-                        // Draws a line at the baseline of the font
-                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                        this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
-                        break;
-                    case "overline":
-                        this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
-                        break;
-                    case "line-through":
-                        // TODO try and find exact position for line-through
-                        this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
-                        break;
+                    switch(text_decoration) {
+                        case "underline":	
+                            // Draws a line at the baseline of the font
+                            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                            this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                            break;
+                        case "overline":
+                            this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
+                            break;
+                        case "line-through":
+                            // TODO try and find exact position for line-through
+                            this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                            break;
                     
-                }	
+                    }	
                 
-            }
+                }
             
-            oldTextNode = newTextNode;
+                oldTextNode = newTextNode;
                   
                   
                   
-        }
+            }
+        
          
 					
     }
@@ -1663,18 +1736,18 @@ html2canvas.prototype.withinBounds = function(src,dst){
 
 html2canvas.prototype.clipBounds = function(src,dst){
  
- var x = Math.max(src.left,dst.left);
- var y = Math.max(src.top,dst.top);
+    var x = Math.max(src.left,dst.left);
+    var y = Math.max(src.top,dst.top);
  
- var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
- var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
+    var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
+    var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
  
- return {
-     left:x,
-     top:y,
-     width:x2-x,
-     height:y2-y
- };
+    return {
+        left:x,
+        top:y,
+        width:x2-x,
+        height:y2-y
+    };
  
 }
 
@@ -1706,8 +1779,8 @@ html2canvas.prototype.getBounds = function(el){
         var p = $(el).offset();       
           
         return {               
-            left: p.left + parseInt(this.getCSS(el,"border-left-width"),10),
-            top: p.top + parseInt(this.getCSS(el,"border-top-width"),10),
+            left: p.left + this.getCSS(el,"border-left-width",true),
+            top: p.top + this.getCSS(el,"border-top-width",true),
             width:$(el).innerWidth(),
             height:$(el).innerHeight()                
         }
@@ -1786,7 +1859,7 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
         if (parentPosition!="static" && typeof parentPosition != "undefined"){
             zindex = 0;
         }
-        /*else{
+    /*else{
             return parentZ;
         }*/
     }
@@ -1818,8 +1891,12 @@ html2canvas.prototype.getContents = function(el){
  * Function for fetching the css attribute
  * TODO remove jQuery dependancy
  */
-html2canvas.prototype.getCSS = function(el,attribute){
-    return $(el).css(attribute);
+html2canvas.prototype.getCSS = function(el,attribute,intOnly){
+    if (intOnly){
+        return parseInt($(el).css(attribute),10); 
+    }else{
+        return $(el).css(attribute);
+    }
 }
 
 

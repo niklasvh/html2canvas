@@ -21,6 +21,7 @@
         <fileset dir="${src.dir}" includes="Background.js"/>
         <fileset dir="${src.dir}" includes="Border.js"/>
         <fileset dir="${src.dir}" includes="Draw.js"/>
+        <fileset dir="${src.dir}" includes="Forms.js"/>
         <fileset dir="${src.dir}" includes="Images.js"/>
         <fileset dir="${src.dir}" includes="Renderer.js"/>     
         <fileset dir="${src.dir}" includes="Text.js"/>
