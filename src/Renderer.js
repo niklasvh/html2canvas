@@ -94,7 +94,7 @@ html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
     if (storageContext.clip){
         ctx.save();
         ctx.beginPath();
-       // console.log(storageContext);
+        // console.log(storageContext);
         ctx.rect(storageContext.clip.left,storageContext.clip.top,storageContext.clip.width,storageContext.clip.height);
         ctx.clip();
         
@@ -110,25 +110,20 @@ html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
                     break;
                 case "function":
                     if (renderItem.name=="fillRect"){
+                        
                         ctx.fillRect(
-                            renderItem.arguments[0]-(storageContext.canvasPosition.x || 0),
-                            renderItem.arguments[1]-(storageContext.canvasPosition.y || 0),
+                            renderItem.arguments[0],
+                            renderItem.arguments[1],
                             renderItem.arguments[2],
                             renderItem.arguments[3]
                             );
                     }else if(renderItem.name=="fillText"){
                         // console.log(renderItem.arguments[0]);
-
-                        ctx.fillText(renderItem.arguments[0],renderItem.arguments[1]-(storageContext.canvasPosition.x || 0),renderItem.arguments[2]-(storageContext.canvasPosition.y || 0));
-                    /*
-                                                if (renderItem.arguments[0]=="Highlights"){
-                            console.log(renderItem);
-                            console.log(storageContext);
-                            $('body').append(ctx.canvas);
-                        }*/
+                        ctx.fillText(renderItem.arguments[0],renderItem.arguments[1],renderItem.arguments[2]);
+                    
                     }else if(renderItem.name=="drawImage"){
                         //  console.log(renderItem);
-                        // console.log(renderItem.arguments[0].width);
+                        // console.log(renderItem.arguments[0].width);    
                         if (renderItem.arguments[8] > 0 && renderItem.arguments[7]){
                             ctx.drawImage(
                                 renderItem.arguments[0],
@@ -136,8 +131,8 @@ html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
                                 renderItem.arguments[2],
                                 renderItem.arguments[3],
                                 renderItem.arguments[4],
-                                renderItem.arguments[5]-(storageContext.canvasPosition.x || 0),
-                                renderItem.arguments[6]-(storageContext.canvasPosition.y || 0),
+                                renderItem.arguments[5],
+                                renderItem.arguments[6],
                                 renderItem.arguments[7],
                                 renderItem.arguments[8]
                                 );
@@ -156,9 +151,9 @@ html2canvas.prototype.canvasRenderContext = function(storageContext,ctx){
         });
 
     }  
-        if (storageContext.clip){
-            ctx.restore();
-        }
+    if (storageContext.clip){
+        ctx.restore();
+    }
     
 }
 
