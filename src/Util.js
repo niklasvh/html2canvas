@@ -144,9 +144,10 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
         var parentPosition = this.getCSS(parentNode,"position");
         if (parentPosition!="static" && typeof parentPosition != "undefined"){
             zindex = 0;
-        }else{
-            return parentZ;
         }
+        /*else{
+            return parentZ;
+        }*/
     }
     
     var b = this.leadingZero(this.numDraws,9);  
