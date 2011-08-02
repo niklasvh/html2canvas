@@ -260,10 +260,15 @@ html2canvas.prototype.canvasRenderStorage = function(queue,parentctx){
     }
 }
 
+
+
 html2canvas.prototype.canvasRenderer = function(queue){
     var _ = this;
+    this.sortZ(this.zStack);
+    queue = this.queue;
+    //console.log(queue);
 
-    queue = this.sortQueue(queue);
+    //queue = this.sortQueue(queue);
     
     
     

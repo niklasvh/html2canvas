@@ -80,7 +80,7 @@
         </style>
 
         <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="build/html2canvas.js?22"></script>
+        <script type="text/javascript" src="build/html2canvas.js?221"></script>
         <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
         <script type="text/javascript" src="http://www.hertzen.com/js/ganalytics-heatmap.js"></script>
         <script type="text/javascript"> 
@@ -89,6 +89,8 @@
             var message,
             timeoutTimer,
             timer;
+            
+            var proxyUrl = "http://html2canvas.appspot.com";
             
             function addRow(table,field,val){
                 var tr = $('<tr />').appendTo( $(table));
@@ -166,7 +168,7 @@
                             url:urlParts.href
                             
                         },
-                        url: "http://html2canvas.appspot.com",
+                        url: proxyUrl,
                         dataType: "jsonp",
                         success: function(html){
                             
@@ -188,7 +190,7 @@
                                     canvasHeight: d.body.scrollHeight,
                                     canvasWidth: d.body.scrollWidth,
                                     logging:true,
-                                    proxyUrl: "http://html2canvas.appspot.com",
+                                    proxyUrl: proxyUrl,
                                     logger:function(msg){
                                         $('#logger').val(function(e,i){
                                             return i+"\n"+msg;

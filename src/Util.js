@@ -121,13 +121,80 @@ html2canvas.prototype.extendObj = function(options,defaults){
     return defaults;           
 }
 
-
+/*
+ *todo remove this function
 html2canvas.prototype.leadingZero = function(num,size){
     
     var s = "000000000" + num;
     return s.substr(s.length-size);    
 }    
+*/
+
+html2canvas.prototype.zContext = function(zindex){
+    return {
+        zindex: zindex,
+        children: []
+    }
     
+}
+
+html2canvas.prototype.setZ = function(zindex,position,parentZ,parentNode){
+    // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
+    if (!parentZ){
+        this.zStack = new this.zContext(0);
+        return this.zStack;
+    }
+    
+    if (zindex!="auto"){
+        this.needReorder = true;
+        var newContext = new this.zContext(zindex);
+        parentZ.children.push(newContext);
+        
+        return newContext;
+        
+    }else {
+        return parentZ;
+    }
+    
+}
+
+html2canvas.prototype.sortZ = function(zStack){
+    var subStacks = [];
+    var stackValues = [];
+    var _ = this;
+
+    this.each(zStack.children, function(i,stackChild){
+        if (stackChild.children && stackChild.children.length > 0){
+            subStacks.push(stackChild);
+            stackValues.push(stackChild.zindex);
+        }else{         
+            _.queue.push(stackChild);
+        }
+        
+    });
+    
+   
+    
+    stackValues.sort(function(a,b){return a - b});
+    
+    this.each(stackValues, function(i,zValue){
+          for (var s = 0;s<=subStacks.length;s++){
+              if (subStacks[s].zindex == zValue){
+                  var stackChild = subStacks.splice(s,1);
+                  _.sortZ(stackChild[0]);
+                  break;
+                  
+              }
+          }
+
+    });
+ 
+    
+}
+
+/*
+ *todo remove this function
+
 html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
     
     if (!parentZ){
@@ -145,9 +212,9 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
         if (parentPosition!="static" && typeof parentPosition != "undefined"){
             zindex = 0;
         }
-    /*else{
+    else{
             return parentZ;
-        }*/
+        }
     }
     
     var b = this.leadingZero(this.numDraws,9);  
@@ -161,6 +228,9 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
     
     
 }
+    */
+    
+    
     
 /*
  * Get element childNodes
