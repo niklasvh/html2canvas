@@ -53,6 +53,7 @@ function html2canvas(el, userOptions) {
     this.needReorder = false;
     this.blockElements = new RegExp("(BR|PARAM)");
     this.pageOrigin = window.location.protocol + window.location.host;
+    this.queue = [];
 
     this.ignoreRe = new RegExp("("+this.ignoreElements+")");
     

@@ -13,7 +13,9 @@ html2canvas.prototype.newElement = function(el,parentStack){
     var cssPosition = this.getCSS(el,"position");
     parentStack = parentStack || {};
 
-    var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
+    //var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
+    
+    var zindex = this.setZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
     
     //console.log(el.nodeName+":"+zindex+":"+this.getCSS(el,"position")+":"+this.numDraws+":"+this.getCSS(el,"z-index"))
     
@@ -26,6 +28,8 @@ html2canvas.prototype.newElement = function(el,parentStack){
         opacity: opacity*parentStack.opacity,
         cssPosition: cssPosition
     };
+    
+    
  
     // TODO correct overflow for absolute content residing under a static position
     if (parentStack.clip){
@@ -45,11 +49,16 @@ html2canvas.prototype.newElement = function(el,parentStack){
 
 
     }   
-       
+     /*  
     var stackLength =  this.contextStacks.push(stack);
         
     var ctx = this.contextStacks[stackLength-1].ctx; 
+*/
 
+    var stackLength =  zindex.children.push(stack);
+        
+    var ctx = zindex.children[stackLength-1].ctx; 
+    
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     // draw element borders
@@ -163,8 +172,8 @@ html2canvas.prototype.newElement = function(el,parentStack){
     
          
 
-    return this.contextStacks[stackLength-1];
-
+   // return this.contextStacks[stackLength-1];
+   return zindex.children[stackLength-1];
 			
 				
 }
