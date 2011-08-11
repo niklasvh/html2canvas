@@ -168,24 +168,30 @@ html2canvas.prototype.sortZ = function(zStack){
             subStacks.push(stackChild);
             stackValues.push(stackChild.zindex);
         }else{         
-            _.queue.push(stackChild);
+          
+
+                _.queue.push(stackChild);
+
         }
         
     });
-    
-   
-    
-    stackValues.sort(function(a,b){return a - b});
+        
+
+
+
+    stackValues.sort(function(a,b){
+        return a - b
+        });
     
     this.each(stackValues, function(i,zValue){
-          for (var s = 0;s<=subStacks.length;s++){
-              if (subStacks[s].zindex == zValue){
-                  var stackChild = subStacks.splice(s,1);
-                  _.sortZ(stackChild[0]);
-                  break;
+        for (var s = 0;s<=subStacks.length;s++){
+            if (subStacks[s].zindex == zValue){
+                var stackChild = subStacks.splice(s,1);
+                _.sortZ(stackChild[0]);
+                break;
                   
-              }
-          }
+            }
+        }
 
     });
  
