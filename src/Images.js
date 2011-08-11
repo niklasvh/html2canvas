@@ -19,8 +19,8 @@ html2canvas.prototype.getImages = function(el) {
         var background_image = this.getCSS(el,'background-image');
            
         if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
-            
-            var src = this.backgroundImageUrl(background_image);                    
+            // TODO add multi image background support
+            var src = this.backgroundImageUrl(background_image.split(",")[0]);                    
             this.preloadImage(src);                    
         }
     }
