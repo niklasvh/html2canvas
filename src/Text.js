@@ -5,9 +5,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
     var size = this.getCSS(el,"font-size");
     var color = this.getCSS(el,"color");
   
-    var bold = this.getCSS(el,"font-weight");
-    var font_style = this.getCSS(el,"font-style");
-    var font_variant = this.getCSS(el,"font-variant");
+
      
     var text_decoration = this.getCSS(el,"text-decoration");
     var text_align = this.getCSS(el,"text-align");  
@@ -21,14 +19,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
 	
     //text = $.trim(text);
     if (text.length>0){
-        switch(bold){
-            case 401:
-                bold = "bold";
-                break;
-            case 400:
-                bold = "normal";
-                break;
-        }
+
             
             
         if (text_decoration!="none"){
@@ -36,8 +27,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             
         }    
         
-        var font = font_variant+" "+bold+" "+font_style+" "+size+" "+family,
-        renderList,
+        var renderList,
         renderWords = false;
         
         	
@@ -54,12 +44,8 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             renderList = textNode.nodeValue.split("");
         }
        
-       
-       
-       
-        
-        this.setContextVariable(ctx,"fillStyle",color);  
-        this.setContextVariable(ctx,"font",font);
+        this.setFont(ctx,el,false);
+
         
         /*
         if (stack.clip){
@@ -71,87 +57,120 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
 
             
          
-            var oldTextNode = textNode;
-            for(var c=0;c<renderList.length;c++){
+        var oldTextNode = textNode;
+        for(var c=0;c<renderList.length;c++){
             
                         
-                // IE 9 bug
-                if (typeof oldTextNode.nodeValue != "string"){
-                    continue;
-                }
+            // IE 9 bug
+            if (typeof oldTextNode.nodeValue != "string"){
+                continue;
+            }
                 
-                // TODO only do the splitting for non-range prints
-                var newTextNode = oldTextNode.splitText(renderList[c].length);
+            // TODO only do the splitting for non-range prints
+            var newTextNode = oldTextNode.splitText(renderList[c].length);
            
-                if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
+            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
                 
                
            
 
-                    if (this.support.rangeBounds){
-                        // getBoundingClientRect is supported for ranges
-                        if (document.createRange){
-                            var range = document.createRange();
-                            range.selectNode(oldTextNode);
-                        }else{
-                            // TODO add IE support
-                            var range = document.body.createTextRange();
-                        }
-                        if (range.getBoundingClientRect()){
-                            var bounds = range.getBoundingClientRect();
-                        }else{
-                            var bounds = {};
-                        }
+                if (this.support.rangeBounds){
+                    // getBoundingClientRect is supported for ranges
+                    if (document.createRange){
+                        var range = document.createRange();
+                        range.selectNode(oldTextNode);
                     }else{
-                        // it isn't supported, so let's wrap it inside an element instead and the bounds there
-               
-                        var parent = oldTextNode.parentNode;
-                        var wrapElement = document.createElement('wrapper');
-                        var backupText = oldTextNode.cloneNode(true);
-                        wrapElement.appendChild(oldTextNode.cloneNode(true));
-                        parent.replaceChild(wrapElement,oldTextNode);
-                                    
-                        var bounds = this.getBounds(wrapElement);
-    
-                        parent.replaceChild(backupText,wrapElement);      
+                        // TODO add IE support
+                        var range = document.body.createTextRange();
                     }
+                    if (range.getBoundingClientRect()){
+                        var bounds = range.getBoundingClientRect();
+                    }else{
+                        var bounds = {};
+                    }
+                }else{
+                    // it isn't supported, so let's wrap it inside an element instead and the bounds there
+               
+                    var parent = oldTextNode.parentNode;
+                    var wrapElement = document.createElement('wrapper');
+                    var backupText = oldTextNode.cloneNode(true);
+                    wrapElement.appendChild(oldTextNode.cloneNode(true));
+                    parent.replaceChild(wrapElement,oldTextNode);
+                                    
+                    var bounds = this.getBounds(wrapElement);
+    
+                    parent.replaceChild(backupText,wrapElement);      
+                }
                
                
        
 
-                    //   console.log(range);
-                    //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
-                    this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
+                //   console.log(range);
+                //      console.log("'"+oldTextNode.nodeValue+"'"+bounds.left)
+                this.printText(oldTextNode.nodeValue,bounds.left,bounds.bottom,ctx);
                     
-                    switch(text_decoration) {
-                        case "underline":	
-                            // Draws a line at the baseline of the font
-                            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
-                            this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
-                            break;
-                        case "overline":
-                            this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
-                            break;
-                        case "line-through":
-                            // TODO try and find exact position for line-through
-                            this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
-                            break;
+                switch(text_decoration) {
+                    case "underline":	
+                        // Draws a line at the baseline of the font
+                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                        this.newRect(ctx,bounds.left,Math.round(bounds.top+metrics.baseline+metrics.lineWidth),bounds.width,1,color);
+                        break;
+                    case "overline":
+                        this.newRect(ctx,bounds.left,bounds.top,bounds.width,1,color);
+                        break;
+                    case "line-through":
+                        // TODO try and find exact position for line-through
+                        this.newRect(ctx,bounds.left,Math.ceil(bounds.top+metrics.middle+metrics.lineWidth),bounds.width,1,color);
+                        break;
                     
-                    }	
+                }	
                 
-                }
-            
-                oldTextNode = newTextNode;
-                  
-                  
-                  
             }
+            
+            oldTextNode = newTextNode;
+                  
+                  
+                  
+        }
         
          
 					
     }
 			
 }
+
+html2canvas.prototype.setFont = function(ctx,el,align){
+    
+    var family = this.getCSS(el,"font-family");
+    var size = this.getCSS(el,"font-size");
+    var color = this.getCSS(el,"color");
+  
+    var bold = this.getCSS(el,"font-weight");
+    var font_style = this.getCSS(el,"font-style");
+    var font_variant = this.getCSS(el,"font-variant");
+    
+    switch(bold){
+        case 401:
+            bold = "bold";
+            break;
+        case 400:
+            bold = "normal";
+            break;
+    }
+    
+    var font = font_variant+" "+bold+" "+font_style+" "+size+" "+family;
+       
+        
+    this.setContextVariable(ctx,"fillStyle",color);  
+    this.setContextVariable(ctx,"font",font);
+    if (align){
+        this.setContextVariable(ctx,"textAlign","right");
+    }else{
+        this.setContextVariable(ctx,"textAlign","left");
+    }
+    
+}
+
 
 /*
  * Function to find baseline for font with a specicic size

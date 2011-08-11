@@ -1,0 +1,87 @@
+<!--
+* @author Niklas von Hertzen <niklas at hertzen.com>
+* @created 16.7.2011 
+* @website http://hertzen.com
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>List tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   
+
+        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../build/html2canvas.js"></script>
+        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript">
+            $(window).ready(function() {     
+                var supportedTypes = ["decimal","decimal-leading-zero","upper-roman","lower-roman","lower-alpha","upper-alpha"];
+                for (var i = 1;i<=100;i++){
+                    
+                   $('#dynamic').append($('<li />').text(i).css('list-style-type',supportedTypes[Math.round(Math.random()*supportedTypes.length)])); 
+                }
+                
+             
+                  $('body').html2canvas();
+            });
+        </script>
+
+        <style>
+            #dynamic{
+                list-style-type:decimal;
+                list-style-position: inside;
+                font-size:20px;
+                line-height:50px;
+               
+            }
+            
+            .small{
+                font-size:14px;
+            }
+
+            .medium{
+                font-size:18px;
+            }
+            .large{
+                font-size:24px;
+            }
+            div{
+                float:left;
+            }
+            h2 {
+                clear:both;
+            }
+            li{
+                border:1px solid black;
+                width:100px;
+                margin:0;
+            }
+            ol{
+                margin:0;
+              
+            }
+        </style>
+
+    </head>
+    <body>   
+        <ul>
+            <li>First</li>
+            <li style="list-style-position:inside; ">Second</li>
+            <li>Third</li>
+            
+        </ul>
+        
+        <ol>
+            <li>First</li>
+            <li style="list-style-position:inside; ">Second<br />new line</li>
+            <li style="list-style-position:inside; "></li>
+            <li style="list-style-position:outside;">Third</li>
+               
+        </ol>
+
+        <ol id="dynamic">
+            
+        </ol>
+        
+    </body>
+</html>
