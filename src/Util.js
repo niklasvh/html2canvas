@@ -52,6 +52,7 @@ html2canvas.prototype.getBounds = function(el){
         // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
         // TODO add scroll position to bounds, so no scrolling of window necessary
         bounds.top = clientRect.top;
+        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
         bounds.left = clientRect.left;
         bounds.width = clientRect.width;
         bounds.height = clientRect.height;
