@@ -293,9 +293,9 @@ html2canvas.prototype.finish = function(){
     
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
-     
-    var background_image = this.getCSS(el,"background-image");
-    var background_repeat = this.getCSS(el,"background-repeat");
+    // TODO add support for multi background-images
+    var background_image = this.getCSS(el,"background-image").split(",")[0];
+    var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
         
     if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
          
@@ -457,7 +457,9 @@ html2canvas.prototype.backgroundImageUrl = function(src){
  */
     
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
-    var bgpos = this.getCSS(el,"backgroundPosition") || "0 0";
+    // TODO add support for multi image backgrounds
+    
+    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0";
    // var bgpos = $(el).css("backgroundPosition") || "0 0";
     var bgposition = bgpos.split(" "),
     topPos,
@@ -955,8 +957,8 @@ html2canvas.prototype.getImages = function(el) {
         var background_image = this.getCSS(el,'background-image');
            
         if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
-            
-            var src = this.backgroundImageUrl(background_image);                    
+            // TODO add multi image background support
+            var src = this.backgroundImageUrl(background_image.split(",")[0]);                    
             this.preloadImage(src);                    
         }
     }
@@ -1354,7 +1356,7 @@ html2canvas.prototype.canvasRenderer = function(queue){
  * Sort elements based on z-index and position attributes
  */
 
-
+/*
 html2canvas.prototype.sortQueue = function(queue){
     if (!this.opts.reorderZ || !this.needReorder) return queue;
     
@@ -1392,16 +1394,11 @@ html2canvas.prototype.sortQueue = function(queue){
     });
     
     
-    /*
 
-    console.log('after');
-    this.each(queue,function(i,e){
-        console.log(i+":"+e.zIndex); 
-       // console.log(e.ctx.storage); 
-    });    */
     
     return queue;
 }
+*/
 
 html2canvas.prototype.setContextVariable = function(ctx,variable,value){
     if (!ctx.storage){
@@ -1897,24 +1894,30 @@ html2canvas.prototype.sortZ = function(zStack){
             subStacks.push(stackChild);
             stackValues.push(stackChild.zindex);
         }else{         
-            _.queue.push(stackChild);
+          
+
+                _.queue.push(stackChild);
+
         }
         
     });
-    
-   
-    
-    stackValues.sort(function(a,b){return a - b});
+        
+
+
+
+    stackValues.sort(function(a,b){
+        return a - b
+        });
     
     this.each(stackValues, function(i,zValue){
-          for (var s = 0;s<=subStacks.length;s++){
-              if (subStacks[s].zindex == zValue){
-                  var stackChild = subStacks.splice(s,1);
-                  _.sortZ(stackChild[0]);
-                  break;
+        for (var s = 0;s<=subStacks.length;s++){
+            if (subStacks[s].zindex == zValue){
+                var stackChild = subStacks.splice(s,1);
+                _.sortZ(stackChild[0]);
+                break;
                   
-              }
-          }
+            }
+        }
 
     });
  

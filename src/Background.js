@@ -2,9 +2,9 @@
     
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
-     
-    var background_image = this.getCSS(el,"background-image");
-    var background_repeat = this.getCSS(el,"background-repeat");
+    // TODO add support for multi background-images
+    var background_image = this.getCSS(el,"background-image").split(",")[0];
+    var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
         
     if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
          
@@ -166,7 +166,9 @@ html2canvas.prototype.backgroundImageUrl = function(src){
  */
     
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
-    var bgpos = this.getCSS(el,"backgroundPosition") || "0 0";
+    // TODO add support for multi image backgrounds
+    
+    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0";
    // var bgpos = $(el).css("backgroundPosition") || "0 0";
     var bgposition = bgpos.split(" "),
     topPos,
