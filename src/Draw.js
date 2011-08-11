@@ -168,6 +168,9 @@ html2canvas.prototype.newElement = function(el,parentStack){
             this.renderFormValue(el,bounds,stack);
             }
             break;
+        case "LI":
+            this.drawListItem(el,stack,bgbounds);
+            break;
     }
     
          
