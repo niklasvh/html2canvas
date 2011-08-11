@@ -1489,8 +1489,13 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             var oldTextNode = textNode;
             for(var c=0;c<renderList.length;c++){
             
+                        
+                // IE 9 bug
+                if (typeof oldTextNode.nodeValue != "string"){
+                    continue;
+                }
+                
                 // TODO only do the splitting for non-range prints
-            
                 var newTextNode = oldTextNode.splitText(renderList[c].length);
            
                 if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
@@ -1514,7 +1519,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
                         }
                     }else{
                         // it isn't supported, so let's wrap it inside an element instead and the bounds there
-                
+               
                         var parent = oldTextNode.parentNode;
                         var wrapElement = document.createElement('wrapper');
                         var backupText = oldTextNode.cloneNode(true);
@@ -1522,7 +1527,6 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
                         parent.replaceChild(wrapElement,oldTextNode);
                                     
                         var bounds = this.getBounds(wrapElement);
-
     
                         parent.replaceChild(backupText,wrapElement);      
                     }
@@ -1778,6 +1782,7 @@ html2canvas.prototype.getBounds = function(el){
         // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
         // TODO add scroll position to bounds, so no scrolling of window necessary
         bounds.top = clientRect.top;
+        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
         bounds.left = clientRect.left;
         bounds.width = clientRect.width;
         bounds.height = clientRect.height;
