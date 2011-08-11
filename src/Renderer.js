@@ -289,7 +289,7 @@ html2canvas.prototype.canvasRenderer = function(queue){
  * Sort elements based on z-index and position attributes
  */
 
-
+/*
 html2canvas.prototype.sortQueue = function(queue){
     if (!this.opts.reorderZ || !this.needReorder) return queue;
     
@@ -327,16 +327,11 @@ html2canvas.prototype.sortQueue = function(queue){
     });
     
     
-    /*
 
-    console.log('after');
-    this.each(queue,function(i,e){
-        console.log(i+":"+e.zIndex); 
-       // console.log(e.ctx.storage); 
-    });    */
     
     return queue;
 }
+*/
 
 html2canvas.prototype.setContextVariable = function(ctx,variable,value){
     if (!ctx.storage){
