@@ -6,18 +6,18 @@ html2canvas.prototype.getBorderData = function(el){
      
     var borders = [];
     var _ = this;
-    this.each(["top","right","bottom","left"],function(i,borderSide){
+    this.each(["Top","Right","Bottom","Left"],function(i,borderSide){
         borders.push({
-            width: parseInt(_.getCSS(el,'border-'+borderSide+'-width'),10),
-            color: _.getCSS(el,'border-'+borderSide+'-color')
+            width: _.getCSS(el,'border'+borderSide+'Width', true),
+            color: _.getCSS(el,'border'+borderSide+'Color')
         });
     });
             
     return borders;
             
-}
+};
 
-html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
+html2canvas.prototype.drawBorders = function(el, ctx, bounds, clip){
     
     
     var x = bounds.left;

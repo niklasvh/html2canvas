@@ -3,10 +3,10 @@
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
     // TODO add support for multi background-images
-    var background_image = this.getCSS(el,"background-image").split(",")[0];
-    var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
+    var background_image = this.getCSS(el,"backgroundImage").split(",")[0];
+    var background_repeat = this.getCSS(el,"backgroundRepeat").split(",")[0];
         
-    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
+    if (typeof background_image != "undefined" && !(/^(1|none)$/).test(background_image) && !(/^(-webkit|-moz|linear-gradient|-o-)/).test(background_image)){
          
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
@@ -139,7 +139,7 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
         }
 					
     }
-}
+};
    
 
 
@@ -158,7 +158,7 @@ html2canvas.prototype.backgroundImageUrl = function(src){
     
     
     return src;            
-}
+};
     
     
 /*
@@ -168,20 +168,15 @@ html2canvas.prototype.backgroundImageUrl = function(src){
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
     // TODO add support for multi image backgrounds
     
-    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0";
-   // var bgpos = $(el).css("backgroundPosition") || "0 0";
-    var bgposition = bgpos.split(" "),
-    topPos,
-    left,
-    percentage;
+    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0", 
+        bgposition = bgpos.split(" "),
+        topPos,
+        left,
+        percentage;
 
     if (bgposition.length==1){
-        var val = bgposition,
-        bgposition = [];
-        
-        bgposition[0] = val,
-        bgposition[1] = val;
-    }  
+        bgposition = [bgposition, bgposition];
+    }
 
     
 
@@ -207,7 +202,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
 
     
     
-    var returnObj = {}
+    var returnObj = {};
     /*
         "top": topPos,
         "left": left
@@ -221,7 +216,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
           
     return returnObj;
          
-}
+};
 
 
 
@@ -247,7 +242,7 @@ html2canvas.prototype.drawbackgroundRepeatY = function(ctx,image,bgp,x,y,w,h){
         bgy = Math.floor(bgy+image.height); 
                               
     } 
-}
+};
     
 html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
                            
@@ -272,7 +267,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
 
                                 
     } 
-}
+};
     
 html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height,elx,ely){
     var sourceX = 0,
@@ -297,4 +292,4 @@ html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height
         width-sourceX, // destination width
         height-sourceY // destination height
         );
-}
+};

@@ -263,7 +263,7 @@ html2canvas.prototype.canvasRenderStorage = function(queue,parentctx){
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
-    var _ = this;
+    var _ = this, documentDimension = _.getDocumentDimension();
     this.sortZ(this.zStack);
     queue = this.queue;
     //console.log(queue);
@@ -272,10 +272,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     
     
-        
-  
-    this.canvas.width = Math.max($(document).width(),this.opts.canvasWidth);   
-    this.canvas.height = Math.max($(document).height(),this.opts.canvasHeight);
+
+    this.canvas.width = Math.max(documentDimension[0],this.opts.canvasWidth);   
+    this.canvas.height = Math.max(documentDimension[1],this.opts.canvasHeight);
     
     this.ctx = this.canvas.getContext("2d");
     

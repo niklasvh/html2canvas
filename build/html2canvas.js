@@ -5,7 +5,6 @@
  * 
  * Released under MIT License
  */
-
 /*
  * The MIT License
 
@@ -27,7 +26,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 /**
  * Creates a render of the element el
  * @constructor
@@ -161,12 +159,12 @@ html2canvas.prototype.init = function(){
     });
     this.images.splice(0,1);  
     //  console.log(this.images);   
-    if (this.images.length == 0){
+    if (this.images.length === 0){
         this.start();
     }  
         
         
-}
+};
 
 /*
  * Check whether all assets have been loaded and start traversing the DOM
@@ -174,20 +172,21 @@ html2canvas.prototype.init = function(){
  
 html2canvas.prototype.start = function(){
     //     console.log(this.images);
-    if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
-        
-        this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-          this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-           document.getElementsByTagName('body')[0].style.overflow = "hidden";
-        var rootStack = new this.storageContext($(document).width(),$(document).height());  
-        rootStack.opacity = this.getCSS(this.element,"opacity");
-        var stack = this.newElement(this.element,rootStack);
-        
-        
-        this.parseElement(this.element,stack);  
+    var _ = this, documentDimension, rootStack, stack;
+    if (_.images.length === 0 || _.imagesLoaded == _.images.length/2){    
+
+        _.log('Finished loading '+_.imagesLoaded+' images, Started parsing');
+        _.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+        documentDimension = _.getDocumentDimension();
+        document.getElementsByTagName('body')[0].style.overflow = "hidden";
+        rootStack = new _.storageContext(documentDimension[0], documentDimension[1]);
+        rootStack.opacity = _.getCSS(_.element, "opacity");
+        stack = _.newElement(_.element, rootStack);
+
+        _.parseElement(_.element, stack);
     }
         
-}
+};
 
 
 html2canvas.prototype.stackingContext = function(width,height){
@@ -222,7 +221,7 @@ html2canvas.prototype.stackingContext = function(width,height){
     
     return this.ctx;
           
-}
+};
 
 html2canvas.prototype.storageContext = function(width,height){
     this.storage = [];
@@ -260,11 +259,11 @@ html2canvas.prototype.storageContext = function(width,height){
             name:"fillText",
             arguments:[currentText,x,y]            
         });      
-    }  
+    }; 
     
     return this;
     
-}
+};
 
 
 /*
@@ -286,18 +285,17 @@ html2canvas.prototype.finish = function(){
             
     }*/
     this.opts.ready(this);          
-}
-
+};
 
 
     
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
     // TODO add support for multi background-images
-    var background_image = this.getCSS(el,"background-image").split(",")[0];
-    var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
+    var background_image = this.getCSS(el,"backgroundImage").split(",")[0];
+    var background_repeat = this.getCSS(el,"backgroundRepeat").split(",")[0];
         
-    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
+    if (typeof background_image != "undefined" && !(/^(1|none)$/).test(background_image) && !(/^(-webkit|-moz|linear-gradient|-o-)/).test(background_image)){
          
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
@@ -430,7 +428,7 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
         }
 					
     }
-}
+};
    
 
 
@@ -449,7 +447,7 @@ html2canvas.prototype.backgroundImageUrl = function(src){
     
     
     return src;            
-}
+};
     
     
 /*
@@ -459,20 +457,15 @@ html2canvas.prototype.backgroundImageUrl = function(src){
 html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
     // TODO add support for multi image backgrounds
     
-    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0";
-   // var bgpos = $(el).css("backgroundPosition") || "0 0";
-    var bgposition = bgpos.split(" "),
-    topPos,
-    left,
-    percentage;
+    var bgpos = this.getCSS(el,"backgroundPosition").split(",")[0] || "0 0", 
+        bgposition = bgpos.split(" "),
+        topPos,
+        left,
+        percentage;
 
     if (bgposition.length==1){
-        var val = bgposition,
-        bgposition = [];
-        
-        bgposition[0] = val,
-        bgposition[1] = val;
-    }  
+        bgposition = [bgposition, bgposition];
+    }
 
     
 
@@ -498,7 +491,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
 
     
     
-    var returnObj = {}
+    var returnObj = {};
     /*
         "top": topPos,
         "left": left
@@ -512,7 +505,7 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
           
     return returnObj;
          
-}
+};
 
 
 
@@ -538,7 +531,7 @@ html2canvas.prototype.drawbackgroundRepeatY = function(ctx,image,bgp,x,y,w,h){
         bgy = Math.floor(bgy+image.height); 
                               
     } 
-}
+};
     
 html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
                            
@@ -563,7 +556,7 @@ html2canvas.prototype.drawbackgroundRepeatX = function(ctx,image,bgp,x,y,w,h){
 
                                 
     } 
-}
+};
     
 html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height,elx,ely){
     var sourceX = 0,
@@ -588,7 +581,7 @@ html2canvas.prototype.drawBackgroundRepeat = function(ctx,image,x,y,width,height
         width-sourceX, // destination width
         height-sourceY // destination height
         );
-}
+};
 /*
  * Function to provide border details for an element
  */
@@ -597,18 +590,18 @@ html2canvas.prototype.getBorderData = function(el){
      
     var borders = [];
     var _ = this;
-    this.each(["top","right","bottom","left"],function(i,borderSide){
+    this.each(["Top","Right","Bottom","Left"],function(i,borderSide){
         borders.push({
-            width: parseInt(_.getCSS(el,'border-'+borderSide+'-width'),10),
-            color: _.getCSS(el,'border-'+borderSide+'-color')
+            width: _.getCSS(el,'border'+borderSide+'Width', true),
+            color: _.getCSS(el,'border'+borderSide+'Color')
         });
     });
             
     return borders;
             
-}
+};
 
-html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
+html2canvas.prototype.drawBorders = function(el, ctx, bounds, clip){
     
     
     var x = bounds.left;
@@ -674,7 +667,6 @@ html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
     return borders;
     
 };
-
 html2canvas.prototype.newElement = function(el,parentStack){
 		
     var bounds = this.getBounds(el);    
@@ -685,7 +677,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     var h = bounds.height;   
     var _ = this,
     image;       
-    var bgcolor = this.getCSS(el,"background-color");
+    var bgcolor = this.getCSS(el,"backgroundColor");
 
     var cssPosition = this.getCSS(el,"position");
     parentStack = parentStack || {};
@@ -710,13 +702,15 @@ html2canvas.prototype.newElement = function(el,parentStack){
  
     // TODO correct overflow for absolute content residing under a static position
     if (parentStack.clip){
-        stack.clip = $.extend({}, parentStack.clip);
-        //stack.clip = parentStack.clip;
+        stack.clip = {};
+        for (var key in parentStack.clip) {
+            stack.clip[key] = parentStack.clip[key];
+        }
         stack.clip.height = stack.clip.height - parentStack.borders[2].width;
     } 
  
  
-    if (this.opts.useOverflow && /(hidden|scroll|auto)/.test(this.getCSS(el,"overflow")) && !/(BODY)/i.test(el.nodeName)){
+    if (this.opts.useOverflow && (/(hidden|scroll|auto)/).test(this.getCSS(el,"overflow")) && !(/(BODY)/i).test(el.nodeName)){
         if (stack.clip){
             stack.clip = this.clipBounds(stack.clip,bounds);
         }else{
@@ -739,7 +733,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     // draw element borders
-    var borders = this.drawBorders(el, ctx, bounds);
+    var borders = this.drawBorders(el, ctx, bounds, false/*clip*/);
     stack.borders = borders;
     
     // let's modify clip area for child elements, so borders dont get overwritten
@@ -804,10 +798,10 @@ html2canvas.prototype.newElement = function(el,parentStack){
                     0, //sy
                     image.width, //sw
                     image.height, //sh
-                    x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
-                    y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
-                    bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                    bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
+                    x+_.getCSS(el,'paddingLeft', true) + borders[3].width, //dx
+                    y+_.getCSS(el,'paddingTop', true) + borders[0].width, // dy
+                    bounds.width - (borders[1].width + borders[3].width + _.getCSS(el,'paddingLeft', true) + _.getCSS(el,'paddingRight', true)), //dw
+                    bounds.height - (borders[0].width + borders[2].width + _.getCSS(el,'paddingTop', true) + _.getCSS(el,'paddingBottom', true)) //dh       
                     );
            
             }else {
@@ -856,7 +850,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
    return zindex.children[stackLength-1];
 			
 				
-}
+};
 
 
 
@@ -873,7 +867,7 @@ html2canvas.prototype.printText = function(currentText,x,y,ctx){
         ctx.fillText(currentText,x,y);
         this.numDraws++;
     }           
-}
+};
 
 
 // Drawing a rectangle 								
@@ -884,7 +878,7 @@ html2canvas.prototype.newRect = function(ctx,x,y,w,h,bgcolor){
         ctx.fillRect (x, y, w, h);
         this.numDraws++;
     }
-}
+};
 
 html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
     ctx.drawImage(
@@ -900,13 +894,16 @@ html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
         );
     this.numDraws++; 
     
-}
+};
 html2canvas.prototype.renderFormValue = function(el,bounds,stack){
     
     var valueWrap = document.createElement('valuewrap'),
-    _ = this;
+    _ = this,
+    body = document.body,
+    textValue,
+    textNode;
                 
-    this.each(['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],function(i,style){                 
+    _.each(['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],function(i,style){                 
         valueWrap.style[style] = _.getCSS(el,style);
     });
                 
@@ -923,41 +920,39 @@ html2canvas.prototype.renderFormValue = function(el,bounds,stack){
     valueWrap.style.left = bounds.left+"px";
     if (el.nodeName == "SELECT"){
         // TODO increase accuracy of text position
-        var textValue = el.options[el.selectedIndex].text;
+        textValue = el.options[el.selectedIndex].text;
     } else{   
-        var textValue = el.value;
+        textValue = el.value;
         
     }
-    var textNode = document.createTextNode(textValue);
+    textNode = document.createTextNode(textValue);
     
     valueWrap.appendChild(textNode);
-    $('body').append(valueWrap);
-                
-    this.newText(el,textNode,stack);
-                
-    $(valueWrap).remove();
+    body.appendChild(valueWrap);
+    
+    _.newText(el,textNode,stack);
+    
+    body.removeChild(valueWrap);
    
     
-}
+};
 /*
  * Function to find all images from <img> and background-image   
  */            
 html2canvas.prototype.getImages = function(el) {
         
-    var self = this;
+    var _ = this;
     
-    if (!this.ignoreRe.test(el.nodeName)){
-        // TODO remove jQuery dependancy
-        this.each($(el).contents(),function(i,element){    
-            var ignRe = new RegExp("("+this.ignoreElements+")");
-            if (!ignRe.test(element.nodeName)){
-                self.getImages(element);
+    if (!_.ignoreRe.test(el.nodeName)){
+        _.each(el.childNodes,function(i,element){    
+            if (!_.ignoreRe.test(element.nodeName)){
+                _.getImages(element);
             }
-        })
+        });
     }
           
     if (el.nodeType==1 || typeof el.nodeType == "undefined"){
-        var background_image = this.getCSS(el,'background-image');
+        var background_image = this.getCSS(el,'backgroundImage');
            
         if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
             // TODO add multi image background support
@@ -965,7 +960,7 @@ html2canvas.prototype.getImages = function(el) {
             this.preloadImage(src);                    
         }
     }
-}  
+};
 
 
 /*
@@ -981,93 +976,83 @@ html2canvas.prototype.loadImage = function(src){
         return false;
     }
 				
-}
+};
 
 
 
 
         
 html2canvas.prototype.preloadImage = function(src){
+    var _ = this, img;
 
-
-    if (this.getIndex(this.images,src)==-1){
-        if (this.isSameOrigin(src)){
-            this.images.push(src);
+    if (_.getIndex(this.images,src)==-1){
+        if (_.isSameOrigin(src)){
+            _.images.push(src);
             //     console.log('a'+src);
-            var img = new Image();   
-            // TODO remove jQuery dependancy
-            var _ = this;
-            $(img).load(function(){
-                _.imagesLoaded++;               
-                _.start();        
-                
-            });	
+            img = new Image();
+            img.onload = function(){
+                _.imagesLoaded++;
+                _.start();
+            };
             img.onerror = function(){
                 _.images.splice(_.images.indexOf(img.src),2);
-                //  _.imagesLoaded++;
                 _.start();                           
-            }
+            };
             img.src = src; 
-            this.images.push(img);
+            _.images.push(img);
         }else if (this.opts.proxyUrl){
             //    console.log('b'+src);
-            this.images.push(src);
-            var img = new Image();   
-            this.proxyGetImage(src,img);
-            this.images.push(img);
+            _.images.push(src);
+            img = new Image();   
+            _.proxyGetImage(src,img);
+            _.images.push(img);
         }
-    }     
-          
-}
+    }
+
+};
+
+html2canvas.jsonp_counter = 0;
 
 html2canvas.prototype.proxyGetImage = function(url,img){
-    var _ = this;
+    var _ = this, callback_name, script_url = _.opts.proxyUrl;
+
+    url = _.getLinkElement(url).href; // work around for pages with base href="" set
+
+    html2canvas.jsonp_counter += 1;
+    callback_name = 'html2canvas_' + html2canvas.jsonp_counter;
     
-    var link = document.createElement("a");
-    link.href = url;
-    url = link.href; // work around for pages with base href="" set
-
+    if (script_url.indexOf("?") > -1) {
+        script_url += "&";
+    } else {
+        script_url += "?";
+    }
+    script_url += 'url=' + encodeURIComponent(url) + '&callback=' + callback_name;
     
-    // todo remove jQuery dependency and enable xhr2 requests where available (no need for base64 / json)
-    $.ajax({
-        data:{
-            xhr2:false,
-            url:url
-        },
-        url: this.opts.proxyUrl,
-        dataType: "jsonp",
-        success: function(a){
-            
-            if (a.substring(0,6)=="error:"){
-                _.images.splice(_.images.indexOf(url),2);
-                _.start();  
-                _.log('Proxy was unable to load '+url+' '+a);
-            }else{
-                // document.createElement(a);
-                // console.log(img);
-                img.onload = function(){
-                    //   console.log('w'+img.width);
-                    _.imagesLoaded++;               
-                    _.start();   
-               
-                }
-            
-                img.src = a; 
-            }
-
-
-        },
-        error: function(){
-           
+    window[callback_name] = function(a){
+        if (a.substring(0,6)=="error:"){
             _.images.splice(_.images.indexOf(url),2);
-            //  _.imagesLoaded++;
-            _.start();          
+            _.start();  
+            _.log('Proxy was unable to load '+url+' '+a);
+        }else{
+            // document.createElement(a);
+            // console.log(img);
+            img.onload = function(){
+                //   console.log('w'+img.width);
+                _.imagesLoaded++;               
+                _.start();   
+           
+            };
+        
+            img.src = a; 
         }
-        
-        
-    });
+        delete window[callback_name];
+    };
+    var script = document.createElement("script");        
+    script.setAttribute("src",script_url);
+    script.setAttribute("type","text/javascript");                
+    document.body.appendChild(script);
     
-}
+};
 html2canvas.prototype.Renderer = function(queue){
      
     var _ = this;
@@ -1333,7 +1318,7 @@ html2canvas.prototype.canvasRenderStorage = function(queue,parentctx){
 
 
 html2canvas.prototype.canvasRenderer = function(queue){
-    var _ = this;
+    var _ = this, documentDimension = _.getDocumentDimension();
     this.sortZ(this.zStack);
     queue = this.queue;
     //console.log(queue);
@@ -1342,10 +1327,9 @@ html2canvas.prototype.canvasRenderer = function(queue){
     
     
     
-        
-  
-    this.canvas.width = Math.max($(document).width(),this.opts.canvasWidth);   
-    this.canvas.height = Math.max($(document).height(),this.opts.canvasHeight);
+
+    this.canvas.width = Math.max(documentDimension[0],this.opts.canvasWidth);   
+    this.canvas.height = Math.max(documentDimension[1],this.opts.canvasHeight);
     
     this.ctx = this.canvas.getContext("2d");
     
@@ -1419,19 +1403,18 @@ html2canvas.prototype.setContextVariable = function(ctx,variable,value){
 html2canvas.prototype.drawListItem = function(element,stack,elBounds){
     
   
-    var position = this.getCSS(element,"list-style-position",false);
+    var position = this.getCSS(element,"listStylePosition",false);
     
 
     var item = this.getListItem(element),
     x,
     y;
         
-    var type = this.getCSS(element,"list-style-type",false);
+    var type = this.getCSS(element,"listStyleType",false);
     
     if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)){
-        // TODO remove jQuery dependency
-        var currentIndex = $(element).index()+1,
-        text;       
+        var currentIndex = this.getIndex(element.parentNode.childNodes, element)+1,
+        text;
         
         if (type == "decimal"){
             text = currentIndex;
@@ -1464,8 +1447,8 @@ html2canvas.prototype.drawListItem = function(element,stack,elBounds){
              may display it whatever way it feels like. 
             "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
  */
-            this.setFont(stack.ctx,element,true);
-            x = elBounds.left-10;
+            // this.setFont(stack.ctx,element,true);
+            // x = elBounds.left-10;
         }
         
         y = listBounds.bottom;
@@ -1477,7 +1460,7 @@ html2canvas.prototype.drawListItem = function(element,stack,elBounds){
     
     
     
-}
+};
 
 html2canvas.prototype.getListPosition = function(element,val){
     var boundElement = document.createElement("boundelement");
@@ -1500,13 +1483,13 @@ html2canvas.prototype.getListPosition = function(element,val){
     return bounds;
     
     
-}
+};
 
 html2canvas.prototype.getListItem = function(element){
     
 
     
-    }
+};
 
     
 html2canvas.prototype.getListAlpha = function(number){
@@ -1518,14 +1501,14 @@ html2canvas.prototype.getListAlpha = function(number){
     }while((number*26) > 26);
    
     return tmp;  
-}
+};
 
 html2canvas.prototype.getListRoman = function(number){
     var romanArray = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"],
     decimal = [1000,900,500,400,100,90,50,40,10,9,5,4,1],
     roman = "";
 
-    if (number <= 0 || number >= 4000) return;
+    if (number <= 0 || number >= 4000) {return roman;}
     for (var v=0; v<romanArray.length; v++) {
         while (number >= decimal[v]) { 
             number -= decimal[v];
@@ -1536,25 +1519,33 @@ html2canvas.prototype.getListRoman = function(number){
     return roman;
     
     
-}
+};
             
-html2canvas.prototype.newText = function(el,textNode,stack,form){
+html2canvas.prototype.newText = function(el,textNode,stack){
     var ctx = stack.ctx;
-    var family = this.getCSS(el,"font-family");
-    var size = this.getCSS(el,"font-size");
+    var family = this.getCSS(el,"fontFamily");
+    var size = this.getCSS(el,"fontSize");
     var color = this.getCSS(el,"color");
   
 
      
-    var text_decoration = this.getCSS(el,"text-decoration");
-    var text_align = this.getCSS(el,"text-align");  
+    var text_decoration = this.getCSS(el,"textDecoration");
+    var text_align = this.getCSS(el,"textAlign");  
     
     
-    var letter_spacing = this.getCSS(el,"letter-spacing");
+    var letter_spacing = this.getCSS(el,"letterSpacing");
 
     // apply text-transform:ation to the text
-    textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
-    var text = this.trim(textNode.nodeValue);		
+    textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"textTransform"));
+    var text = this.trim(textNode.nodeValue);
+    
+    var metrics;
+    
+    var renderList, renderWords = false;
+    
+    var oldTextNode, newTextNode;
+    
+    var range, bounds = {};
 	
     //text = $.trim(text);
     if (text.length>0){
@@ -1562,18 +1553,13 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             
             
         if (text_decoration!="none"){
-            var metrics = this.fontMetrics(family,size);
-            
+            metrics = this.fontMetrics(family,size);
         }    
         
-        var renderList,
-        renderWords = false;
-        
-        	
-        text_align = text_align.replace(["-webkit-auto"],["auto"])
+        text_align = text_align.replace(["-webkit-auto"],["auto"]);
         
         
-        if (this.opts.letterRendering == false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
+        if (!this.opts.letterRendering && (/^(left|right|justify|auto)$/).test(text_align) && (/^(normal|none)$/).test(letter_spacing)){
             // this.setContextVariable(ctx,"textAlign",text_align);  
             renderWords = true;
             renderList = textNode.nodeValue.split(/(\b| )/);
@@ -1596,7 +1582,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
 
             
          
-        var oldTextNode = textNode;
+        oldTextNode = textNode;
         for(var c=0;c<renderList.length;c++){
             
                         
@@ -1606,26 +1592,25 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             }
                 
             // TODO only do the splitting for non-range prints
-            var newTextNode = oldTextNode.splitText(renderList[c].length);
+            newTextNode = oldTextNode.splitText(renderList[c].length);
            
-            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
+            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length !== 0){
                 
                
            
 
                 if (this.support.rangeBounds){
                     // getBoundingClientRect is supported for ranges
+                    
                     if (document.createRange){
-                        var range = document.createRange();
+                        range = document.createRange();
                         range.selectNode(oldTextNode);
                     }else{
                         // TODO add IE support
-                        var range = document.body.createTextRange();
+                        range = document.body.createTextRange();
                     }
                     if (range.getBoundingClientRect()){
-                        var bounds = range.getBoundingClientRect();
-                    }else{
-                        var bounds = {};
+                        bounds = range.getBoundingClientRect();
                     }
                 }else{
                     // it isn't supported, so let's wrap it inside an element instead and the bounds there
@@ -1636,7 +1621,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement,oldTextNode);
                                     
-                    var bounds = this.getBounds(wrapElement);
+                    bounds = this.getBounds(wrapElement);
     
                     parent.replaceChild(backupText,wrapElement);      
                 }
@@ -1667,26 +1652,22 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             }
             
             oldTextNode = newTextNode;
-                  
-                  
-                  
+
         }
-        
-         
-					
+
     }
-			
-}
+
+};
 
 html2canvas.prototype.setFont = function(ctx,el,align){
     
-    var family = this.getCSS(el,"font-family");
-    var size = this.getCSS(el,"font-size");
+    var family = this.getCSS(el,"fontFamily");
+    var size = this.getCSS(el,"fontSize");
     var color = this.getCSS(el,"color");
   
-    var bold = this.getCSS(el,"font-weight");
-    var font_style = this.getCSS(el,"font-style");
-    var font_variant = this.getCSS(el,"font-variant");
+    var bold = this.getCSS(el,"fontWeight");
+    var font_style = this.getCSS(el,"fontStyle");
+    var font_variant = this.getCSS(el,"fontVariant");
     
     switch(bold){
         case 401:
@@ -1708,7 +1689,7 @@ html2canvas.prototype.setFont = function(ctx,el,align){
         this.setContextVariable(ctx,"textAlign","left");
     }
     
-}
+};
 
 
 /*
@@ -1717,24 +1698,25 @@ html2canvas.prototype.setFont = function(ctx,el,align){
 html2canvas.prototype.fontMetrics = function(font,fontSize){
     
     
-    var findMetrics = this.fontData.indexOf(font+"-"+fontSize);
+    var i, findMetrics = this.getIndex(this.fontData, font+"-"+fontSize);
     
     if (findMetrics>-1){
         return this.fontData[findMetrics+1];
     }
     
     var container = document.createElement('div');
-    document.getElementsByTagName('body')[0].appendChild(container);
+    document.body.appendChild(container);
     
-    // jquery to speed this up, TODO remove jquery dependancy
-    $(container).css({
+    var css = {
         visibility:'hidden',
         fontFamily:font,
         fontSize:fontSize,
-        margin:0,
-        padding:0
-    });
-    
+        margin:'0',
+        padding:'0'
+    };
+    for (i in css) {
+        this.setCSS(container, i, css[i]);
+    }
 
     
     var img = document.createElement('img');
@@ -1744,18 +1726,19 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     img.width = 1;
     img.height = 1;
     
-    $(img).css({
-        margin:0,
-        padding:0
-    });
+    this.setCSS(img, 'margin', '0');
+    this.setCSS(img, 'padding', '0');
     var span = document.createElement('span');
     
-    $(span).css({
+    css = {
         fontFamily:font,
         fontSize:fontSize,
-        margin:0,
-        padding:0
-    });
+        margin:'0',
+        padding:'0'
+    };
+    for (i in css) {
+        this.setCSS(span, i, css[i]);
+    }
     
     
     span.appendChild(document.createTextNode('Hidden Text'));
@@ -1766,8 +1749,8 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     container.removeChild(span);
     container.appendChild(document.createTextNode('Hidden Text'));
     
-    $(container).css('line-height','normal');
-    $(img).css("vertical-align","super");
+    this.setCSS(container, 'lineHeight', 'normal');
+    this.setCSS(img, 'verticalAlign', 'super');
     var middle = (img.offsetTop-container.offsetTop)+1;  
     
     var metricsObj = {
@@ -1780,13 +1763,13 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     this.fontData.push(font+"-"+fontSize);
     this.fontData.push(metricsObj);
     
-    $(container).remove();
+    document.body.removeChild(container);
     
     
     
     return metricsObj;
     
-}
+};
 
 
 
@@ -1800,22 +1783,21 @@ html2canvas.prototype.textTransform = function(text,transform){
         case "lowercase":
             return text.toLowerCase();
             break;
-					
+
         case "capitalize":
             return text.replace( /(^|\s|:|-|\(|\))([a-z])/g , function(m,p1,p2){
                 return p1+p2.toUpperCase();
             } );
             break;
-					
+
         case "uppercase":
             return text.toUpperCase();
             break;
-        default:
-            return text;
-				
+
     }
-        
-}
+    
+    return text;
+};
      
      
      
@@ -1824,7 +1806,7 @@ html2canvas.prototype.textTransform = function(text,transform){
  */
 html2canvas.prototype.trim = function(text) {
     return text.replace(/^\s*/, "").replace(/\s*$/, "");
-}
+};
  
     
 html2canvas.prototype.parseElement = function(element,stack){
@@ -1851,7 +1833,6 @@ html2canvas.prototype.parsing = function(el,stack){
         var ctx = stack.ctx;
       
         if (!this.ignoreRe.test(el.nodeName)){
-            // TODO remove jQuery dependancy	
             this.each(this.contentsInZ(el),function(cid,node){
 					
                 if (node.nodeType==1){
@@ -1871,6 +1852,21 @@ html2canvas.prototype.parsing = function(el,stack){
 // }
 }
     
+/*
+ * simple feature detection
+ * copied over the relevant parts from jQuery.
+ */
+html2canvas.support = (function(){
+    var support = {}, div = document.createElement( "div" );
+    
+    // Figure out if the W3C box model works as expected
+    div.style.width = div.style.paddingLeft = "1px";
+
+    support.boxModel = div.offsetWidth === 2;
+    
+    return support;
+})();
+
 
 // Simple logger
 html2canvas.prototype.log = function(a){    
@@ -1879,10 +1875,10 @@ html2canvas.prototype.log = function(a){
         this.opts.logger(a);
 
     }
-}                    
+}   ;                 
 
 html2canvas.prototype.withinBounds = function(src,dst){
-    if (!src) return true;
+    if (!src) {return true;}
     // return true; 
     return (
         (src.left <= dst.left || dst.left+dst.width < src.left) &&
@@ -1890,7 +1886,7 @@ html2canvas.prototype.withinBounds = function(src,dst){
         );
  
     
-}
+};
 
 
 html2canvas.prototype.clipBounds = function(src,dst){
@@ -1908,12 +1904,12 @@ html2canvas.prototype.clipBounds = function(src,dst){
         height:y2-y
     };
  
-}
+};
 
 
 /**
  * Function to provide bounds for element
- * @return {Bounds} object with position and dimension information
+ * @return {Object} Bounds object with position and dimension information
  */
 html2canvas.prototype.getBounds = function(el){
         
@@ -1921,44 +1917,42 @@ html2canvas.prototype.getBounds = function(el){
         
     if (el.getBoundingClientRect){	
         var clientRect = el.getBoundingClientRect();	
-        var bounds = {};
         // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
         // TODO add scroll position to bounds, so no scrolling of window necessary
-        bounds.top = clientRect.top;
-        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
-        bounds.left = clientRect.left;
-        bounds.width = clientRect.width;
-        bounds.height = clientRect.height;
+        return {
+            top: clientRect.top,
+            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
+            left: clientRect.left,
+            width: clientRect.width,
+            height: clientRect.height
+        };
         
-        
-        
-        return bounds;
-    }else{
-            
-        // TODO remove jQuery dependancy
-        var p = $(el).offset();       
-          
-        return {               
-            left: p.left + this.getCSS(el,"border-left-width",true),
-            top: p.top + this.getCSS(el,"border-top-width",true),
-            width:$(el).innerWidth(),
-            height:$(el).innerHeight()                
-        }
+    } else {
 
-    }           
-}
-    
-     
-     
+        var p = this.offset(el);
+
+        return {               
+            left: p.left + this.getCSS(el, "borderLeftWidth", true),
+            top: p.top + this.getCSS(el, "borderTopWidth", true),
+            width: this.inner('width', el),
+            height: this.inner('height', el)
+        };
+
+    }
+};
+
+
+
+
 /*
  * Function for looping through array
  */
 html2canvas.prototype.each = function(arrayLoop,callbackFunc){
     callbackFunc = callbackFunc || function(){};
     for (var i=0;i<arrayLoop.length;i++){       
-        if (callbackFunc(i,arrayLoop[i]) === false) return;
+        if (callbackFunc(i,arrayLoop[i]) === false) {return;}
     }
-}
+};
 
 
 /*
@@ -1968,13 +1962,11 @@ html2canvas.prototype.each = function(arrayLoop,callbackFunc){
 
 html2canvas.prototype.contentsInZ = function(el){
     
-    // TODO remove jQuery dependency
-    
-    var contents = $(el).contents();
+    var contents = el.childNodes;
     
     return contents;
  
-}
+};
 
     
 /*
@@ -1983,7 +1975,7 @@ html2canvas.prototype.contentsInZ = function(el){
 html2canvas.prototype.getAttr = function(el,attribute){
     return el.getAttribute(attribute);
 //return $(el).attr(attribute);
-}
+};
 
 /*
  * Function to extend object
@@ -1993,7 +1985,7 @@ html2canvas.prototype.extendObj = function(options,defaults){
         defaults[key] = options[key];
     }
     return defaults;           
-}
+};
 
 /*
  *todo remove this function
@@ -2008,9 +2000,9 @@ html2canvas.prototype.zContext = function(zindex){
     return {
         zindex: zindex,
         children: []
-    }
+    };
     
-}
+};
 
 html2canvas.prototype.setZ = function(zindex,position,parentZ,parentNode){
     // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
@@ -2030,7 +2022,7 @@ html2canvas.prototype.setZ = function(zindex,position,parentZ,parentNode){
         return parentZ;
     }
     
-}
+};
 
 html2canvas.prototype.sortZ = function(zStack){
     var subStacks = [];
@@ -2054,8 +2046,8 @@ html2canvas.prototype.sortZ = function(zStack){
 
 
     stackValues.sort(function(a,b){
-        return a - b
-        });
+        return a - b;
+    });
     
     this.each(stackValues, function(i,zValue){
         for (var s = 0;s<=subStacks.length;s++){
@@ -2070,7 +2062,7 @@ html2canvas.prototype.sortZ = function(zStack){
     });
  
     
-}
+};
 
 /*
  *todo remove this function
@@ -2118,42 +2110,172 @@ html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
     
 html2canvas.prototype.getContents = function(el){
     return (el.nodeName ==  "iframe" ) ?
-    el.contentDocument || el.contentWindow.document :
-    el.childNodes;
-}
+      el.contentDocument || el.contentWindow.document :
+      el.childNodes;
+};
 
     
 /*
  * Function for fetching the css attribute
- * TODO remove jQuery dependancy
+ * The attribute parameter _must_ be in camelCase, not in the css style with dashes.
  */
-html2canvas.prototype.getCSS = function(el,attribute,intOnly){
-    if (intOnly){
-        return parseInt($(el).css(attribute),10); 
-    }else{
-        return $(el).css(attribute);
-    }
-}
-
-
-html2canvas.prototype.getIndex = function(array,src){
-    
-    if (array.indexOf){
-        return array.indexOf(src);
-    }else{
-        for(var i = 0; i < array.length; i++){
-            if(this[i] == src) return i;
+html2canvas.prototype.getCSS = (function(){
+  if ("jQuery" in window) { 
+    return function(el,attribute,intOnly){
+        var val = jQuery(el).css(attribute);
+        if (intOnly){
+            return parseInt(val, 10); 
+        } else {
+            return val;
         }
-        return -1;
-    }
-    
-}
+    };
+  } else {
+    return function(el,attribute,intOnly){
+        var val;
+        // TODO: make this work
+        if (el.currentStyle) {
+            val = el.currentStyle[attribute];
+        } else if (window.getComputedStyle) {
+            val = document.defaultView.getComputedStyle(el,null).getPropertyValue(attribute);
+        }
+        if (intOnly){
+            return parseInt(val, 10); 
+        } else {
+            return val;
+        }
+    };
+  }
+})();
 
+/*
+ * Function for fetching the css attribute
+ */
+html2canvas.prototype.setCSS = function(el, attribute, value){
+    el.style[attribute] = value;
+};
+
+/* 
+ * Get inner width/height of element
+ */
+html2canvas.prototype.inner = function(el, type){
+    return el && el.style ?
+        parseFloat( jQuery.css( el, type, "padding" ) ) :
+        null; // TODO remove jQuery dependency
+};
+
+html2canvas.prototype.getDocumentDimension = function() {
+  var d = jQuery(document);
+  return [d.width(), d.height()]; // TODO remove jQuery dependency
+};
+
+/*
+ * checks if element a contains element b
+ */
+html2canvas.prototype.contains = (function(){
+  if ( document.documentElement.contains ) {
+      return function( a, b ) {
+          return a !== b && (a.contains ? a.contains(b) : true);
+      };
+  } else if ( document.documentElement.compareDocumentPosition ) {
+      return function( a, b ) {
+          return !!(a.compareDocumentPosition(b) & 16);
+      };
+  } else {
+      return function() {
+          return false;
+      };
+  }
+})();
+
+
+/*
+ * gets the corresponding window element for the dom node
+ */
+html2canvas.prototype.getWindow = function( elem ) {
+    return (elem && typeof elem === "object" && "setInterval" in elem)/* jQuery's isWindow */ ?
+        elem :
+        elem.nodeType === 9 ?
+        elem.defaultView || elem.parentWindow :
+        false;
+};
+
+/*
+ * returns position of element in page
+ */
+html2canvas.prototype.offset = (function(){
+    if ("jQuery" in window) {
+        return function(elem){
+            return jQuery(elem).offset();
+        };
+    } else if ( "getBoundingClientRect" in document.documentElement ) {
+        return function(elem) {
+            var box;
+
+            if ( !elem || !elem.ownerDocument ) {
+                return null;
+            }
+
+            if ( elem === elem.ownerDocument.body ) {
+                return jQuery.offset.bodyOffset( elem ); // TODO: remove jQuery dependency
+            }
+
+            try {
+                box = elem.getBoundingClientRect();
+            } catch(e) {}
+
+            var doc = elem.ownerDocument,
+            docElem = doc.documentElement;
+
+            // Make sure we're not dealing with a disconnected DOM node
+            if ( !box || !this.contains( docElem, elem ) ) {
+                return box ? { top: box.top, left: box.left } : { top: 0, left: 0 };
+            }
+
+            var body = doc.body,
+            win = this.getWindow(doc),
+            clientTop  = docElem.clientTop  || body.clientTop  || 0,
+            clientLeft = docElem.clientLeft || body.clientLeft || 0,
+            scrollTop  = win.pageYOffset || html2canvas.support.boxModel && docElem.scrollTop  || body.scrollTop,
+            scrollLeft = win.pageXOffset || html2canvas.support.boxModel && docElem.scrollLeft || body.scrollLeft,
+            top  = box.top  + scrollTop  - clientTop,
+            left = box.left + scrollLeft - clientLeft;
+
+            return { top: top, left: left };
+        };
+
+    } else {
+        // TODO: implement for old browsers
+        return function() {
+            return null;
+        };
+    }
+})();
+
+
+html2canvas.prototype.getIndex = (function(){
+    var indexOf = Array.prototype.indexOf;
+    if (indexOf){
+        return function(array, src){ return indexOf.call(array, src); };
+    } else {
+        return function(array, src){
+            for(var i = 0; i < array.length; i+=1){
+                if(array[i] == src) {return i;}
+            }
+            return -1;
+        };
+    }
+})();
+
+html2canvas.prototype.getLinkElement = function(url) {
+    var _ = this;
+    if (!_.tempA) {
+        _.tempA = document.createElement("a");
+    }
+    _.tempA.href = url;
+    return _.tempA;
+};
 
 html2canvas.prototype.isSameOrigin = function(url){
-    var link = document.createElement("a");
-    link.href = url;
-
+    var link = this.getLinkElement(url);
     return ((link.protocol + link.host) == this.pageOrigin);
-}
-
+};

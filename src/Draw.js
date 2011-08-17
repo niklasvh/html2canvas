@@ -8,7 +8,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     var h = bounds.height;   
     var _ = this,
     image;       
-    var bgcolor = this.getCSS(el,"background-color");
+    var bgcolor = this.getCSS(el,"backgroundColor");
 
     var cssPosition = this.getCSS(el,"position");
     parentStack = parentStack || {};
@@ -33,13 +33,15 @@ html2canvas.prototype.newElement = function(el,parentStack){
  
     // TODO correct overflow for absolute content residing under a static position
     if (parentStack.clip){
-        stack.clip = $.extend({}, parentStack.clip);
-        //stack.clip = parentStack.clip;
+        stack.clip = {};
+        for (var key in parentStack.clip) {
+            stack.clip[key] = parentStack.clip[key];
+        }
         stack.clip.height = stack.clip.height - parentStack.borders[2].width;
     } 
  
  
-    if (this.opts.useOverflow && /(hidden|scroll|auto)/.test(this.getCSS(el,"overflow")) && !/(BODY)/i.test(el.nodeName)){
+    if (this.opts.useOverflow && (/(hidden|scroll|auto)/).test(this.getCSS(el,"overflow")) && !(/(BODY)/i).test(el.nodeName)){
         if (stack.clip){
             stack.clip = this.clipBounds(stack.clip,bounds);
         }else{
@@ -62,7 +64,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
     this.setContextVariable(ctx,"globalAlpha",stack.opacity);  
 
     // draw element borders
-    var borders = this.drawBorders(el, ctx, bounds);
+    var borders = this.drawBorders(el, ctx, bounds, false/*clip*/);
     stack.borders = borders;
     
     // let's modify clip area for child elements, so borders dont get overwritten
@@ -127,10 +129,10 @@ html2canvas.prototype.newElement = function(el,parentStack){
                     0, //sy
                     image.width, //sw
                     image.height, //sh
-                    x+parseInt(_.getCSS(el,'padding-left'),10) + borders[3].width, //dx
-                    y+parseInt(_.getCSS(el,'padding-top'),10) + borders[0].width, // dy
-                    bounds.width - (borders[1].width + borders[3].width + parseInt(_.getCSS(el,'padding-left'),10) + parseInt(_.getCSS(el,'padding-right'),10)), //dw
-                    bounds.height - (borders[0].width + borders[2].width + parseInt(_.getCSS(el,'padding-top'),10) + parseInt(_.getCSS(el,'padding-bottom'),10)) //dh       
+                    x+_.getCSS(el,'paddingLeft', true) + borders[3].width, //dx
+                    y+_.getCSS(el,'paddingTop', true) + borders[0].width, // dy
+                    bounds.width - (borders[1].width + borders[3].width + _.getCSS(el,'paddingLeft', true) + _.getCSS(el,'paddingRight', true)), //dw
+                    bounds.height - (borders[0].width + borders[2].width + _.getCSS(el,'paddingTop', true) + _.getCSS(el,'paddingBottom', true)) //dh       
                     );
            
             }else {
@@ -179,7 +181,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
    return zindex.children[stackLength-1];
 			
 				
-}
+};
 
 
 
@@ -196,7 +198,7 @@ html2canvas.prototype.printText = function(currentText,x,y,ctx){
         ctx.fillText(currentText,x,y);
         this.numDraws++;
     }           
-}
+};
 
 
 // Drawing a rectangle 								
@@ -207,7 +209,7 @@ html2canvas.prototype.newRect = function(ctx,x,y,w,h,bgcolor){
         ctx.fillRect (x, y, w, h);
         this.numDraws++;
     }
-}
+};
 
 html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
     ctx.drawImage(
@@ -223,4 +225,4 @@ html2canvas.prototype.drawImage = function(ctx,image,sx,sy,sw,sh,dx,dy,dw,dh){
         );
     this.numDraws++; 
     
-}
+};

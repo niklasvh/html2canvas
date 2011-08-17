@@ -1,19 +1,18 @@
 html2canvas.prototype.drawListItem = function(element,stack,elBounds){
     
   
-    var position = this.getCSS(element,"list-style-position",false);
+    var position = this.getCSS(element,"listStylePosition",false);
     
 
     var item = this.getListItem(element),
     x,
     y;
         
-    var type = this.getCSS(element,"list-style-type",false);
+    var type = this.getCSS(element,"listStyleType",false);
     
     if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)){
-        // TODO remove jQuery dependency
-        var currentIndex = $(element).index()+1,
-        text;       
+        var currentIndex = this.getIndex(element.parentNode.childNodes, element)+1,
+        text;
         
         if (type == "decimal"){
             text = currentIndex;
@@ -46,8 +45,8 @@ html2canvas.prototype.drawListItem = function(element,stack,elBounds){
              may display it whatever way it feels like. 
             "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
  */
-            this.setFont(stack.ctx,element,true);
-            x = elBounds.left-10;
+            // this.setFont(stack.ctx,element,true);
+            // x = elBounds.left-10;
         }
         
         y = listBounds.bottom;
@@ -59,7 +58,7 @@ html2canvas.prototype.drawListItem = function(element,stack,elBounds){
     
     
     
-}
+};
 
 html2canvas.prototype.getListPosition = function(element,val){
     var boundElement = document.createElement("boundelement");
@@ -82,13 +81,13 @@ html2canvas.prototype.getListPosition = function(element,val){
     return bounds;
     
     
-}
+};
 
 html2canvas.prototype.getListItem = function(element){
     
 
     
-    }
+};
 
     
 html2canvas.prototype.getListAlpha = function(number){
@@ -100,14 +99,14 @@ html2canvas.prototype.getListAlpha = function(number){
     }while((number*26) > 26);
    
     return tmp;  
-}
+};
 
 html2canvas.prototype.getListRoman = function(number){
     var romanArray = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"],
     decimal = [1000,900,500,400,100,90,50,40,10,9,5,4,1],
     roman = "";
 
-    if (number <= 0 || number >= 4000) return;
+    if (number <= 0 || number >= 4000) {return roman;}
     for (var v=0; v<romanArray.length; v++) {
         while (number >= decimal[v]) { 
             number -= decimal[v];
@@ -118,4 +117,4 @@ html2canvas.prototype.getListRoman = function(number){
     return roman;
     
     
-}
+};

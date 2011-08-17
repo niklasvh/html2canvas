@@ -1,21 +1,29 @@
             
-html2canvas.prototype.newText = function(el,textNode,stack,form){
+html2canvas.prototype.newText = function(el,textNode,stack){
     var ctx = stack.ctx;
-    var family = this.getCSS(el,"font-family");
-    var size = this.getCSS(el,"font-size");
+    var family = this.getCSS(el,"fontFamily");
+    var size = this.getCSS(el,"fontSize");
     var color = this.getCSS(el,"color");
   
 
      
-    var text_decoration = this.getCSS(el,"text-decoration");
-    var text_align = this.getCSS(el,"text-align");  
+    var text_decoration = this.getCSS(el,"textDecoration");
+    var text_align = this.getCSS(el,"textAlign");  
     
     
-    var letter_spacing = this.getCSS(el,"letter-spacing");
+    var letter_spacing = this.getCSS(el,"letterSpacing");
 
     // apply text-transform:ation to the text
-    textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"text-transform"));
-    var text = this.trim(textNode.nodeValue);		
+    textNode.nodeValue = this.textTransform(textNode.nodeValue,this.getCSS(el,"textTransform"));
+    var text = this.trim(textNode.nodeValue);
+    
+    var metrics;
+    
+    var renderList, renderWords = false;
+    
+    var oldTextNode, newTextNode;
+    
+    var range, bounds = {};
 	
     //text = $.trim(text);
     if (text.length>0){
@@ -23,18 +31,13 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             
             
         if (text_decoration!="none"){
-            var metrics = this.fontMetrics(family,size);
-            
+            metrics = this.fontMetrics(family,size);
         }    
         
-        var renderList,
-        renderWords = false;
-        
-        	
-        text_align = text_align.replace(["-webkit-auto"],["auto"])
+        text_align = text_align.replace(["-webkit-auto"],["auto"]);
         
         
-        if (this.opts.letterRendering == false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
+        if (!this.opts.letterRendering && (/^(left|right|justify|auto)$/).test(text_align) && (/^(normal|none)$/).test(letter_spacing)){
             // this.setContextVariable(ctx,"textAlign",text_align);  
             renderWords = true;
             renderList = textNode.nodeValue.split(/(\b| )/);
@@ -57,7 +60,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
 
             
          
-        var oldTextNode = textNode;
+        oldTextNode = textNode;
         for(var c=0;c<renderList.length;c++){
             
                         
@@ -67,26 +70,25 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             }
                 
             // TODO only do the splitting for non-range prints
-            var newTextNode = oldTextNode.splitText(renderList[c].length);
+            newTextNode = oldTextNode.splitText(renderList[c].length);
            
-            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length != 0){
+            if (text_decoration!="none" || this.trim(oldTextNode.nodeValue).length !== 0){
                 
                
            
 
                 if (this.support.rangeBounds){
                     // getBoundingClientRect is supported for ranges
+                    
                     if (document.createRange){
-                        var range = document.createRange();
+                        range = document.createRange();
                         range.selectNode(oldTextNode);
                     }else{
                         // TODO add IE support
-                        var range = document.body.createTextRange();
+                        range = document.body.createTextRange();
                     }
                     if (range.getBoundingClientRect()){
-                        var bounds = range.getBoundingClientRect();
-                    }else{
-                        var bounds = {};
+                        bounds = range.getBoundingClientRect();
                     }
                 }else{
                     // it isn't supported, so let's wrap it inside an element instead and the bounds there
@@ -97,7 +99,7 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement,oldTextNode);
                                     
-                    var bounds = this.getBounds(wrapElement);
+                    bounds = this.getBounds(wrapElement);
     
                     parent.replaceChild(backupText,wrapElement);      
                 }
@@ -128,26 +130,22 @@ html2canvas.prototype.newText = function(el,textNode,stack,form){
             }
             
             oldTextNode = newTextNode;
-                  
-                  
-                  
+
         }
-        
-         
-					
+
     }
-			
-}
+
+};
 
 html2canvas.prototype.setFont = function(ctx,el,align){
     
-    var family = this.getCSS(el,"font-family");
-    var size = this.getCSS(el,"font-size");
+    var family = this.getCSS(el,"fontFamily");
+    var size = this.getCSS(el,"fontSize");
     var color = this.getCSS(el,"color");
   
-    var bold = this.getCSS(el,"font-weight");
-    var font_style = this.getCSS(el,"font-style");
-    var font_variant = this.getCSS(el,"font-variant");
+    var bold = this.getCSS(el,"fontWeight");
+    var font_style = this.getCSS(el,"fontStyle");
+    var font_variant = this.getCSS(el,"fontVariant");
     
     switch(bold){
         case 401:
@@ -169,7 +167,7 @@ html2canvas.prototype.setFont = function(ctx,el,align){
         this.setContextVariable(ctx,"textAlign","left");
     }
     
-}
+};
 
 
 /*
@@ -178,24 +176,25 @@ html2canvas.prototype.setFont = function(ctx,el,align){
 html2canvas.prototype.fontMetrics = function(font,fontSize){
     
     
-    var findMetrics = this.fontData.indexOf(font+"-"+fontSize);
+    var i, findMetrics = this.getIndex(this.fontData, font+"-"+fontSize);
     
     if (findMetrics>-1){
         return this.fontData[findMetrics+1];
     }
     
     var container = document.createElement('div');
-    document.getElementsByTagName('body')[0].appendChild(container);
+    document.body.appendChild(container);
     
-    // jquery to speed this up, TODO remove jquery dependancy
-    $(container).css({
+    var css = {
         visibility:'hidden',
         fontFamily:font,
         fontSize:fontSize,
-        margin:0,
-        padding:0
-    });
-    
+        margin:'0',
+        padding:'0'
+    };
+    for (i in css) {
+        this.setCSS(container, i, css[i]);
+    }
 
     
     var img = document.createElement('img');
@@ -205,18 +204,19 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     img.width = 1;
     img.height = 1;
     
-    $(img).css({
-        margin:0,
-        padding:0
-    });
+    this.setCSS(img, 'margin', '0');
+    this.setCSS(img, 'padding', '0');
     var span = document.createElement('span');
     
-    $(span).css({
+    css = {
         fontFamily:font,
         fontSize:fontSize,
-        margin:0,
-        padding:0
-    });
+        margin:'0',
+        padding:'0'
+    };
+    for (i in css) {
+        this.setCSS(span, i, css[i]);
+    }
     
     
     span.appendChild(document.createTextNode('Hidden Text'));
@@ -227,8 +227,8 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     container.removeChild(span);
     container.appendChild(document.createTextNode('Hidden Text'));
     
-    $(container).css('line-height','normal');
-    $(img).css("vertical-align","super");
+    this.setCSS(container, 'lineHeight', 'normal');
+    this.setCSS(img, 'verticalAlign', 'super');
     var middle = (img.offsetTop-container.offsetTop)+1;  
     
     var metricsObj = {
@@ -241,13 +241,13 @@ html2canvas.prototype.fontMetrics = function(font,fontSize){
     this.fontData.push(font+"-"+fontSize);
     this.fontData.push(metricsObj);
     
-    $(container).remove();
+    document.body.removeChild(container);
     
     
     
     return metricsObj;
     
-}
+};
 
 
 
@@ -261,22 +261,21 @@ html2canvas.prototype.textTransform = function(text,transform){
         case "lowercase":
             return text.toLowerCase();
             break;
-					
+
         case "capitalize":
             return text.replace( /(^|\s|:|-|\(|\))([a-z])/g , function(m,p1,p2){
                 return p1+p2.toUpperCase();
             } );
             break;
-					
+
         case "uppercase":
             return text.toUpperCase();
             break;
-        default:
-            return text;
-				
+
     }
-        
-}
+    
+    return text;
+};
      
      
      
@@ -285,4 +284,4 @@ html2canvas.prototype.textTransform = function(text,transform){
  */
 html2canvas.prototype.trim = function(text) {
     return text.replace(/^\s*/, "").replace(/\s*$/, "");
-}
+};

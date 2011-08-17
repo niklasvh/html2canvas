@@ -131,12 +131,12 @@ html2canvas.prototype.init = function(){
     });
     this.images.splice(0,1);  
     //  console.log(this.images);   
-    if (this.images.length == 0){
+    if (this.images.length === 0){
         this.start();
     }  
         
         
-}
+};
 
 /*
  * Check whether all assets have been loaded and start traversing the DOM
@@ -144,20 +144,21 @@ html2canvas.prototype.init = function(){
  
 html2canvas.prototype.start = function(){
     //     console.log(this.images);
-    if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
-        
-        this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-          this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-           document.getElementsByTagName('body')[0].style.overflow = "hidden";
-        var rootStack = new this.storageContext($(document).width(),$(document).height());  
-        rootStack.opacity = this.getCSS(this.element,"opacity");
-        var stack = this.newElement(this.element,rootStack);
-        
-        
-        this.parseElement(this.element,stack);  
+    var _ = this, documentDimension, rootStack, stack;
+    if (_.images.length === 0 || _.imagesLoaded == _.images.length/2){    
+
+        _.log('Finished loading '+_.imagesLoaded+' images, Started parsing');
+        _.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+        documentDimension = _.getDocumentDimension();
+        document.getElementsByTagName('body')[0].style.overflow = "hidden";
+        rootStack = new _.storageContext(documentDimension[0], documentDimension[1]);
+        rootStack.opacity = _.getCSS(_.element, "opacity");
+        stack = _.newElement(_.element, rootStack);
+
+        _.parseElement(_.element, stack);
     }
         
-}
+};
 
 
 html2canvas.prototype.stackingContext = function(width,height){
@@ -192,7 +193,7 @@ html2canvas.prototype.stackingContext = function(width,height){
     
     return this.ctx;
           
-}
+};
 
 html2canvas.prototype.storageContext = function(width,height){
     this.storage = [];
@@ -230,11 +231,11 @@ html2canvas.prototype.storageContext = function(width,height){
             name:"fillText",
             arguments:[currentText,x,y]            
         });      
-    }  
+    }; 
     
     return this;
     
-}
+};
 
 
 /*
@@ -256,5 +257,5 @@ html2canvas.prototype.finish = function(){
             
     }*/
     this.opts.ready(this);          
-}
+};
 

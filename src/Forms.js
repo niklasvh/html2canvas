@@ -1,9 +1,12 @@
 html2canvas.prototype.renderFormValue = function(el,bounds,stack){
     
     var valueWrap = document.createElement('valuewrap'),
-    _ = this;
+    _ = this,
+    body = document.body,
+    textValue,
+    textNode;
                 
-    this.each(['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],function(i,style){                 
+    _.each(['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],function(i,style){                 
         valueWrap.style[style] = _.getCSS(el,style);
     });
                 
@@ -20,19 +23,19 @@ html2canvas.prototype.renderFormValue = function(el,bounds,stack){
     valueWrap.style.left = bounds.left+"px";
     if (el.nodeName == "SELECT"){
         // TODO increase accuracy of text position
-        var textValue = el.options[el.selectedIndex].text;
+        textValue = el.options[el.selectedIndex].text;
     } else{   
-        var textValue = el.value;
+        textValue = el.value;
         
     }
-    var textNode = document.createTextNode(textValue);
+    textNode = document.createTextNode(textValue);
     
     valueWrap.appendChild(textNode);
-    $('body').append(valueWrap);
-                
-    this.newText(el,textNode,stack);
-                
-    $(valueWrap).remove();
+    body.appendChild(valueWrap);
+    
+    _.newText(el,textNode,stack);
+    
+    body.removeChild(valueWrap);
    
     
-}
+};

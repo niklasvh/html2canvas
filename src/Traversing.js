@@ -24,7 +24,6 @@ html2canvas.prototype.parsing = function(el,stack){
         var ctx = stack.ctx;
       
         if (!this.ignoreRe.test(el.nodeName)){
-            // TODO remove jQuery dependancy	
             this.each(this.contentsInZ(el),function(cid,node){
 					
                 if (node.nodeType==1){
