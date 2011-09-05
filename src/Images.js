@@ -50,7 +50,15 @@ html2canvas.prototype.preloadImage = function(src){
 
 
     if (this.getIndex(this.images,src)==-1){
-        if (this.isSameOrigin(src)){
+        if(src.substr(0, 5) == 'data:'){
+	    //Base64 src
+	    this.images.push(src);
+	    var img = new Image();
+	    img.src = src;
+	    this.images.push(img);
+	    this.imagesLoaded++;               
+	    this.start(); 	
+        }else if (this.isSameOrigin(src)){
             this.images.push(src);
             //     console.log('a'+src);
             var img = new Image();   
