@@ -23,6 +23,9 @@
         <fileset dir="${src.dir}" includes="Draw.js"/>
         <fileset dir="${src.dir}" includes="Forms.js"/>
         <fileset dir="${src.dir}" includes="Images.js"/>
+        <fileset dir="${src.dir}" includes="Parse.js"/>
+        <fileset dir="${src.dir}" includes="Preload.js"/>
+        <fileset dir="${src.dir}" includes="Queue.js"/>
         <fileset dir="${src.dir}" includes="Renderer.js"/>    
         <fileset dir="${src.dir}" includes="Lists.js"/>   
         <fileset dir="${src.dir}" includes="Text.js"/>
