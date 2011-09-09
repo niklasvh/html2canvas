@@ -1851,31 +1851,13 @@ html2canvas.prototype.parsing = function(el,stack){
     }
 // }
 }
-    
-/*
- * simple feature detection
- * copied over the relevant parts from jQuery.
- */
-html2canvas.support = (function(){
-    var support = {}, div = document.createElement( "div" );
-    
-    // Figure out if the W3C box model works as expected
-    div.style.width = div.style.paddingLeft = "1px";
-
-    support.boxModel = div.offsetWidth === 2;
-    
-    return support;
-})();
-
 
 // Simple logger
 html2canvas.prototype.log = function(a){    
     if (this.opts.logging){
-        
         this.opts.logger(a);
-
     }
-}   ;                 
+};                 
 
 html2canvas.prototype.withinBounds = function(src,dst){
     if (!src) {return true;}
@@ -1883,19 +1865,14 @@ html2canvas.prototype.withinBounds = function(src,dst){
     return (
         (src.left <= dst.left || dst.left+dst.width < src.left) &&
         (src.top <= dst.top || dst.top+dst.height < src.top)
-        );
- 
-    
+    );    
 };
 
-
 html2canvas.prototype.clipBounds = function(src,dst){
- 
-    var x = Math.max(src.left,dst.left);
-    var y = Math.max(src.top,dst.top);
- 
-    var x2 = Math.min((src.left+src.width),(dst.left+dst.width));
-    var y2 = Math.min((src.top+src.height),(dst.top+dst.height));
+    var x = Math.max(src.left,dst.left),
+        y = Math.max(src.top,dst.top),
+        x2 = Math.min((src.left+src.width),(dst.left+dst.width)),
+        y2 = Math.min((src.top+src.height),(dst.top+dst.height));
  
     return {
         left:x,
@@ -1903,20 +1880,15 @@ html2canvas.prototype.clipBounds = function(src,dst){
         width:x2-x,
         height:y2-y
     };
- 
 };
 
-
-/**
+/*
  * Function to provide bounds for element
  * @return {Object} Bounds object with position and dimension information
  */
 html2canvas.prototype.getBounds = function(el){
     return this.offset(el);
 };
-
-
-
 
 /*
  * Function for looping through array
@@ -1928,27 +1900,22 @@ html2canvas.prototype.each = function(arrayLoop,callbackFunc){
     }
 };
 
-
 /*
  * Function to get childNodes of an element in the order they should be rendered (based on z-index)
  * reference http://www.w3.org/TR/CSS21/zindex.html
  */
 
 html2canvas.prototype.contentsInZ = function(el){
-    
     var contents = el.childNodes;
     
     return contents;
- 
 };
-
     
 /*
  * Function for fetching the element attribute
  */  
 html2canvas.prototype.getAttr = function(el,attribute){
     return el.getAttribute(attribute);
-//return $(el).attr(attribute);
 };
 
 /*
@@ -1960,15 +1927,6 @@ html2canvas.prototype.extendObj = function(options,defaults){
     }
     return defaults;           
 };
-
-/*
- *todo remove this function
-html2canvas.prototype.leadingZero = function(num,size){
-    
-    var s = "000000000" + num;
-    return s.substr(s.length-size);    
-}    
-*/
 
 html2canvas.prototype.zContext = function(zindex){
     return {
@@ -2015,9 +1973,6 @@ html2canvas.prototype.sortZ = function(zStack){
         }
         
     });
-        
-
-
 
     stackValues.sort(function(a,b){
         return a - b;
@@ -2034,54 +1989,12 @@ html2canvas.prototype.sortZ = function(zStack){
         }
 
     });
- 
-    
 };
 
-/*
- *todo remove this function
-
-html2canvas.prototype.formatZ = function(zindex,position,parentZ,parentNode){
-    
-    if (!parentZ){
-        parentZ = "0";
-    }
-
-
-    if (position!="static" && parentZ.charAt(0)=="0"){
-        this.needReorder = true;
-        parentZ = "1"+parentZ.slice(1);        
-    }
-
-    if (zindex=="auto"){
-        var parentPosition = this.getCSS(parentNode,"position");
-        if (parentPosition!="static" && typeof parentPosition != "undefined"){
-            zindex = 0;
-        }
-    else{
-            return parentZ;
-        }
-    }
-    
-    var b = this.leadingZero(this.numDraws,9);  
-    
-    
-    var s = this.leadingZero(zindex+1,9);
-
-    // var s = "000000000" + num;
-    return parentZ+""+""+s+""+b;
-    
-    
-    
-}
-    */
-    
-    
     
 /*
  * Get element childNodes
  */
-    
 html2canvas.prototype.getContents = function(el){
     return (el.nodeName ==  "iframe" ) ?
       el.contentDocument || el.contentWindow.document :
