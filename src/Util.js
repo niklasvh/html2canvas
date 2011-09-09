@@ -266,31 +266,18 @@ html2canvas.prototype.getContents = function(el){
  * The attribute parameter _must_ be in camelCase, not in the css style with dashes.
  */
 html2canvas.prototype.getCSS = (function(){
-  if ("jQuery" in window) { 
-    return function(el,attribute,intOnly){
-        var val = jQuery(el).css(attribute);
-        if (intOnly){
-            return parseInt(val, 10); 
-        } else {
-            return val;
-        }
-    };
-  } else {
     return function(el,attribute,intOnly){
         var val;
-        // TODO: make this work
         if (el.currentStyle) {
             val = el.currentStyle[attribute];
         } else if (window.getComputedStyle) {
-            val = document.defaultView.getComputedStyle(el,null).getPropertyValue(attribute);
+            val = document.defaultView.getComputedStyle(el,null)[attribute];
         }
         if (intOnly){
-            return parseInt(val, 10); 
-        } else {
-            return val;
+            val = parseInt(val, 10); 
         }
+        return val;
     };
-  }
 })();
 
 /*
@@ -309,10 +296,21 @@ html2canvas.prototype.inner = function(el, type){
         null; // TODO remove jQuery dependency
 };
 
-html2canvas.prototype.getDocumentDimension = function() {
-  var d = jQuery(document);
-  return [d.width(), d.height()]; // TODO remove jQuery dependency
-};
+html2canvas.prototype.getDocumentDimension = function(){
+    var width, height;
+
+    // gecko/webkit/presto/IE7
+    if (window.innerWidth) {
+        width = window.innerWidth;
+    }
+
+    // gecko/webkit/presto/IE7
+    if (window.innerHeight) {
+        height = window.innerHeight;
+    }
+
+    return [width, height];
+}
 
 /*
  * checks if element a contains element b
