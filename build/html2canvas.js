@@ -1530,7 +1530,7 @@ html2canvas.prototype.newText = function(el,textNode,stack){
 
      
     var text_decoration = this.getCSS(el,"textDecoration");
-    var text_align = this.getCSS(el,"textAlign");  
+    var text_align = this.getCSS(el,"textAlign"); 
     
     
     var letter_spacing = this.getCSS(el,"letterSpacing");
@@ -1912,33 +1912,7 @@ html2canvas.prototype.clipBounds = function(src,dst){
  * @return {Object} Bounds object with position and dimension information
  */
 html2canvas.prototype.getBounds = function(el){
-        
-    window.scroll(0,0);
-        
-    if (el.getBoundingClientRect){	
-        var clientRect = el.getBoundingClientRect();	
-        // need to create new object, as clientrect bounds can't be modified, thanks pufuwozu
-        // TODO add scroll position to bounds, so no scrolling of window necessary
-        return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            left: clientRect.left,
-            width: clientRect.width,
-            height: clientRect.height
-        };
-        
-    } else {
-
-        var p = this.offset(el);
-
-        return {               
-            left: p.left + this.getCSS(el, "borderLeftWidth", true),
-            top: p.top + this.getCSS(el, "borderTopWidth", true),
-            width: this.inner('width', el),
-            height: this.inner('height', el)
-        };
-
-    }
+    return this.offset(el);
 };
 
 
@@ -2120,31 +2094,18 @@ html2canvas.prototype.getContents = function(el){
  * The attribute parameter _must_ be in camelCase, not in the css style with dashes.
  */
 html2canvas.prototype.getCSS = (function(){
-  if ("jQuery" in window) { 
-    return function(el,attribute,intOnly){
-        var val = jQuery(el).css(attribute);
-        if (intOnly){
-            return parseInt(val, 10); 
-        } else {
-            return val;
-        }
-    };
-  } else {
     return function(el,attribute,intOnly){
         var val;
-        // TODO: make this work
         if (el.currentStyle) {
             val = el.currentStyle[attribute];
         } else if (window.getComputedStyle) {
-            val = document.defaultView.getComputedStyle(el,null).getPropertyValue(attribute);
+            val = document.defaultView.getComputedStyle(el,null)[attribute];
         }
         if (intOnly){
-            return parseInt(val, 10); 
-        } else {
-            return val;
+            val = parseInt(val, 10); 
         }
+        return val;
     };
-  }
 })();
 
 /*
@@ -2154,19 +2115,10 @@ html2canvas.prototype.setCSS = function(el, attribute, value){
     el.style[attribute] = value;
 };
 
-/* 
- * Get inner width/height of element
- */
-html2canvas.prototype.inner = function(el, type){
-    return el && el.style ?
-        parseFloat( jQuery.css( el, type, "padding" ) ) :
-        null; // TODO remove jQuery dependency
-};
-
-html2canvas.prototype.getDocumentDimension = function() {
-  var d = jQuery(document);
-  return [d.width(), d.height()]; // TODO remove jQuery dependency
-};
+html2canvas.prototype.getDocumentDimension = function(){
+    // gecko/webkit/presto/IE7
+    return [window.innerWidth, window.innerHeight];
+}
 
 /*
  * checks if element a contains element b
@@ -2199,58 +2151,115 @@ html2canvas.prototype.getWindow = function( elem ) {
         false;
 };
 
+
+/**
+ * Returns element left offset
+*/
+html2canvas.prototype.getX = function(el) {
+    if (el.offsetWidth === 0) { // IE
+        return parseInt(el.style.left);
+    }
+    var el = args && args.nodeType ? args : el;
+    // if the given element has a parent node
+    if (el.offsetParent) {
+        return el.offsetLeft + this.getX(el.offsetParent);
+    }
+    return !el.offsetLeft && el.style.left > 0 ? el.style.left : el.offsetLeft;
+};
+
+/**
+ * Returns element top offset
+*/
+html2canvas.prototype.getY = function(el) {
+    if (el.offsetWidth === 0) { // IE
+        return parseInt(el.style.top);
+    }
+    var _el = args && args.nodeType ? args : el;
+    // if the given element has a parent node
+    if (_el.offsetParent) {
+        return _el.offsetTop + this.getY(_el.offsetParent);
+    }
+    return !_el.offsetTop && el.style.top > 0 ? el.style.top : _el.offsetTop;
+};
+
+/**
+ * Returns scroll width
+*/
+html2canvas.prototype.getScrollWidth = function() {
+    // gecko/webkit/presto/IE7
+    if (window.pageXOffset) {
+        return window.pageXOffset;
+    }
+    // IE6- standards mode
+    if (document.documentElement.scrollLeft) {
+        return document.documentElement.scrollLeft;
+    }
+    // IE6- quirks mode
+    if (document.body.scrollLeft) {
+        return document.body.scrollLeft;
+    }
+    return 0;
+};
+
+/**
+ * Returns scroll height
+*/
+html2canvas.prototype.getScrollHeight = function() {
+    // gecko/webkit/presto/IE7
+    if (window.pageYOffset) {
+        return window.pageYOffset;
+    }
+    // IE6- standards mode
+    if (document.documentElement.scrollTop) {
+        return document.documentElement.scrollTop;
+    }
+    // IE6- quirks mode
+    if (document.body.scrollTop) {
+        return document.body.scrollTop;
+    }
+    return 0;
+};
+
 /*
  * returns position of element in page
  */
-html2canvas.prototype.offset = (function(){
-    if ("jQuery" in window) {
-        return function(elem){
-            return jQuery(elem).offset();
+html2canvas.prototype.offset = function(elem){
+    if (typeof elem.getBoundingClientRect === "undefined") {
+        var _x = this.getX(), _y = this.getY();
+        _offset = {
+            top    : _y,
+            right  : Math.abs(_x + this.getWidth()),
+            bottom : Math.abs(_y + this.getHeight()),
+            left   : _x
         };
-    } else if ( "getBoundingClientRect" in document.documentElement ) {
-        return function(elem) {
-            var box;
-
-            if ( !elem || !elem.ownerDocument ) {
-                return null;
-            }
-
-            if ( elem === elem.ownerDocument.body ) {
-                return jQuery.offset.bodyOffset( elem ); // TODO: remove jQuery dependency
-            }
-
-            try {
-                box = elem.getBoundingClientRect();
-            } catch(e) {}
-
-            var doc = elem.ownerDocument,
-            docElem = doc.documentElement;
-
-            // Make sure we're not dealing with a disconnected DOM node
-            if ( !box || !this.contains( docElem, elem ) ) {
-                return box ? { top: box.top, left: box.left } : { top: 0, left: 0 };
-            }
-
-            var body = doc.body,
-            win = this.getWindow(doc),
-            clientTop  = docElem.clientTop  || body.clientTop  || 0,
-            clientLeft = docElem.clientLeft || body.clientLeft || 0,
-            scrollTop  = win.pageYOffset || html2canvas.support.boxModel && docElem.scrollTop  || body.scrollTop,
-            scrollLeft = win.pageXOffset || html2canvas.support.boxModel && docElem.scrollLeft || body.scrollLeft,
-            top  = box.top  + scrollTop  - clientTop,
-            left = box.left + scrollLeft - clientLeft;
-
-            return { top: top, left: left };
-        };
-
     } else {
-        // TODO: implement for old browsers
-        return function() {
-            return null;
-        };
-    }
-})();
+        _offset = elem.getBoundingClientRect();
+        var _scrollHeight = this.getScrollHeight(),
+            _scrollWidth  = this.getScrollWidth();
 
+        if(/*@cc_on!@*/false) {
+            if (typeof XDomainRequest !== "function") {
+                _scrollWidth -= 2;
+                _scrollHeight -= 2;
+            }
+        }
+        // getBoundingClientRect properties are read-only
+        _offset = {
+            top : _offset.top + _scrollHeight,
+            right : _offset.right + _scrollWidth,
+            bottom : _offset.bottom + _scrollHeight,
+            left : _offset.left + _scrollWidth
+        };
+        // extended getBoundingClientRect (FF 3.5)
+        if ('width' in _offset) {
+            return _offset;
+        }
+    }
+
+    _offset.width  = Math.abs(_offset.left - _offset.right);
+    _offset.height = Math.abs(_offset.top - _offset.bottom);
+    return _offset;
+};
 
 html2canvas.prototype.getIndex = (function(){
     var indexOf = Array.prototype.indexOf;
