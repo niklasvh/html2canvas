@@ -216,31 +216,63 @@ html2canvas.prototype.getWindow = function( elem ) {
 /**
  * Returns element left offset
 */
-html2canvas.prototype.getX = function(el) {
-    if (el.offsetWidth === 0) { // IE
-        return parseInt(el.style.left);
+html2canvas.prototype.getX = function(elem) {
+    if (elem.offsetWidth === 0) { // IE
+        return parseInt(elem.style.left);
     }
-    var el = args && args.nodeType ? args : el;
     // if the given element has a parent node
-    if (el.offsetParent) {
-        return el.offsetLeft + this.getX(el.offsetParent);
+    if (elem.offsetParent) {
+        return elem.offsetLeft + this.getX(elem.offsetParent);
     }
-    return !el.offsetLeft && el.style.left > 0 ? el.style.left : el.offsetLeft;
+    return !elem.offsetLeft && elem.style.left > 0 ? elem.style.left : elem.offsetLeft;
 };
 
 /**
  * Returns element top offset
 */
-html2canvas.prototype.getY = function(el) {
-    if (el.offsetWidth === 0) { // IE
-        return parseInt(el.style.top);
+html2canvas.prototype.getY = function(elem) {
+    if (elem.offsetWidth === 0) { // IE
+        return parseInt(elem.style.top);
     }
-    var _el = args && args.nodeType ? args : el;
     // if the given element has a parent node
-    if (_el.offsetParent) {
-        return _el.offsetTop + this.getY(_el.offsetParent);
+    if (elem.offsetParent) {
+        return elem.offsetTop + this.getY(elem.offsetParent);
     }
-    return !_el.offsetTop && el.style.top > 0 ? el.style.top : _el.offsetTop;
+    return !elem.offsetTop && elem.style.top > 0 ? elem.style.top : elem.offsetTop;
+};
+
+/**
+ * Returns element width
+*/
+html2canvas.prototype.getWidth = function(elem) {
+    // if the element is an image
+    if (elem.tagName === 'IMG') {
+        return elem.width;
+    }
+
+    // if the element is not hidden
+    if (elem.style.display !== 'none') {
+        return elem.offsetWidth || elem.clientWidth || parseInt(this.getCSS(elem, 'width', true));
+    }
+
+    return 0;
+};
+
+/**
+ * Returns element height
+*/
+html2canvas.prototype.getHeight = function(elem) {
+    // if the element is an image
+    if (elem.tagName === 'IMG') {
+        return elem.height;
+    }
+    
+    // if the element is not hidden
+    if (elem.style.display !== 'none') {
+        return elem.offsetHeight || elem.clientHeight || parseInt(this.getCSS(elem, 'height', true));
+    }
+
+    return 0;
 };
 
 /**
