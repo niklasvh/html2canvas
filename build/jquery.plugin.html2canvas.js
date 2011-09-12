@@ -1,5 +1,5 @@
 /* 
- * html2canvas v0.25 <http://html2canvas.hertzen.com>
+ * html2canvas v0.30 <http://html2canvas.hertzen.com>
  * Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
  * http://www.twitter.com/niklasvh 
  * 
@@ -36,6 +36,52 @@
 (function( $ ){
     $.fn.html2canvas = function(options) {
   
+        var date = new Date();
+        var message,
+        timeoutTimer,
+        timer = date.getTime();
+       
+        var preload = html2canvas.Preload(this[0], {
+            "complete": function(images){
+                
+                var queue = html2canvas.Parse(this[0], images);
+               
+                
+                var canvas = $(html2canvas.Renderer(queue));
+                var finishTime = new Date();
+         
+          
+                canvas.css('position','absolute')
+                .css('left',0).css('top',0);
+                $('body').append(canvas);
+                $(canvas).siblings().toggle();
+                
+           
+                
+                $(window).click(function(){
+                    if (!canvas.is(':visible')){
+                        $(canvas).toggle().siblings().toggle();  
+                        throwMessage("Canvas Render visible");
+                    } else{
+                        $(canvas).siblings().toggle();  
+                        $(canvas).toggle();
+                        throwMessage("Canvas Render hidden");
+                    }
+                    
+          
+                });
+                throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)/1000) + " seconds<br />",4000);
+                  
+            }
+        });
+       
+  
+       
+
+         
+
+      
+        /*
         var date = new Date();
         var message,
         timeoutTimer,
@@ -84,6 +130,7 @@
         
         new html2canvas(this.get(0), object);
         
+         */
         
         function throwMessage(msg,duration){
             
@@ -114,5 +161,6 @@
         }
 
     };
+   
 })( jQuery );
 	
