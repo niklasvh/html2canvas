@@ -28,6 +28,16 @@
  * THE SOFTWARE.
  */
 
+if (typeof Array.prototype.indexOf == "undefined") {
+    Array.prototype.indexOf = function(elem) {
+        if (!this.length) return -1;
+        for (var i = 0, len = this.length; i < len; i++) {
+            if (this[i] == elem) return i
+        }
+        return -1
+    }
+}
+
 /**
  * Creates a render of the element el
  * @constructor
@@ -150,7 +160,7 @@ html2canvas.prototype.init = function(){
     this.images.push('start');
     
     this.getImages(this.element);
-            
+
     this.log('Finding images');
     // console.log(this.element.ownerDocument);
    
@@ -173,8 +183,7 @@ html2canvas.prototype.init = function(){
  */
  
 html2canvas.prototype.start = function(){
-    //     console.log(this.images);
-    if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
+    if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){
         
         this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
           this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
@@ -294,11 +303,13 @@ html2canvas.prototype.finish = function(){
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
                
     // TODO add support for multi background-images
-    var background_image = this.getCSS(el,"background-image").split(",")[0];
+    var background_image = this.getCSS(el,"background-image");
     var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
-        
+    
+    if (!background_image.match(/data:image\/.*;base64,/i))
+        background_image = this.getCSS(el,"background-image").split(",")[0];
+
     if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
-         
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
 					
@@ -439,7 +450,10 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
  */
 
 html2canvas.prototype.backgroundImageUrl = function(src){
-    if (src.substr(0,5)=='url("'){
+    if (src.match(/data:image\/.*;base64,/i)) {
+        return src
+    }
+    if (src.toLowerCase().substr(0,5)=='url("'){
         src = src.substr(5);
         src = src.substr(0,src.length-2);                 
     }else{
@@ -609,7 +623,6 @@ html2canvas.prototype.getBorderData = function(el){
 }
 
 html2canvas.prototype.drawBorders = function(el,ctx, bounds,clip){
-    
     
     var x = bounds.left;
     var y = bounds.top;
@@ -961,7 +974,7 @@ html2canvas.prototype.getImages = function(el) {
            
         if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
             // TODO add multi image background support
-            var src = this.backgroundImageUrl(background_image.split(",")[0]);                    
+            var src = this.backgroundImageUrl(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
             this.preloadImage(src);                    
         }
     }
@@ -991,7 +1004,14 @@ html2canvas.prototype.preloadImage = function(src){
 
 
     if (this.getIndex(this.images,src)==-1){
-        if (this.isSameOrigin(src)){
+        if (src.match(/data:image\/.*;base64,/i)) {
+            var img = new Image();
+            img.src = src.replace(/url\(['"]|['"]\)$/img, '');
+            this.images.push(src);
+            this.images.push(img);
+            this.imagesLoaded++;
+            this.start();
+        } else if(this.isSameOrigin(src)){
             this.images.push(src);
             //     console.log('a'+src);
             var img = new Image();   
