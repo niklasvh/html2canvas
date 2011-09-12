@@ -170,7 +170,7 @@ html2canvas.prototype.init = function(){
         _.preloadImage(_.getAttr(e,'src'));
     });
     this.images.splice(0,1);  
-    //  console.log(this.images);   
+    //  console.log(this.images);
     if (this.images.length == 0){
         this.start();
     }  
@@ -297,7 +297,73 @@ html2canvas.prototype.finish = function(){
     this.opts.ready(this);          
 }
 
+/*
+ * This method draws the gradient on a temporary canvas and inserts it in the images stack as a image so the rest of the code will handle it seamlessly
+ */
+html2canvas.prototype.drawGradient = function(src, bounds) {
+    var canvas = document.createElement('canvas'),
+        tmp, p0 = 0,p1 = 0,p2 = 0,p3 = 0,
+        steps=[];
+    
+    canvas.width = bounds.width;
+    canvas.height = bounds.height;
+    var ctx = canvas.getContext('2d');
 
+    function getColors(input) {
+        var j = -1, color = '';
+        while(j++ < input.length) {
+            var chr = input.charAt(j);
+            if (chr == ')') {
+                color += chr;
+                steps.push(color);
+                color = '';
+                j+=2;
+            } else {
+                color += chr;
+            }
+        }
+    }
+    if (tmp = src.match(/-webkit-linear-gradient\((.*)\)/)) {
+        var position = tmp[1].split(",", 1)[0];
+        getColors(tmp[1].substr(position.length + 2));
+        position = position.split(' ');
+        for (var p = 0; p < position.length; p++) {
+            switch(position[p]) {
+                case 'top': p3 = bounds.height; break;
+                case 'right': p0 = bounds.width; break;
+                case 'bottom': p1 = bounds.height; break;
+                case 'left': p2 = bounds.width; break;
+            }
+        }
+
+    } else if (tmp = src.match(/-webkit-gradient\(linear, (\d+)% (\d+)\%, (\d+)% (\d+)%, from\((.*)\), to\((.*)\)\)/)) {
+        p0 = (tmp[1] * bounds.width) / 100; p1 = (tmp[2] * bounds.height) / 100;
+        p2 = (tmp[3] * bounds.width) / 100; p3 = (tmp[4] * bounds.height) / 100;
+        steps.push(tmp[5]);
+        steps.push(tmp[6]);
+    } else if (tmp = src.match(/-moz-linear-gradient\((\d+)% (\d+)%, (.*)\)/)) {
+        p0 = (tmp[1] * bounds.width) / 100; p1 = (tmp[2] * bounds.width) / 100;
+        p2 = bounds.width - p0; p3 = bounds.height - p1;
+        getColors(tmp[3])
+    } else {
+        return;
+    }
+
+    var lingrad = ctx.createLinearGradient(p0,p1,p2,p3);
+    var increment = 1 / (steps.length - 1);
+    for (var i = 0, len = steps.length; i < len; i++) {
+        lingrad.addColorStop(increment * i, steps[i]);
+    }
+    ctx.fillStyle = lingrad;
+    // draw shapes
+    ctx.fillRect(0, 0, bounds.width,bounds.height);
+    var img = new Image();
+    img.src = canvas.toDataURL();
+    this.images.push(src);
+    this.images.push(img);
+    this.imagesLoaded++;
+    this.start();
+}
 
     
 html2canvas.prototype.drawBackground = function(el,bounds,ctx){
@@ -306,13 +372,13 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
     var background_image = this.getCSS(el,"background-image");
     var background_repeat = this.getCSS(el,"background-repeat").split(",")[0];
     
-    if (!background_image.match(/data:image\/.*;base64,/i))
+    if (!/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)) {
         background_image = this.getCSS(el,"background-image").split(",")[0];
+    }
 
-    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
+    if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false) {
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
-
         var bgp = this.getBackgroundPosition(el,bounds,image),
         bgy;
 
@@ -449,7 +515,7 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
  */
 
 html2canvas.prototype.backgroundImageUrl = function(src){
-    if (src.match(/data:image\/.*;base64,/i)) {
+    if (/data:image\/.*;base64,/i.test(src) || /^(-webkit|-moz|linear-gradient|-o-)/.test(src)) {
         return src
     }
     if (src.toLowerCase().substr(0,5)=='url("'){
@@ -527,9 +593,6 @@ html2canvas.prototype.getBackgroundPosition = function(el,bounds,image){
          
 }
 
-
-
-    
 html2canvas.prototype.drawbackgroundRepeatY = function(ctx,image,bgp,x,y,w,h){
         
     var height,
@@ -800,8 +863,7 @@ html2canvas.prototype.newElement = function(el,parentStack){
             bgbounds.height,
             bgcolor
             );
-           
-        this.drawBackground(el,bgbounds,ctx);     
+        this.drawBackground(el,bgbounds,ctx);
     }
         
     switch(el.nodeName){
@@ -971,10 +1033,14 @@ html2canvas.prototype.getImages = function(el) {
     if (el.nodeType==1 || typeof el.nodeType == "undefined"){
         var background_image = this.getCSS(el,'background-image');
            
-        if (background_image && background_image != "1" && background_image != "none" && background_image.substring(0,7)!="-webkit" && background_image.substring(0,3)!="-o-" && background_image.substring(0,4)!="-moz"){
-            // TODO add multi image background support
-            var src = this.backgroundImageUrl(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
-            this.preloadImage(src);                    
+        if (background_image && background_image != "1" && background_image != "none") {
+            if (background_image.substring(0,7) == "-webkit" || background_image.substring(0,3) == "-o-" || background_image.substring(0,4) == "-moz") {
+                this.drawGradient(background_image, this.getBounds(el))
+            } else {
+                // TODO add multi image background support
+                var src = this.backgroundImageUrl(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
+                this.preloadImage(src);
+            }
         }
     }
 }  
@@ -985,7 +1051,7 @@ html2canvas.prototype.getImages = function(el) {
  */
     
 html2canvas.prototype.loadImage = function(src){	
-        
+
     var imgIndex = this.getIndex(this.images,src);
     if (imgIndex!=-1){
         return this.images[imgIndex+1];
@@ -995,10 +1061,6 @@ html2canvas.prototype.loadImage = function(src){
 				
 }
 
-
-
-
-        
 html2canvas.prototype.preloadImage = function(src){
 
 
