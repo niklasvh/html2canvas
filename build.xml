@@ -18,6 +18,7 @@
         <fileset dir="${src.dir}" includes="LICENSE"/>
         <fileset dir="." includes="LICENSE"/>
         <fileset dir="${src.dir}" includes="Core.js"/>  
+        <fileset dir="${src.dir}" includes="Generate.js"/>
         <fileset dir="${src.dir}" includes="Parse.js"/>
         <fileset dir="${src.dir}" includes="Preload.js"/>
         <fileset dir="${src.dir}" includes="Queue.js"/>

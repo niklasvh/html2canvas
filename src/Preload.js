@@ -89,7 +89,7 @@ html2canvas.Preload = function(element, opts){
         
                 img.src = a; 
             }
-           delete window[callback_name];
+            delete window[callback_name];
         };
 
         count += 1;
@@ -147,7 +147,9 @@ html2canvas.Preload = function(element, opts){
         i,
         contentsLen = contents.length,
         background_image,
-        src;
+        src,
+        img;
+        
         for (i = 0;  i < contentsLen; i+=1 ){
             // var ignRe = new RegExp("("+this.ignoreElements+")");
             // if (!ignRe.test(element.nodeName)){
@@ -160,52 +162,78 @@ html2canvas.Preload = function(element, opts){
         if (el.nodeType === 1 || el.nodeType === undefined){
             
             background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
+            
+            if ( background_image && background_image !== "1" && background_image !== "none" ) {	
+                
+                // TODO add multi image background support
+                
+                if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
+                  
+                    img = html2canvas.Generate.Gradient( background_image, html2canvas.Util.Bounds( el ) );
+
+                    if ( img !== undefined ){                       
+                        images.push(background_image);
+                        images.push(img);
+                        imagesLoaded++;
+                        start();
+                        
+                    }
+                    
+                } else {	
+                    src = html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);		
+                    methods.loadImage(src); 		
+                }
            
+            /*
             if (background_image && background_image !== "1" && background_image !== "none" && background_image.substring(0,7) !== "-webkit" && background_image.substring(0,3)!== "-o-" && background_image.substring(0,4) !== "-moz"){
                 // TODO add multi image background support
                 src = html2canvas.Util.backgroundImage(background_image.split(",")[0]);                    
-                methods.loadImage(src);                    
+                methods.loadImage(src);            */        
             }
         }
     }  
     
     methods = {
-        loadImage: function(src){
+        loadImage: function( src ) {
             var img;
-            if (getIndex(images, src) === -1){
-                if(src.substr(0, 5) === 'data:'){
-                    //Base64 src
-                    images.push(src);
+            if ( getIndex(images, src) === -1 ) {
+                if ( src.match(/data:image\/.*;base64,/i) ) {
+                
+                    //Base64 src                  
                     img = new Image();
-                    img.src = src;
-                    images.push(img);
+                    img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
+                    
+                    images.push( src );
+                    images.push( img );
+                    
                     imagesLoaded+=1;
                     start();
-                }else if (isSameOrigin(src)){
+                    
+                }else if ( isSameOrigin( src ) ) {
             
-                    images.push(src);
+                    images.push( src );
                     img = new Image();   
                     
-                    img.onload = function(){
+                    img.onload = function() {
                         imagesLoaded+=1;               
                         start();        
                 
                     };	
                     
-                    img.onerror = function(){
-                        images.splice(getIndex(images, img.src), 2);
+                    img.onerror = function() {
+                        images.splice( getIndex( images, img.src ), 2 );
                         start();                           
                     };
                     
                     img.src = src; 
                     images.push(img);
             
-                }else if (options.proxy){
+                }else if ( options.proxy ){
                     //    console.log('b'+src);
-                    images.push(src);
+                    images.push( src );
                     img = new Image();   
-                    proxyGetImage(src, img);
-                    images.push(img);
+                    proxyGetImage( src, img );
+                    images.push( img );
                 }
             }     
           
@@ -217,18 +245,18 @@ html2canvas.Preload = function(element, opts){
     // add something to array
     images.push('start');
     
-    getImages(element);
+    getImages( element );
     
     
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
-        methods.loadImage(domImages[i].getAttribute("src"));
+        methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
     
     // remove 'start'
-    images.splice(0,1);  
+    images.splice(0, 1);  
 
-    if (images.length === 0){
+    if ( images.length === 0 ) {
         start();
     }  
     

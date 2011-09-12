@@ -42,7 +42,11 @@ html2canvas.Util = {};
 
 html2canvas.Util.backgroundImage = function (src) {
   
-    if ( src.substr(0, 5) === 'url("' ) {
+    if (/data:image\/.*;base64,/i.test( src ) || /^(-webkit|-moz|linear-gradient|-o-)/.test( src )) {
+        return src;
+    }
+    
+    if (src.toLowerCase().substr( 0, 5 ) === 'url("') {
         src = src.substr( 5 );
         src = src.substr( 0, src.length - 2 );                 
     } else {
@@ -52,6 +56,41 @@ html2canvas.Util.backgroundImage = function (src) {
 
     return src;  
 };
+
+html2canvas.Util.Bounds = function getBounds (el) {
+        
+    window.scroll(0,0);
+    var clientRect,
+    bounds = {};
+        
+    if (el.getBoundingClientRect){	
+        clientRect = el.getBoundingClientRect();
+
+            
+        // TODO add scroll position to bounds, so no scrolling of window necessary
+        bounds.top = clientRect.top;
+        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
+        bounds.left = clientRect.left;
+        bounds.width = clientRect.width;
+        bounds.height = clientRect.height;
+    
+        return bounds;
+            
+    } /*else{
+           
+           
+            p = $(el).offset();       
+          
+            return {               
+                left: p.left + getCSS(el,"borderLeftWidth", true),
+                top: p.top + getCSS(el,"borderTopWidth", true),
+                width:$(el).innerWidth(),
+                height:$(el).innerHeight()                
+            };
+            
+
+        }     */      
+}
 
 html2canvas.Util.getCSS = function (el, attribute) {
     // return jQuery(el).css(attribute);
@@ -75,8 +114,8 @@ html2canvas.Util.getCSS = function (el, attribute) {
     // If we're not dealing with a regular pixel number
     // but a number that has a weird ending, we need to convert it to pixels
     
-   // if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
-        /*
+    // if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+    /*
         // Remember the original values
         left = style.left;
 
@@ -92,8 +131,8 @@ html2canvas.Util.getCSS = function (el, attribute) {
         if ( rsLeft ) {
             el.runtimeStyle.left = rsLeft;
         }*/
-        val = $(el).css(attribute);
-   // }
+    val = $(el).css(attribute);
+    // }
     return val;
     
   
@@ -112,6 +151,115 @@ html2canvas.Util.Extend = function (options, defaults) {
 html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     return $(el).contents();
+}
+html2canvas.Generate = {};
+
+html2canvas.Generate.Gradient = function(src, bounds) {
+    var canvas = document.createElement('canvas'),
+    ctx = canvas.getContext('2d'),
+    tmp, 
+    p0 = 0,
+    p1 = 0,
+    p2 = 0,
+    p3 = 0,
+    steps = [],
+    position,
+    i,
+    len,
+    lingrad,
+    increment,
+    p,
+    img;
+    
+    canvas.width = bounds.width;
+    canvas.height = bounds.height;
+    
+
+    function getColors(input) {
+        var j = -1, 
+        color = '', 
+        chr;
+        
+        while( j++ < input.length ) {
+            chr = input.charAt( j );
+            if (chr === ')') {
+                color += chr;
+                steps.push( color );
+                color = '';
+                j+=2;
+            } else {
+                color += chr;
+            }
+        }
+    }
+    
+    if ( tmp = src.match(/-webkit-linear-gradient\((.*)\)/) ) {
+        
+        position = tmp[1].split( ",", 1 )[0];
+        getColors( tmp[1].substr( position.length + 2 ) );
+        position = position.split(' ');
+        
+        for (p = 0; p < position.length; p+=1) {
+            
+            switch(position[p]) {
+                case 'top':
+                    p3 = bounds.height;
+                    break;
+                    
+                case 'right':
+                    p0 = bounds.width;
+                    break;
+                    
+                case 'bottom':
+                    p1 = bounds.height;
+                    break;
+                    
+                case 'left':
+                    p2 = bounds.width;
+                    break;
+            }
+            
+        }
+
+    } else if (tmp = src.match(/-webkit-gradient\(linear, (\d+)% (\d+)\%, (\d+)% (\d+)%, from\((.*)\), to\((.*)\)\)/)) {
+        
+        p0 = (tmp[1] * bounds.width) / 100;
+        p1 = (tmp[2] * bounds.height) / 100;
+        p2 = (tmp[3] * bounds.width) / 100;
+        p3 = (tmp[4] * bounds.height) / 100;
+        
+        steps.push(tmp[5]);
+        steps.push(tmp[6]);
+        
+    } else if (tmp = src.match(/-moz-linear-gradient\((\d+)% (\d+)%, (.*)\)/)) {
+        
+        p0 = (tmp[1] * bounds.width) / 100;
+        p1 = (tmp[2] * bounds.width) / 100;
+        p2 = bounds.width - p0;
+        p3 = bounds.height - p1;
+        getColors( tmp[3] );
+        
+    } else {
+        return;
+    }
+
+    lingrad = ctx.createLinearGradient( p0, p1, p2, p3 );
+    increment = 1 / (steps.length - 1);
+    
+    for (i = 0, len = steps.length; i < len; i+=1) {
+        lingrad.addColorStop(increment * i, steps[i]);
+    }
+    
+    ctx.fillStyle = lingrad;
+    
+    // draw shapes
+    ctx.fillRect(0, 0, bounds.width,bounds.height);
+
+    img = new Image();
+    img.src = canvas.toDataURL();
+    
+    return img;
+
 }
 /*
  *  New function for traversing elements
@@ -230,41 +378,6 @@ html2canvas.Parse = function (element, images, opts) {
         }
     }
     
-    
-    function getBounds (el) {
-        
-        window.scroll(0,0);
-        var clientRect,
-        bounds = {};
-        
-        if (el.getBoundingClientRect){	
-            clientRect = el.getBoundingClientRect();
-
-            
-            // TODO add scroll position to bounds, so no scrolling of window necessary
-            bounds.top = clientRect.top;
-            bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
-            bounds.left = clientRect.left;
-            bounds.width = clientRect.width;
-            bounds.height = clientRect.height;
-    
-            return bounds;
-            
-        } /*else{
-           
-           
-            p = $(el).offset();       
-          
-            return {               
-                left: p.left + getCSS(el,"borderLeftWidth", true),
-                top: p.top + getCSS(el,"borderTopWidth", true),
-                width:$(el).innerWidth(),
-                height:$(el).innerHeight()                
-            };
-            
-
-        }     */      
-    }
     
     function textTransform (text, transform) {
         switch(transform){
@@ -494,7 +607,7 @@ html2canvas.Parse = function (element, images, opts) {
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement, oldTextNode);
                                     
-                    bounds = getBounds(wrapElement);
+                    bounds = html2canvas.Util.Bounds(wrapElement);
                         
                     textValue = oldTextNode.nodeValue;
                         
@@ -603,19 +716,6 @@ html2canvas.Parse = function (element, images, opts) {
         return parentZ;
         
     }
-    
-    function backgroundUrl (src){
-        if (src.substr(0,5) === 'url("'){
-            src = src.substr(5);
-            src = src.substr(0,src.length-2);                 
-        }else{
-            src = src.substr(4);
-            src = src.substr(0,src.length-1);  
-        }
-  
-        return src;            
-    }
-
     
     function renderBorders(el, ctx, bounds, clip){
      
@@ -896,7 +996,7 @@ html2canvas.Parse = function (element, images, opts) {
     function renderBackground(el,bounds,ctx){
                
         // TODO add support for multi background-images
-        var background_image = getCSS(el, "backgroundImage", false).split(",")[0],
+        var background_image = getCSS(el, "backgroundImage", false),
         background_repeat = getCSS(el, "backgroundRepeat", false).split(",")[0],
         image,
         bgp,
@@ -911,24 +1011,29 @@ html2canvas.Parse = function (element, images, opts) {
         height,
         add;
         
-        if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
-         
-            background_image = backgroundUrl(background_image);
-            image = loadImage(background_image);
+        //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
+      
+        if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {   
+            background_image = background_image.split(",")[0];
+        }
+        
+        if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
+            background_image = html2canvas.Util.backgroundImage( background_image );
+            image = loadImage( background_image );
 					
 
             bgp = getBackgroundPosition(el, bounds, image);
             
 
-            if (image){
-                switch(background_repeat){
+            if ( image ){
+                switch ( background_repeat ) {
 					
                     case "repeat-x":
-                        renderBackgroundRepeatX(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);                     
+                        renderBackgroundRepeatX( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                     
                         break;
                          
                     case "repeat-y":
-                        renderBackgroundRepeatY(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);                                             
+                        renderBackgroundRepeatY( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                                             
                         break;
                           
                     case "no-repeat":
@@ -1049,7 +1154,7 @@ html2canvas.Parse = function (element, images, opts) {
  
     function renderElement(el, parentStack){
 		
-        var bounds = getBounds(el), 
+        var bounds = html2canvas.Util.Bounds(el), 
         x = bounds.left, 
         y = bounds.top, 
         w = bounds.width, 
@@ -1099,8 +1204,8 @@ html2canvas.Parse = function (element, images, opts) {
         
         if (parentStack.clip){
             stack.clip = html2canvas.Util.Extend( {}, parentStack.clip );
-            //stack.clip = parentStack.clip;
-         //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
+        //stack.clip = parentStack.clip;
+        //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
         } 
  
  
@@ -1131,7 +1236,7 @@ html2canvas.Parse = function (element, images, opts) {
         stack.clip.width = stack.clip.width-(borders[1].width); 
         stack.clip.height = stack.clip.height-(borders[2].width); 
     }
-         */
+     */
         if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){ 
             if (options.iframeDefault === "default"){
                 bgcolor = "#efefef";
@@ -1219,7 +1324,7 @@ html2canvas.Parse = function (element, images, opts) {
                     },
                     formValue:true
                 },stack);
-                     */
+                 */
                 }
                 break;
             case "TEXTAREA":
@@ -1379,7 +1484,7 @@ html2canvas.Preload = function(element, opts){
         
                 img.src = a; 
             }
-           delete window[callback_name];
+            delete window[callback_name];
         };
 
         count += 1;
@@ -1437,7 +1542,9 @@ html2canvas.Preload = function(element, opts){
         i,
         contentsLen = contents.length,
         background_image,
-        src;
+        src,
+        img;
+        
         for (i = 0;  i < contentsLen; i+=1 ){
             // var ignRe = new RegExp("("+this.ignoreElements+")");
             // if (!ignRe.test(element.nodeName)){
@@ -1450,52 +1557,78 @@ html2canvas.Preload = function(element, opts){
         if (el.nodeType === 1 || el.nodeType === undefined){
             
             background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
+            
+            if ( background_image && background_image !== "1" && background_image !== "none" ) {	
+                
+                // TODO add multi image background support
+                
+                if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
+                  
+                    img = html2canvas.Generate.Gradient( background_image, html2canvas.Util.Bounds( el ) );
+
+                    if ( img !== undefined ){                       
+                        images.push(background_image);
+                        images.push(img);
+                        imagesLoaded++;
+                        start();
+                        
+                    }
+                    
+                } else {	
+                    src = html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);		
+                    methods.loadImage(src); 		
+                }
            
+            /*
             if (background_image && background_image !== "1" && background_image !== "none" && background_image.substring(0,7) !== "-webkit" && background_image.substring(0,3)!== "-o-" && background_image.substring(0,4) !== "-moz"){
                 // TODO add multi image background support
                 src = html2canvas.Util.backgroundImage(background_image.split(",")[0]);                    
-                methods.loadImage(src);                    
+                methods.loadImage(src);            */        
             }
         }
     }  
     
     methods = {
-        loadImage: function(src){
+        loadImage: function( src ) {
             var img;
-            if (getIndex(images, src) === -1){
-                if(src.substr(0, 5) === 'data:'){
-                    //Base64 src
-                    images.push(src);
+            if ( getIndex(images, src) === -1 ) {
+                if ( src.match(/data:image\/.*;base64,/i) ) {
+                
+                    //Base64 src                  
                     img = new Image();
-                    img.src = src;
-                    images.push(img);
+                    img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
+                    
+                    images.push( src );
+                    images.push( img );
+                    
                     imagesLoaded+=1;
                     start();
-                }else if (isSameOrigin(src)){
+                    
+                }else if ( isSameOrigin( src ) ) {
             
-                    images.push(src);
+                    images.push( src );
                     img = new Image();   
                     
-                    img.onload = function(){
+                    img.onload = function() {
                         imagesLoaded+=1;               
                         start();        
                 
                     };	
                     
-                    img.onerror = function(){
-                        images.splice(getIndex(images, img.src), 2);
+                    img.onerror = function() {
+                        images.splice( getIndex( images, img.src ), 2 );
                         start();                           
                     };
                     
                     img.src = src; 
                     images.push(img);
             
-                }else if (options.proxy){
+                }else if ( options.proxy ){
                     //    console.log('b'+src);
-                    images.push(src);
+                    images.push( src );
                     img = new Image();   
-                    proxyGetImage(src, img);
-                    images.push(img);
+                    proxyGetImage( src, img );
+                    images.push( img );
                 }
             }     
           
@@ -1507,18 +1640,18 @@ html2canvas.Preload = function(element, opts){
     // add something to array
     images.push('start');
     
-    getImages(element);
+    getImages( element );
     
     
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
-        methods.loadImage(domImages[i].getAttribute("src"));
+        methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
     
     // remove 'start'
-    images.splice(0,1);  
+    images.splice(0, 1);  
 
-    if (images.length === 0){
+    if ( images.length === 0 ) {
         start();
     }  
     
