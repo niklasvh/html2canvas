@@ -312,7 +312,6 @@ html2canvas.prototype.drawBackground = function(el,bounds,ctx){
     if (typeof background_image != "undefined" && /^(1|none)$/.test(background_image)==false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)==false){
         background_image = this.backgroundImageUrl(background_image);
         var image = this.loadImage(background_image);
-					
 
         var bgp = this.getBackgroundPosition(el,bounds,image),
         bgy;
@@ -1006,7 +1005,7 @@ html2canvas.prototype.preloadImage = function(src){
     if (this.getIndex(this.images,src)==-1){
         if (src.match(/data:image\/.*;base64,/i)) {
             var img = new Image();
-            img.src = src.replace(/url\(['"]|['"]\)$/img, '');
+            img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
             this.images.push(src);
             this.images.push(img);
             this.imagesLoaded++;
