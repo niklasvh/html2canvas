@@ -116,41 +116,6 @@ html2canvas.Parse = function (element, images, opts) {
     }
     
     
-    function getBounds (el) {
-        
-        window.scroll(0,0);
-        var clientRect,
-        bounds = {};
-        
-        if (el.getBoundingClientRect){	
-            clientRect = el.getBoundingClientRect();
-
-            
-            // TODO add scroll position to bounds, so no scrolling of window necessary
-            bounds.top = clientRect.top;
-            bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
-            bounds.left = clientRect.left;
-            bounds.width = clientRect.width;
-            bounds.height = clientRect.height;
-    
-            return bounds;
-            
-        } /*else{
-           
-           
-            p = $(el).offset();       
-          
-            return {               
-                left: p.left + getCSS(el,"borderLeftWidth", true),
-                top: p.top + getCSS(el,"borderTopWidth", true),
-                width:$(el).innerWidth(),
-                height:$(el).innerHeight()                
-            };
-            
-
-        }     */      
-    }
-    
     function textTransform (text, transform) {
         switch(transform){
             case "lowercase":
@@ -379,7 +344,7 @@ html2canvas.Parse = function (element, images, opts) {
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement, oldTextNode);
                                     
-                    bounds = getBounds(wrapElement);
+                    bounds = html2canvas.Util.Bounds(wrapElement);
                         
                     textValue = oldTextNode.nodeValue;
                         
@@ -488,19 +453,6 @@ html2canvas.Parse = function (element, images, opts) {
         return parentZ;
         
     }
-    
-    function backgroundUrl (src){
-        if (src.substr(0,5) === 'url("'){
-            src = src.substr(5);
-            src = src.substr(0,src.length-2);                 
-        }else{
-            src = src.substr(4);
-            src = src.substr(0,src.length-1);  
-        }
-  
-        return src;            
-    }
-
     
     function renderBorders(el, ctx, bounds, clip){
      
@@ -781,7 +733,7 @@ html2canvas.Parse = function (element, images, opts) {
     function renderBackground(el,bounds,ctx){
                
         // TODO add support for multi background-images
-        var background_image = getCSS(el, "backgroundImage", false).split(",")[0],
+        var background_image = getCSS(el, "backgroundImage", false),
         background_repeat = getCSS(el, "backgroundRepeat", false).split(",")[0],
         image,
         bgp,
@@ -796,24 +748,29 @@ html2canvas.Parse = function (element, images, opts) {
         height,
         add;
         
-        if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
-         
-            background_image = backgroundUrl(background_image);
-            image = loadImage(background_image);
+        //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
+      
+        if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {   
+            background_image = background_image.split(",")[0];
+        }
+        
+        if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
+            background_image = html2canvas.Util.backgroundImage( background_image );
+            image = loadImage( background_image );
 					
 
             bgp = getBackgroundPosition(el, bounds, image);
             
 
-            if (image){
-                switch(background_repeat){
+            if ( image ){
+                switch ( background_repeat ) {
 					
                     case "repeat-x":
-                        renderBackgroundRepeatX(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);                     
+                        renderBackgroundRepeatX( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                     
                         break;
                          
                     case "repeat-y":
-                        renderBackgroundRepeatY(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);                                             
+                        renderBackgroundRepeatY( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                                             
                         break;
                           
                     case "no-repeat":
@@ -934,7 +891,7 @@ html2canvas.Parse = function (element, images, opts) {
  
     function renderElement(el, parentStack){
 		
-        var bounds = getBounds(el), 
+        var bounds = html2canvas.Util.Bounds(el), 
         x = bounds.left, 
         y = bounds.top, 
         w = bounds.width, 
@@ -984,8 +941,8 @@ html2canvas.Parse = function (element, images, opts) {
         
         if (parentStack.clip){
             stack.clip = html2canvas.Util.Extend( {}, parentStack.clip );
-            //stack.clip = parentStack.clip;
-         //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
+        //stack.clip = parentStack.clip;
+        //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
         } 
  
  
@@ -1016,7 +973,7 @@ html2canvas.Parse = function (element, images, opts) {
         stack.clip.width = stack.clip.width-(borders[1].width); 
         stack.clip.height = stack.clip.height-(borders[2].width); 
     }
-         */
+     */
         if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){ 
             if (options.iframeDefault === "default"){
                 bgcolor = "#efefef";
@@ -1104,7 +1061,7 @@ html2canvas.Parse = function (element, images, opts) {
                     },
                     formValue:true
                 },stack);
-                     */
+                 */
                 }
                 break;
             case "TEXTAREA":
