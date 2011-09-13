@@ -154,6 +154,8 @@ html2canvas.Util.Children = function(el) {
 }
 html2canvas.Generate = {};
 
+
+
 html2canvas.Generate.Gradient = function(src, bounds) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
@@ -192,7 +194,9 @@ html2canvas.Generate.Gradient = function(src, bounds) {
             }
         }
     }
+    
     if ( tmp = src.match(/-webkit-linear-gradient\((.*)\)/) ) {
+        
         position = tmp[1].split( ",", 1 )[0];
         getColors( tmp[1].substr( position.length + 2 ) );
         position = position.split(' ');
@@ -220,6 +224,7 @@ html2canvas.Generate.Gradient = function(src, bounds) {
         }
 
     } else if (tmp = src.match(/-webkit-gradient\(linear, (\d+)[%]{0,1} (\d+)[%]{0,1}, (\d+)[%]{0,1} (\d+)[%]{0,1}, from\((.*)\), to\((.*)\)\)/)) {
+        
         p0 = (tmp[1] * bounds.width) / 100;
         p1 = (tmp[2] * bounds.height) / 100;
         p2 = (tmp[3] * bounds.width) / 100;
@@ -228,7 +233,8 @@ html2canvas.Generate.Gradient = function(src, bounds) {
         steps.push(tmp[5]);
         steps.push(tmp[6]);
         
-    } else if (tmp = src.match(/-moz-linear-gradient\((\d+)% (\d+)%, (.*)\)/)) {
+    } else if (tmp = src.match(/-moz-linear-gradient\((\d+)[%]{0,1} (\d+)[%]{0,1}, (.*)\)/)) {
+        
         p0 = (tmp[1] * bounds.width) / 100;
         p1 = (tmp[2] * bounds.width) / 100;
         p2 = bounds.width - p0;
@@ -257,6 +263,42 @@ html2canvas.Generate.Gradient = function(src, bounds) {
     return img;
 
 }
+
+html2canvas.Generate.ListAlpha = function(number) {
+    var tmp = "",
+    modulus;
+    
+    do {
+        modulus = number % 26; 
+        tmp = String.fromCharCode((modulus) + 64) + tmp;
+        number = number / 26;
+    }while((number*26) > 26);
+   
+    return tmp;  
+}
+
+html2canvas.Generate.ListRoman = function(number) {
+    var romanArray = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"],
+    decimal = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
+    roman = "",
+    v,
+    len = romanArray.length;
+
+    if (number <= 0 || number >= 4000) { 
+        return number;
+    }
+    
+    for (v=0; v < len; v+=1) {
+        while (number >= decimal[v]) { 
+            number -= decimal[v];
+            roman += romanArray[v];
+        }
+    }
+        
+    return roman;
+   
+}
+
 /*
  *  New function for traversing elements
  */
@@ -479,7 +521,7 @@ html2canvas.Parse = function (element, images, opts) {
     }
     
     
-    function renderText(el, textNode, stack){
+    function renderText(el, textNode, stack) {
         var ctx = stack.ctx,
         family = getCSS(el, "fontFamily", false),
         size = getCSS(el, "fontSize", false),
@@ -646,7 +688,124 @@ html2canvas.Parse = function (element, images, opts) {
         }
 			
     }
+    
+    function listPosition (element, val) {
+        var boundElement = doc.createElement( "boundelement" ),
+        type,
+        bounds;
+        
+        boundElement.style.display = "inline";
+        //boundElement.style.width = "1px";
+        //boundElement.style.height = "1px";
+    
+        type = element.style.listStyleType;
+        element.style.listStyleType = "none";
+    
+        boundElement.appendChild( doc.createTextNode( val ) );
+    
+
+        element.insertBefore(boundElement, element.firstChild);
+
+    
+        bounds = html2canvas.Util.Bounds( boundElement );
+        element.removeChild( boundElement );
+        element.style.listStyleType = type;
+        return bounds;
+
+    }
+    
    
+    function renderListItem(element, stack, elBounds) {
+    
+  
+        var position = getCSS(element, "listStylePosition", false),
+        x,
+        y,
+        type = getCSS(element, "listStyleType", false),
+        currentIndex,
+        text,
+        listBounds,
+        bold = getCSS(element, "fontWeight");
+    
+        if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)) {
+            
+            // TODO remove jQuery dependency
+            currentIndex = $(element).index()+1;
+            
+            switch(type){
+                case "decimal":
+                    text = currentIndex;
+                    break;
+                case "decimal-leading-zero":
+                    if (currentIndex.toString().length === 1){
+                        text = currentIndex = "0" + currentIndex.toString();
+                    }else{
+                        text = currentIndex.toString();   
+                    }     
+                    break;
+                case "upper-roman":
+                    text = html2canvas.Generate.ListRoman( currentIndex );
+                    break;
+                case "lower-roman":
+                    text = html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
+                    break;
+                case "lower-alpha":
+                    text = html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();  
+                    break;
+                case "upper-alpha":
+                    text = html2canvas.Generate.ListAlpha( currentIndex );  
+                    break;
+            }
+
+           
+            text += ". ";
+            listBounds = listPosition(element, text);
+        
+      
+    
+            switch(bold){
+                case 401:
+                    bold = "bold";
+                    break;
+                case 400:
+                    bold = "normal";
+                    break;
+            }
+    
+ 
+       
+        
+            ctx.setVariable( "fillStyle", getCSS(element, "color", false) );  
+            ctx.setVariable( "font", getCSS(element, "fontVariant", false) + " " + bold + " " + getCSS(element, "fontStyle", false) + " " + getCSS(element, "fontFize", false) + " " + getCSS(element, "fontFamily", false) );
+
+        
+            if ( position === "inside" ) {
+                ctx.setVariable("textAlign", "left");
+                //   this.setFont(stack.ctx, element, false);     
+                x = elBounds.left;
+                
+            }else{
+                return; 
+                /* 
+                 TODO really need to figure out some more accurate way to try and find the position. 
+                 as defined in http://www.w3.org/TR/CSS21/generate.html#propdef-list-style-position, it does not even have a specified "correct" position, so each browser 
+                 may display it whatever way it feels like. 
+                 "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
+                */
+                ctx.setVariable("textAlign", "right");
+                //  this.setFont(stack.ctx, element, true);
+                x = elBounds.left - 10;
+            }
+        
+            y = listBounds.bottom;
+    
+            drawText(text, x, y, ctx)
+ 
+        
+        }
+ 
+    
+    }
     
     function loadImage (src){	     
         
@@ -1334,7 +1493,7 @@ html2canvas.Parse = function (element, images, opts) {
                 }
                 break;
             case "LI":
-                // this.drawListItem(el,stack,bgbounds);
+                renderListItem(el, stack, bgbounds);
                 break;
         }
 

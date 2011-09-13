@@ -220,7 +220,7 @@ html2canvas.Parse = function (element, images, opts) {
     }
     
     
-    function renderText(el, textNode, stack){
+    function renderText(el, textNode, stack) {
         var ctx = stack.ctx,
         family = getCSS(el, "fontFamily", false),
         size = getCSS(el, "fontSize", false),
@@ -387,7 +387,124 @@ html2canvas.Parse = function (element, images, opts) {
         }
 			
     }
+    
+    function listPosition (element, val) {
+        var boundElement = doc.createElement( "boundelement" ),
+        type,
+        bounds;
+        
+        boundElement.style.display = "inline";
+        //boundElement.style.width = "1px";
+        //boundElement.style.height = "1px";
+    
+        type = element.style.listStyleType;
+        element.style.listStyleType = "none";
+    
+        boundElement.appendChild( doc.createTextNode( val ) );
+    
+
+        element.insertBefore(boundElement, element.firstChild);
+
+    
+        bounds = html2canvas.Util.Bounds( boundElement );
+        element.removeChild( boundElement );
+        element.style.listStyleType = type;
+        return bounds;
+
+    }
+    
    
+    function renderListItem(element, stack, elBounds) {
+    
+  
+        var position = getCSS(element, "listStylePosition", false),
+        x,
+        y,
+        type = getCSS(element, "listStyleType", false),
+        currentIndex,
+        text,
+        listBounds,
+        bold = getCSS(element, "fontWeight");
+    
+        if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)) {
+            
+            // TODO remove jQuery dependency
+            currentIndex = $(element).index()+1;
+            
+            switch(type){
+                case "decimal":
+                    text = currentIndex;
+                    break;
+                case "decimal-leading-zero":
+                    if (currentIndex.toString().length === 1){
+                        text = currentIndex = "0" + currentIndex.toString();
+                    }else{
+                        text = currentIndex.toString();   
+                    }     
+                    break;
+                case "upper-roman":
+                    text = html2canvas.Generate.ListRoman( currentIndex );
+                    break;
+                case "lower-roman":
+                    text = html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
+                    break;
+                case "lower-alpha":
+                    text = html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();  
+                    break;
+                case "upper-alpha":
+                    text = html2canvas.Generate.ListAlpha( currentIndex );  
+                    break;
+            }
+
+           
+            text += ". ";
+            listBounds = listPosition(element, text);
+        
+      
+    
+            switch(bold){
+                case 401:
+                    bold = "bold";
+                    break;
+                case 400:
+                    bold = "normal";
+                    break;
+            }
+    
+ 
+       
+        
+            ctx.setVariable( "fillStyle", getCSS(element, "color", false) );  
+            ctx.setVariable( "font", getCSS(element, "fontVariant", false) + " " + bold + " " + getCSS(element, "fontStyle", false) + " " + getCSS(element, "fontFize", false) + " " + getCSS(element, "fontFamily", false) );
+
+        
+            if ( position === "inside" ) {
+                ctx.setVariable("textAlign", "left");
+                //   this.setFont(stack.ctx, element, false);     
+                x = elBounds.left;
+                
+            }else{
+                return; 
+                /* 
+                 TODO really need to figure out some more accurate way to try and find the position. 
+                 as defined in http://www.w3.org/TR/CSS21/generate.html#propdef-list-style-position, it does not even have a specified "correct" position, so each browser 
+                 may display it whatever way it feels like. 
+                 "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
+                */
+                ctx.setVariable("textAlign", "right");
+                //  this.setFont(stack.ctx, element, true);
+                x = elBounds.left - 10;
+            }
+        
+            y = listBounds.bottom;
+    
+            drawText(text, x, y, ctx)
+ 
+        
+        }
+ 
+    
+    }
     
     function loadImage (src){	     
         
@@ -1075,7 +1192,7 @@ html2canvas.Parse = function (element, images, opts) {
                 }
                 break;
             case "LI":
-                // this.drawListItem(el,stack,bgbounds);
+                renderListItem(el, stack, bgbounds);
                 break;
         }
 
