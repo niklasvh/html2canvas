@@ -1,260 +1,124 @@
-/**
- * Creates a render of the element el
- * @constructor
- */
+var html2canvas = {};
 
-function html2canvas(el, userOptions) {
+html2canvas.logging = true;
 
-    var options = userOptions || {};
+html2canvas.log = function (a) {    
+    if (html2canvas.logging) {    
+        window.console.log(a);
+    }
+};    
+
+html2canvas.Util = {};
+
+html2canvas.Util.backgroundImage = function (src) {
   
+    if (/data:image\/.*;base64,/i.test( src ) || /^(-webkit|-moz|linear-gradient|-o-)/.test( src )) {
+        return src;
+    }
     
-    this.opts = this.extendObj(options, {          
-        logging: false,
-        ready: function (stack) {
-            document.body.appendChild(stack.canvas);
-        },
-        storageReady: function(obj){
-            obj.Renderer(obj.contextStacks);
-        },
-        iframeDefault: "default",
-        flashCanvasPath: "http://html2canvas.hertzen.com/external/flashcanvas/flashcanvas.js",
-        renderViewport: false,
-        reorderZ: true,
-        throttle:true,
-        letterRendering:false,
-        proxyUrl: null,
-        logger: function(a){
-            if (window.console && window.console.log){
-                window.console.log(a);     
-            }else{
-                alert(a);
-            }
-        },
-        canvasWidth:0,
-        canvasHeight:0,
-        useOverflow: true,
-        renderOrder: "canvas flash html"
-    });
+    if (src.toLowerCase().substr( 0, 5 ) === 'url("') {
+        src = src.substr( 5 );
+        src = src.substr( 0, src.length - 2 );                 
+    } else {
+        src = src.substr( 4 );
+        src = src.substr( 0, src.length - 1 );  
+    }
 
-    this.element = el;
-    
-    var imageLoaded,
-    canvas,
-    ctx,
-    bgx,
-    bgy,
-    image;
-    this.imagesLoaded = 0;
-    this.images = [];
-    this.fontData = [];
-    this.numDraws = 0;
-    this.contextStacks = [];
-    this.ignoreElements = "IFRAME|OBJECT|PARAM";
-    this.needReorder = false;
-    this.blockElements = new RegExp("(BR|PARAM)");
-    this.pageOrigin = window.location.protocol + window.location.host;
-    this.queue = [];
+    return src;  
+};
 
-    this.ignoreRe = new RegExp("("+this.ignoreElements+")");
-    
-    
-    this.support = {
-        rangeBounds: false
+html2canvas.Util.Bounds = function getBounds (el) {
         
-    };
-    
-    // Test whether we can use ranges to measure bounding boxes
-    // Opera doesn't provide valid bounds.height/bottom even though it supports the method.
-
-    
-    if (document.createRange){
-        var r = document.createRange();
-        //this.support.rangeBounds = new Boolean(r.getBoundingClientRect);
-        if (r.getBoundingClientRect){
-            var testElement = document.createElement('boundtest');
-            testElement.style.height = "123px";
-            testElement.style.display = "block";
-            document.getElementsByTagName('body')[0].appendChild(testElement);
-            
-            r.selectNode(testElement);
-            var rangeBounds = r.getBoundingClientRect();
-            var rangeHeight = rangeBounds.height;
-
-            if (rangeHeight==123){
-                this.support.rangeBounds = true;
-            }
-            document.getElementsByTagName('body')[0].removeChild(testElement);
+    window.scroll(0,0);
+    var clientRect,
+    bounds = {};
+        
+    if (el.getBoundingClientRect){	
+        clientRect = el.getBoundingClientRect();
 
             
-        }
-        
-    }
-  
-   
+        // TODO add scroll position to bounds, so no scrolling of window necessary
+        bounds.top = clientRect.top;
+        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
+        bounds.left = clientRect.left;
+        bounds.width = clientRect.width;
+        bounds.height = clientRect.height;
     
-    // Start script
-    this.init();
-    
-    return this;
-}
-	
-        
-        
-                                
-html2canvas.prototype.init = function(){
-     
-    var _ = this;
-    /*
-    this.ctx = new this.stackingContext($(document).width(),$(document).height());    
-              
-    if (!this.ctx){
-        // canvas not initialized, let's kill it here
-        this.log('Canvas not available');
-        return;
-    }
-       
-    this.canvas = this.ctx.canvas;
-        */
-    this.log('Finding background-images');
-        
-    this.images.push('start');
-    
-    this.getImages(this.element);
+        return bounds;
             
-    this.log('Finding images');
-    // console.log(this.element.ownerDocument);
-   
-    
-   
-    this.each(this.element.ownerDocument.images,function(i,e){
-        _.preloadImage(_.getAttr(e,'src'));
-    });
-    this.images.splice(0,1);  
-    //  console.log(this.images);   
-    if (this.images.length == 0){
-        this.start();
-    }  
-        
-        
-}
-
-/*
- * Check whether all assets have been loaded and start traversing the DOM
- */
- 
-html2canvas.prototype.start = function(){
-    //     console.log(this.images);
-    if (this.images.length == 0 || this.imagesLoaded==this.images.length/2){    
-        
-        this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-          this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-           document.getElementsByTagName('body')[0].style.overflow = "hidden";
-        var rootStack = new this.storageContext($(document).width(),$(document).height());  
-        rootStack.opacity = this.getCSS(this.element,"opacity");
-        var stack = this.newElement(this.element,rootStack);
-        
-        
-        this.parseElement(this.element,stack);  
-    }
-        
-}
-
-
-html2canvas.prototype.stackingContext = function(width,height){
-    this.canvas = document.createElement('canvas');
-        
-
-    this.canvas.width = width;
-    this.canvas.height = width;
-    
-    if (!this.canvas.getContext){
+    } /*else{
            
-    // TODO include Flashcanvas
-    /*
-        var script = document.createElement('script');
-        script.type = "text/javascript";
-        script.src = this.opts.flashCanvasPath;
-        var s = document.getElementsByTagName('script')[0]; 
-        s.parentNode.insertBefore(script, s);
-
-        if (typeof FlashCanvas != "undefined") {
-                
-            FlashCanvas.initElement(this.canvas);
-            this.ctx = this.canvas.getContext('2d');
-        }	*/
-            
-    }else{
-        this.ctx = this.canvas.getContext('2d');
-    }    
-    
-    // set common settings for canvas
-    this.ctx.textBaseline = "bottom";
-    
-    return this.ctx;
+           
+            p = $(el).offset();       
           
-}
-
-html2canvas.prototype.storageContext = function(width,height){
-    this.storage = [];
-    this.width = width;
-    this.height = height;
-    //this.zIndex;
-    
-    // todo simplify this whole section
-    this.fillRect = function(x, y, w, h){
-        this.storage.push(
-        {
-            type: "function",
-            name:"fillRect",
-            arguments:[x,y,w,h]            
-        });
-        
-    };
-    
-
-        
-    this.drawImage = function(image,sx,sy,sw,sh,dx,dy,dw,dh){     
-        this.storage.push(
-        {
-            type: "function",
-            name:"drawImage",
-            arguments:[image,sx,sy,sw,sh,dx,dy,dw,dh]            
-        });
-    };
-    
-    this.fillText = function(currentText,x,y){
-        
-        this.storage.push(
-        {
-            type: "function",
-            name:"fillText",
-            arguments:[currentText,x,y]            
-        });      
-    }  
-    
-    return this;
-    
-}
-
-
-/*
-* Finished rendering, send callback
-*/ 
-
-html2canvas.prototype.finish = function(){
-    
-    this.log("Finished rendering");
-    
-    document.getElementsByTagName('body')[0].style.overflow = this.bodyOverflow;
-    /*
-    if (this.opts.renderViewport){
-        // let's crop it to viewport only then
-        var newCanvas = document.createElement('canvas');
-        var newctx = newCanvas.getContext('2d');
-        newCanvas.width = window.innerWidth;
-        newCanvas.height = window.innerHeight;
+            return {               
+                left: p.left + getCSS(el,"borderLeftWidth", true),
+                top: p.top + getCSS(el,"borderTopWidth", true),
+                width:$(el).innerWidth(),
+                height:$(el).innerHeight()                
+            };
             
-    }*/
-    this.opts.ready(this);          
+
+        }     */      
 }
 
+html2canvas.Util.getCSS = function (el, attribute) {
+    // return jQuery(el).css(attribute);
+    /*
+    var val,
+    left,
+    rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
+    style = el.style;
+    
+    if ( el.currentStyle ) {
+        val = el.currentStyle[ attribute ];
+    } else if (window.getComputedStyle) {
+        val = document.defaultView.getComputedStyle(el, null)[ attribute ];
+    }
+    */
+    // Check if we are not dealing with pixels, (Opera has issues with this)
+    // Ported from jQuery css.js
+    // From the awesome hack by Dean Edwards
+    // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+
+    // If we're not dealing with a regular pixel number
+    // but a number that has a weird ending, we need to convert it to pixels
+    
+    // if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+    /*
+        // Remember the original values
+        left = style.left;
+
+        // Put in the new values to get a computed value out
+        if ( rsLeft ) {
+            el.runtimeStyle.left = el.currentStyle.left;
+        }
+        style.left = attribute === "fontSize" ? "1em" : (val || 0);
+        val = style.pixelLeft + "px";
+
+        // Revert the changed values
+        style.left = left;
+        if ( rsLeft ) {
+            el.runtimeStyle.left = rsLeft;
+        }*/
+    val = $(el).css(attribute);
+    // }
+    return val;
+    
+  
+};
+
+html2canvas.Util.Extend = function (options, defaults) {
+    var key;
+    for (key in options) {              
+        if (options.hasOwnProperty(key)) {
+            defaults[key] = options[key];
+        }
+    }
+    return defaults;           
+};
+
+html2canvas.Util.Children = function(el) {
+    // $(el).contents() !== el.childNodes, Opera / IE have issues with that
+    return $(el).contents();
+}

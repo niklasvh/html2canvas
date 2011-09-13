@@ -184,8 +184,29 @@
                             
                             $(iframe.contentWindow).load(function(){
 
-                                timer = date.getTime();
+                               // timer = date.getTime();
                                 
+                                var date = new Date();
+                                var message,
+                                timeoutTimer,
+                                timer = date.getTime();
+                                var body = $(iframe).contents().find('body')[0];
+                                var preload = html2canvas.Preload(body, {
+                                    "complete": function(images){
+                
+                                        var queue = html2canvas.Parse(body, images);
+               
+                
+                                        var canvas = $(html2canvas.Renderer(queue));
+                                        var finishTime = new Date();
+         
+          
+                                     $("#content").empty().append(canvas);
+                                   
+                                     //   throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)/1000) + " seconds<br />",4000);
+                                    }
+                                });
+                                        /*
                                 $(iframe).contents().find('body').html2canvas({
                                     canvasHeight: d.body.scrollHeight,
                                     canvasWidth: d.body.scrollWidth,
@@ -226,48 +247,48 @@
                                  
                                     }
                                             
-                                });
+                                });*/
 
-                            });
+                                    });
 
-                            $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/");
-                            html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />");
-                            if ($("#disablejs").prop('checked')){
-                                html = html.replace(/\<script/gi,"<!--<script");
-                                html = html.replace(/\<\/script\>/gi,"<\/script>-->");
-                            }
-                            // console.log(html);
-                            d.write(html);
+                                    $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/");
+                                    html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />");
+                                    if ($("#disablejs").prop('checked')){
+                                        html = html.replace(/\<script/gi,"<!--<script");
+                                        html = html.replace(/\<\/script\>/gi,"<\/script>-->");
+                                    }
+                                    // console.log(html);
+                                    d.write(html);
 
-                            d.close();
+                                    d.close();
                          
-                        }
+                                }
         
         
-                    });
+                            });
                     
 
-                });
+                        });
                    
                
                     
           
             
-            });        
+                    });        
         </script> 
         <script type="text/javascript">
             
             
-            var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-188600-10']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();   
+                    var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-188600-10']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();   
 
         </script>
         <base />
     </head>
     <body>
-    <!--    <div style="background:red;padding:10px;color:#fff">
-            App engine proxy is <a href="http://twitter.com/#!/Niklasvh/status/96265826713350144">temporarily out of use</a> due to exceeded bandwidth use. Please try again tomorrow or meanwhile check other examples <a href="http://html2canvas.hertzen.com/">here</a>.
-        </div>-->
-        
+        <!--    <div style="background:red;padding:10px;color:#fff">
+                App engine proxy is <a href="http://twitter.com/#!/Niklasvh/status/96265826713350144">temporarily out of use</a> due to exceeded bandwidth use. Please try again tomorrow or meanwhile check other examples <a href="http://html2canvas.hertzen.com/">here</a>.
+            </div>-->
+
         <div style="float:left;width:500px;">
             <h1>JavaScript screenshot creator</h1>
             <label for="url">Website URL:</label>
@@ -308,14 +329,12 @@
             <li><a href="http://www.youtube.com/">youtube.com</a></li>
             <li><a href="http://www.cnn.com/">cnn.com</a></li>
 
-<li><a href="http://www.engadget.com/">engadget.com (lot of elements, very slow)</a></li>
+            <li><a href="http://www.engadget.com/">engadget.com (lot of elements, very slow)</a></li>
             <li><a href="http://eu.battle.net/en/">battle.net</a></li>
 
 
         </ul>
-        <div style="float:left;">
-            <textarea id="logger"></textarea>
-        </div>
+     
         <div id="about"><b> About</b><br />
             The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
             There are a lot of problems of loading external pages, even with a proxy, and as such many pages will not render at all. If you wish to try the script properly, I recommend you get a copy of the source from <a href="https://github.com/niklasvh/html2canvas">here</a> instead.
