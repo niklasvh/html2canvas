@@ -1,5 +1,7 @@
 html2canvas.Generate = {};
 
+
+
 html2canvas.Generate.Gradient = function(src, bounds) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
@@ -106,4 +108,39 @@ html2canvas.Generate.Gradient = function(src, bounds) {
     
     return img;
 
+}
+
+html2canvas.Generate.ListAlpha = function(number) {
+    var tmp = "",
+    modulus;
+    
+    do {
+        modulus = number % 26; 
+        tmp = String.fromCharCode((modulus) + 64) + tmp;
+        number = number / 26;
+    }while((number*26) > 26);
+   
+    return tmp;  
+}
+
+html2canvas.Generate.ListRoman = function(number) {
+    var romanArray = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"],
+    decimal = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
+    roman = "",
+    v,
+    len = romanArray.length;
+
+    if (number <= 0 || number >= 4000) { 
+        return number;
+    }
+    
+    for (v=0; v < len; v+=1) {
+        while (number >= decimal[v]) { 
+            number -= decimal[v];
+            roman += romanArray[v];
+        }
+    }
+        
+    return roman;
+   
 }
