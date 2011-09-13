@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="html2canvas" basedir=".">
     <property name="src.dir" location="src"/>
-    <property name="lib.dir" location="lib"/>
+    <property name="lib.dir" location="../lib"/>
     <property name="build.dir" location="build"/>
     <property name="dist"  location="dist"/>
     
@@ -17,17 +17,14 @@
     <path id="sourcefiles">
         <fileset dir="${src.dir}" includes="LICENSE"/>
         <fileset dir="." includes="LICENSE"/>
-        <fileset dir="${src.dir}" includes="Core.js"/>
-        <fileset dir="${src.dir}" includes="Background.js"/>
-        <fileset dir="${src.dir}" includes="Border.js"/>
-        <fileset dir="${src.dir}" includes="Draw.js"/>
-        <fileset dir="${src.dir}" includes="Forms.js"/>
-        <fileset dir="${src.dir}" includes="Images.js"/>
+        <fileset dir="${src.dir}" includes="Core.js"/>  
+        <fileset dir="${src.dir}" includes="Generate.js"/>
+        <fileset dir="${src.dir}" includes="Parse.js"/>
+        <fileset dir="${src.dir}" includes="Preload.js"/>
+        <fileset dir="${src.dir}" includes="Queue.js"/>
         <fileset dir="${src.dir}" includes="Renderer.js"/>    
-        <fileset dir="${src.dir}" includes="Lists.js"/>   
-        <fileset dir="${src.dir}" includes="Text.js"/>
-        <fileset dir="${src.dir}" includes="Traversing.js"/>
-        <fileset dir="${src.dir}" includes="Util.js"/>       
+
+          
     </path>
     
     <path id="jquery-plugin">
@@ -48,7 +45,7 @@
     </target>
  
     
-    <target name="source">
+    <target name="build">
         <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
             <path refid="sourcefiles"/>
         </concat>
