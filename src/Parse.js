@@ -865,6 +865,15 @@ html2canvas.Parse = function (element, images, opts) {
         height,
         add;
         
+        
+        if(/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)){
+            // TODO: fix rendering of gradients
+            /*
+            image = html2canvas.Generate.Gradient(background_image, bounds);
+            */
+        }
+        
+        
         //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
       
         if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {   
