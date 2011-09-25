@@ -4,7 +4,7 @@ html2canvas.Generate = {};
 /**
  * mostly borrowed from https://github.com/westonruter/css-gradients-via-canvas/ ;o)
  */
-html2canvas.Generate.Gradient = function(src, bounds) {
+html2canvas.Generate.Gradient = function(cssPropertyValue, bounds) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d');
     
