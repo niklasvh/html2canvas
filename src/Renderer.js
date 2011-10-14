@@ -2,8 +2,8 @@ html2canvas.Renderer = function(parseQueue, opts){
 
 
     var options = {
-        "width": 0,
-        "height": 0,
+        "width": null,
+        "height": null,
         "renderer": "canvas"
     },
     queue = [],
@@ -73,8 +73,8 @@ html2canvas.Renderer = function(parseQueue, opts){
         storageLen,
         renderItem;
       
-        canvas.width = Math.max(zStack.ctx.width, options.width);   
-        canvas.height = Math.max(zStack.ctx.height, options.height);
+        canvas.width = options.width || zStack.ctx.width;   
+        canvas.height = options.height || zStack.ctx.height;
     
           
         for (i = 0, queueLen = queue.length; i < queueLen; i+=1){
