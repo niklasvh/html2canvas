@@ -250,7 +250,10 @@ html2canvas.Preload = function(element, opts){
     
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
-        methods.loadImage( domImages[i].getAttribute( "src" ) );
+        var imgSrc = domImages[i].getAttribute( "src" );
+        if ( imgSrc ) {
+            methods.loadImage( imgSrc );   
+        }        
     }
     
     // remove 'start'
