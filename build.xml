@@ -1,77 +1,75 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="html2canvas" basedir=".">
+<project name="html2canvas" basedir="." default="build">
     <property name="src.dir" location="src"/>
     <property name="lib.dir" location="../lib"/>
     <property name="build.dir" location="build"/>
     <property name="dist"  location="dist"/>
-    
-    
     <property name="jquery-externs" value="jquery-1.4.4.externs.js"/>
-    
-    
+
     <property name="JS_NAME" value="html2canvas.js"/>
     <property name="JS_NAME_MIN" value="html2canvas.min.js"/>
     <property name="JQUERY_PLUGIN_NAME" value="jquery.plugin.html2canvas.js"/>
-    
+    <loadfile property="version" srcfile="version.txt" />
 
-    <path id="sourcefiles">
-        <fileset dir="${src.dir}" includes="LICENSE"/>
-        <fileset dir="." includes="LICENSE"/>
-        <fileset dir="${src.dir}" includes="Core.js"/>  
-        <fileset dir="${src.dir}" includes="Generate.js"/>
-        <fileset dir="${src.dir}" includes="Parse.js"/>
-        <fileset dir="${src.dir}" includes="Preload.js"/>
-        <fileset dir="${src.dir}" includes="Queue.js"/>
-        <fileset dir="${src.dir}" includes="Renderer.js"/>    
+    <fileset id="sourcefiles" dir="${src.dir}">
+        <include name="LICENSE"/>
+        <include name="Core.js"/>
+        <include name="Generate.js"/>
+        <include name="Parse.js"/>
+        <include name="Preload.js"/>
+        <include name="Queue.js"/>
+        <include name="Renderer.js"/>
+    </fileset>
 
-          
-    </path>
-    
     <path id="jquery-plugin">
         <fileset dir="${src.dir}" includes="LICENSE"/>
-        <fileset dir="." includes="LICENSE"/>
         <fileset dir="${src.dir}/plugins" includes="${JQUERY_PLUGIN_NAME}"/>    
     </path>
- 
-    <path id="minified">
-        <fileset dir="${src.dir}" includes="LICENSE"/>
-        <fileset dir="${build.dir}" includes="tmp.js"/>    
-    </path>
-    
+
     <target name="plugins">
         <concat fixlastline="yes" destfile="${build.dir}/${JQUERY_PLUGIN_NAME}">
             <path refid="jquery-plugin"/>
         </concat>
+        <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JQUERY_PLUGIN_NAME}" />
     </target>
- 
-    
-    <target name="build">
+
+
+    <target name="build" depends="plugins">
         <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
-            <path refid="sourcefiles"/>
+            <fileset refid="sourcefiles"/>
         </concat>
+        <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME}" />
     </target>
-    
-    
+
+
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
-           classpath="${lib.dir}/compiler.jar"/>
-  
-    <target name="release">
-            
-        <jscomp compilationLevel="simple" warning="verbose" 
-            debug="false" 
-            output="${build.dir}/tmp.js">
+           classpath="${lib.dir}/compiler.jar" onerror="report"/>
+
+    <target name="release" depends="build">
+        <jscomp compilationLevel="simple" warning="verbose"
+            debug="false"
+            output="${build.dir}/${JS_NAME_MIN}">
             <externs dir="${lib.dir}">
-                <file name="${jquery-externs}"/>
+                 <file name="${jquery-externs}"/>
             </externs>
-            <sources dir="${build.dir}">
-                <file name="${JS_NAME}" />
+            <sources dir="${src.dir}">
+                <!-- need to write them again here since the closure compiler doesn't understand filesets,... -->
+                <file name="LICENSE"/>
+                <file name="Core.js"/>
+                <file name="Generate.js"/>
+                <file name="Parse.js"/>
+                <file name="Preload.js"/>
+                <file name="Queue.js"/>
+                <file name="Renderer.js"/>
             </sources>
         </jscomp>
-        
-        <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME_MIN}">
-            <path refid="minified"/>
-        </concat>  
+        <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME_MIN}" />
+    </target>
 
+    <target name="clean">
+        <delete file="${build.dir}/${JS_NAME}"></delete>
+        <delete file="${build.dir}/${JS_NAME_MIN}"></delete>
+        <delete file="${build.dir}/${JQUERY_PLUGIN_NAME}"></delete>
     </target>
 </project>
 
