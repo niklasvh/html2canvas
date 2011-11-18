@@ -11,7 +11,7 @@ var html2canvas = {};
 html2canvas.logging = true;
 
 html2canvas.log = function (a) {    
-    if (html2canvas.logging) {    
+    if (html2canvas.logging && window.console && window.console.log) {
         window.console.log(a);
     }
 };    
