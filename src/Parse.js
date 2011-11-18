@@ -47,6 +47,7 @@ html2canvas.Parse = function (element, images, opts) {
     children,
     childrenLen;
     
+    options = html2canvas.Util.Extend(opts, options);
 
     images = images || [];
     
