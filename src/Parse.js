@@ -1202,6 +1202,24 @@ html2canvas.Parse = function (element, images, opts) {
             case "LI":
                 renderListItem(el, stack, bgbounds);
                 break;
+            case "CANVAS":
+                paddingLeft = getCSS(el, 'paddingLeft', true);
+                paddingTop = getCSS(el, 'paddingTop', true);
+                paddingRight = getCSS(el, 'paddingRight', true);
+                paddingBottom = getCSS(el, 'paddingBottom', true);
+                renderImage(
+                    ctx,
+                    el,
+                    0, //sx
+                    0, //sy
+                    el.width, //sw
+                    el.height, //sh
+                    x + paddingLeft + borders[3].width, //dx
+                    y + paddingTop + borders[0].width, // dy
+                    bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
+                    bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
+                );
+                break;
         }
 
         return zindex.children[stackLength - 1];
