@@ -182,6 +182,7 @@ html2canvas.Parse = function (element, images, opts) {
     
         img.style.margin = 0;
         img.style.padding = 0;
+        img.style.verticalAlign = "baseline";
 
         span.style.fontFamily = font;
         span.style.fontSize = fontSize;
