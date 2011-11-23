@@ -128,5 +128,12 @@ html2canvas.Util.Extend = function (options, defaults) {
 
 html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
-    return $(el).contents();
+    var children;
+    try {
+      children = $(el).contents();
+    } catch (ex) {
+      html2canvas.log("html2canvas.Util.Children failed with exception: " + ex.message);
+      children = [];
+    }
+    return children;
 }
