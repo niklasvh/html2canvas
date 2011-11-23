@@ -36,8 +36,6 @@ html2canvas.Util.backgroundImage = function (src) {
 };
 
 html2canvas.Util.Bounds = function getBounds (el) {
-        
-    window.scroll(0,0);
     var clientRect,
     bounds = {};
         

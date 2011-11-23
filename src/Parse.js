@@ -11,7 +11,7 @@
  */
 
 html2canvas.Parse = function (element, images, opts) {
- 
+    window.scroll(0,0);
     opts = opts || {};
   
     // select body by default
