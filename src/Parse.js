@@ -175,9 +175,8 @@ html2canvas.Parse = function (element, images, opts) {
         
 
 
-    
-        // TODO add another image
-        img.src = "http://html2canvas.hertzen.com/images/8.jpg";
+        // http://probablyprogramming.com/2009/03/15/the-tiniest-gif-ever (handtinywhite.gif)
+        img.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACwAAAAAAQABAAACAkQBADs=";
         img.width = 1;
         img.height = 1;
     
