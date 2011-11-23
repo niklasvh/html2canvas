@@ -109,9 +109,9 @@ html2canvas.Util.getCSS = function (el, attribute) {
         if ( rsLeft ) {
             el.runtimeStyle.left = rsLeft;
         }*/
-    val = $(el).css(attribute);
+    // val = $(el).css(attribute);
     // }
-    return val;
+    return $(el).css(attribute);
     
   
 };
