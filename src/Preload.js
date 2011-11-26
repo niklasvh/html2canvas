@@ -9,11 +9,16 @@
 html2canvas.Preload = function(element, opts){
     
     var options = {
-        "proxy": "http://html2canvas.appspot.com/"
+        proxy: "http://html2canvas.appspot.com/",
+        timeout: 0    // no timeout
     },
-    images = [],
+    images = {
+        numLoaded: 0,   // also failed are counted here
+        numFailed: 0,
+        numTotal: 0,
+        cleanupDone: false
+    },
     pageOrigin = window.location.protocol + window.location.host,
-    imagesLoaded = 0,
     methods,
     i,
     count = 0,
@@ -36,24 +41,9 @@ html2canvas.Preload = function(element, opts){
         
     }
     
-    function getIndex(array,src){
-        var i, arrLen;
-        if (array.indexOf){
-            return array.indexOf(src);
-        }else{
-            for(i = 0, arrLen = array.length; i < arrLen; i+=1){
-                if(this[i] === src) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-    
-    }
-    
     function start(){
-        if (images.length === 0 || imagesLoaded === images.length/2){    
-            
+        html2canvas.log("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
+        if (!images.firstRun && images.numLoaded >= images.numTotal){
         
             /*
             this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
@@ -63,20 +53,22 @@ html2canvas.Preload = function(element, opts){
             if (typeof options.complete === "function"){
                 options.complete(images);
             }
+
+            html2canvas.log("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
         }
     }
     
     function proxyGetImage(url, img){
-     
-        link.href = url;
-        url = link.href; // work around for pages with base href="" set
         var callback_name,
-        scriptUrl = options.proxy,
-        script;
-       
+            scriptUrl = options.proxy,
+            script,
+            imgObj = images[url];
+
+        link.href = url;
+        url = link.href; // work around for pages with base href="" set - WARNING: this may change the url -> so access imgObj from images map before changing that url!
+
         callback_name = 'html2canvas_' + count;
-        
-      
+        imgObj.callbackname = callback_name;
         
         if (scriptUrl.indexOf("?") > -1) {
             scriptUrl += "&";
@@ -87,26 +79,35 @@ html2canvas.Preload = function(element, opts){
     
         window[callback_name] = function(a){
             if (a.substring(0,6) === "error:"){
-                images.splice(getIndex(images, url), 2);
+                imgObj.succeeded = false;
+                images.numLoaded++;
+                images.numFailed++;
                 start();  
-            }else{
+            } else {
                 img.onload = function(){
-                    imagesLoaded+=1;               
-                    start();          
+                    imgObj.succeeded = true;
+                    images.numLoaded++;
+                    start();
                 };
-        
                 img.src = a; 
             }
-            delete window[callback_name];
+            window[callback_name] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
+            try {
+                delete window[callback_name];  // for all browser that support this
+            } catch(ex) {}
+            script.parentNode.removeChild(script);
+            script = null;
+            imgObj.callbackname = undefined;
         };
 
         count += 1;
         
         script = doc.createElement("script");        
         script.setAttribute("src", scriptUrl);
-        script.setAttribute("type", "text/javascript");                
+        script.setAttribute("type", "text/javascript");
+        imgObj.script = script;
         window.document.body.appendChild(script);
-       
+
     /*
  
     //  enable xhr2 requests where available (no need for base64 / json)
@@ -186,10 +187,10 @@ html2canvas.Preload = function(element, opts){
                   
                     img = html2canvas.Generate.Gradient( background_image, html2canvas.Util.Bounds( el ) );
 
-                    if ( img !== undefined ){                       
-                        images.push(background_image);
-                        images.push(img);
-                        imagesLoaded++;
+                    if ( img !== undefined ){
+                        images[background_image] = { img: img, succeeded: true };
+                        images.numTotal++;
+                        images.numLoaded++;
                         start();
                         
                     }
@@ -211,58 +212,110 @@ html2canvas.Preload = function(element, opts){
     methods = {
         loadImage: function( src ) {
             var img;
-            if ( getIndex(images, src) === -1 ) {
+            if ( images[src] === undefined ) {
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                 
                     //Base64 src                  
                     img = new Image();
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
-                    
-                    images.push( src );
-                    images.push( img );
-                    
-                    imagesLoaded+=1;
+                    images[src] = { img: img, succeeded: true };
+                    images.numTotal++;
+                    images.numLoaded++;
                     start();
                     
                 }else if ( isSameOrigin( src ) ) {
             
-                    images.push( src );
-                    img = new Image();   
+                    img = new Image();
+                    images[src] = { img: img };
+                    images.numTotal++;
                     
                     img.onload = function() {
-                        imagesLoaded+=1;               
-                        start();        
-                
+                        images.numLoaded++;
+                        images[src].succeeded = true;
+                        start();
                     };	
                     
                     img.onerror = function() {
-                        images.splice( getIndex( images, img.src ), 2 );
-                        start();                           
+                        images.numLoaded++;
+                        images.numFailed++;
+                        images[src].succeeded = false;
+                        start();
                     };
                     
-                    img.src = src; 
-                    images.push(img);
+                    img.src = src;
             
                 }else if ( options.proxy ){
                     //    console.log('b'+src);
-                    images.push( src );
-                    img = new Image();   
+                    img = new Image();
+                    images[src] = { img: img };
+                    images.numTotal++;
                     proxyGetImage( src, img );
-                    images.push( img );
                 }
             }     
           
+        },
+        cleanupDOM: function(cause) {
+            var img;
+            if (!images.cleanupDone) {
+                if (cause && typeof cause === "string") {
+                    html2canvas.log("html2canvas: Cleanup because: " + cause);
+                } else {
+                    html2canvas.log("html2canvas: Cleanup after timeout: " + options.timeout + " ms.");
+                }
+
+                for (src in images) {
+                    if (images.hasOwnProperty(src)) {
+                        img = images[src];
+                        if (typeof img === "object" && img.callbackname && img.succeeded === undefined) {
+                            // cancel proxy image request
+                            window[img.callbackname] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
+                            try {
+                                delete window[img.callbackname];  // for all browser that support this
+                            } catch(ex) {}
+                            if (img.script && img.script.parentNode) {
+                                img.script.setAttribute("src", "about:blank");  // try to cancel running request
+                                img.script.parentNode.removeChild(img.script);
+                            }
+                            images.numLoaded++;
+                            images.numFailed++;
+                            html2canvas.log("html2canvas: Cleaned up failed img: '" + src + "' Steps: " + images.numLoaded + " / " + images.numTotal);
+                        }
+                    }
+                }
+
+                // cancel any pending requests
+                if(window.stop !== undefined) {
+                    window.stop();
+                } else if(document.execCommand !== undefined) {
+                    document.execCommand("Stop", false);
+                }
+                if (document.close !== undefined) {
+                    document.close();
+                }
+                images.cleanupDone = true;
+                if (!(cause && typeof cause === "string")) {
+                    start();
+                }
+            }
+        },
+        renderingDone: function() {
+          if (timeoutTimer) {
+            window.clearTimeout(timeoutTimer);
+          }
         }
         
-        
     };
-    
-    // add something to array
-    images.push('start');
-    
+
+    if (options.timeout > 0) {
+        timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
+    }
+    var startTime = (new Date()).getTime();
+    this.log('html2canvas: Preload starts: finding background-images');
+    images.firstRun = true;
+
     getImages( element );
     
-    
+    this.log('html2canvas: Preload: Finding images');
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
         var imgSrc = domImages[i].getAttribute( "src" );
@@ -271,10 +324,9 @@ html2canvas.Preload = function(element, opts){
         }        
     }
     
-    // remove 'start'
-    images.splice(0, 1);  
-
-    if ( images.length === 0 ) {
+    images.firstRun = false;
+    this.log('html2canvas: Preload: Done.');
+    if ( images.numTotal === images.numLoaded ) {
         start();
     }  
     
