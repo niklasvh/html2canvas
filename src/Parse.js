@@ -11,7 +11,7 @@
  */
 
 html2canvas.Parse = function (element, images, opts) {
- 
+    window.scroll(0,0);
     opts = opts || {};
   
     // select body by default
@@ -175,14 +175,14 @@ html2canvas.Parse = function (element, images, opts) {
         
 
 
-    
-        // TODO add another image
-        img.src = "http://html2canvas.hertzen.com/images/8.jpg";
+        // http://probablyprogramming.com/2009/03/15/the-tiniest-gif-ever (handtinywhite.gif)
+        img.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACwAAAAAAQABAAACAkQBADs=";
         img.width = 1;
         img.height = 1;
     
         img.style.margin = 0;
         img.style.padding = 0;
+        img.style.verticalAlign = "baseline";
 
         span.style.fontFamily = font;
         span.style.fontSize = fontSize;
