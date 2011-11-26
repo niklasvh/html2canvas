@@ -156,7 +156,8 @@ html2canvas.Preload = function(element, opts){
         contentsLen = contents.length,
         background_image,
         src,
-        img;
+        img,
+        elNodeType = false;
         
         for (i = 0;  i < contentsLen; i+=1 ){
             // var ignRe = new RegExp("("+this.ignoreElements+")");
@@ -166,8 +167,14 @@ html2canvas.Preload = function(element, opts){
         }
             
         // }
-          
-        if (el.nodeType === 1 || el.nodeType === undefined){
+        try {
+            elNodeType = el.nodeType;
+        } catch (ex) {
+            elNodeType = false;
+            html2canvas.log("html2canvas: failed to access some element's nodeType - Exception: " + ex.message);
+        }
+
+        if (elNodeType === 1 || elNodeType === undefined){
             
             background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
             
