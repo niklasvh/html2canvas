@@ -18,7 +18,7 @@ html2canvas.Preload = function(element, opts){
         numTotal: 0,
         cleanupDone: false
     },
-    pageOrigin = window.location.protocol + window.location.host,
+    pageOrigin,
     methods,
     i,
     count = 0,
