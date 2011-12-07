@@ -859,6 +859,7 @@ html2canvas.Parse = function (element, images, opts) {
         height,
         add;
         
+        
         //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
       
         if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {   
@@ -868,7 +869,11 @@ html2canvas.Parse = function (element, images, opts) {
         if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
             background_image = html2canvas.Util.backgroundImage( background_image );
             image = loadImage( background_image );
-					
+			
+            
+            if(!image && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)){
+                image = html2canvas.Generate.Gradient(background_image, bounds);
+            }
 
             bgp = getBackgroundPosition(el, bounds, image);
             

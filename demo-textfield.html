@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="external/jquery-1.6.2.min.js"></script>
+<script src="build/html2canvas.js"></script>
+<script src="build/jquery.plugin.html2canvas.js"></script>
+<script>
+
+    $(window).ready(function() {
+        
+        //$('#tf').val('Hello World!');
+    
+        window.setTimeout(function(){
+            $('body').html2canvas();
+        }, 5000);
+        
+          
+        /*
+        var queue = html2canvas.Parse();
+        
+        console.log(queue);
+        var canvas = html2canvas.Renderer(queue);
+        
+        $('body').append(canvas);
+        */
+    });
+    
+</script>
+</head>
+<body>
+    <input type="text" id="tf"/>
+</body>
+</html>
