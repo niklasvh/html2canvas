@@ -252,7 +252,10 @@
                                     });
 
                                     $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/");
-                                    html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />");
+                                    var base = "<base href='"+urlParts.protocol+"//"+urlParts.hostname+"/' />";
+                                    var headIdx = html.indexOf('<head');
+                                    var endHeadIdx = html.indexOf('>', headIdx);
+                                    html = html.substring(0, endHeadIdx + 1) + base + html.substring(endHeadIdx + 1);
                                     if ($("#disablejs").prop('checked')){
                                         html = html.replace(/\<script/gi,"<!--<script");
                                         html = html.replace(/\<\/script\>/gi,"<\/script>-->");
