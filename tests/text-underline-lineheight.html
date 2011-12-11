@@ -10,28 +10,18 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="#" type="text/css" rel="stylesheet"> 
 
-        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="../build/html2canvas.js"></script>
-        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
+        <script type="text/javascript" src="test.js"></script>
         <script type="text/javascript">
-            $(window).ready(function() {
+            function setUp() {
                 $('body').empty();
                 $.each(['arial','verdana','tahoma','courier new'],function(i,e){
-                    
                     var div = $('<div />').css('font-family',e).appendTo('body');
-                    
                     for(var i=0;i<=20;i++){
                         $('<div />').text('Testing texts').css('margin-top',1).css('border','1px solid black').css('font-size',(16+i*6)).appendTo(div);
                     } 
                     
                 });
-                
-            
-                
-                window.setTimeout(function(){
-                    $('body').html2canvas();
-                },100);
-            });
+            }
         </script>
 
         <style>
