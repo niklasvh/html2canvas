@@ -8,22 +8,15 @@
     <head>
         <title>List tests</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
+        <script type="text/javascript" src="test.js"></script>
 
-        <script type="text/javascript" src="../external/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="../build/html2canvas.js"></script>
-        <script type="text/javascript" src="../build/jquery.plugin.html2canvas.js"></script>
         <script type="text/javascript">
-            $(window).ready(function() {     
+            function setUp() {
                 var supportedTypes = ["decimal","decimal-leading-zero","upper-roman","lower-roman","lower-alpha","upper-alpha"];
                 for (var i = 1;i<=100;i++){
-                    
                    $('#dynamic').append($('<li />').text(i).css('list-style-type',supportedTypes[Math.round(Math.random()*supportedTypes.length)])); 
                 }
-                
-             
-                  $('body').html2canvas();
-            });
+            }
         </script>
 
         <style>
