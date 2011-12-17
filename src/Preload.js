@@ -25,7 +25,8 @@ html2canvas.Preload = function(element, opts){
     doc = element.ownerDocument,
     domImages = doc.images, // TODO probably should limit it to images present in the element only
     imgLen = domImages.length,
-    link = doc.createElement("a");
+    link = doc.createElement("a"),
+    timeoutTimer;
     
     link.href = window.location.href;
     pageOrigin  = link.protocol + link.host;
@@ -214,7 +215,7 @@ html2canvas.Preload = function(element, opts){
     methods = {
         loadImage: function( src ) {
             var img;
-            if ( images[src] === undefined ) {
+            if ( src && images[src] === undefined ) {
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                 
                     //Base64 src                  
@@ -257,7 +258,7 @@ html2canvas.Preload = function(element, opts){
           
         },
         cleanupDOM: function(cause) {
-            var img;
+            var img, src;
             if (!images.cleanupDone) {
                 if (cause && typeof cause === "string") {
                     html2canvas.log("html2canvas: Cleanup because: " + cause);
@@ -320,10 +321,7 @@ html2canvas.Preload = function(element, opts){
     this.log('html2canvas: Preload: Finding images');
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
-        var imgSrc = domImages[i].getAttribute( "src" );
-        if ( imgSrc ) {
-            methods.loadImage( imgSrc );   
-        }        
+        methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
     
     images.firstRun = false;
