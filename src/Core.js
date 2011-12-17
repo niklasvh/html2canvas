@@ -8,7 +8,7 @@
 
 var html2canvas = {};
 
-html2canvas.logging = true;
+html2canvas.logging = false;
 
 html2canvas.log = function (a) {    
     if (html2canvas.logging && window.console && window.console.log) {
