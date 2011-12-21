@@ -168,6 +168,7 @@ html2canvas.Renderer = function(parseQueue, opts){
        
    
         }
+        html2canvas.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
         
         // this.canvasRenderStorage(queue,this.ctx);
         return canvas;
@@ -352,7 +353,7 @@ html2canvas.Renderer = function(parseQueue, opts){
         
         
         
-        
+        html2canvas.log("html2canvas: Renderer: SVG Renderer done - returning SVG DOM obj");
         
         return svg;
 
@@ -367,11 +368,13 @@ html2canvas.Renderer = function(parseQueue, opts){
         case "canvas":
             canvas = doc.createElement('canvas');
             if (canvas.getContext){
+                this.log("html2canvas: Renderer: using canvas renderer");
                 return canvasRenderer(parseQueue);
             }               
             break;
         case "svg":
             if (doc.createElementNS){
+                this.log("html2canvas: Renderer: using SVG renderer");
                 return svgRenderer(parseQueue);             
             }
             break;

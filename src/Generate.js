@@ -39,18 +39,15 @@ html2canvas.Generate.Gradient = function(src, bounds) {
         while( j++ < input.length ) {
             chr = input.charAt( j );
             if (chr === ')') {
-                color += chr;                
+                color += chr;
                 steps.push( color );
                 color = '';
-                j+=2;
-            } else if (color || isValidColorStartChar(chr)) {                
+                while (j++ < input.length && input.charAt( j ) !== ',') {
+                }
+            } else {
                 color += chr;
             }
         }
-    }
-    
-    function isValidColorStartChar(c) {     
-    	return c && /[^0-9%,]/.test(c);
     }
     
     if ( tmp = src.match(/-webkit-linear-gradient\((.*)\)/) ) {
@@ -107,7 +104,12 @@ html2canvas.Generate.Gradient = function(src, bounds) {
     increment = 1 / (steps.length - 1);
     
     for (i = 0, len = steps.length; i < len; i+=1) {
-        lingrad.addColorStop(increment * i, steps[i]);
+        try {
+            lingrad.addColorStop(increment * i, steps[i]);
+        }
+        catch(e) {
+            html2canvas.log(['failed to add color stop: ', e, '; tried to add: ', steps[i], '; stop: ', i, '; in: ', src]);
+        }
     }
     
     ctx.fillStyle = lingrad;
