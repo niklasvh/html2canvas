@@ -38,12 +38,14 @@
         Ext.onReady(function(){
             var app = new FeedViewer.App();
             
-            var queue = html2canvas.Parse();
-      
-            console.log(queue);
-            var canvas = html2canvas.Renderer(queue);
-            
-            Ext.get(document.body).insertSibling(canvas);
+            setTimeout(function(){
+                var queue = html2canvas.Parse();
+          
+                console.log(queue);
+                var canvas = html2canvas.Renderer(queue);
+                
+                Ext.get(document.body).insertSibling(canvas);
+            }, 3000);
         });
         
     </script>
