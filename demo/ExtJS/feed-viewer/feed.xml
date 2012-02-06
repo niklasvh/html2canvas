@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/rss2full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:admin="http://webns.net/mvcb/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0" version="2.0">
+
+    <channel>
+        <title>Sencha Blog</title>
+        <link>http://www.sencha.com/blog/</link>
+        <description>
+            Technical articles, company news, and customer spotlights from Sencha.
+        </description>
+        <dc:language>en-us</dc:language>
+        <author>jay@sencha.com</author>
+        <dc:rights>Copyright 2011</dc:rights>
+        <dc:date>2011-06-30T18:00:36+00:00</dc:date>
+        <admin:generatorAgent rdf:resource="http://expressionengine.com/" />
+        
+
+        
+        <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/rss+xml" href="http://feeds.feedburner.com/extblog" /><feedburner:info uri="extblog" /><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" /><item>
+        <title>Introducing the Sencha Touch App Gallery</title>
+        <author>Jay Robinson</author>
+        <description>
+            Introducing the Sencha Touch App Gallery, currently stocked with over 100 Sencha Touch mobile apps. Read on about our plans for the App Gallery, and how to submit your own Sencha Touch app.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/lJeYiQ1YLTc/</link>
+        <content><![CDATA[
+            
+                <p><a href="http://www.sencha.com/apps/"><img class="aligncenter" src="http://img1.sencha.com/files/misc/sencha-touch-app-gallery-new.png" alt="" height="330" width="636"></a></p>
+
+    <p>We are proud to introduce the <a href="http://www.sencha.com/apps/">Sencha Touch App Gallery</a>. Currently stocked with over one hundred Sencha Touch mobile apps, we expect it to grow by leaps and bounds over the next year. </p>
+
+    <p><strong>More than 100 apps are available</strong> either as web apps, or using a native-wrapper (like <a href="http://www.sencha.com/learn/a-sencha-touch-mvc-application-with-phonegap">PhoneGap</a> or <a href="http://www.sencha.com/learn/enhancing-ios-sencha-touch-apps-with-nimblekit/">NimbleKit</a>) to deploy to app stores.  We currently have both free and paid apps representing the three biggest mobile app stores: Apple&#8217;s App Store, Android&#8217;s Marketplace, and the BlackBerry App World; as well as the burgeoning up-and-comers like Chrome Web Store, Mac App Store, and Amazon Appstore for Android.</p>
+
+	<p><img src="http://img1.sencha.com/files/misc/top-app-stores.png" alt="Sencha Touch apps are available on the Apple App Store, Android Marketplace, and BlackBerry App World." height="50" width="636"></p>
+
+	<p>You can browse through apps alphabetically, or sort by categories like <a href="http://www.sencha.com/apps/category/business">business</a> or <a href="http://www.sencha.com/apps/category/social-networking">social networking</a>. See which apps are available for your device, view screenshots, and share the links with your friends on Facebook and Twitter. You can also see interesting information about each app, including whether they&#8217;ve won a Sencha contest, or been featured on our blog in a <a href="http://www.sencha.com/blog/category/spotlight">Spotlight article</a>.</p>
+
+	<p>Finally, send the app page to your phone or tablet with a <abbr title="Quick Response">QR</abbr> code and try out the app.</p>
+
+	<h3>Featured Apps</h3>
+
+	<p>We&#8217;re incredibly proud to see so many <strong>amazing</strong> mobile web apps being built with Sencha Touch and HTML5 &#8212; especially considering it was just last year we released Sencha Touch 1.0. Listed, of course, you&#8217;ll find the usual suspects of Sencha-created demos like the <a href="http://www.sencha.com/apps/sencha-touch-kitchen-sink/">Kitchen Sink</a> and <a href="http://www.sencha.com/apps/kivatouch/">KivaTouch</a>, but you&#8217;ll also find such community favorites as Nils Dehls&#8217; app <a href="http://www.sencha.com/apps/remember-the-card/">Remember the Card</a>, which had the honor of being the very first third-party app created with Sencha Touch. Or Cahit Gurguc&#8217;s <a href="http://www.sencha.com/apps/dailycrossword/">DailyCrossword</a>, which won last year&#8217;s <a href="http://www.sencha.com/blog/sencha-touch-app-contest-2010-an-interview-with-the-dailycrossword-team/">Sencha Touch App Contest</a>.</p>
+
+	<p>Here are some more apps that recently caught our eye:</p>
+
+	<p><img class="alignright" src="http://src.sencha.io/96/http://img1.sencha.com/files/misc/creature-mixup-icon.jpg" alt="" height="96" width="96" style="clear:left;"></p>
+
+	<h4><a href="http://www.sencha.com/apps/creature-mixup/">Creature Mixup by Mark Wyner</a></h4>
+
+	<p>Mark Wyner made his cute creature creator relying on Sencha Touch&#8217;s carousel. Select a background and a creature shape, then start mixing and matching top and bottoms until you get a mixed up monster of your own. Creature Mixup is only 99¢ for Android and iOS, with a BlackBerry version coming soon. Mark is also planning a tablet-optimized version in the future.</p>
+
+	<p><img class="alignright" src="http://src.sencha.io/96/http://img1.sencha.com/files/misc/bugs-in-the-garden-icon.jpg" alt="" height="96" width="96" style="clear:left;"></p>
+
+	<h4><a href="http://www.sencha.com/apps/bugs-in-the-garden/">Bugs in the Garden by Justin Davidson</a></h4>
+
+	<p>What makes Bugs in the Garden stand out from the crowd, apart from its novel use of the vertical carousel, is the custom illustrations of insects created by Justin Davidson. Justin is a mobile developer who also works on an organic farm, and wanted an app to help him learn his way around the tiny bugs that share his garden. Justin&#8217;s app is incredibly handy if your thumbs are even slightly green, and worth a look even if they aren&#8217;t. Get it for just 99¢ on the App Store.</p>
+
+	<p><img class="alignright" src="http://src.sencha.io/96/http://img1.sencha.com/files/misc/Consumer_Reports_Mobile_Shopper_2012_icon.jpeg" alt="" height="96" width="96" style="clear:left;"></p>
+
+	<h4><a href="http://www.sencha.com/apps/consumer-reports-mobile-shopper-2012/">Consumer Reports by Jarv.us</a></h4>
+
+	<p>This app recently came out on the Android Marketplace and the Apple App Store. It has incredibly deep integration of nearly every Sencha Touch feature to make an app that gives you helpful reviews of everyday products. Check it out for either Android or Apple devices for $4.99.</p>
+
+	<p><img class="alignright" src="http://src.sencha.io/96/http://img1.sencha.com/files/misc/Philadelphia_Eagles_Draft_icon.jpeg" alt="" height="96" width="96" style="clear:left;"></p>
+
+	<h4><a href="http://www.sencha.com/apps/philadelphia-eagles-draft/">Philadelphia Eagles Draft by Jarv.us</a></h4>
+
+	<p>If it&#8217;s sports you like, you can&#8217;t get better than the <a href="http://jarv.us/">Jarv.us</a> -built app for the Philadelphia Eagle&#8217;s draft. Keep up with the latest news and players picks, and help round out your fantasy roster. Available for free as a web app, as well as on the app stores for iOS and Android.</p>
+
+    <h3 style="clear:right">Submit Your App Today</h3>
+
+    <div class="alignright">
+        <a href="http://www.sencha.com/apps/submit/" class="glowingButton button-link inline">Submit Your App!</a>
+    </div>
+
+	<p>If you&#8217;re interested in having your app showcased on the Sencha Touch App Gallery, we&#8217;ve made it simple to submit your information. First, read our Forum post about <a href="http://www.sencha.com/forum/announcement.php?f=61&amp;a=25">submission guidelines</a>. Then package up your assets in a zip and <a href="http://www.sencha.com/apps/submit">fill out the form</a>. We&#8217;ll review your submission and, if it&#8217;s appropriate for the gallery, we&#8217;ll notify you and post it as soon as possible. Head over to the <a href="http://www.sencha.com/apps/submit">App Submission form</a> to get started now.</p>
+
+	<h3>Get Started!</h3>
+
+	<p>By asking to see your Sencha Touch apps through Twitter, we received a ton of replies that we had never seen before. We know there&#8217;s plenty more apps out there and we&#8217;re just waiting to see them. If you haven&#8217;t made an app with Sencha Touch yet, now is the perfect time to get started. We recently re-launched Sencha Learn and often updated with new material. Take the time to get started with Sencha Touch and in a short while you could be ready to <a href="http://www.sencha.com/apps/submit">submit your own app</a>. James Pearce&#8217;s <a href="http://www.sencha.com/learn/sencha-touch-quick-start/">Sencha Touch Quick Start</a> is a great place to begin.</p>
+
+	<p>And while you&#8217;re thinking about submitting your next amazing app to the Sencha Touch App Gallery, why not enter it in our SenchaCon Share Contest as well? Who knows, you could even <a href="http://www.sencha.com/share-contest">win a car</a>!</p>
+
+	<p>Check out the <a href="http://www.sencha.com/apps/">App Gallery</a> today and get inspired to write your first mobile web app with Sencha Touch! To all the developers already listed in the gallery, thanks for making amazing web apps with Sencha!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=lJeYiQ1YLTc:gJDNBJwj2sM:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=lJeYiQ1YLTc:gJDNBJwj2sM:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=lJeYiQ1YLTc:gJDNBJwj2sM:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=lJeYiQ1YLTc:gJDNBJwj2sM:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 21 Sep 2011 19:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/introducing-the-sencha-touch-app-gallery/#date:19:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/introducing-the-sencha-touch-app-gallery/#date:19:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha.io Sync Open Beta and App Contest Extension</title>
+        <author>Aditya Bansod</author>
+        <description>
+            Sencha.io Sync's beta is now open to the public, and we're excited to announce we've extended the SenchaCon app contest deadline by one week to let people integrate Sync to their projects.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/_XkmWvi_VNk/</link>
+        <content><![CDATA[
+            
+                <p><a href="http://www.sencha.com/forum/showthread.php?147166-Sencha.io-Sync-Beta-Open-for-Public"><img class="alignright rounded shadow" src="http://img1.sencha.com/files/misc/sencha-io-sync.png" alt="Sencha.io Sync Open Beta" height="180" width="240"></a> We&#8217;ve got two exciting pieces of news to share with you today! First of all, the Sencha.io Sync beta is now open to the public. We&#8217;ve posted details on how to get started in the Sencha Touch <a href="http://www.sencha.com/forum/showthread.php?147166-Sencha.io-Sync-Beta-Open-for-Public">forums</a>. In the forum you&#8217;ll find all the information you need including our Getting Started guide which gives you an overview of how to use the service. </p>
+
+	<p><a href="http://www.sencha.com/forum/showthread.php?147166-Sencha.io-Sync-Beta-Open-for-Public" class="more-icon">View details about Sencha.io Sync beta</a></p>
+
+	<p>We&#8217;ll be posting more details and documentation in the newsletter and on the blog in the next week, but the documentation in the forum should get you up and running. </p>
+
+	<p>And the second piece of news is we&#8217;re extending the deadline for submissions for the <a href="http://www.sencha.com/blog/announcing-the-senchacon-2011-app-contest/">Sencha App Contest</a>. We&#8217;ve taken longer than we expected to open up the Sync beta to the wider community, so we&#8217;re pushing out the first deadline to <strong>September 30th, 2011</strong> (noon <span class="caps">PST</span>). Now that Sencha.io Sync is available for public beta, we hope more contestants have a chance to integrate Sync functionality in to their projects if they want.  </p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=_XkmWvi_VNk:Zh3YhjNGATw:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=_XkmWvi_VNk:Zh3YhjNGATw:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=_XkmWvi_VNk:Zh3YhjNGATw:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=_XkmWvi_VNk:Zh3YhjNGATw:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Mon, 19 Sep 2011 18:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/senchaio-sync-open-beta-and-app-contest-extension/#date:18:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/senchaio-sync-open-beta-and-app-contest-extension/#date:18:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Previewing Sencha Touch 2: Native Packaging and Performance</title>
+        <author>Aditya Bansod</author>
+        <description>
+            Sencha Touch is a revolutionary HTML5 framework to help developers build mobile web applications. Today, we’re excited to give you glimpse into the next major release, Sencha Touch 2.0.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/h4e4bQ_nC6A/</link>
+        <content><![CDATA[
+            
+                <p>Today, we&#8217;d like to give you a glimpse into some of the new features in Sencha Touch 2.0. We&#8217;re incredibly excited about this upcoming release and we hope that you&#8217;ll share in our excitement by developing some amazing mobile apps.</p>
+
+	<p>Let&#8217;s start with a quick recap. Since the initial release of <a href="/products/touch/">Sencha Touch</a> last year, HTML5 and the mobile web has grown by leaps and bounds. Many developers made the decision to create their apps using the mobile web as a platform, and frameworks like Sencha Touch played a major role in accelerating the adoption of HTML5 and browser-based apps. We couldn&#8217;t be happier, and to our community of web developers, we thank you.</p>
+
+	<p>Our vision for the future of mobile web app development has been shaped by our outstanding core <a href="/forum/">community of over 250,000 developers</a>. Your feedback and input into our products has led us to today&#8217;s blog on what you can expect in Sencha Touch 2.0.</p>
+
+	<p>First, like you, we&#8217;re very aware of the growing complexity of devices. With the rise of Android and with the future of Windows Phone as a player, developers want consistent and predictable performance for their applications on every device type. Second, developers are deploying their apps to the web in record numbers, but they still want to be in front of their customers wherever they are. To get on to the native stores, devs have been cobbling together solutions or writing their own shells to distribute their apps to native app stores. </p>
+
+	<p>So, in Sencha Touch 2, we&#8217;re focusing on how to knock performance out of the park and how to help developers with native app packaging. We&#8217;re excited to share with you today some of the things we&#8217;re doing to make Sencha Touch 2 the best mobile framework in the market.</p>
+
+	<h3>Sencha Touch 2: Native packaging, device <span class="caps">API</span>s, and major performance improvements</h3>
+
+	<ul>
+		<li><strong>Native packaging</strong> is now a feature in Sencha Touch 2. With just one command, you can package your application for iOS and for Android. You&#8217;ll no longer need to write your own wrappers or wrangle with other solutions, it&#8217;s all built in to Sencha Touch. Best of all, you&#8217;ll be able to package for both iOS and Android from both Mac and Windows.</li>
+		<li><strong>HTML5 Device <span class="caps">API</span>s</strong> aren&#8217;t fully available on mobile browsers yet, so we&#8217;re adding many of the native device <span class="caps">API</span>s into the packager <span class="caps">API</span> surface, letting you take advantage of what future web browsers will enable today.</li>
+		<li><strong>Layouts are getting much faster.</strong> We&#8217;re replumbed the internals of the layout system so component layouts are radically faster. You&#8217;ll notice right away on a Touch 2 app when you start your app how much faster it starts up and renders to screen. Orientation changes wlll also be noticeably superior.</li>
+		<li><strong>Event Handling</strong> is getting reworked to better respond to touch events on Android. Various mobile platforms handle and dispatch touch events at different rates, so we&#8217;ve been working on normalizing this across browsers so apps have smooth and predictable touch behaviors. The list scrolling on Android will blow you away.</li>
+		<li><strong>Image based themes</strong> are being added to the framework for browsers where <span class="caps">CSS</span> is slow. Using <span class="caps">SASS</span>, Touch 2 will generate <span class="caps">CSS</span> based themes as you do in 1.x, but now you&#8217;ll also be able to generate image based themes for devices where CSS3 features slow the browser down. This also opens the way to making Touch 2.x apps eventually work on Windows Phone.</li>
+		<li><strong>A rationalized config system</strong> make it easier and more predictable to set up your Touch app. Instead of having to learn every different way in which to configure a component, the new config system streamlines setting up your components. And of course, it&#8217;s backwards compatible with the old way.</li>
+	</ul>
+
+	<p>On top of all these performance features, Sencha Touch 2 will be built on the same architecture as Ext JS 4, so the class system, custom framework builds, and all the robust enterprise features from Ext JS will be available in Touch 2. </p>
+
+	<p>These are just a few of the incredible new set of capabilities we&#8217;re bringing to Touch 2. We&#8217;ve been busy at work building it and we look forward to sharing the first betas as soon as possible. And a quick plug for SenchaCon in October &#8212; we&#8217;ll be doing a deep dive in practically every part of the framework so don&#8217;t miss it! We think you&#8217;ll be pleasantly surprised at just how wicked fast building and deploying Touch 2 apps will be.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=h4e4bQ_nC6A:z7RhXb3tOlc:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=h4e4bQ_nC6A:z7RhXb3tOlc:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=h4e4bQ_nC6A:z7RhXb3tOlc:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=h4e4bQ_nC6A:z7RhXb3tOlc:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Thu, 15 Sep 2011 14:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-touch-2-what-to-expect/#date:14:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-touch-2-what-to-expect/#date:14:00</feedburner:origLink></item>
+        
+        <item>
+        <title>SenchaCon 2011—Now Packed with More Goodness</title>
+        <author>James Pearce</author>
+        <description>
+            SenchaCon 2011 is going to be in Austin, Texas, October 23-26, and it's set to be our biggest and best event ever. We're putting the finishing touches to the schedule right now, and we thought we'd share some of the excitement with you!
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/IJRlj6W3k5k/</link>
+        <content><![CDATA[
+            
+                <p><a href="http://secure.lenos.com/lenos/sencha/SenchaCon2011/"><img class="aligncenter" src="http://img1.sencha.com/files/misc/senchacon-2011.jpg" alt="SenchaCon 2011" height="206" width="636"></a></p>
+
+	<p><a href="http://www.sencha.com/senchacon2011">SenchaCon 2011</a> is going to be in Austin, Texas, October 23-26, and it&#8217;s set to be our biggest and best event ever. We&#8217;re putting the finishing touches to the schedule right now, and we thought we&#8217;d share some of the excitement with you!</p>
+
+	<p>The conference is spread over three days, with the first two focused on presentation sessions and workshops, and the Wednesday dedicated to an all-day Sencha Hackathon.</p>
+
+	<p>We&#8217;ve organized Monday and Tuesday so that you&#8217;ll be able to enjoy a real mixture of sessions. On Monday, the grand introductory Keynote and the morning&#8217;s JavaScript track will focus on new Sencha product announcements, demos, innovative community apps and a glimpse of things to come.</p>
+
+	<p><strong>You have until September 30th to save $100 on your SenchaCon pass.</strong> <a href="http://www.sencha.com/senchacon2011" class="more-icon">Register today!</a></p>
+
+	<h3>Day 1</h3>
+
+	<p>In the afternoon, we dive into platform sessions, relevant to both Ext JS and Sencha Touch. We start with a double workshop on implementing <span class="caps">MVC</span>-based applications with both frameworks, utilizing the newest features of Ext JS 4 and Sencha Touch 2. We&#8217;ve a dedicated session on charting and visualization, including the new Sencha Touch Charts package, and then we conclude with a theming session, showing how the same Sass and Compass techniques can be used in both mobile and desktop apps.</p>
+
+	<p>The parallel Ext <span class="caps">GWT</span> track will naturally be focused on the improvements we&#8217;ve made in Ext <span class="caps">GWT</span> 3. Darrell Meyer and the team will lead dedicated sessions on migration, widgets, layout and templates, and you&#8217;ll be able to spend valuable time with the framework&#8217;s developers themselves in the Clinic sessions on Tuesday. Be sure to bring your laptops!</p>
+
+	<p>Also on Monday, our Web Tech &amp; Tools track will be a great chance to hear from the Sencha Labs and WebKit teams. Learn about WebGL, a critical and exciting new web technology, peek under the hood at how browsers work, and get a sense for how the web as a whole is evolving. We&#8217;ll also be showcasing Sencha Animator v1.0, the newest addition to our tools lineup, and Sencha.io, our cloud offerings. And of course, don&#8217;t miss the session on Node.js &amp; CoffeeScript!</p>
+
+	<h3>Day 2</h3>
+
+	<p>On Tuesday we split the sessions down by framework, and this is a chance to learn about more details of each. The Ext JS track has sessions on accessibility, security, migration, using Designer, and other advanced techniques. You&#8217;ll also get a chance to get more details about the improvements and changes made in Ext JS 4.1.</p>
+
+	<p>In the Sencha Touch track, we&#8217;ll focus on Sencha Touch 2, in particular how to maximize its performance (particularly on Android browsers), upgrade your existing applications, use it to interact with device and carrier network <span class="caps">API</span>s, and then deploy web apps to native app stores. And how to build Sencha Touch apps with Designer? That could be an exciting one&#8230;</p>
+
+	<p>Woven throughout the second day, both in a dedicated track and in the afternoon, we&#8217;ve invited as many community members as possible to run community showcase sessions. While we hope that hearing about the frameworks from the Sencha team is invaluable, we also know that there&#8217;s no substitute for learning from members of your community. You&#8217;ll hear from both big brands and start-ups alike as they share their experiences of building amazing applications. Code walkthroughs, war stories, solutions and plenty of other tips and tricks! Many of our community members are also helping to run the server-side breakouts later in the afternoon.</p>
+
+	<h3>Day 3 / Hackathon Evening</h3>
+
+	<p>And then to Wednesday and the Hackathon. Bring your newfound Sencha skills and hook up with fellow community members in a (semi!) competitive environment. Hack code, snack, drink, and see what amazing things you can come up with in 6 hours of collective coding. There will be a host of prizes for the best apps and an experience not to be missed.</p>
+
+	<p>Are you excited yet? We know we are! With more sessions than ever, and what looks set to be a record number of attendees, SenchaCon 2011 is going to rock Austin this year. We&#8217;ll see you there!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=IJRlj6W3k5k:zmEBiVzT7h0:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=IJRlj6W3k5k:zmEBiVzT7h0:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=IJRlj6W3k5k:zmEBiVzT7h0:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=IJRlj6W3k5k:zmEBiVzT7h0:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Mon, 12 Sep 2011 18:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/senchacon-2011-now-packed-with-more-goodness/#date:18:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/senchacon-2011-now-packed-with-more-goodness/#date:18:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha on the Road: Fall 2011</title>
+        <author>James Pearce</author>
+        <description>
+            The Fall 2011 conference season is warming up, and so we're out on the road again. Conferences and meetups are a great chance for us to come out and meet our community, and to show off what we've spent the summer working on. Here's where we're planning to be over the next few months.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/ihC_J7seeoY/</link>
+        <content><![CDATA[
+            
+                <p>The Fall 2011 conference season is warming up, and so we&#8217;re out on the road again. Conferences and meetups are a great chance for us to come out and meet our community, and to show off what we&#8217;ve spent the summer working on.</p>
+
+	<p>You won&#8217;t be surprised to learn that HTML5, CSS3, JavaScript, and mobile web apps are hot topics right now. And it&#8217;s no co-incidence that our calendar is pretty full. Here are some of the highlights, and the places where you&#8217;ll be able to see us over the next few months.</p>
+
+	<p><a href='http://mobile2event.com/'><img class="alignright" src="http://src.sencha.io/220/http://img1.sencha.com/files/misc/mobile2.png" alt="Mobile2.0" width="220"></a> The season kicks off this week, in the Bay Area, with <strong><a href='http://mobile2event.com/'>Mobile 2.0</a></strong>. This is a long-established mobile event, and we&#8217;re thrilled to be involved, both in the mobile web panel and as event sponsors. A highly recommended event (and get a third off the entry using the code &#8216;<strong>friends</strong>&#8216;).</p>
+
+	<p><a href='http://www.bdconf.com/'><img class="alignright" src="http://src.sencha.io/220/http://img1.sencha.com/files/misc/bdconf.png" alt="BDconf" width="220"></a> Two weeks later, we head south to Nashville, for the second <strong><a href='http://www.bdconf.com/'>Breaking Development</a></strong> conference, a mobile event that&#8217;s already building up a great reputation. The line-up for this event is awesome &#8212; a veritable who&#8217;s-who of web and mobile design and development &#8212; and we&#8217;re proud to be involved, running a Sencha Touch workshop on the second day. You can get $100 off registration with the code &#8216;<strong>TNPEA11</strong>&#8216;.</p>
+
+	<p><a href='http://future-of-mobile.com/london-2011/'><img class="alignright" src="http://src.sencha.io/220/http://img1.sencha.com/files/misc/fom.png" alt="FOM" width="220"></a> A quick hop across the pond, and we&#8217;re in London on the 16th September for Carsonified&#8217;s prestigious <strong><a href='http://future-of-mobile.com/london-2011/'>Future of Mobile</a></strong> conference, where we&#8217;ll be discussing cross-platform mobile web apps and generally ranting about HTML5. Again, this should be a great event, with some great speakers, and you can grab yourself 10% off the registration with the code &#8216;<strong><span class="caps">FOM</span>-10</strong>&#8216;. Their strapline asserts that the future is &#8220;in your hands&#8221;. Indeed!</p>
+
+	<p><span class="alignright"><a href='http://max.adobe.com/'><img src="http://img1.sencha.com/files/misc/max.png" alt="MAX" width="105" style="padding-right:10px;"></a><a href='http://www.blackberrydevcon.com/americas'><img src="http://img1.sencha.com/files/misc/bb.png" alt="DevCon" width="105"></a></span> In late September and October, you&#8217;ll catch us at a number of partner events. We&#8217;re excited to be speaking at, and attending <strong><a href='http://max.adobe.com/'>Adobe Max</a></strong> &#8212; catch us at our booth there. Ariya Hidayat is speaking at Intel&#8217;s <strong><a href='http://appdeveloper.intel.com/en-us/events/elements'>AppUp Elements</a></strong>, and we&#8217;ll be showcasing our BlackBerry skillz at <span class="caps">RIM</span>&#8217;s <strong><a href='http://www.blackberrydevcon.com/americas'>DevCon Americas</a></strong> event later in the month.</p>
+
+	<p><a href='http://secure.lenos.com/lenos/sencha/SenchaCon2011/'><img class="aligncenter" src="http://img1.sencha.com/files/misc/senchacon-2011.jpg" alt="SenchaCon 2011" height="206" width="636"></a> </p>
+
+	<p>Michael Mullany is speaking at <strong><a href='http://www.html5devconf.com/'>HTML5 Dev Conf</a></strong> in San Francisco, and over on the east coast, October also sees us hit the <strong><a href='http://www.web2expo.com/webexny2011/'>Web 2.0 Expo</a></strong> in New York for a three hour app development workshop. Oh, and then apparently there&#8217;s a thing down in Austin&#8230; don&#8217;t tell us we didn&#8217;t <a href='http://www.sencha.com/blog/announcing-the-senchacon-2011-app-contest/'>tell you</a> <strong><a href='http://secure.lenos.com/lenos/sencha/SenchaCon2011/'>SenchaCon 2011</a></strong> is going to be amazing this year!</p>
+
+	<p>Moving into November, and you&#8217;ll be able to see us at <a href='http://html5live.org/html5-nyc-2011/'>HTML5 Live</a> in New York (use code &#8216;<strong>pear50</strong>&#8216; for a discount), <a href='http://www.andevcon.com/AndevCon_II'>Android DevCon II</a> in the Bay Area, and <a href='http://qconsf.com/'>QCon SF</a>. If you&#8217;re looking for great conferences to plan ahead for, these come highly recommended.</p>
+
+	<p><a href='http://www.meetup.com/find/?keywords=Sencha&op=search&submitButton=Search'><img class="alignright" src="http://img1.sencha.com/files/misc/meetup.png" alt="Meetup" width="140"></a> But at Sencha, it&#8217;s not all about big conferences though, and we&#8217;re always excited to be involved with meetups, hackathons and grassroots events too. AT&amp;T&#8217;s regular hackathons are always a lot of fun, and after <a href='http://www.facebook.com/event.php?eid=130116957073235'>Chicago</a> this weekend, we&#8217;re looking forward to <a href='http://www.facebook.com/event.php?eid=204489012940828'>Atlanta</a>, <a href='http://www.facebook.com/event.php?eid=211343448920501'>San Francisco</a> and <a href='http://www.facebook.com/event.php?eid=255547617796451'>Orlando</a> over the coming months. Our <a href='http://www.sencha.com/meetups'>community meetup</a> teams are busy around the world, and you&#8217;ll find us in person at many, including the <a href='http://www.meetup.com/The-San-Francisco-ExtJS-Meetup-Group'>SF ExtJS</a>, <a href='http://www.meetup.com/BayAreaMobile/'><span class="caps">BAM</span></a>, and <a href='http://www.meetup.com/MobileCloud/'>MobileCloud</a> events. We&#8217;ll be at <a href='http://www.siliconvalley-codecamp.com/'>Silicon Valley Code Camp</a> as well, of course &#8212; and even at <strong><a href='http://plancast.com/p/740m'>Ben &amp; Dion&#8217;s Mobile Tech Talks</a></strong> tonight, if you&#8217;re in the area&#8230;</p>
+
+	<p>So, that&#8217;s the diary as it currently stands. Stay up-to-date with our <a href='http://www.sencha.com/company/events'>events page</a>, <a href='http://www.meetup.com/find/?keywords=Sencha&op=search&submitButton=Search'>Meetup.com</a> and our various <a href='http://lanyrd.com/search/?q=sencha'>Lanyrd</a> accounts (<a href='http://lanyrd.com/profile/davidkaneda/'>Dave Kaneda</a> and <a href='http://lanyrd.com/profile/jamespearce/'>myself</a>, for example).</p>
+
+<p style='margin-bottom:2em'><strong>We look forward to meeting you out there! Which events are you looking forward to?</strong></p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=ihC_J7seeoY:jn5cSpr1uGM:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=ihC_J7seeoY:jn5cSpr1uGM:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=ihC_J7seeoY:jn5cSpr1uGM:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=ihC_J7seeoY:jn5cSpr1uGM:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 31 Aug 2011 19:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-on-the-road-again/#date:19:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-on-the-road-again/#date:19:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Ext GWT 3.0 Drawing and Charting</title>
+        <author>Brendan Coughran</author>
+        <description>
+            It has always been a challenge to draw objects in GWT because SVG and VML are not supported out of the box. In Ext GWT 3.0, we solve this problem by providing a draw framework that runs everywhere, from IE6 to the latest Chrome that is developed as a pure GWT library.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/zaEaeKRSqPU/</link>
+        <content><![CDATA[
+            
+                <p>It has always been a challenge to draw objects in GWT because SVG and VML are not supported out of the box. In a modern web application, it is useful to have charts or other richly interactive visuals, particularly in a data heavy application where it is important to visualize relationships and ideas.</p>
+
+<p>At the moment, Ext GWT 2.0 provides this functionality, but it is dependent on the third party Flash library, Open Flash Chart. While this library met the need for visualizations, there was a lack of extensibility and customization. In Ext GWT 3.0 we solve this problem by providing a draw framework that runs everywhere, from IE6 to the latest Chrome that is developed as a pure GWT library.</p>
+
+<h3>Draw Engine</h3>
+
+<p>Ext GWT 3.0 makes all of this possible with a new drawing system that chooses the proper rendering engine for the browser. The Draw package uses an abstract class called Surface that is replaced during compilation by the appropriate draw engine for the user agent. The SVG engine is used by default for the majority of browsers, and the VML engine is used for IE 6, 7, and 8. This all takes place seamlessly behind the scenes, allowing visual parity between all browsers.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.xml  {font-family:monospace;}
+.xml .imp {font-weight: bold; color: red;}
+.xml .es0 {color: #000099; font-weight: bold;}
+.xml .br0 {color: #66cc66;}
+.xml .sy0 {color: #66cc66;}
+.xml .st0 {color: #ff0000;}
+.xml .sc-1 {color: #808080; font-style: italic;}
+.xml .sc0 {color: #00bbdd;}
+.xml .sc1 {color: #ddbb00;}
+.xml .sc2 {color: #339933;}
+.xml .sc3 {color: #009900;}
+.xml .re0 {color: #000066;}
+.xml .re1 {color: #000000; font-weight: bold;}
+.xml .re2 {color: #000000; font-weight: bold;}
+.xml span.xtra { display:block; }
+</style>
+<pre class="xml"><span class="sc3"><span class="re1">&lt;replace-with</span> <span class="re0">class</span>=<span class="st0">'com.sencha.gxt.chart.client.draw.engine.SVG'</span><span class="re2">&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;when-type-is</span> <span class="re0">class</span>=<span class="st0">'com.sencha.gxt.chart.client.draw.Surface'</span> <span class="re2">/&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/replace-with<span class="re2">&gt;</span></span></span>
+&nbsp;
+<span class="sc3"><span class="re1">&lt;replace-with</span> <span class="re0">class</span>=<span class="st0">'com.sencha.gxt.chart.client.draw.engine.VML'</span><span class="re2">&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;when-type-is</span> <span class="re0">class</span>=<span class="st0">'com.sencha.gxt.chart.client.draw.Surface'</span> <span class="re2">/&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;any<span class="re2">&gt;</span></span></span>
+    <span class="sc3"><span class="re1">&lt;when-property-is</span> <span class="re0">name</span>=<span class="st0">'user.agent'</span> <span class="re0">value</span>=<span class="st0">'ie6'</span> <span class="re2">/&gt;</span></span>
+    <span class="sc3"><span class="re1">&lt;when-property-is</span> <span class="re0">name</span>=<span class="st0">'user.agent'</span> <span class="re0">value</span>=<span class="st0">'ie8'</span> <span class="re2">/&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;/any<span class="re2">&gt;</span></span></span>
+<span class="sc3"><span class="re1">&lt;/replace-with<span class="re2">&gt;</span></span></span></pre>
+
+<h3>Draw Sprites</h3>
+
+<p>The root of the draw package is DrawComponent.  DrawComponent is a component that provides a canvas-like area for visual elements. The scene of a DrawComponent is made up of sprites from the various types of geometric primitives rendered by the surface engine, ranging from ellipses to text.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">DrawComponent component <span class="sy0">=</span> <span class="kw1">new</span> DrawComponent<span class="br0">&#40;</span><span class="nu0">600</span>, <span class="nu0">400</span><span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p>Gradients are supported and can be used in place of any color attribute.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">CircleSprite circle <span class="sy0">=</span> <span class="kw1">new</span> CircleSprite<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setCenterX</span><span class="br0">&#40;</span><span class="nu0">30</span><span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setCenterY</span><span class="br0">&#40;</span><span class="nu0">100</span><span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setRadius</span><span class="br0">&#40;</span><span class="nu0">25</span><span class="br0">&#41;</span><span class="sy0">;</span>
+Scaling scale <span class="sy0">=</span> <span class="kw1">new</span> Scaling<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+scale.<span class="me1">setX</span><span class="br0">&#40;</span><span class="nu0">2</span><span class="br0">&#41;</span><span class="sy0">;</span>
+scale.<span class="me1">setY</span><span class="br0">&#40;</span><span class="nu0">2</span><span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setScaling</span><span class="br0">&#40;</span>scale<span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setStroke</span><span class="br0">&#40;</span><span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#999&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+Gradient gradient <span class="sy0">=</span> <span class="kw1">new</span> Gradient<span class="br0">&#40;</span><span class="st0">&quot;gradient&quot;</span>, <span class="nu0">21</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">0</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#79A933&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">13</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#70A333&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">34</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#559332&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">58</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#277B2F&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">86</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#005F27&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+gradient.<span class="me1">addStop</span><span class="br0">&#40;</span><span class="nu0">100</span>, <span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#005020&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setFill</span><span class="br0">&#40;</span>gradient<span class="br0">&#41;</span><span class="sy0">;</span>
+component.<span class="me1">addGradient</span><span class="br0">&#40;</span>gradient<span class="br0">&#41;</span><span class="sy0">;</span>
+circle.<span class="me1">setStrokeWidth</span><span class="br0">&#40;</span><span class="nu0">3</span><span class="br0">&#41;</span><span class="sy0">;</span>
+component.<span class="me1">add</span><span class="br0">&#40;</span>circle<span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p>The PathSprite is the lowest level sprite element, and it allows the developer to manually set up the vector elements of a sprite. We have made the path system easier by using strongly typed PathCommands. PathSprite also provides useful helper functions such as line smoothing.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">PathSprite path <span class="sy0">=</span> <span class="kw1">new</span> PathSprite<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">addCommand</span><span class="br0">&#40;</span><span class="kw1">new</span> MoveTo<span class="br0">&#40;</span><span class="nu0">75</span>, <span class="nu0">75</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">addCommand</span><span class="br0">&#40;</span><span class="kw1">new</span> CurveTo<span class="br0">&#40;</span><span class="nu0">0</span>, <span class="sy0">-</span><span class="nu0">25</span>, <span class="nu0">50</span>, <span class="nu0">25</span>, <span class="nu0">50</span>, <span class="nu0">0</span>, <span class="kw2">true</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">addCommand</span><span class="br0">&#40;</span><span class="kw1">new</span> CurveTo<span class="br0">&#40;</span><span class="nu0">0</span>, <span class="sy0">-</span><span class="nu0">25</span>, <span class="sy0">-</span><span class="nu0">50</span>, <span class="nu0">25</span>, <span class="sy0">-</span><span class="nu0">50</span>, <span class="nu0">0</span>, <span class="kw2">true</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">setStroke</span><span class="br0">&#40;</span><span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#000&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">setStrokeWidth</span><span class="br0">&#40;</span><span class="nu0">2</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">setFill</span><span class="br0">&#40;</span><span class="kw1">new</span> <a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Acolor+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Color</span></a><span class="br0">&#40;</span><span class="st0">&quot;#fc0&quot;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+path.<span class="me1">setFillOpacity</span><span class="br0">&#40;</span><span class="nu0">0.25</span><span class="br0">&#41;</span><span class="sy0">;</span>
+component.<span class="me1">add</span><span class="br0">&#40;</span>path<span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p><img src="http://img1.sencha.com/files/misc/Draw.png" alt="draw example" height="246" width="197"></p>
+
+<h3>Chart Example</h3>
+
+<p>To better understand the new charting system, let’s walk through one of the examples.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:stackedbarchart"><img src="http://img1.sencha.com/files/misc/stackedlarge.png" alt="stacked bar" height="382" width="586"></a></p>
+
+<h3>Store</h3>
+
+<p>The data used in the chart is accessed from a store. In this example, ValueProviders are used to link the data to corresponding areas of the chart. A ValueProvider instance takes a model object and returns a value. Each Series is designed to accept a certain type of value and will only accept ValueProviders that supply that type. While you can implement your own ValueProvider instances, if your data model has getters and setters, you can define a PropertyAccess type to supply ValueProvider instances as needed. In this example, we are using the Movies class, which has several properties of type double, each with its own getter and setter. Each genre represents the number of releases for the given year.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java"><span class="kw1">public</span> <span class="kw1">interface</span> MoviesPropertyAccess <span class="kw1">extends</span> PropertyAccess<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> <span class="br0">&#123;</span>
+  ValueProvider<span class="sy0">&lt;</span>Movies, Double<span class="sy0">&gt;</span> action<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  ValueProvider<span class="sy0">&lt;</span>Movies, Double<span class="sy0">&gt;</span> comedy<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  ValueProvider<span class="sy0">&lt;</span>Movies, Double<span class="sy0">&gt;</span> drama<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  ValueProvider<span class="sy0">&lt;</span>Movies, Double<span class="sy0">&gt;</span> thriller<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  ValueProvider<span class="sy0">&lt;</span>Movies, Integer<span class="sy0">&gt;</span> year<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  ModelKeyProvider<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> yearKey<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw1">private</span> <span class="kw1">static</span> <span class="kw1">final</span> MoviesPropertyAccess moviesAccess <span class="sy0">=</span> GWT.<span class="me1">create</span><span class="br0">&#40;</span>MoviesPropertyAccess.<span class="kw1">class</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+@Override
+<span class="kw1">public</span> Widget asWidget<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="kw1">final</span> ListStore<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> store <span class="sy0">=</span> <span class="kw1">new</span> ListStore<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">yearKey</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  store.<span class="me1">addAll</span><span class="br0">&#40;</span>TestData.<span class="me1">getMovieData</span><span class="br0">&#40;</span><span class="nu0">2005</span>, <span class="nu0">4</span>, <span class="nu0">0</span>, <span class="nu0">10000</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="kw1">final</span> Chart<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> chart <span class="sy0">=</span> <span class="kw1">new</span> Chart<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span><span class="nu0">600</span>, <span class="nu0">400</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  chart.<span class="me1">setStore</span><span class="br0">&#40;</span>store<span class="br0">&#41;</span><span class="sy0">;</span>
+  chart.<span class="me1">setChartShadow</span><span class="br0">&#40;</span><span class="kw2">true</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  chart.<span class="me1">setAnimated</span><span class="br0">&#40;</span><span class="kw2">true</span><span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<h3>Axis</h3>
+
+<p>Axes come in various types and are added to the chart on which they will appear. Only one axis can be used for each position on the chart. You then link ValueProviders from the store to provide the data sets that are used by the axis. This example also shows the configuration for the title, grid, and subtick steps. The NumericAxis will interpolate between the values in the store whereas the CategoryAxis will only use values in the store. Some charts require a special Axis that is unique to that chart - such as with Gauge and Radar, for example.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">NumericAxis<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> axis <span class="sy0">=</span> <span class="kw1">new</span> NumericAxis<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">setPosition</span><span class="br0">&#40;</span><a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Aposition+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Position</span></a>.<span class="me1">BOTTOM</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">addField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">comedy</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">addField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">action</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">addField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">drama</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">addField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">thriller</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+axis.<span class="me1">setDisplayGrid</span><span class="br0">&#40;</span><span class="kw2">true</span><span class="br0">&#41;</span><span class="sy0">;</span>
+chart.<span class="me1">addAxis</span><span class="br0">&#40;</span>axis<span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+CategoryAxis<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> catAxis <span class="sy0">=</span> <span class="kw1">new</span> CategoryAxis<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+catAxis.<span class="me1">setPosition</span><span class="br0">&#40;</span><a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Aposition+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Position</span></a>.<span class="me1">LEFT</span><span class="br0">&#41;</span><span class="sy0">;</span>
+catAxis.<span class="me1">addField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">year</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+chart.<span class="me1">addAxis</span><span class="br0">&#40;</span>catAxis<span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<h3>Legend</h3>
+
+<p>The Legend provides a key of the data represented in the chart. The legend adapts to the series added to the chart and uses items that pertain to the type of data set represented in that series.  A legend is an easy way for the end user to highlight or hide data in the chart.</p>
+
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">Legend<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> legend <span class="sy0">=</span> <span class="kw1">new</span> Legend<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+legend.<span class="me1">setPosition</span><span class="br0">&#40;</span><a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Aposition+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Position</span></a>.<span class="me1">RIGHT</span><span class="br0">&#41;</span><span class="sy0">;</span>
+chart.<span class="me1">setLegend</span><span class="br0">&#40;</span>legend<span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<h3>Series</h3>
+
+<p>A Series functions in a similar way to an Axis. Each series represents a different chart type, such as Pie or Radar. First, you add ValueProviders for accessing the data represented in the Series. Next, you add the colors associated with the Series.</p>
+
+<p>
+<style>/**
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ */
+.java .imp {font-weight: bold; color: red;}
+.java .kw1 {color: #000000; font-weight: bold;}
+.java .kw2 {color: #000066; font-weight: bold;}
+.java .kw3 {color: #003399;}
+.java .kw4 {color: #000066; font-weight: bold;}
+.java .co1 {color: #666666; font-style: italic;}
+.java .co2 {color: #006699;}
+.java .co3 {color: #008000; font-style: italic; font-weight: bold;}
+.java .coMULTI {color: #666666; font-style: italic;}
+.java .es0 {color: #000099; font-weight: bold;}
+.java .br0 {color: #009900;}
+.java .sy0 {color: #339933;}
+.java .st0 {color: #0000ff;}
+.java .nu0 {color: #cc66cc;}
+.java .me1 {color: #006633;}
+.java .me2 {color: #006633;}
+.java span.xtra { display:block; }
+</style><pre class="java">BarSeries<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span> bar <span class="sy0">=</span> <span class="kw1">new</span> BarSeries<span class="sy0">&lt;</span>Movies<span class="sy0">&gt;</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">setyAxisPosition</span><span class="br0">&#40;</span><a href="http://www.google.com/search?hl=en&amp;q=allinurl%3Aposition+java.sun.com&amp;btnI=I%27m%20Feeling%20Lucky"><span class="kw3">Position</span></a>.<span class="me1">BOTTOM</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addyField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">comedy</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addyField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">action</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addyField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">drama</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addyField</span><span class="br0">&#40;</span>moviesAccess.<span class="me1">thriller</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addColor</span><span class="br0">&#40;</span><span class="kw1">new</span> RGB<span class="br0">&#40;</span><span class="nu0">148</span>, <span class="nu0">174</span>, <span class="nu0">10</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addColor</span><span class="br0">&#40;</span><span class="kw1">new</span> RGB<span class="br0">&#40;</span><span class="nu0">17</span>, <span class="nu0">95</span>, <span class="nu0">166</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addColor</span><span class="br0">&#40;</span><span class="kw1">new</span> RGB<span class="br0">&#40;</span><span class="nu0">166</span>, <span class="nu0">17</span>, <span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">addColor</span><span class="br0">&#40;</span><span class="kw1">new</span> RGB<span class="br0">&#40;</span><span class="nu0">255</span>, <span class="nu0">136</span>, <span class="nu0">9</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+bar.<span class="me1">setStacked</span><span class="br0">&#40;</span><span class="kw2">true</span><span class="br0">&#41;</span><span class="sy0">;</span>
+chart.<span class="me1">addSeries</span><span class="br0">&#40;</span>bar<span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p>The advantage of separating the chart types into series, instead of making them a part of the chart itself, is that various chart types can be mixed together.  In the example below, a Scatter, Line, and Bar Series are all used on the same chart.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:mixedchart"><img src="http://img1.sencha.com/files/misc/ext-gwt-3-charts-line.png" alt="mixed chart" height="153" width="200"></a></p>
+
+<h3>Chart Types</h3>
+
+<p>Next, let&rsquo;s run through all of the chart types in this preview and give a general overview of how they are used.</p>
+
+<p>The stacked Area Chart is useful when displaying multiple aggregated layers of information.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:areachart"><img src="http://img1.sencha.com/files/misc/areachart.gif" alt="area chart" height="90" width="120"></a></p>
+
+<p>A Bar Chart is a useful visualization technique to display quantitative information for different categories that shows some progression (or regression) in the data set.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:barchart"><img src="http://img1.sencha.com/files/misc/barchart.gif" alt="bar chart" height="90" width="120"></a>
+<a href="http://www.sencha.com/examples-dev/#ExamplePlace:columnchart"><img src="http://img1.sencha.com/files/misc/columnchart.gif" alt="column chart" height="90" width="120"></a>
+<a href="http://www.sencha.com/examples-dev/#ExamplePlace:groupedbarchart"><img src="http://img1.sencha.com/files/misc/groupedbarchart.gif" alt="grouped bar chart" height="90" width="120"></a>
+<a href="http://www.sencha.com/examples-dev/#ExamplePlace:stackedbarchart"><img src="http://img1.sencha.com/files/misc/stackedbarchart.gif" alt="stacked bar chart" height="90" width="120"></a></p>
+
+<p>Gauge Charts are used to show progress in a certain variable.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:gaugechart"><img src="http://img1.sencha.com/files/misc/gaugechart.gif" alt="gauge chart" height="90" width="120"></a></p>
+
+<p>A Line Chart is a useful visualization technique to display quantitative information for different categories or other real values (as opposed to the bar series), that can show some progression (or regression) in the data set.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:linechart"><img src="http://img1.sencha.com/files/misc/linechart.gif" alt="line chart" height="90" width="120"></a></p>
+
+<p>A Pie Chart is a useful visualization technique to display quantitative information for different categories that also have a meaning as a whole.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:piechart"><img src="http://img1.sencha.com/files/misc/piechart.gif" alt="pie chart" height="90" width="120"></a>
+<a href="http://www.sencha.com/examples-dev/#ExamplePlace:custompiechart"><img src="http://img1.sencha.com/files/misc/custompiechart.gif" alt="custom pie chart" height="90" width="120"></a></p>
+
+<p>A Radar Chart is a useful visualization technique for comparing different quantitative values for a constrained number of categories.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:radarchart"><img src="http://img1.sencha.com/files/misc/radarchart.gif" alt="radar chart" height="90" width="120"></a></p>
+
+<p>The scatter plot is useful when trying to display more than two variables in the same visualization.</p>
+
+<p><a href="http://www.sencha.com/examples-dev/#ExamplePlace:scatterchart"><img src="http://img1.sencha.com/files/misc/scatterchart.gif" alt="scatter chart" height="90" width="120"></a></p>
+
+<h3>Summary</h3>
+
+<p>Be sure to try all of the examples&mdash;and in particular, the legend interactivity. Keep in mind that this is still preview, so expect additional features as well as other improvements. This is just scratching the surface of what is possible with the new Draw and Charting framework. We can’t wait to see what you do with them.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=zaEaeKRSqPU:pgGTtwQgTEE:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=zaEaeKRSqPU:pgGTtwQgTEE:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zaEaeKRSqPU:pgGTtwQgTEE:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=zaEaeKRSqPU:pgGTtwQgTEE:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Tue, 30 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/ext-gwt-3-drawing-and-charting/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/ext-gwt-3-drawing-and-charting/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha Touch Spotlight: Emerge Interactive and TEDxPortland</title>
+        <author>Jay Robinson</author>
+        <description>
+            Emerge Interactive had the pleasure of being creative collaborators for the inaugural TEDxPortland event -- contributing their digital expertise to enrich the event experience through an interactive networking "game."
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/8LcVw6nL0V4/</link>
+        <content><![CDATA[
+            
+                <figure class="aligncenter">
+ <img src="http://img1.sencha.com/files/misc/sencha-touch-tedx.jpg" alt="TEDx app by Emerge Interactive, built with Sencha Touch"height="330" width="636">
+ <figcaption><span class="caps">TED</span>x app by Emerge Interactive, built with Sencha Touch. (Photo credit: &copy; Second Story Interactive&nbsp;Studios)</figcaption>
+ </figure>
+
+	<p><a href="http://www.emergeinteractive.com">Emerge Interactive</a> is a digital marketing agency providing interactive solutions for consumer brands, including <span class="caps">CMS</span> and e-commerce websites, mobile and Facebook applications. Emerge offers clients a single source for delivering digital solutions that succeed and thrive in a rapidly changing marketplace. Our promise is to &ldquo;Inspire and Deliver the Remarkable.&rdquo;</p>
+
+ <aside>
+ <blockquote class="pullquote right">
+     <p><span>&ldquo;</span>For a real-time application like ours, responsiveness was critical, and Sencha Touch did not disappoint.&rdquo;</p>
+ </blockquote>
+ </aside>
+
+	<p><span class="caps">TED</span>x is a program of local events that brings people together to share a <span class="caps">TED</span>-like experience. Emerge had the pleasure of being creative collaborators for the inaugural TEDxPortland event&#8212;contributing our digital expertise to enrich the event experience through an interactive networking &ldquo;game.&rdquo;</p>
+
+	<p>The goal of the project was to connect attendees and digitally augment their networking via an interactive installation along with a mobile website. Attendees were asked provocative questions, and their answers were anonymously projected onto a large screen. Real-time relationship scores indicated how similar attendees were to other individuals at the party, based on their answers, and players could pull up their Twitter and LinkedIn profiles right there from the app and connect. Days after the event, players were still answering questions through the mobile site and using it to connect with other party <span class="caps">VIP</span>s.</p>
+
+	<p>Due to the short lifetime of the project, we chose to build a mobile website instead of device-specific applications. That way we could deploy the application without having to go through the App Store approval process and easily iterate up to the day of the event. The fact that we could use Sencha Touch to create mobile websites, and not just applications, was critical. </p>
+
+	<p>One of the main concerns when building any mobile website is cross-device compatibility. For this requirement, we leaned heavily on Sencha Touch which mimics native UI elements out of the box, providing users with a familiar user experience. This was a big advantage for us as well because we didn&rsquo;t have to tweak <span class="caps">CSS</span> for each device individually. The UI elements were production ready and didn&rsquo;t need styling. Since we were able to use the UI elements without doing custom coding for different platforms, our QA was radically streamlined.</p>
+
+	<p><figure class="aligncenter clearing">
+    <a class="lightbox" href="http://img1.sencha.com/files/misc/sencha-touch-tedx-iphone.png">
+        <img src="http://img1.sencha.com/files/misc/sencha-touch-tedx-iphone-sm.jpg" alt="Emerge Interactive's web app for TEDx, built with Sencha Touch. Shown running on an Apple iPhone 4." height="343" width="186">
+    </a>
+    <a class="lightbox" href="http://img1.sencha.com/files/misc/sencha-touch-tedx-nexus.png">
+        <img src="http://img1.sencha.com/files/misc/sencha-touch-tedx-nexus-sm.jpg" alt="Emerge Interactive's web app for TEDx, built with Sencha Touch. Shown running on an Google Nexus S." height="363" width="197">
+    </a>
+    <a class="lightbox" href="http://img1.sencha.com/files/misc/sencha-touch-tedx-palm.png" style="margin-right:0;">
+        <img src="http://img1.sencha.com/files/misc/sencha-touch-tedx-palm-sm.jpg" alt="Emerge Interactive's web app for TEDx, built with Sencha Touch. Shown running on an HP/Palm Pre." height="304" width="188">
+    </a>
+    <figcaption style="clear:both;">Using Sencha Touch allowed Emerge Interactive to build a cross-device compatible app in a minimal amount of time.</figcaption><br />
+</figure></p>
+
+	<p>Compared to other JavaScript frameworks, Sencha Touch has a richer set of libraries and objects that can be leveraged in the client, beyond just the UI elements. Also, Sencha Touch manages the state on the client side, so your app or site can be more responsive because the load is reduced on the back-end. For a real-time application like ours, responsiveness was critical, and Sencha Touch did not disappoint.</p>
+
+	<p>Finally, Sencha Touch support for an <span class="caps">MVC</span> approach was critical to supporting our team-based development methodology and the highly collaborative nature of this project. We separated concerns which allowed us to deploy teams working concurrently on the application and then integrate their work at a later point.</p>
+
+	<p><img class="alignleft" src="http://img1.sencha.com/files/misc/sencha-touch-tedx-app.png" alt="TEDx Sencha Touch app, built by Emerge Interactive" height="165" width="200"> Sencha Touch allows you to take advantage of the simplicity of remote data access libraries which can be a huge advantage&#8212;they were for us. This greatly reduces the need for server side processing. You also don&rsquo;t need to worry about session variables in many cases, which allows for easier scaling. The model layer is very robust, with computed columns being just one example. You can also sync client-side changes to the server via the framework&rsquo;s built-in functionality.</p>
+
+ <p style="clear:both;">Keep in mind that Sencha Touch is continuing to deliver new functionality. This is a good thing! The docs are awesome and will quickly become your best friend. Familiarize yourself with them early in the process and be sure to reference them regularly.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=8LcVw6nL0V4:2tTIwWH-X8g:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=8LcVw6nL0V4:2tTIwWH-X8g:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=8LcVw6nL0V4:2tTIwWH-X8g:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=8LcVw6nL0V4:2tTIwWH-X8g:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Thu, 25 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-touch-spotlight-emerge-interactive-and-tedxportland/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-touch-spotlight-emerge-interactive-and-tedxportland/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>A Fresh Approach to JavaScript Documentation—The New Ext JS 4 Documentation Center</title>
+        <author>Nick Poulden</author>
+        <description>
+            Since the launch of Ext JS 4 we've been hard at work improving all aspects of helping you learn the framework. We've launched a new learning center, improved the way we track bugs and respond to issues on the forums and more. You've given us a tremendous amount of support as well as suggestions on how to improve via the active docs app threads on the forums. We've been listening and today I'd like to share a few of the improvements we've made with you, as well as some of what we're working on.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/K3A8lDo2OQc/</link>
+        <content><![CDATA[
+            
+                <p>At Sencha, we&#8217;ve been challenging ourselves to improve our <a href="http://docs.sencha.com/extjs/"><span class="caps">API</span> documentation</a>, and listening to your feedback on what we should focus on. Today, I&#8217;d like to share a few of the improvements we&#8217;ve made, as well as some of what we&#8217;re working on for the future.  We hope you like what we&#8217;ve done and where we&#8217;re headed. </p>
+
+  <figure class="aligncenter">
+  <a href="http://docs.sencha.com/extjs/"><img src="http://img1.sencha.com/files/misc/redesign-sencha-docs.jpg" alt="The New Ext JS 4 Documentation Center" height="183" width="636"></a>
+  <figcaption>The redesigned Ext JS 4 Doc Center features Docs, Guides, Videos, and Examples all in one place.</figcaption>
+  </figure>
+
+	<h3>The Return of Tabs</h3>
+
+	<p>The first thing you&#8217;ll notice when you load the docs is that tabs are back &#8212; and sexier than ever! While the earlier versions of the docs app had many improvements, tabs were missed by many so today we&#8217;re bringing them back by popular demand. </p>
+
+	<h3>Easy Access to Learning Materials</h3>
+
+	<p>In addition to the existing <span class="caps">API</span> reference and reference guides, we&#8217;ve also added easy access to examples, screencasts and other learning materials. The updated docs adds new tabbed sections for <a href="http://docs.sencha.com/ext-js/4-0/#!/example">examples</a>, <a href="http://docs.sencha.com/ext-js/4-0/#!/guide">guides</a>, and <a href="http://docs.sencha.com/ext-js/4-0/#!/video">videos</a>. We&#8217;ve also revamped and in some cases rewritten the Ext JS 4 guides, improving flow, fixing inaccuracies and bringing them into a new &#8220;Guides&#8221; section.  Now that the examples are part of the docs app, you can play with an example while you&#8217;re reading details on the classes that power it.</p>
+
+  <figure class="alignleft">
+  <a href="http://docs.sencha.com/ext-js/4-0/?print=/api/Ext.ComponentQuery"><img src="http://img1.sencha.com/files/misc/print.png" alt="Print view for Sencha Docs" height="200" width="200"></a>
+  <figcaption>Click to see new print view</figcaption>
+  </figure>
+
+	<p>Another brand new addition to the docs is the videos section. We&#8217;re launching with 30 Ext JS videos, ranging from SenchaCon 2010 sessions to screencasts on how to use the framework&#8217;s components. We&#8217;ll continue to regularly upload more content here, especially in the area of new screencasts explaining many of the framework components such as Windows and Toolbars. All the screencasts and learning materials will also be mirrored on our learning center for those of you who prefer to access materials that way. </p>
+
+	<p>We&#8217;ve also implemented another of the most requested features, an easy-to-read <a href="http://docs.sencha.com/ext-js/4-0/?print=/api/Ext.ComponentQuery">print view for docs</a>. Click the large printer icon at the top right of a Docs page to preview.</p>
+
+	<p>h3&#123;clear:both;&#125;. <span class="caps">API</span> Reference Upgrades</p>
+
+	<p>The new materials aren&#8217;t the only improvements we&#8217;ve been making: the <span class="caps">API</span> reference itself has also benefitted from a lot of hard work. We&#8217;ve been through every class in Ext JS to improve the accuracy of the reported types for each of the functions, configs and events, now explicitly stating precisely what types each function or configuration takes.</p>
+
+	<h4>Badges </h4>
+
+	<p><img class="alignright" src="http://img1.sencha.com/files/misc/stinking-badges.png" alt="Deprecated, Static and Protected badges" height="26" width="203"> We&#8217;ve also added badges to all of the functions that are currently Deprecated, Static or Protected, so it&#8217;s easy to see if a function is already deprecated. The deprecation notices also point you to the function you should be using instead. The Static functions on each class are separated into their own section so that they&#8217;re not confused with normal instance functions.</p>
+
+	<h4>Inline Examples</h4>
+
+	<p>Perhaps the biggest upgrade for the class reference pages is the addition of inline examples. We&#8217;ve always included code snippets and screenshots in the documentation but before, you had to copy them into your own app to see them work. Now, the new inline examples have a brand new preview mode that allows you  to immediately see how sample code looks. Even cooler &#8212; you can now <a href="http://docs.sencha.com/ext-js/4-0/#/api/Ext.grid.Panel">edit the example code</a> inline and see your changes live on the page:</p>
+
+  <figure class="aligncenter">
+  <a href="http://docs.sencha.com/ext-js/4-0/#/api/Ext.grid.Panel"><img src="http://img1.sencha.com/files/misc/inline-examples.png" alt="Inline Examples" height="130" width="636"></a>
+  <figcaption>The new inline examples lets you edit sample code and see it instantly in a brand new preview mode. Click to see an inline example.</figcaption>
+  </figure>
+
+	<p>Many of the UI classes already have inline examples and we&#8217;ll continue to roll out more.</p>
+
+	<h3>Powered by Sencha Labs</h3>
+
+ All of the functionality improvements above are enabled by work on JsDuck, our documentation generator and presentation app. <a href="https://github.com/senchalabs/jsduck">JsDuck</a> is a open source project of Sencha Labs and is hosted on the Sencha Labs github account. JsDuck builds on the standard <span class="caps">JSD</span>oc syntax while adding many enhancements to generate excellent documentation for your Ext JS and Sencha Touch projects.
+
+	<p>Some of the recent additions to JsDuck include compatibility with Markdown, easy search integration and history/deep linking support. Best of all, the front end app we use on our docs is an Ext JS 4 <span class="caps">MVC</span> app and comes included with JsDuck. It&#8217;s easy to install for your own projects. Give it a try and let us know what you think. </p>
+
+	<h3>We&#8217;re Just Getting Started</h3>
+
+	<p>Since the launch of Ext JS 4.0 we&#8217;ve been hard at work improving all aspects of helping you learn the framework and build amazing apps. We&#8217;ve launched a new <a href="http://www.sencha.com/blog/introducing-our-new-learning-center/">learning center</a>, improved the way we track bugs and respond to issues on the forums and more. We&#8217;re also working on more screencast videos, more guides and several larger <span class="caps">MVC</span> example apps.  You&#8217;ve given us a tremendous amount of support as well as suggestions on how to improve via the active docs app threads on the forums. </p>
+
+	<p>We hope to continuously release documentation updates, so make sure you leave a comment here on on the forum with what you think of the progress and what you want to see next.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=K3A8lDo2OQc:g7BzG-2e_8g:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=K3A8lDo2OQc:g7BzG-2e_8g:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=K3A8lDo2OQc:g7BzG-2e_8g:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=K3A8lDo2OQc:g7BzG-2e_8g:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Mon, 22 Aug 2011 17:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/new-ext-js-4-documentation-center/#date:17:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/new-ext-js-4-documentation-center/#date:17:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Announcing the New Sencha Complete—Touch Charts, Designer 1.2, and a Special Promo Price!</title>
+        <author>Aditya Bansod</author>
+        <description>
+            Today, we're happy to announce an all-new Sencha Complete and a promotional price to sweeten the deal. The new Sencha Complete includes a commercial license to Sencha Touch Charts -- our data visualization add-on to Sencha Touch -- and the new Ext Designer 1.2 with support for Ext JS 4. And celebrate the expanded Sencha Complete, we've made the price even more attractive. Sencha Complete is now on sale through Sept. 30th with a starting price of $845.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/vnp9qjGEogA/</link>
+        <content><![CDATA[
+            
+                <p><a href="http://www.sencha.com/store/sencha-complete/"><img src="http://img1.sencha.com/files/misc/sencha-complete-blog.jpg" alt="Sencha Complete includes Ext JS 4, Sencha Touch and Sencha Touch Charts, Ext Designer 1.2, as well as Sencha Care Support" height="370" width="636"></a></p>
+
+	<p><a href="http://www.sencha.com/store/sencha-complete/"><img class="alignright" src="http://img1.sencha.com/files/misc/sale2.png" alt="Sale" height="48" width="120"></a> Today, we&#8217;re happy to announce an all-new <a href="http://www.sencha.com/store/sencha-complete/">Sencha Complete</a>. In addition to a commercial license of Ext JS 4, Sencha Touch, and an annual Standard or Premium Support subscription, Sencha Complete now includes a commercial license to <a href="http://www.sencha.com/blog/sencha-touch-charts-now-available/">Sencha Touch Charts</a> &#8212; our data visualization add-on to Sencha Touch &#8212; and the new <a href="http://www.sencha.com/blog/ext-designer-1-2-final-is-here/">Ext Designer 1.2</a> with support for Ext JS 4.</p>
+
+	<p>Purchasing Sencha Complete is a great way to get all of the desktop and mobile JavaScript frameworks and tools to help you develop amazing web applications. Plus, you&#8217;ll get the backing of our Sencha Support team and community forums with the included Standard or Premium Support subscription. </p>
+
+	<p>To celebrate the enhanced and expanded Sencha Complete, we&#8217;ve made the price even more attractive. Sencha Complete is now available at a <strong>special price of $845</strong> for a 1-pack license (see our online store for 5-pack and 20-pack prices).</p>
+
+	<p>So go ahead and head over to the <a href="http://www.sencha.com/store/">Sencha Store</a> and find which bundle is right for you.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=vnp9qjGEogA:Ce6upiFlbuA:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=vnp9qjGEogA:Ce6upiFlbuA:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vnp9qjGEogA:Ce6upiFlbuA:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=vnp9qjGEogA:Ce6upiFlbuA:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Thu, 18 Aug 2011 17:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-complete-updated-touch-charts-on-sale-and-more/#date:17:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-complete-updated-touch-charts-on-sale-and-more/#date:17:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Ext Designer 1.2 is Now Available</title>
+        <author>Luca Candela</author>
+        <description>
+            We are incredibly excited to announce Ext Designer 1.2 with Ext JS 4 support. Ext Designer 1.2 is the culmination of many months of work and we believe it's the most powerful release of Designer so far. Support for Ext JS 4, improved documentation, and a new 30-Day Trial period make this the most compelling Ext Designer yet.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/42OfOeJoHdE/</link>
+        <content><![CDATA[
+            
+                <p>We are incredibly excited to announce the general availability of <strong><a href="http://www.sencha.com/products/designer/">Ext Designer 1.2</a> with Ext JS 4 support</strong>. Ext Designer 1.2 is the culmination of many months of work and we believe it&#8217;s the most powerful release of Designer so far.</p>
+
+	<p>Before we dive into the details of this release, we would like to thank some of our community members who helped test the beta builds of Ext Designer. They are: Arunosaur, berntkau, bwmatthews, Cybjorg, dorgan, ewl2, Francois Lecroart, gdewey, hschaefer123, icvg, mfearby, MeDavid, mihaip007, ofueckert, ryland, samoas, welshcathy and last but not least wemerson.januario. A big thank you for helping us find and fix bugs, we really appreciate your help. (By the way, if you&#8217;re interested in helping us full-time, please check our <a href="http://www.sencha.com/company/careers/">careers page</a>.)</p>
+
+	<p>What&#8217;s new for this release:</p>
+
+	<h3>Support for Ext JS 4</h3>
+
+	<p><img class="alignright avatar shadow" src="http://img10.sencha.com/img/20110502-ext-js-3-to-4-compat-js.png" alt="Ext JS 3 and 4 Support" height="90" width="120" style="height:90px;width:120px;">We know you&#8217;ve anxiously awaited support for Ext JS 4, and Ext Designer 1.2 delivers. We&#8217;re excited to provide our community with a powerful workspace to visually create your Ext JS interfaces.</p>
+
+	<p>Please note that while you can load your old Ext JS 3.x projects in Designer 1.2, it&#8217;s not possible to automatically update the code to Ext JS 4. Due to the differences between Ext JS 3 and Ext JS 4, an automatic code update would require more manual intervention than to simply re-create the project in the new framework.</p>
+
+	<p><a href="http://www.sencha.com/blog/ext-designer-1-2-beta/">Check out a complete list of new features</a> that came with the support of Ext JS 4, released in the previous beta.</p>
+
+	<h3>Improved Documentation</h3>
+
+	<p><a href="http://www.sencha.com/learn/designer/"><img class="alignright" src="http://www.sencha.com/files/misc/extjs-documentation.jpg" alt="Sencha Documentation" width="120" height="90"></a> Previous versions of Ext Designer shipped with individual manuals that described working with Layouts, Components, Stores, etc. Not only was there a lot of repetition in the docs, finding information wasn&#8217;t very easy. In Ext Designer 1.2, we have a single, easy-to-use, and beautifully crafted manual that you can read on screen or print for your convenience. The table of contents and indexes are improved to help you find the information you need quickly. <a href="http://www.sencha.com/learn/designer">Find these in our brand new Learn section</a>.</p>
+
+	<p>While documentation is never done, this is a huge leap forward in the quality of documentation that accompanies Ext Designer and we hope that you find it useful.</p>
+
+	<h3>Discounted Price and New 30-Day Trial</h3>
+
+	<p><a href="http://www.sencha.com/store/designer/"><img class="alignright" src="http://img1.sencha.com/files/misc/sale2.png" alt="Sale" height="48" width="120"></a> With the GA release of Ext Designer 1.2, <strong><a href="http://www.sencha.com/store/designer">we&#8217;re offering a special discounted price of $219</a></strong> for a single developer license &#8212; an $80 savings through September 30, 2011. When you&#8217;re ready to purchase our Designer license, <a href="http://www.sencha.com/store/designer/">visit our online store</a>. We&#8217;re also please to announce that we&#8217;ve extended the Ext Designer trial from 15 days to 30 days.</p>
+
+	<p>And, for our existing Ext Designer users in trial mode, we reset all trial periods. <a href="http://www.sencha.com/products/designer/download/">Go ahead and test Designer once again!</a> You simply need to log in with your Sencha username and password, the trial reset will happen automatically.</p>
+
+	<h3>Download Designer</h3>
+
+	<p>Designer 1.2 is the biggest and best Designer release to date, but we&#8217;re not standing still. While you’re busy exploring all the new features of Ext JS 4, we’re already at work to bring you Designer 2.0 which will enable support for Sencha Touch among other features to make Designer an even better design and development tool.</p>
+
+	<p>Go ahead and <a href="http://www.sencha.com/products/designer/download/">download Ext Designer 1.2</a> now and join us in the forums. We love hearing your feedback!</p>
+
+	<p>For a full list of updates and bug fixes, please refer to the <a href="http://www.sencha.com/products/designer/changelog/">changelog</a>.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=42OfOeJoHdE:stvfeloC-c4:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=42OfOeJoHdE:stvfeloC-c4:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=42OfOeJoHdE:stvfeloC-c4:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=42OfOeJoHdE:stvfeloC-c4:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Tue, 16 Aug 2011 23:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/ext-designer-1-2-final-is-here/#date:23:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/ext-designer-1-2-final-is-here/#date:23:00</feedburner:origLink></item>
+        
+        <item>
+        <title>What’s New in Sencha Learn?</title>
+        <author>James Pearce</author>
+        <description>
+            Over the past few weeks, we've produced a host of new educational material for our new Learning Center. We thought we would give you a quick update on a few of the recent highlights.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/UQEVM65GtCg/</link>
+        <content><![CDATA[
+            
+                <p>Over the past few weeks, we&#8217;ve produced a host of new educational material for our new <a href='http://www.sencha.com/learn'>Learning Center</a>.</p>
+
+	<p>The Learning Center is where we host graded tutorials, <span class="caps">FAQ</span>s, webinars, and screencasts for all of our products. It is designed to complement the frameworks&#8217; <a href='http://docs.sencha.com/'><span class="caps">API</span> documentation</a> (where you&#8217;ll find the canonical guides to using each and every package, guide, and class), and is where we encourage community members to get involved with sharing their experiences.</p>
+
+	<p><a href="http://www.sencha.com/learn/rss"><img class="right" src="http://www.sencha.com/img/social/rss-32.png" alt="RSS" height="32" width="32"></a> The Center has an <a href='http://www.sencha.com/learn/rss'><span class="caps">RSS</span> feed</a> for new entries, but we thought we could also give you a quick update on a few of the recent highlights.</p>
+
+	<h3>New Tutorials</h3>
+
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/ext-designer-1-2-beta-overview/"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://www.sencha.com/img/20110503-ext-designer-charts-thumb.jpg" alt="Ext Designer 1.2 beta Overview" width="120"></a> First up is last week&#8217;s webinar: the <a href='http://www.sencha.com/learn/ext-designer-1-2-beta-overview/'>Ext Designer 1.2 beta Overview</a>. This is a great introduction to, and demo of, this new version. We record and publish all of our webinars, since we know not everyone can attend at the time: last month&#8217;s <a href='http://www.sencha.com/learn/theming-sencha-frameworks-with-sass-and-compass/'>Theming Sencha Frameworks with Sass and Compass</a> is also up on the site.</p>
+
+  </div>
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/working-with-forms/"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://img1.sencha.com/files/misc/sencha-touch-forms-thumb.png" alt="Sencha Touch Forms tutorial" width="120"></a> As well as videos, we&#8217;re creating dedicated curricula of screencasts for the Learning Center. Our most recent episode, from Drew Neil, covers working with <a href='http://www.sencha.com/learn/working-with-forms/'>Sencha Touch Forms</a> and is an excellent introduction to data binding in an <span class="caps">MVC</span> pattern.</p>
+
+  </div>
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/ext-js-4-panel-docked-items/"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://img1.sencha.com/files/misc/extjs4-panel-docked-items.png" alt="Ext JS 4's Docked Items tutorial" width="120"></a> One of our most active community members, Jay Garcia, has been busy in the screencast studio. Check out his newest: a tour through <a href='http://www.sencha.com/learn/ext-js-4-panel-docked-items/'>Ext JS 4&#8217;s Docked Items</a>.</p>
+
+  </div>
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/architecting-your-app-in-ext-js-4-part-1"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://www.sencha.com/img/20110615-architecting-your-app-in-ext-js-4.png" alt="Ext JS 4 tutorial by Tommy Maintz" width="120"></a> If you&#8217;re a newsletter subscriber, you&#8217;ll get early access to many of our tutorials and articles. For instance, we&#8217;ve been running an epic series from Tommy Maintz on architecting <a href='http://www.sencha.com/learn/architecting-your-app-in-ext-js-4-part-1'>Ext JS 4 <span class="caps">MVC</span> apps</a> (and <a href='http://www.sencha.com/learn/architecting-your-app-in-ext-js-4-part-2'>part two</a>). These are now available for general access. And of course stay tuned for part three by signing up in the sidebar on the right or in the newsletter subscribe form at the bottom of our website.</p>
+
+  </div>
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/a-sencha-touch-mvc-application-with-phonegap"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://img1.sencha.com/files/misc/phonegap.png" alt="Sencha Touch and PhoneGap tutorial" width="120"></a> One of the Learning Center&#8217;s most popular tutorials ever is &#8216;<a href='http://www.sencha.com/learn/a-sencha-touch-mvc-application-with-phonegap'>A Sencha Touch <span class="caps">MVC</span> application with PhoneGap</a>&#8216;. The popular library recently reached its v1.0, and to celebrate, we gave the article a big overhaul. It also now covers using XCode 4.x and <a href="http://phonegap.github.com/weinre/" title="weinre is Web Inspector Remote">Weinre</a>.</p>
+
+  </div>
+  <div class="clearing">
+
+	<p><a href="http://www.sencha.com/learn/enhancing-ios-sencha-touch-apps-with-nimblekit"><img class="shadow avatar alignleft" style="height:90px;width:120px;" src="http://img3.sencha.com/files/learn/nimblekit.png" alt="Sencha Touch and NimbleKit tutorial" width="120"></a> Staying on the hybrid native/web topic, we&#8217;ve also been playing with <a href='http://nimblekit.com/'>NimbleKit</a>, which provides a selection of interesting iOS <span class="caps">API</span>s that can be used in Sencha Touch. Our <a href='http://www.sencha.com/learn/enhancing-ios-sencha-touch-apps-with-nimblekit'>two</a>-<a href='http://www.sencha.com/learn/enhancing-ios-sencha-touch-apps-with-nimblekit-pt-ii'>part</a> article on the topic demonstrates how to embed internet radio and camera integration into a simple web app. Very cool.</p>
+
+  </div>
+
+	<h3>New Guides and Getting Started</h3>
+
+	<p>For those exploring our new <a href='http://www.sencha.com/products/touch/charts'>Sencha Touch Charts</a> package, you&#8217;ll find three new guides on the <span class="caps">SDK</span>: the <a href="http://www.sencha.com/learn/touch-drawing-and-charting/">basics</a>, <a href="http://www.sencha.com/learn/touch-charts-interactions/">interactions</a>, and <a href="http://www.sencha.com/learn/touch-charts-styling/">theming</a>. Stay tuned for more dedicated tutorials on what we think is a truly unique mobile visualization package.</p>
+
+	<p>Or are you still just dipping your toes into Sencha Touch? For beginners and hackathon contestants alike, our new <a href='http://www.sencha.com/learn/sencha-touch-quick-start/'>Quick Start</a> guide should prove useful. We&#8217;ve also got a new <a href='http://www.sencha.com/learn/how-to-use-src-sencha-io'>Sencha.io Src guide</a>, which takes you on a gentle, but comprehensive, tour of the cloud <span class="caps">API</span>&#8217;s syntax. </p>
+
+	<p>Finally, have you noticed the GitHub links on many of the tutorials and screencasts? We know how helpful it can be for you to get into a topic quickly without having to copy and paste endless fragments of code. Take a look at the working repos on our <a href='https://github.com/senchalearn'>Sencha Learn GitHub account</a>, fork &#8216;em, hack &#8216;em, go crazy.</p>
+
+	<p>That&#8217;s it for this month. As ever, let us know how you get on with the resources. And good luck on your Sencha adventures!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=UQEVM65GtCg:Eav8bOrfEik:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=UQEVM65GtCg:Eav8bOrfEik:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=UQEVM65GtCg:Eav8bOrfEik:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=UQEVM65GtCg:Eav8bOrfEik:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Mon, 15 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/whats-new-in-sencha-learn/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/whats-new-in-sencha-learn/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>What to Expect in Ext JS 4.1</title>
+        <author>Aditya Bansod</author>
+        <description>
+            Ext JS 4.1 is coming soon, so we wanted to let you know what's coming down the road, what to expect and help you understand how to plan.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/gxLJKrO62e4/</link>
+        <content><![CDATA[
+            
+                <p><img class="shadow alignright" src="http://img1.sencha.com/files/misc/ext-js-4-1-what-to-expect.png" alt="What to Expect in Ext JS 4.1" height="90" width="120"> We&#8217;ve been hard at work on Ext JS; both working on bug fixes and improvements in 4.0.x as well as in 4.1. The first beta of 4.1 is around the corner so wanted to share the details of what to expect in Ext JS 4.1.</p>
+
+	<p>In talking with the community, we heard loud and clear the two areas we needed to spend the most time: <strong>performance</strong> and <strong>documentation</strong>. Indeed that has been our focus for 4.1. Let&#8217;s look at each of them individually.</p>
+
+	<h3>Performance</h3>
+
+	<p><img class="alignleft" src="http://www.sencha.com/files/misc/extjs4-performance.jpg" alt="Performance" width="135" height="142"> Many of you rely on Ext JS for your mission critical projects, which are often highly complex apps with hundreds of layouts, views and configurations. We&#8217;ve found that for certain classes of applications, Ext JS 4.0.x could be a lot faster in how it deals with the <span class="caps">DOM</span>. Specifically, for applications that have complex layouts, Ext JS 4.0.x reads and writes to the <span class="caps">DOM</span> frequently causing latency in the layout process. In Ext JS 4.1 we&#8217;ve changed this to be far less &#8216;chatty&#8217;. Instead of re-reading and re-writing the <span class="caps">DOM</span> during the entire layout process, 4.1 will now buffer and batch reads and writes.</p>
+
+	<p>We&#8217;ve also made further changes in the component rendering: instead of each component rendering itself directly to the <span class="caps">DOM</span>, its writes are now batched up into a single <span class="caps">DOM</span> insert per top-level container, which means that any app using a Viewport will have all of its components rendered in a single <span class="caps">DOM</span> write. This should significantly increase the performance of both simple and complex layouts across browsers. </p>
+
+	<p>In addition to the new <span class="caps">DOM</span> management strategy, Ext JS 4.1 also speeds up component rendering. In 4.0.x, when a component was rendered we used <span class="caps">CSS</span> selectors to find elements. We&#8217;ve updated that to use IDs, which are faster when performing a component layout. We have also updated the Grid component to use browser-native scrollbars and have moved away from virtualized scrolling. This offers two significant benefits. First, the grid scrolls faster and offers a more &#8216;browser-native&#8217; scrolling feel. Second, for Mac OS X Lion users, the scrolling behavior is now Lion-compatible. </p>
+
+	<p>Not specifically performance related, we&#8217;ve also fixed bugs across the board that have been reported in our forums, through our support channels, as well as through customer conversations. We&#8217;ve fixed bugs in the data package (making sure esoteric combinations of proxies, readers and writers work as expected), the charting package (performance and edge case improvements). We&#8217;re also hoping to reintroduce the Calendar component with 4.1.</p>
+
+	<p>You&#8217;ll also notice in the <a href="http://www.sencha.com/forum/forumdisplay.php?79-Ext-JS-Community-Forums-4.x">Ext JS Forums</a>, bugs that have been linked to our internal bug reporting system now show the issue number so we can better track and respond to community issues.</p>
+
+	<p>Many of these fixes are already available to support subscribers and we&#8217;ll be happy to make them publicly available when Ext JS 4.1 ships.</p>
+
+	<h3>Documentation</h3>
+
+	<p><img class="alignright" src="http://www.sencha.com/files/misc/extjs-documentation.jpg" alt="Sencha Documentation" width="120" height="90"> The <a href="http://docs.sencha.com/extjs/">documentation tool</a> that was released with Ext JS 4.0 provided a fresh new look at all the documentation that Ext JS had to offer. While documentation is never done, we&#8217;ve spent a good amount of improving two areas of the docs: the actual docs, as well as the doc tool. In 4.1 we&#8217;ll be including new content as well as refreshes to the existing content for clarity and consistency. The upgrades we&#8217;ll be making to the docs tool will make it easier to navigate and explore the content and allow it to become a better reference guide for working on Ext JS. We&#8217;ll be sharing more details about documentation in a blog post next week. </p>
+
+	<h3>When to Expect Ext JS 4.1</h3>
+
+	<p>We&#8217;re looking to deliver the first beta of Ext JS 4.1 in mid to late September. While that may feel like some time from now, the overhaul of the layout mechanics have required a significant amount of engineering and testing and we want to ensure that we work through as many of the &#8216;gotchas&#8217; as possible so our community doesn&#8217;t have to.</p>
+
+	<p>Ext JS 4.0 introduced a huge number of new features, but also turned out to have some performance and documentation holes and we hope that Ext JS 4.1 solves as many issues and concerns that you&#8217;ve had. Also, we originally had <span class="caps">RTL</span> and <span class="caps">ARIA</span> support scheduled for 4.1, but with the emphasis on performance improvements for 4.1, we&#8217;ve had to push these features out to a 4.2 release. We can never thank you enough for all the help and attention you give to Ext JS, whether it&#8217;s through reports on the forums, conversations on Twitter, finding us at conferences, or wherever. We&#8217;re committed to making Ext JS hands-down the best choice for desktop web application projects!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=gxLJKrO62e4:9R679tFYMUA:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=gxLJKrO62e4:9R679tFYMUA:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=gxLJKrO62e4:9R679tFYMUA:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=gxLJKrO62e4:9R679tFYMUA:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Thu, 11 Aug 2011 18:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/what-to-expect-in-ext-js-4-1/#date:18:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/what-to-expect-in-ext-js-4-1/#date:18:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha Touch Charts Now Available</title>
+        <author>Jamie Avins</author>
+        <description>
+            Today we’re excited to announce the general availability of Sencha Touch Charts, an add-on to Sencha Touch. Touch Charts introduces a whole new way to interact with data on the mobile web, enabling users to touch, pan, pinch and explore data all within the browser.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/k4b3BZ87hi8/</link>
+        <content><![CDATA[
+            
+                <p><a class="aligncenter" href="http://www.sencha.com/products/touch/charts/"><img src="http://img1.sencha.com/files/misc/sencha-touch-charts-hero.jpg" alt="Sencha Touch Charts 1.0 Now Available" height="500" width="636"></a></p>
+
+	<p><a class="alignright" href="http://vimeo.com/26651228" style="background:url('http://img1.sencha.com/files/misc/tc-video-thumb.jpg') no-repeat 50% 0;color:#777;display:block;font-size:12px;font-weight:bold;padding:115px 0 20px;text-align:center;width:150px;margin-bottom: 40px;">Watch Video</a> Today we&#8217;re excited to announce the general availability of <a href="http://www.sencha.com/products/touch/charts/">Sencha Touch Charts</a>, an add-on to Sencha Touch. Touch Charts introduces a whole new way to interact with data on the mobile web, enabling users to touch, pan, pinch and explore data all within the browser. </p>
+
+	<p>We launched the beta last month and we&#8217;ve received an overwhelming amount of positive feedback as people have explored Touch Charts and seen what&#8217;s possible on the mobile web. With the help of the amazing Sencha community we&#8217;ve been hard at work improving and adding to Touch Charts in a number of ways:</p>
+
+	<ul>
+		<li>Members in the forum were asking for the ability to have a default zoom, so we&#8217;ve done just that with the addition a default zoom and pan values for use with the PanZoom interaction</li>
+		<li>One of the most fun interactions in Charts is the ability to rotate the Pie series and now we&#8217;ve brought that over to the radar series as well</li>
+		<li>Pie labels will now be hidden if they do not fit within a pie slice.  In addition, pie charts can now use callouts to display labels</li>
+		<li>While the markers on the charts were great as labels, we had a request to allow images to be used.  Based on that, we&#8217;ve added a new &#8216;image&#8217; marker which allows any image to be used as a chart marker</li>
+	</ul>
+
+	<p>And of course, documentation: you can&#8217;t ever have enough and with the general release of Touch Charts, we&#8217;ve added a third guide, the <a href="http://dev.sencha.com/deploy/touch-charts-1.0.0/docs/#/guide/touch_charts_styling"><span class="caps">SASS</span> Styling Guide</a> to help developers get started styling their charts.</p>
+
+	<p>On top of all of this new functionality we&#8217;ve been hard at work fixing bugs, ensuring corner-cases are handled as well as making performance better across all of our supported devices. <a href="http://www.sencha.com/store/touch-charts">Sencha Touch Charts is now available for $99</a> under commercial license or for free under the GPLv3 license. </p>
+
+	<p>Of course we wouldn&#8217;t have been able to do this without our tireless community. From reporting bugs, to suggesting features, to submitting patches, your input has helped us build and shape Sencha Touch Charts. All of us at Sencha thank you for your help and continued support!</p>
+
+	<p>So download a trial, read the documentation, and get started with Sencha Touch Charts!</p>
+
+	<p><a href="http://www.sencha.com/products/charts/download" class="more-icon">Download Sencha Touch Charts 1.0 Today</a></p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=k4b3BZ87hi8:N0cOiRMcRmM:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=k4b3BZ87hi8:N0cOiRMcRmM:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=k4b3BZ87hi8:N0cOiRMcRmM:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=k4b3BZ87hi8:N0cOiRMcRmM:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 10 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-touch-charts-now-available/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-touch-charts-now-available/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha.io Src Walk Through</title>
+        <author>Aditya Bansod</author>
+        <description>
+            Sencha.io Src is an adaptive image resizing service in the cloud and is part of the Sencha.io set of cloud services. Use it to dynamically resize images to fit each mobile browser viewing your web app.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/pqSwEnG7j4A/</link>
+        <content><![CDATA[
+            
+                <p>Sencha.io Src is one of the cloud services offered as a part of <a href="http://www.sencha.com/products/io/">Sencha.io</a>. Src solves a common problem that mobile developers face: how to design for multiple screen resolutions. Let's start with an example. Imagine you're building a mobile website. You have a background image that your designer has provided, 'background.png'. It's been sized for the highest resolution device - an iPhone 4 with Retina Display, so it&rsquo;s resolution is 960&times;640. But serving up a high resolution image to a lower resolution iPad is a waste of bandwidth and footprint, so you also want a lower resolution image for an iPad. You create a 'background_ipad.png' sized at 1024&times;768. Then, you remember that all older iPhones have a 480&times;320 resolution, so you ask your designer to make an even lower resolution 'background_iphoneold.png'. Then when you launch your web app you find that Android is visiting in its huge variety of screen sizes and resolution. And serving up a high resolution image to all of them is probably wasting an optimization opportunity.</p>
+
+<aside>
+    <blockquote class="pullquote">
+        <p><span>&ldquo;</span>Sencha.io Src aims to solve a common mobile problem that mobile developers face: how to design for multiple screen resolutions.&rdquo;</p>
+    </blockquote>
+</aside>
+
+<p>Obviously, creating optimally sized images becomes intractable as the number of devices, operating systems and platforms increases over time. And here is where Sencha.io Src comes in. Instead of pre-building specific assets sized for each device, a developer can provide Sencha.io Src with a single master asset and rely on the service to deliver the correctly sized image for each device that requests it.</p>
+
+<p>Getting started with Src is incredibly easy. All you have to do is prepend <code>http://src.sencha.io/</code> in your <code>img src</code> attribute. For example, take here's how we would convert this image element:</p>
+
+<style><!-- GeSHi could not find the language  (using path ) --></style><pre class="html">&lt;img src=&quot;http://src.sencha.io/http://farm2.static.flickr.com/1106/1490189339_bbf2dd7995_b.jpg&quot;&gt;</pre>
+
+<figure class="aligncenter">
+    <img src="http://src.sencha.io/http://farm2.static.flickr.com/1106/1490189339_bbf2dd7995_b.jpg" alt="Beautiful photo of Sencha and Blooming Jasmine Tea">
+    <figcaption>Photo of <a href="http://www.flickr.com/photos/oxborrow/1490189339/in/photostream/">Sencha and Blooming Jasmine Tea</a> by Flickr user Mr Wabu. <a href="http://creativecommons.org/licenses/by-sa/2.0/deed.en">Some rights reserved</a>.</figcaption>
+</figure>
+
+<p>In this example, the browser first connects to Sencha.io Src to retrieve the image. Then, Src identifies the User-Agent string of the mobile browser and queries a device database to find its screen size. Next, it fetches the image that was requested from flickr. If the image has a higher resolution than the device supports, Src dynamically downscales the image to fit the device screen size.  It then caches the original image and the rescaled image for that screen format, and serves it to the mobile browser. There are two benefits here - first, you've offloaded image delivery from your web server, and second, your customer&rsquo;s web browser has downloaded an image with no extra bit. This saves download wait time without sacrificing image quality. In addition there is no CPU-intensive browser-based rescaling which speeds up your app.</p>
+
+<p>Src becomes even more powerful when you use its URL API. By specifying modifiers in a URL, you can control how Src resizes the adapted image. For example, if you want the image to be 16 pixels smaller than the size of the screen (if you have padding or a matte around the image), you can tell Src to reduce the image size by a set amount from the automatically resized amount. In this example, Src will make the image whatever the device's maximum resolution is, minus 16 pixels. This is perfect for inline images:</p>
+
+<style><!-- GeSHi could not find the language  (using path ) --></style><pre class="html">http://src.sencha.io/-16/http://farm2.static.flickr.com/1106/1490189339_bbf2dd7995_b.jpg</pre>
+
+<p>In addition to the resizing features in Src, the service also features a set of APIs that control how an image is resized and delivered to your device. For a full list, <a href="http://docs.sencha.com/io/src/">check out the Sencha.io Src API documentation</a>.</p>
+
+<p>In the simplest example, Src can do image constrained resizing. This is perfect when you want to take images from one source and use them in thumbnails or similar fixed-size slots. If you want to take the same Flickr image, and constrain one dimension to 100px, you simply tell Src in the URL:</p>
+
+<style><!-- GeSHi could not find the language  (using path ) --></style><pre class="html">http://src.sencha.io/100/http://farm2.static.flickr.com/1106/1490189339_bbf2dd7995_b.jpg</pre>
+
+<p>Finally, one of new features that we&rsquo;ve added to Src is the ability to transform the image to a base64 data URL. This is ideal when you want Src to process an image and then store it in the browser&rsquo;s localStorage or perhaps call Src from your own server and use Src in a server-to-server manner:</p>
+
+<style><!-- GeSHi could not find the language  (using path ) --></style><pre class="html">http://src.sencha.io/data/http://farm2.static.flickr.com/1106/1490189339_bbf2dd7995_b.jpg</pre>
+
+<p>Sencha.io Src is a versatile service that lets you take the hassle out of building the right image for each device as well as being a general purpose image resizing service in the cloud. Src not only saves time when producing assets, it also ensures that each device gets the exact image it needs without local image resizing, and never gets more image data than is required, making sure your customers get the ideal user experience.</p>
+
+<p>See "<a href="http://www.sencha.com/learn/how-to-use-src-sencha-io/">How to Use src.sencha.io</a>" in the Learn section for a full API review.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=pqSwEnG7j4A:bQuykX8RLxk:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=pqSwEnG7j4A:bQuykX8RLxk:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=pqSwEnG7j4A:bQuykX8RLxk:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=pqSwEnG7j4A:bQuykX8RLxk:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Mon, 08 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/sencha-io-src-walk-through/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/sencha-io-src-walk-through/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Announcing the SenchaCon 2011 App Contest</title>
+        <author>James Pearce</author>
+        <description>
+            While we here at Sencha are getting ready for the biggest and boldest SenchaCon ever, it's your turn to show us what you can do -- as we invite you to compete to win the coveted SenchaCon 2011 App Contest. And this year's selection of prizes will blow you away.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/zzLFbWIvffU/</link>
+        <content><![CDATA[
+            
+                <p><b>It&#8217;s that time of year again!</b> While we here at Sencha are getting ready for the <a href='http://secure.lenos.com/lenos/sencha/SenchaCon2011/'>biggest and boldest SenchaCon</a> ever, it&#8217;s your turn to show us what <em>you</em> can do &#8212; as we invite you to compete in the coveted <a href='http://www.sencha.com/share-contest'>SenchaCon 2011 App Contest</a>.</p>
+
+	<p>But this is no ordinary JavaScript contest &#8212; if only because of the <span class="caps">COMPLETELY</span> <span class="caps">AWESOME</span>!1!! prizes. Third place wins <b>US$2,500 and an iPad 2</b>. Second place wins a spectacular <b>US$10,000 and a MacBook Pro</b>. And the winner? The winner will receive nothing less than a <b>2011 Nissan Leaf</b>. </p>
+
+	<p><img class="right" src="http://img1.sencha.com/files/misc/nissan-leaf.png" alt="Write some JavaScript, and win a Nissan Leaf." height="140" width="298">Yes, ladies and gentlemen: a car. Write some JavaScript, and win a car.</p>
+
+	<p>Of course, with prizes like this, we set the bar high. In order to be in with a chance of winning, we want you to build something special. We&#8217;re looking for rich, collaborative web applications that show how to put Sencha frameworks and services to their best use.</p>
+
+	<p><img class="left" src="http://img1.sencha.com/files/misc/prizes.png" alt="MacBook Pro, iPad 2, and $10,000 cash!" height="96" width="298"> We expect competing applications to use the latest versions of our JavaScript <span class="caps">SDK</span>s (namely <a href='http://www.sencha.com/products/extjs/'>Ext JS</a> and <a href='http://www.sencha.com/products/touch/'>Sencha Touch</a>), and encourage you to use our <a href='http://www.sencha.com/products/io/'>Sencha.io Cloud Services</a>. You&#8217;re encouraged to use our tools, such as <a href='http://www.sencha.com/products/designer/'>Ext Designer</a> and <a href='http://www.sencha.com/products/animator/'>Sencha Animator</a>, and of course, as much extra <a href='https://github.com/senchalabs'>HTML5 goodness</a> as you like.</p>
+
+	<p>The application can be designed for the desktop or mobile web, but we&#8217;ll be even more impressed if it straddles both. The app must be fully functional and running successfully when we begin first round of judging at noon, <span class="caps">PST</span>, September 23rd, 2011. The top ten submissions will then undergo a second round of judging, to be held on October 15th, 2011, and the top three finalists will be announced in Austin, at SenchaCon 2011, on October 24th.</p>
+
+	<p>So what are you waiting for? Find out more about <a href='http://www.sencha.com/share-contest'>the contest</a>, check <a href='http://www.sencha.com/share-contest/official-rules/'>the rules</a>, and the judges are standing by to see what you can do.</p>
+
+	<p>Rev up your (eco-friendly) JavaScript engines, and we&#8217;ll see you <a href='http://secure.lenos.com/lenos/sencha/SenchaCon2011/'>in October</a>!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=zzLFbWIvffU:nwL8TnuJIHA:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=zzLFbWIvffU:nwL8TnuJIHA:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=zzLFbWIvffU:nwL8TnuJIHA:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=zzLFbWIvffU:nwL8TnuJIHA:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Fri, 05 Aug 2011 20:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/announcing-the-senchacon-2011-app-contest/#date:20:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/announcing-the-senchacon-2011-app-contest/#date:20:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Ext Designer 1.2 Beta Available for Preview</title>
+        <author>Luca Candela</author>
+        <description>
+            We know you’ve anxiously awaited the release of Ext Designer with support for Ext JS 4. Today we’re very happy to announce the availability of Ext Designer 1.2 Beta with Ext JS 4 support. Ext Designer 1.2 is completely re-architected and more powerful than ever. Dive into this exciting update and see what has changed.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/HezN2AXeMU0/</link>
+        <content><![CDATA[
+            
+                <p>We know you’ve anxiously awaited the release of Ext Designer with support for Ext JS 4. So, today we’re very happy to announce the <a href="http://www.sencha.com/forum/showthread.php?141777-Ext-Designer-1.2-Beta&referrerid=77080">availability of Ext Designer 1.2 Beta</a> with Ext JS 4 support. Ext Designer 1.2 is completely re-architected and more powerful than ever.</p>
+
+	<p>To quantify the re-architecture, let me give you a few stats: Designer 1.1 contains 19,515 lines of code (without factoring in the runtime environment), while Designer 1.2 Beta (as of July 25 2011) comes in at 34,588 lines of code, of which only 322 weren’t touched at all. </p>
+
+    <div class="right clearing" style="
+background: #ECF5FC;
+border: 1px solid #C7D1D8;
+-webkit-border-radius: 3px;
+-moz-border-radius:    3px;
+-o-border-radius:      3px;
+border-radius:         3px;
+font-size: 90%;
+padding: 10px 10px 0px;
+width: 40%;">
+        <img class="right" src="http://img1.sencha.com/files/misc/training_small2.png" alt="Sencha Ext Designer 1.2 Webinar" height="55" width="60">
+        <h5>Ext Designer 1.2 Webinar</h5>
+        <p>Learn how to integrate Ext JS 4 Charts into your app by joining up with our Designer experts online. Mark your calendars for Thursday, August 4th. <a class="more-icon" href="http://sencha.com/x/cr">Sign up today</a></p>
+    </div>
+
+	<p>Designer 1.2 is essentially a new application in disguise. But, the real advantages of the new architecture will come to fruition in the next months, when we’ll be able to deliver quicker updates in response to framework changes, expand the feature set and address a list of long-standing users’ requests and usability enhancements.</p>
+
+	<p>Let&#8217;s dive into this exciting update and see what has changed:</p>
+
+	<h3>Support for Multiple Frameworks</h3>
+
+	<p>When creating a new project, you can choose between Ext JS 3.3.x or Ext JS 4. Right now, you can start a new project in either framework, but you can&#8217;t switch a project between versions of the framework. While we believe that Ext JS 4 should be the version of choice for every new project, it&#8217;s up to you to decide if you&#8217;re ready to dive into Ext JS 4 or stay on familiar ground with Ext JS 3. Designer 1.2 can easily handle projects in either version.</p>
+
+	<p><img src="http://img1.sencha.com/files/misc/New_Project.png" alt="New Project Options" height="253" width="468"  /></p>
+
+	<p>Of course, for those of you that are ready to make the leap to 4.x, there are plenty of new handy features waiting to be explored. Let&#8217;s review them one by one.</p>
+
+	<h4>Charts</h4>
+
+	<p>One of the most exciting new features of Ext JS 4 is the brand new, plug-in free, charting package. Built on web technologies (<span class="caps">SVG</span> and <span class="caps">VML</span>), the new charting package is a write-once, run-anywhere solution that doesn&#8217;t rely on any third party dependencies. Now you can leverage the power of the charting package from the comfort of Ext Designer 1.2. </p>
+
+	<p><img src="http://img1.sencha.com/files/misc/Ext_4_Charting.png" alt="Ext 4 Charts in Designer 1.2" height="291" width="446"></p>
+
+	<p>Creating a new chart is a piece of cake: just pick one of the available chart styles including Bar, Column, Gauge, Line, Pie or Radar, drag it onto the canvas and Designer will take care of connecting the chart to a dummy data set and give you a quick preview of what your chart will look like once connected to real data.</p>
+
+	<p>If you need to customize it further, all the controls to do so are available from within Designer. You can customize your chart by selecting a custom Chart Axis, Series and, if needed, even a Legend.</p>
+
+	<h4>Data Package</h4>
+
+	<p>The data package has been completely rewritten for Ext JS 4, and Designer is now able to handle it properly. Designer can now instantiate <span class="caps">JSON</span> and <span class="caps">XML</span> Tree stores to use in conjunction with the new Tree Panel.</p>
+
+	<p><img src="http://img1.sencha.com/files/misc/Ext_4_Stores.png" alt="Ext JS 4 stores in Designer 1.2" height="283" width="330"  /></p>
+
+	<p>All stores are displayed with their Proxies and Readers as separate items in the Stores hierarchy to reflect the new architecture and make their configuration easier. And of course, you can test your stores by connecting them to any component that supports data from within the fly-out menu on the canvas from that component. </p>
+
+	<h4>New Layout Options</h4>
+
+	<p><img src="http://src.sencha.io/http://img1.sencha.com/files/misc/New_Dock_Layout.png" alt="Dock Layout in action in Designer 1.2"></p>
+
+	<p>Ext JS 4 removed FormLayout and allowed the creation of forms using any combination of layouts, and Designer 1.2 lets you do the same. We also now have support for the DockLayout, which makes it easy to dock components inside other components.</p>
+
+	<h3>Conclusion</h3>
+
+	<p>With 35 new components, improved layouts, a brand new data package and a slew of architectural changes to improve speed and reliability, Designer 1.2 is the biggest and best Designer release to date. Designer 1.2 is ready to bring the power of Ext JS 4 in your daily workflow. </p>
+
+	<p>So go ahead, download Designer 1.2 Beta <a href="http://www.sencha.com/forum/showthread.php?141777-Ext-Designer-1.2-Beta&referrerid=77080">from this forum post</a>. Spend some time exploring all the new features and support for Ext JS 4, abuse the app, and make sure you report all problems to our <a href="http://www.sencha.com/forum/forumdisplay.php?51-Ext-Designer-Bugs">Ext Designer Bugs forum</a>. Doing so will help us make Designer 1.2 our best release ever.</p>
+
+	<p>To make sure everybody can try this new beta version, we re-authorized all expired trial accounts: if you tried Designer before and ran out of time, you now have another chance to test the application. Enjoy!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=HezN2AXeMU0:6vZKLH3CiM8:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=HezN2AXeMU0:6vZKLH3CiM8:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=HezN2AXeMU0:6vZKLH3CiM8:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=HezN2AXeMU0:6vZKLH3CiM8:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Tue, 02 Aug 2011 18:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/ext-designer-1-2-beta/#date:18:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/ext-designer-1-2-beta/#date:18:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Sencha Touch Charts: A New Way to Interact with Data on the Mobile Web</title>
+        <author>Aditya Bansod</author>
+        <description>
+            We’re excited to share with you the beta release of Sencha Touch Charts. Touch Charts is a new add-on to Sencha Touch that we think will change how people interact with mobile web data.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/qz1neLXo4o0/</link>
+        <content><![CDATA[
+            
+                <div align="center" style="margin-bottom: 8px"><a href="http://www.sencha.com/products/touch/charts/" title="Learn more about Sencha Touch Charts"><img src="http://img1.sencha.com/files/misc/touch-charts-blog.jpg" alt="Various chart styles" height="388" width="500"></a></div>
+
+	<p>We&#8217;re excited to share with you the beta release of <a href="http://www.sencha.com/products/touch/charts">Sencha Touch Charts</a>. Touch Charts is a new add-on to Sencha Touch that we think will change how people interact with mobile web data. Just like <span class="caps">AJAX</span> was a revolution because it accelerated work flow by eliminating page refreshes, Touch Charts allows users to explore and interact with data in-session without high latency server image serving. With the included gesture controls in Touch Charts, users can zoom in and out of data, pan across data sets, as well as quickly aggregate and filter data series. </p>
+
+	<h3>HTML5: Canvas</h3>
+
+	<p><img class="right" src="http://img1.sencha.com/files/misc/touch-charts-devices.jpg" alt="Sencha Touch Charts runs on the world's best touchscreen devices" height="175" width="142"></p>
+
+	<p>When we released the new drawing packing in <a href="http://www.sencha.com/products/extjs/">Ext JS 4</a>, we took browser drawing and packaging to a whole new level. With Touch Charts we took the core drawing and charting system from Ext JS 4 and made it come alive.When we started to think mobile for Charts, we had a few key requirements. First, it had to work on all platforms that Sencha Touch supported, including Android 2+, iOS, and BlackBerry OS6. Second, it had to be mobile friendly and feel fast. We wanted to come as close to a native experience as possible using HTML5.</p>
+
+	<p>In order to get to that high performance native feel, we implemented a HTML5 Canvas engine in the core drawing system. Out of the gate that gave us some great benefits. We were able to leverage Canvas&#8217; drop shadow capabilities that are hardware accelerated on many browsers. <img src="http://img1.sencha.com/files/misc/legends.png" alt="Different legend configurations" height="197" width="255" class="left" style="margin-top: 4px"> Also by changing the underlying drawing system from the <span class="caps">SVG</span>/VML in Ext JS 4, we were able to get all the basics of the higher level charting system in place incredibly quickly and then focus on delivering the mobile specific experience.</p>
+
+	<p>While designing Touch Charts, we took into account that mobile has two devices types: phones and tablets; and two orientations: portrait and landscape. Touch Charts adapts to device size and orientation by creating different layouts for the charts legend. Where there&#8217;s limited screen real estate, the legend is activated via a slide-out menu so users can focus on the data. When there&#8217;s enough screen real estate (on a tablet, for example) legends are shown inline. In both cases, Legend Views extend from DataView, so they&#8217;re fully configurable Sencha Touch components.</p>
+
+	<h3>Animated and Interactive</h3>
+
+	<p><a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/Pie/"><img src="http://img1.sencha.com/files/misc/selection.png" alt="Selected pie chart" height="197" width="255" class="left" style="margin-top: 4px"></a> The best part of building in a modern browser for mobile is being able to build Charts that are mobile specific, so we have the ability to add gesture control. The gestural interactions are completely configurable, so on any chart you can change the kinds of interactions you want to use. For example, you can enable a <a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/Pie/">pie chart</a> to spin with a drag or a pinch.  On a <a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/Bar/">bar graph</a> you can let your users pinch to zoom, drag to pan, swap between a grouped and stacked bar with a swipe, and more. You can also add interactions directly on an axis and expose more gestures on the chart itself.</p>
+
+	<p>Anybody who has experience in HTML5 knows that mobile WebKit browsers differ, sometimes significantly. One key issue that we came across when building Touch Charts was the lack of consistent multi-touch browser events in different browsers. Android most notably doesn&#8217;t handle this well until Android 3.x. This posed a problem when using pinch-to-zoom on an axis, so Touch Charts provides a compatibility mode that enables the user to toggle between zoom and pan modes with older HTML5 browsers but use gestures on more capable browsers. </p>
+
+	<h3>Style via <span class="caps">SASS</span></h3>
+
+	<p><a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/EnergyApp/"><img src="http://img1.sencha.com/files/misc/energy.png" alt="" height="197" width="255" class="left" style="margin-top: 4px" /></a> Much like Sencha Touch, all charts in Touch Charts are styleable using <span class="caps">SASS</span>. Changes to the look and feel of a chart, like those to gradients, drop shadows, fonts and colors, can be implemented with variables and mixing inside <span class="caps">SCSS</span> files. The included <a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/EnergyApp/">Energy App example</a> is a great example of an application that takes advantage of <span class="caps">SASS</span> and is styled with a darker theme. Just changing a few variables can style any chart in Touch Charts.</p>
+
+	<p>h3&#123;clear: both&#125;. Demos</p>
+
+	<p>If you want to get a feel for how Touch Charts looks try out these three demos in a <a href="http://www.webkit.org/">WebKit browser</a>:</p>
+
+  <a class="left" href="http://dev.sencha.com/deploy/touch-charts-beta/examples/EnergyApp/" title="View the US Energy demo (WebKit required)"><img src="http://img1.sencha.com/files/misc/icon-ipad_1.png" alt="US Energy app icon" height="72" width="72"  /></a>
+  <a class="left" href="http://dev.sencha.com/deploy/touch-charts-beta/examples/WorldData/" title="View the World Data demo (WebKit required)"><img src="http://img1.sencha.com/files/misc/icon-ipad-worlddata.png" alt="World Data app icon" height="72" width="72"  /></a>
+  <a class="left" href="http://dev.sencha.com/deploy/touch-charts-beta/examples/Combo/" title="View the Combo demo (WebKit required)"><img src="http://img1.sencha.com/files/misc/icon-ipad.png" alt="Combo chart icon" height="72" width="72"  /></a>
+
+	<p>p&#123;clear: both&#125;. <a href="http://dev.sencha.com/deploy/touch-charts-beta/examples/" class="more-icon">View other examples</a></p>
+
+	<p>If you&#8217;re visiting from a non-WebKit browser (such as Firefox or Internet Explorer), you can also <a href="http://vimeo.com/26651228">see this video</a> and get a feel for how Touch Charts look on a mobile device.</p>
+
+	<p>h3&#123;clear: both&#125;. Get Started</p>
+
+	<p>To take advantage of all this graphical greatness, check out the <a href="http://www.sencha.com/products/touch/charts/">new product page</a> and <a href="http://www.sencha.com/products/charts/download/">download the beta</a>. The download contains the full source for examples and documentation to get you started building Sencha Touch Charts.</p>
+
+	<p class="button-group"><a href="http://www.sencha.com/products/charts/download/" class="button-link green small arrow inline">Download Now<span></span></a></p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=qz1neLXo4o0:6nQxoqMt5jM:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=qz1neLXo4o0:6nQxoqMt5jM:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=qz1neLXo4o0:6nQxoqMt5jM:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=qz1neLXo4o0:6nQxoqMt5jM:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 20 Jul 2011 17:08 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/introducing-sencha-touch-charts/#date:17:08</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/introducing-sencha-touch-charts/#date:17:08</feedburner:origLink></item>
+        
+        <item>
+        <title>Samsung bada: The HTML5 Developer Scorecard</title>
+        <author>Aditya Bansod</author>
+        <description>
+            We review the browser on the Samsung Bada, a half featurephone, half smartphone, but full WebKit browser.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/d275zJB4I5Q/</link>
+        <content><![CDATA[
+            
+                <p><img class="alignright" src="http://img1.sencha.com/files/misc/sencha-html5-samsung-bada.png" alt="Samsung bada: The HTML5 Developer Scorecard" width="120"></p>
+
+	<p>A few week&#8217;s ago, we brought you our review of the browser on the HP TouchPad. In today&#8217;s review we bring you a bit of a change, looking at the Samsung bada platform. If you&#8217;re based in North America, you may not be familiar with the Samsung bada operating system. The bada OS is a hybrid featurephone/smartphone OS that ships mostly in Europe (we hear it&#8217;s coming to North America soon). We were interested in it because we heard good things about its WebKit browser from our community of Sencha Touch developers.</p>
+
+  <blockquote class="pullquote right" style="width: auto; float: none; clear: none;"><p><span>&ldquo;</span>While bada has a featurephone heritage, the browser is better than most smartphone devices we&#8217;ve seen.&rdquo;</p></blockquote>
+
+	<p>We managed to get our hands on a Samsung GT-S8530, running bada version 1.2 and put it though our browser tests to see how well bada&#8217;s WebKit implementation stands up as an HTML5 app platform. On paper and through many of our synthetic tests, bada had a lot of deficiencies and was often a mixed bag of results. On the other hand, in terms of real world performance and when actually used for HTML5 content the bada phone performed impressively well. We were pleasantly surprised how easily the bada browser was able to tackle CSS3 transformations and many other HTML5 features. While bada has a featurephone heritage, the browser is better than most smartphone devices we&#8217;ve seen.</p>
+
+	<h3>Our First Look &#8220;Methodology&#8221;</h3>
+
+	<p>Our HTML5 scorecard consists of a series of tests aimed to help mobile web developers understand new devices and new form factors as they come to market. We test in a number of areas, namely JavaScript performance, HTML5/CSS3 features, rendering performance and rendering accuracy. To get there we use a variety of tests, including Modernizr, Acid3, SunSpider, and our own <a href="http://www.sencha.com/products/animator/demos/">Sencha Animator demos</a> and our <a href="http://dev.sencha.com/deploy/touch/examples/kitchensink/">Sencha Touch Kitchen Sink</a>.</p>
+
+	<p><img src="http://src.sencha.io/636/http://img1.sencha.com/files/misc/bada-acid3.jpg" alt="bada Acid3 Scores"  /></p>
+
+	<h3>Acid3 and Modernizr</h3>
+
+	<p>We use the Acid3 tests to get a sense of the completeness of a browser&#8217;s rendering and feature set. While the Acid3 tests are a bit dated as this point, they still provide a fairly good indication of the browser and developer experience on a particular device. Bada scored a 98/100 on the <a href="http://acid3.acidtests.org/">Acid3</a> tests. The failures came in bucket 5, and we believe those are from the lack of <span class="caps">SVG</span> support on the device. Also if you look closely at the the Acid3 image, you&#8217;ll notice that there are extra dark black borders around some of the boxes. While browsing and testing, however, we didn&#8217;t see these causing visible issues.</p>
+
+	<p>We then turned to <a href="http://www.modernizr.com/">Modernizr</a>, one of our favorite tools to look under the hood of a browser and let us know what HTML5 features it supports. We again tested using the <a href="http://modernizr.github.com/Modernizr/test/index.html">test suite</a>. The Modernizr test failed after 236 tests were attempted (out of a total of 276). Failure occurred in the last set of tests &#8212; where the Modernizr test run results are compared against <a href="http://www.caniuse.com">caniuse</a>. It&#8217;s unclear if this is a test case issue, or a browser issue. Overall, therefore, the bada browser has fairly good support for HTML5 features, but there were a few major gaps reported, specifically <span class="caps">CSS</span> 3D transforms, audio and video, WebSockets and inline <span class="caps">SVG</span>. Also missing was font-face support. The browser renders all fonts in the browser default and ignores font-face. We noted that the browser reports that it supports <span class="caps">SVG</span>, but as Acid3 showed earlier and as we found in further ad hoc testing, we were not able to get it to work. On the other hand, WebSQL was present, touch events were present, and standard <span class="caps">CSS</span> transforms, animations, and reflections were also supported.</p>
+
+	<h3>Performance Testing</h3>
+
+	<p>As with all the other devices we&#8217;ve tested, the browser on the bada phone is powered by the WebKit rendering engine. On the bada platform, Samsung has built their own implementation of WebKit, called Dolfin. The phone reports that it&#8217;s using WebKit version 533.1, which is a slightly dated build of WebKit. Under the hood, we&#8217;ve heard that bada devices contain Samsung&#8217;s Hummingbird <span class="caps">ARM</span> processor clocked at 1GHz: the same processor that&#8217;s been used on multiple other mobile devices. While this is a modern mobile <span class="caps">CPU</span>, it appears that like the browser engine and specifically the JavaScript engine has not yet been fully optimized nor is there a <span class="caps">JIT</span>. Given how well the browser renders many websites and web apps, we were a bit surprised when we ran <a href="http://www.webkit.org/perf/sunspider/sunspider.html">SunSpider</a> to see how abysmal the results were. In our testing the bada phone reported 17x slower JavaScript performance than the latest generation of tablets (such as the Xoom, the iPad or the Playbook). It&#8217;s a bit of an apples to oranges comparison, but we expected given how modern the <span class="caps">CPU</span> is, and how well many other web operations occurred that it would be much closer. </p>
+
+	<p><img src="http://src.sencha.io/636/http://img1.sencha.com/files/misc/bada-sunspider.png" alt="bada Sunspider"  /></p>
+
+	<p>Given how poor the SunSpider tests were, we decided against running v8 benchmarks. These tests are synthetic tests that push the engine to its limit. So as we usually do, we turned our attention to some more real world tests, looking at CSS3 performance using our own Sencha Animator demos as well as a few other tests.</p>
+
+	<p>Given the poor benchmark performance, bada&#8217;s CSS3 support is astounding. Compared to almost any other device, bada&#8217;s browser was able to render the most complex CSS3 animations without any issues. Our guess here is the Samsung team spent a lot of time engineering and hardware accelerating the graphics performance of the browser at the expense of the JavaScript performance.  We tested <a href="http://www.sencha.com/products/animator/demos/">six of our standard demos</a> and our latest <a href="http://dev.sencha.com/animator/demos/rocking-boat/"</a> Rocking the Boat of Flash tutorial demo</a> that were made with Sencha Animator and they worked beautifully. All the frames were rendered, and the frames were rendered accurately and in full fidelity. We noted earlier that 3D transformations aren&#8217;t supported so 3D effects ended up being flattened into 2D. Only iOS does CSS3 animations better, and bada handily beats every other tablet and smartphone we&#8217;ve tested. We also ran through our <a href="http://dev.sencha.com/deploy/css3-ads">CSS3 vs Flash ads</a> page.  The Flash versions of the ads didn&#8217;t render so it seems that there&#8217;s no Flash support in the browser. On the other hand the CSS3 ads worked perfectly well. The bada browser nails CSS3.</p>
+
+	<p><img src="http://src.sencha.io/636/http://img1.sencha.com/files/misc/bada-css3animation1.jpg" alt="bada CSS3 Animation" /></p>
+
+	<p>We also tested a few other real world HTML5 apps for performance and correctness. First off, we tried a <a href="https://github.com/mojombo/ernie/network">github network graph</a>. Rendering performance is fine, and the graph renders quickly and accurately, but it is at times a bit grainy. Zooming in on the network graph had much of the text jagged and the browser didn&#8217;t redraw to a higher resolution when the pinch-to-zoom was finished. We also tried <a href="http://www.effectgames.com/demos/canvascycle/">Canvas Cycle</a> and it did not load. Our guess is that given the poor JavaScript performance many Canvas based apps or games won&#8217;t work on bada devices because the browser continually misses its drawing intervals due to slow JavaScript. For simple static drawing, Canvas support is usable, but not for much more.</p>
+
+	<p>As this point we typically would have done our audio and video test but the bada browser doesn&#8217;t support either, so we skipped this test altogether. We also attempted a few <span class="caps">SVG</span> tests, both inline and out in a separate file and were not able to get them to work in the browser. When we attempted click on a link for a .svg file, the browser downloaded the file to the camera roll, where you could then go and view the <span class="caps">SVG</span> file. Not very useful.</p>
+
+	<h3>Sencha Touch Kitchen Sink</h3>
+
+	<p>Given the mixed bag with beautiful CSS3 animation support and iffy JavaScript performance, we weren&#8217;t quite sure what to expect with the the <a href="http://dev.sencha.com/deploy/touch/examples/kitchensink">Sencha Touch Kitchen Sink</a>. After testing for a while, we were quite impressed. There were definitely a few rendering glitches, and the aggressive behavior of the address bar often occludes the UI&#8217;s back button. On the other hand, animations were snappy, lists scrolled quickly and the browser had no problems handling the most complex layouts. Sencha Touch relies on high performance CSS3 and as our CSS3 testing earlier showed, bada performs well in the pure CSS3 tests as well as in our Kitchen Sink.</p>
+
+	<h3>Samsung bada: Suggestions for the HTML5 App Developer</h3>
+
+	<p>Samsung&#8217;s bada platform comes from a background as a featurephone, and while many of the aspects of the device reminded us of the old world of featurephones, the browser is squarely in the realm of a modern smartphone. The browser has many HTML5 features, and while a few are missing or are implemented in a somewhat strange way, as a HTML5 app platform it&#8217;s quite reliable.</p>
+
+	<p>For a HTML5 app developer, the abysmal JavaScript performance is something to be wary of. If you&#8217;re looking to do a lot of animations in JavaScript, it would be a good idea to consider using CSS3 animations and transitions given how well they work in the bada browser. Some of the minor rendering artifacts that we saw in Acid3 and in our Kitchen Sink seemed like they might have related to masks and border-radius, but they were not severe enough to prevent those features from being used.</p>
+
+	<p>We&#8217;re very excited about the promise of bada is a device and app platform for HTML5 developers. In many ways Samsung&#8217;s bada performs far better than its more expensive Android siblings in the Samsung lineup, so we&#8217;re very happy to see solid WebKit implementations coming from them. We were surprised with how well many of advanced browser features worked on their device, and we&#8217;re excited to see what the next generation of bada devices will offer with bada 2.</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=d275zJB4I5Q:cwvguw2n5Xw:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=d275zJB4I5Q:cwvguw2n5Xw:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=d275zJB4I5Q:cwvguw2n5Xw:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=d275zJB4I5Q:cwvguw2n5Xw:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 20 Jul 2011 15:56 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/samsung-bada-the-html5-developer-scorecard/#date:15:56</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/samsung-bada-the-html5-developer-scorecard/#date:15:56</feedburner:origLink></item>
+        
+        <item>
+        <title>Understanding Hardware Acceleration on Mobile Browsers</title>
+        <author>Ariya Hidayat</author>
+        <description>
+            Our own WebKit genius, Ariya Hidayat, is back to explain what happens behind the scenes with mobile browsers, vector graphics, and shed light on interactions with the GPU.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/81tBgVmIXnM/</link>
+        <content><![CDATA[
+            
+                <p><img class="alignright shadow" src="http://www.sencha.com/img/understanding-hardware-acceleration-on-mobile-browsers-tiger-thumb.png" alt="Understanding Hardware Acceleration on Mobile Browsers" height="90" width="120"> There has been a lot of mentions of the use of GPU (graphics processing unit) hardware acceleration in smartphone and tablet web browsers. So far, the content has been pretty general and hasn&#8217;t provided much technical direction apart from simple advice such as &#8220;use CSS translate3d&#8221;. This blog article tries to shed some more light on browser interactions with the GPU and explain what happens behind the scenes.</p>
+
+<h3>Accelerating Primitive Drawing</h3>
+
+<p>A web rendering engine, such as <a href="http://webkit.org">WebKit</a>, takes a web page that is described structurally using HTML and a DOM and visually using CSS and transforms it into a series of painting commands and then passes these commands to the graphics stack. In WebKit specifically, WebKit talks to an abstract interface called <a href="http://trac.webkit.org/browser/trunk/Source/WebCore/platform/graphics/GraphicsContext.h">GraphicsContext</a>. There are <a href="http://ariya.blogspot.com/2011/06/your-webkit-port-is-special-just-like.html">different implementations</a> of GraphicsContext depending on the underlying platform. For example, on iOS the GraphicsContext is bound to <a href="http://developer.apple.com/library/ios/#documentation/CoreGraphics/Reference/CoreGraphics_Framework/_index.html">CoreGraphics</a>. On Android, GraphicContext uses the <a href="http://code.google.com/p/skia/">Skia graphics engine</a>.</p>
+
+<p>A major responsibility of the graphics stack is <a href="http://en.wikipedia.org/wiki/Rasterisation">rasterization</a>: converting vector painting commands into color pixels on a screen. Rasterization also applies to text display. A single letter can consist of a chain of hundreds of curves. Rasterization produces a matrix of pixels of varying colors that gives users the impression of smoothly drawn text. The following picture shows the enlarged portion of a letter displayed on the screen:</p>
+
+<p><img class="aligncenter" src="http://www.sencha.com/img/20110715-understanding-hardware-acceleration-on-mobile-browsers-1.png" alt="Graphic showing letter 'A' and the zoomed in pixels thereof" height="128" width="636"></p>
+
+<p>The most common mobile graphics API is OpenGL for Embedded System, shortened as <a href="http://en.wikipedia.org/wiki/OpenGL_ES">OpenGL ES</a>, which operates quite similarly to its desktop OpenGL counterpart. A modern GPU has the power to carry out a lot of primitive drawing, from textured triangles to anti-aliased polygons, with massively paralleled implementation of various graphics algorithm. This is, of course, evidenced by a lot of graphics-intensive games which run smoothly - often achieving the ultimate goal of 60 fps on even highly complex scenes.</p>
+
+<p>If you&#8217;re building a browser, it makes sense to reduce the burden of the CPU and to delegate most of the <strong>primitive drawing</strong> (such as images, curves, gradients, and so on) to the GPU. This is one way that the GPU accelerates performance and it is very often taken care of automatically by the graphics stack. On iOS,  CoreGraphics leverages many different GPU features for difficult drawing operations, leveraging its Mac OS X experience. On Android (since Honeycomb), Skia also has a full-featured OpenGL ES back-end which fits nicely with NVIDIA Tegra2 GPUs.</p>
+
+<h3>Backing Store</h3>
+
+<p>It is important to note here that GPUs were originally designed to tackle heavy-duty operations needed in engineering applications (CAD/CAM) and graphics-intensive games. But optimizing the primitive drawing typically found in a web page is very different than making game graphics fast. For a start, most web pages consist of a lot of text and an occasional image. Most web page user-interface elements have solid colors, with some gradients and rounded corners here and there. In contrast, top-selling games like Angry Birds, Need for Speed, and Quake hardly contain any text and almost everything in the game world is an object with a texture. In addition, 3-D models with photo-realistic appearances are pretty common in such games.</p>
+
+<p>Since the GPU is optimized for complex use-cases, it does not always come as a surprise that simply asking a GPU to draw images, curves, text glyphs, and other content, does not magically translate into a fluid 60 frames/second for web page rendering. In addition, unlike games, web content can&#8217;t be predicted by the browser. A web page can be as simple as a Bing search page or as complicated as the New York Times front page. To achieve a really smooth browsing experience, user interactions with the browser <em>should not be limited</em> by the complexity of the page. In other words, even if the browser is busy loading images and rendering the page, the user should still be able to scroll around and zoom in/out as she wants.</p>
+
+<p>Modern mobile browsers adopt an off-screen buffer approach to decouple the complexity of displaying a web page from the user interaction. Usually the web rendering engine, (WebKit for example), draws into the buffer instead of straight to the display. This buffer, often called the <strong>backing store</strong>, will be shown on screen based on user activity. When the web page is quite complicated and the user scrolls and zooms quickly, the backing store is often not <em>filled</em> fast enough. This is the reason why on an iPhone or iPad, the checkerboard pattern is visible; it serves as a placeholder for the region of the buffer that is not fully rendered yet. This way, the web page can be scrolled around or zoomed in/out as fast as the user wants. The rendering process (which fills the backing store) may lag user interactions but since it is in a separate thread, it does not block any user interactions occurring in the main UI thread.</p>
+
+<p>Another side effect of using a backing store is <a href="http://ariya.blogspot.com/2011/06/progressive-rendering-via-tiled-backing.html">progressive rendering</a> when the user zooms in and out. A backing store is nothing but a rectangle with a texture. For efficiency, the backing store is usually <em>tiled</em>, i.e. it comprises several small textured rectangles instead of a giant one. During pinching, all the browser does is <a href="http://www.youtube.com/watch?v=xdLQl7d00Ak">scale</a> the backing store up and down, thus giving an enlarged but blurry version of the web page. Since pinching typically happens in a few hundred milliseconds, there is no use of faithful high-resolution rendering. Once the user is done with pinching, or when there is an idle moment, the backing store is updated with the correct resolution web page rendering.</p>
+
+<p><img class="aligncenter" src="http://www.sencha.com/img/20110715-understanding-hardware-acceleration-on-mobile-browsers-tiger.jpg" alt="Graphic showing blurry SVG vs sharp SVG, side by side" height="128" width="636"></p>
+
+<p>One of the disadvantages of using a backing store per page (regardless whether it is tiled or not) is that is causes difficulty in implementing support for overflow:scroll and position:fixed. The main reason is that the panning and zooming actions from the user modify only the transformation matrix of the backing store, but do not update the backing store. For these two CSS features to work, the handling of the backing store has to be improved to account for content movement within the display.</p>
+
+<h3>Layer and Compositing</h3>
+
+<p>For web applications which have more dynamic content, including for example CSS animations, having a static off-screen buffer does not really help. However, the same backing store concept can be extended further. Instead of one giant backing store for the entire page, we can have <strong>multiple</strong> smaller backing stores, each associated with an animated element.</p>
+
+<p>Take for example the famous <a href="http://www.webkit.org/blog-files/leaves/">falling leaves demo</a> from WebKit. This demo really shows how creating backing stores at a more granular level can <a href="http://youtu.be/KujWTTRkPkM">improve the frame rate</a>. Rather than drawing the leaves (with different rotation and position) for each animation step, WebKit creates a small <em>layer</em> for each leaf, sends those layers to the GPU once, and performs the animation by <em>varying</em> the transformation matrix and opacity of every layer (and thus also the corresponding leaf thereof). Effectively, this creates a really <a href="http://ariya.blogspot.com/2011/07/fluid-animation-with-accelerated.html">smooth animation</a> because (1) the CPU does not need to do anything beside the initial animation setup and (2) the GPU is only responsible for <strong>compositing different layers</strong> during the entire animation process. As evidenced from 60 fps performance of many graphics-intensive mobile games, compositing such a rather simple collection of layers is a piece of cake for modern GPU nowadays.</p>
+
+<p><img src="http://www.sencha.com/img/20110715-understanding-hardware-acceleration-on-mobile-browsers-layered-leaves.jpg" alt="Graphic outlining the layers in the falling leaves demo" height="500" width="636"></p>
+
+<p>The best practice of setting the CSS transformation matrix to <em>translate3d</em> or <em>scale3d</em> (even though there is no 3-D involved) comes from the fact that those types of matrix will switch the animated element to have its own layer which will then be composited together with the rest of the web page and other layers. But you should note that creating and compositing layers come with a price, namely memory allocation. It is not wise to blindly composite every little element in the web page for the sake of hardware acceleration, you&#8217;ll eat memory.</p>
+
+<h3>Conclusion</h3>
+
+<p>In short, making a web browser take advantage of GPU hardware acceleration is far from trivial. It involves making lots of changes at multiple levels, from primitive drawing acceleration, to textured backing store, and layer compositing. But the best possible performance can be achieved when all of these work in harmony.</p>
+
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=81tBgVmIXnM:cr8TK1Bj2RU:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=81tBgVmIXnM:cr8TK1Bj2RU:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=81tBgVmIXnM:cr8TK1Bj2RU:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=81tBgVmIXnM:cr8TK1Bj2RU:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Fri, 15 Jul 2011 17:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/understanding-hardware-acceleration-on-mobile-browsers/#date:17:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/understanding-hardware-acceleration-on-mobile-browsers/#date:17:00</feedburner:origLink></item>
+        
+        <item>
+        <title>Introducing Our New Learning Center</title>
+        <author>James Pearce</author>
+        <description>
+            The key to becoming successful with any software platform is the learning process required to become proficient with it -- and JavaScript frameworks like Ext JS, Sencha Touch, and Ext GWT are no exception. To make that process easier than ever, we've introduced a new Learning Center.
+        </description>
+        <link>http://feedproxy.google.com/~r/extblog/~3/vGLwF1zf8Po/</link>
+        <content><![CDATA[
+            
+                <p><img alt="Introducing the new Sencha Learning Center" class="aligncenter" src="http://staging.sencha.com/img/20110713-sencha-learning-center-hero.png" width="636" height="330"></p>
+
+	<p>The key to becoming successful with any software platform is the learning process required to become proficient with it&#8212;and JavaScript frameworks like Ext JS, Sencha Touch, and Ext <span class="caps">GWT</span> are no exception. To make that process easier than ever, we&#8217;ve introduced a new Sencha <a href='http://www.sencha.com/learn'>Learning Center</a>.</p>
+
+	<p>While there have always been plenty of resources for learning about our frameworks and tools, they haven&#8217;t always been in one place. Many community members will know of our old wiki system for information on older versions of our products. We host screencast and SenchaCon videos on Vimeo. We create educational posts for our blog and in our newsletters. There are comprehensive guides and examples found within our <span class="caps">API</span> documentation. And of course there is valuable information found throughout our forums. The time you spend looking around for all this information is time you could spend writing code!</p>
+
+	<p>The primary aim of the Learning Center, therefore, is to bring everything into one place. From the start page you&#8217;ll see we&#8217;ve curated all the material into product-specific sections, and categorized everything according to difficulty and relevant product version. This means that you can quickly sort or filter the content to look for each type of content. Want to browse through the new <a href='http://www.sencha.com/learn2/extjs?4x/guide/difficulty/asc'>Ext JS 4 guides</a>? Our famous <a href='http://www.sencha.com/learn/animator?screencast'>Animator screencasts</a>? <a href='http://www.sencha.com/learn/touch#difficulty/asc'>Introductions to Sencha Touch</a>? You&#8217;ve got &#8216;em.</p>
+
+	<p>What&#8217;s more, because we&#8217;ve built the Learning Center on the same <span class="caps">CMS</span> as our web site, you can comment on each article, share them over social media, and even subscribe to <span class="caps">RSS</span> feeds of new material. And if you want to flag any errors you find, you can even drop us direct feedback about individual articles, right from the sidebar. Oh, and of course keyword search.</p>
+
+    <figure class="aligncenter">
+        <img src="http://staging.sencha.com/img/20110713-sencha-learning-center-diagram.png" alt="Sencha Learning Center" width="636" height="509">
+        <ul class="blip-map zero">
+            <li style="top:31px; left:238px;">
+                <p>Stay up-to-date with <span class="caps">RSS</span> for your favorite product</p>
+                <div class="pulse">&nbsp;</div>
+            </li>
+            <li style="top:180px; left:242px;">
+                <p>Suggested tutorials are the best way to get started</p>
+                <div class="pulse">&nbsp;</div>
+            </li>
+            <li style="top:271px; left:186px;">
+                <p>Filter out by article type and find just the kind you want</p>
+                <div class="pulse">&nbsp;</div>
+            </li>
+            <li style="top:302px; left:549px;">
+                <p style="right:20px; left:auto">Sort by Difficulty, Date Added, Version, or Title</p>
+                <div class="pulse">&nbsp;</div>
+            </li>
+        </ul>
+        <figcaption>Each framework or tool has its own page with listed entries, <span class="caps">RSS</span> feed, filter and sorting options, and more.</figcaption>
+    </figure>
+
+	<p>A resource like the Learning Center is, of course, never finished. We&#8217;re always adding more content, importing legacy articles for older products, and working directly with you, our community, to create fresh, compelling new material. If you want to help out and achieve instant community fame, let us know if you&#8217;d like to create an article or screencast and you can be a part of it too.</p>
+
+	<p>But as of today, we&#8217;re satisfied that you&#8217;ll already find it to be a rich and helpful place to learn about your favorite web frameworks and tools. Let us know what you think, and we hope you enjoy using it!</p>
+                <style>
+                    .right, .alignright { float: right; margin: 0 0 10px 10px; }
+                    .left, .alignleft { float: left; margin: 0 10px 10px 0; }
+                </style>
+            
+        <div class="feedflare">
+<a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:yIl2AUoC8zA"><img src="http://feeds.feedburner.com/~ff/extblog?d=yIl2AUoC8zA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:dnMXMwOfBR0"><img src="http://feeds.feedburner.com/~ff/extblog?d=dnMXMwOfBR0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:F7zBnMyn0Lo"><img src="http://feeds.feedburner.com/~ff/extblog?i=vGLwF1zf8Po:uyW9gQJaPUY:F7zBnMyn0Lo" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:7Q72WNTAKBA"><img src="http://feeds.feedburner.com/~ff/extblog?d=7Q72WNTAKBA" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:V_sGLiPBpWU"><img src="http://feeds.feedburner.com/~ff/extblog?i=vGLwF1zf8Po:uyW9gQJaPUY:V_sGLiPBpWU" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:l6gmwiTKsz0"><img src="http://feeds.feedburner.com/~ff/extblog?d=l6gmwiTKsz0" border="0"></img></a> <a href="http://feeds.feedburner.com/~ff/extblog?a=vGLwF1zf8Po:uyW9gQJaPUY:gIN9vFwOqvQ"><img src="http://feeds.feedburner.com/~ff/extblog?i=vGLwF1zf8Po:uyW9gQJaPUY:gIN9vFwOqvQ" border="0"></img></a>
+</div>]]></content>
+        <pubDate>Wed, 13 Jul 2011 19:00 GMT</pubDate>
+        <guid isPermaLink="false">http://www.sencha.com/blog/introducing-our-new-learning-center/#date:19:00</guid>
+        <feedburner:origLink>http://www.sencha.com/blog/introducing-our-new-learning-center/#date:19:00</feedburner:origLink></item>
+        
+    </channel>
+</rss>

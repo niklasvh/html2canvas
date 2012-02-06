@@ -1,0 +1,8 @@
+.ux-layout-center-item {
+    margin:0 auto;
+    text-align:left;
+}
+.ux-layout-center .x-panel-body,   
+body.ux-layout-center {            
+    text-align:center;
+}
