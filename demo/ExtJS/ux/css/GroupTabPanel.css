@@ -1,0 +1,103 @@
+/* Main GroupTabPanel style */
+.x-grouptabpanel {
+    background-color: #99BBE8;
+    border: solid 15px #99BBE8;
+}
+/* End of GroupTabPanel style */
+
+/* Card Layout container */
+.x-grouptabcontainer {
+    background-color: white;
+    border-top: 1px solid #d9d9d9 !important;    
+    border-bottom: 1px solid #d9d9d9 !important;
+    border-right: 1px solid #d9d9d9 !important;
+}
+/* End of Card Layout container */
+
+/* TreePanel overrides */
+.x-grouptabbar .x-grouptab {
+    height: 24px;
+    line-height: 24px;
+}
+
+.x-grouptabbar .x-tree-elbow-line, 
+.x-grouptabbar .x-tree-elbow-empty {
+    width: 0;
+}
+
+.x-grouptabbar .x-tree-icon {
+    margin-top: 2px;
+}
+
+.x-grouptabbar .x-grouptab-first {
+    background-image: url('images/tab-collapsed.gif') !important;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.x-grouptabbar .x-active-tab .x-grid-cell-inner {
+    text-decoration: underline !important;
+}
+
+.x-grouptabbar .x-grid-tree-node-expanded  .x-grouptab-first {
+    background-image: url('images/tab-first.gif') !important;
+
+}
+
+.x-grouptabbar .x-grouptab-last {
+    background-image: url('images/tab-last.gif') !important;
+    background-repeat: no-repeat;
+}
+
+.x-grouptabbar .x-grouptab-center {
+    border-left: 1px solid #d9d9d9 !important;
+    background-image: none;
+    border-right: 1px solid white;
+    background-color: #fff !important;
+}
+
+.x-grouptabbar .x-grid-row-selected .x-grid-cell {
+    background-color: transparent !important;
+}
+
+.x-grouptabbar .x-grid-row-selected .x-grouptab-center  {
+    background-color: #fff !important;
+}
+
+.x-grouptabbar .x-tree-panel .x-grid-cell {
+    overflow: visible;
+}
+
+.x-grouptabbar .x-tree-panel .x-grid-row .x-grid-cell-inner {
+    margin-left: 7px;
+    overflow: visible !important;
+    line-height: 24px;
+    height: 24px; 
+}
+
+.x-grouptabbar .x-scroller {
+    display: none;
+}
+
+.x-grouptabbar .x-panel-body  {
+    overflow: visible !important;
+    background: url('images/border.gif') repeat-y top right;
+}
+
+.x-grouptabbar {
+    top: 0 !important;
+    margin-top: -1px !important;
+}
+
+.x-strict .x-ie7 .x-grouptabbar, .x-strict .x-ie6 .x-grouptabbar {
+    margin-top: -2px !important;
+}
+
+.x-grouptabbar .x-grid-view {
+    overflow: visible !important;
+}
+
+.x-grouptabbar table {
+     width:150px !important;
+}
+/* End of TreePanel overrides */
