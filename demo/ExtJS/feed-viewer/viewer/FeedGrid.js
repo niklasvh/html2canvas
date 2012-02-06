@@ -45,7 +45,7 @@ Ext.define('FeedViewer.FeedGrid', {
                 },
                 proxy: {
                     type: 'ajax',
-                    url: 'feed-proxy.php',
+                    url: 'demo/ExtJS/feed-viewer/feed.xml',
                     reader: {
                         type: 'xml',
                         record: 'item'
