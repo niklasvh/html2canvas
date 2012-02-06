@@ -181,7 +181,7 @@ html2canvas.Util.getCSS = function (el, property) {
 		result = [];
 		for (var style in shortStyles){
 			if (property != style) continue;
-			for (var s in shortStyles[style]) result.push(el.getStyle(s));
+			for (var s in shortStyles[style]) result.push(html2canvas.Util.getCSS(el, s));
 			return result.join(' ');
 		}
 		result = html2canvas.Util.getComputedStyle(el, property);
