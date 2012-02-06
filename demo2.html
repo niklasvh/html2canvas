@@ -1,20 +1,25 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<!DOCTYPE html>
 <html>
-    <head>
-
-        <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="build/html2canvas.js"></script>
-        <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('body').html2canvas();
-                // var ss = $('ul').offset();
-                // alert(ss.left);
-            });
-        </script>
-        <title>
-			 display/box/float/clear test 
-        </title>
+<head>
+    <script src="external/jquery-1.6.2.min.js"></script>
+    <script src="src/Core.js"></script>
+    <script src="src/Generate.js"></script>
+    <script src="src/Parse.js"></script>
+    <script src="src/Preload.js"></script>
+    <script src="src/Queue.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Util.js"></script>
+    <script src="src/plugins/jquery.plugin.html2canvas.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('body').html2canvas();
+            // var ss = $('ul').offset();
+            // alert(ss.left);
+        });
+    </script>
+    <title>
+		 display/box/float/clear test 
+    </title>
         <style type="text/css">
             /* last modified: 1 Dec 98 */ 	
 
