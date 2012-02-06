@@ -1,22 +1,29 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
-<script type="text/javascript" src="build/html2canvas.js"></script>
-<script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
-<script type="text/javascript">
-$(window).ready(function() {
-  $('body').html2canvas();
-  
-/*
-  var queue = html2canvas.Parse();
-  
-  console.log(queue);
-  var canvas = html2canvas.Renderer(queue);
-
-  $('body').append(canvas);*/
-  
-});
-</script>
+    <script src="external/jquery-1.6.2.min.js"></script>
+    <script src="src/Core.js"></script>
+    <script src="src/Generate.js"></script>
+    <script src="src/Parse.js"></script>
+    <script src="src/Preload.js"></script>
+    <script src="src/Queue.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Util.js"></script>
+    <script src="src/plugins/jquery.plugin.html2canvas.js"></script>
+    <script>
+        $(window).ready(function() {
+          $('body').html2canvas();
+          
+        /*
+          var queue = html2canvas.Parse();
+          
+          console.log(queue);
+          var canvas = html2canvas.Renderer(queue);
+        
+          $('body').append(canvas);*/
+          
+        });
+    </script>
 
 <style>
 

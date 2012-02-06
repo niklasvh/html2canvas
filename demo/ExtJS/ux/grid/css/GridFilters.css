@@ -1,0 +1,12 @@
+/**
+ * GridFilters Styles
+ */
+
+.ux-filtered-column {
+    font-style: italic;  
+    font-weight: bold;
+}
+
+.ux-gridfilter-text-icon {
+    background-image: url(../images/find.png) !important;
+}
