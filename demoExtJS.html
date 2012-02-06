@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>html2canvas &amp; Ext 4 Demo</title>
+    
+    <script src="src/Core.js"></script>
+    <script src="src/Generate.js"></script>
+    <script src="src/Parse.js"></script>
+    <script src="src/Preload.js"></script>
+    <script src="src/Queue.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Util.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/bootstrap.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedPost.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedDetail.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedGrid.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedInfo.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedPanel.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedViewer.js"></script>
+    <script src="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/viewer/FeedWindow.js"></script>
+    <script>
+    
+        Ext.Loader.setConfig({enabled: true});
+        Ext.Loader.setPath('Ext.ux', 'http://docs.sencha.com/ext-js/4-0/extjs/examples/ux/');
+        Ext.require([
+            'Ext.grid.*',
+            'Ext.data.*',
+            'Ext.util.*',
+            'Ext.Action',
+            'Ext.tab.*',
+            'Ext.button.*',
+            'Ext.form.*',
+            'Ext.layout.container.Card',
+            'Ext.layout.container.Border',
+            'Ext.ux.PreviewPlugin'
+        ]);
+        
+        Ext.onReady(function(){
+            var app = new FeedViewer.App();
+            
+            var queue = html2canvas.Parse();
+      
+            console.log(queue);
+            var canvas = html2canvas.Renderer(queue);
+            
+            Ext.get(document.body).insertSibling(canvas);
+        });
+        
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="http://docs.sencha.com/ext-js/4-0/extjs/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/Feed-Viewer.css">
+    <style>
+        .x-menu-item img.preview-right, .preview-right {
+            background-image: url(http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/images/preview-right.gif);
+        }
+        .x-menu-item img.preview-bottom, .preview-bottom {
+            background-image: url(http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/images/preview-bottom.gif);
+        }
+        .x-menu-item img.preview-hide, .preview-hide {
+            background-image: url(http://docs.sencha.com/ext-js/4-0/extjs/examples/feed-viewer/images/preview-hide.gif);
+        }
+        
+        #reading-menu .x-menu-item-checked {
+            border: 1px dotted #a3bae9 !important;
+            background: #DFE8F6;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+</body>
+</html>

@@ -109,9 +109,21 @@ html2canvas.Util.getCSS = function (el, attribute) {
         }*/
     // val = $(el).css(attribute);
     // }
-    return $(el).css(attribute);
     
-  
+    
+    if (el.style[attribute]) {
+        return el.style[attribute];
+    } else if (el.currentStyle) {
+        return el.currentStyle[attribute];
+    }
+    else if (document.defaultView && document.defaultView.getComputedStyle) {
+        attribute = attribute.replace(/([A-Z])/g, "-$1");
+        attribute = attribute.toLowerCase();
+        var s = document.defaultView.getComputedStyle(el, "");
+        return s && s.getPropertyValue(attribute);
+    } else {
+        return null;
+    }
 };
 
 html2canvas.Util.Extend = function (options, defaults) {
