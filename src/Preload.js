@@ -61,17 +61,16 @@ html2canvas.Preload = function(element, opts){
         }
     }
     
-    function proxyGetImage(url, img){
+    function proxyGetImage(url, img, imageObj){
         var callback_name,
         scriptUrl = options.proxy,
-        script,
-        imgObj = images[url];
+        script;
 
         link.href = url;
-        url = link.href; // work around for pages with base href="" set - WARNING: this may change the url -> so access imgObj from images map before changing that url!
+        url = link.href; // work around for pages with base href="" set - WARNING: this may change the url
 
-        callback_name = 'html2canvas_' + count;
-        imgObj.callbackname = callback_name;
+        callback_name = 'html2canvas_' + (count++);
+        imageObj.callbackname = callback_name;
         
         if (scriptUrl.indexOf("?") > -1) {
             scriptUrl += "&";
@@ -79,19 +78,16 @@ html2canvas.Preload = function(element, opts){
             scriptUrl += "?";
         }
         scriptUrl += 'url=' + encodeURIComponent(url) + '&callback=' + callback_name;
-    
+        script = doc.createElement("script");
+
         window[callback_name] = function(a){
             if (a.substring(0,6) === "error:"){
-                imgObj.succeeded = false;
+                imageObj.succeeded = false;
                 images.numLoaded++;
                 images.numFailed++;
                 start();  
             } else {
-                img.onload = function(){
-                    imgObj.succeeded = true;
-                    images.numLoaded++;
-                    start();
-                };
+                setImageLoadHandlers(img, imageObj);
                 img.src = a; 
             }
             window[callback_name] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
@@ -100,15 +96,13 @@ html2canvas.Preload = function(element, opts){
             } catch(ex) {}
             script.parentNode.removeChild(script);
             script = null;
-            imgObj.callbackname = undefined;
+            delete imageObj.script;
+            delete imageObj.callbackname;
         };
 
-        count += 1;
-        
-        script = doc.createElement("script");        
-        script.setAttribute("src", scriptUrl);
         script.setAttribute("type", "text/javascript");
-        imgObj.script = script;
+        script.setAttribute("src", scriptUrl);
+        imageObj.script = script;
         window.document.body.appendChild(script);
 
     /*
@@ -219,54 +213,41 @@ html2canvas.Preload = function(element, opts){
         }
     }  
     
+    function setImageLoadHandlers(img, imageObj) {
+        img.onload = function() {
+            images.numLoaded++;
+            imageObj.succeeded = true;
+            start();
+        };
+        img.onerror = function() {
+            images.numLoaded++;
+            images.numFailed++;
+            imageObj.succeeded = false;
+            start();
+        };
+    }
+
     methods = {
         loadImage: function( src ) {
-            var img;
+            var img, imageObj;
             if ( src && images[src] === undefined ) {
+                img = new Image();
                 if ( src.match(/data:image\/.*;base64,/i) ) {
-                
-                    //Base64 src                  
-                    img = new Image();
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
-                    images[src] = {
-                        img: img, 
-                        succeeded: true
-                    };
+                    imageObj = images[src] = { img: img };
                     images.numTotal++;
-                    images.numLoaded++;
-                    start();
-                    
-                }else if ( isSameOrigin( src ) ) {
-            
-                    img = new Image();
-                    images[src] = {
-                        img: img
-                    };
+                    setImageLoadHandlers(img, imageObj);
+                }
+                else if ( isSameOrigin( src ) ) {
+                    imageObj = images[src] = { img: img };
                     images.numTotal++;
-                    
-                    img.onload = function() {
-                        images.numLoaded++;
-                        images[src].succeeded = true;
-                        start();
-                    };	
-                    
-                    img.onerror = function() {
-                        images.numLoaded++;
-                        images.numFailed++;
-                        images[src].succeeded = false;
-                        start();
-                    };
-                    
+                    setImageLoadHandlers(img, imageObj);
                     img.src = src;
-            
-                }else if ( options.proxy ){
-                    //    console.log('b'+src);
-                    img = new Image();
-                    images[src] = {
-                        img: img
-                    };
+                }
+                else if ( options.proxy ) {
+                    imageObj = images[src] = { img: img };
                     images.numTotal++;
-                    proxyGetImage( src, img );
+                    proxyGetImage( src, img, imageObj );
                 }
             }     
           
@@ -326,7 +307,6 @@ html2canvas.Preload = function(element, opts){
     if (options.timeout > 0) {
         timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
     }
-    var startTime = (new Date()).getTime();
     html2canvas.log('html2canvas: Preload starts: finding background-images');
     images.firstRun = true;
 
