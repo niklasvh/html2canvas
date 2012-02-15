@@ -25,7 +25,7 @@
 					patchLinks();
 				}).change();
 				$.ajax('src/plugins/bookmarklet.js', {
-					datatype: 'text',
+					dataType: 'text',
 					success: function(data, status, xhr) {
 						origBookmarklet = data;
 						patchLinks();
