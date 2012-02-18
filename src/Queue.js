@@ -6,52 +6,38 @@
   Released under MIT License
 */
 html2canvas.canvasContext = function (width, height) {
-    this.storage = [];
-    this.width = width;
-    this.height = height;
-    //this.zIndex;
-    
-    this.fillRect = function(){
-        this.storage.push(
-        {
-            type: "function",
-            name: "fillRect",
-            'arguments': arguments            
-        });
-        
-    };
-    
-       
-    this.drawImage = function () {     
-        this.storage.push(
-        {
-            type: "function",
-            name: "drawImage",
-            'arguments': arguments            
-        });
-    };
-    
-    
-    this.fillText = function () {
-        
-        this.storage.push(
-        {
-            type: "function",
-            name: "fillText",
-            'arguments': arguments            
-        });      
-    };  
-    
-    
-    this.setVariable = function(variable, value) {
-            this.storage.push(
-            {
+    var storage = [];
+    return {
+        storage: storage,
+        width: width,
+        height: height,
+        fillRect: function () {
+            storage.push({
+                type: "function",
+                name: "fillRect",
+                'arguments': arguments
+            });
+        },
+        drawImage: function () {
+            storage.push({
+                type: "function",
+                name: "drawImage",
+                'arguments': arguments
+            });
+        },
+        fillText: function () {
+            storage.push({
+                type: "function",
+                name: "fillText",
+                'arguments': arguments
+            });
+        },
+        setVariable: function (variable, value) {
+            storage.push({
                 type: "variable",
                 name: variable,
-                'arguments': value            
+                'arguments': value
             });
+        }
     };
-    
-    return this;
-    
 };

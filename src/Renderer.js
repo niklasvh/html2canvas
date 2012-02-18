@@ -81,7 +81,7 @@ html2canvas.Renderer = function(parseQueue, opts){
         renderItem,
         fstyle;
       
-        canvas.width = options.width || zStack.ctx.width;   
+        canvas.width = options.width || zStack.ctx.width;
         canvas.height = options.height || zStack.ctx.height;
     
         fstyle = ctx.fillStyle;
@@ -368,13 +368,13 @@ html2canvas.Renderer = function(parseQueue, opts){
         case "canvas":
             canvas = doc.createElement('canvas');
             if (canvas.getContext){
-                this.log("html2canvas: Renderer: using canvas renderer");
+                html2canvas.log("html2canvas: Renderer: using canvas renderer");
                 return canvasRenderer(parseQueue);
             }               
             break;
         case "svg":
             if (doc.createElementNS){
-                this.log("html2canvas: Renderer: using SVG renderer");
+                html2canvas.log("html2canvas: Renderer: using SVG renderer");
                 return svgRenderer(parseQueue);             
             }
             break;
