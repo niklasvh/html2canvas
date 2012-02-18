@@ -313,19 +313,19 @@ html2canvas.Preload = function(element, opts){
         timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
     }
     var startTime = (new Date()).getTime();
-    this.log('html2canvas: Preload starts: finding background-images');
+    html2canvas.log('html2canvas: Preload starts: finding background-images');
     images.firstRun = true;
 
     getImages( element );
     
-    this.log('html2canvas: Preload: Finding images');
+    html2canvas.log('html2canvas: Preload: Finding images');
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
         methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
     
     images.firstRun = false;
-    this.log('html2canvas: Preload: Done.');
+    html2canvas.log('html2canvas: Preload: Done.');
     if ( images.numTotal === images.numLoaded ) {
         start();
     }  
