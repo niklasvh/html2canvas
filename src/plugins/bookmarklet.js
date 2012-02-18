@@ -68,6 +68,7 @@
     statusline.style.border = '1px solid black';
     statusline.style.borderBottomWidth = '0px';
     statusline.style.padding = '2px 5px';
+    statusline.style.zIndex = 9999999;
     document.body.appendChild(statusline);
     loader.onload();
 }());
