@@ -38,6 +38,7 @@ For more information and examples, please visit the <a href="http://html2canvas.
 ### Changelog ###
 
 v0.32 - 20.2.2012
+
 * Added changelog!
 * Added bookmarklet (<a href="https://github.com/niklasvh/html2canvas/commit/b320dd306e1a2d32a3bc5a71b6ebf6d8c060cde5">cobexer</a>)
 * Option to select single element to render (<a href="https://github.com/niklasvh/html2canvas/commit/0cb252ada91c84ef411288b317c03e97da1f12ad">niklasvh</a>)
