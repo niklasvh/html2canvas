@@ -106,13 +106,9 @@ html2canvas.Parse = function (element, images, opts) {
         
     }
 
-    function getCSS (element, attribute, intOnly) {
-        
-        if (intOnly !== undefined && intOnly === true) {
-            return parseInt(html2canvas.Util.getCSS(element, attribute), 10); 
-        }else{
-            return html2canvas.Util.getCSS(element, attribute);
-        }
+    var getCSS = html2canvas.Util.getCSS;
+    function getCSSInt(element, attribute) {
+        return parseInt(getCSS(element, attribute), 10);
     }
 
     // Drawing a rectangle
@@ -231,19 +227,19 @@ html2canvas.Parse = function (element, images, opts) {
     
     function renderText(el, textNode, stack) {
         var ctx = stack.ctx,
-        family = getCSS(el, "fontFamily", false),
-        size = getCSS(el, "fontSize", false),
-        color = getCSS(el, "color", false),
-        text_decoration = getCSS(el, "textDecoration", false),
-        text_align = getCSS(el, "textAlign", false),
-        letter_spacing = getCSS(el, "letterSpacing", false),
+        family = getCSS(el, "fontFamily"),
+        size = getCSS(el, "fontSize"),
+        color = getCSS(el, "color"),
+        text_decoration = getCSS(el, "textDecoration"),
+        text_align = getCSS(el, "textAlign"),
+        letter_spacing = getCSS(el, "letterSpacing"),
         bounds,
         text,
         metrics,
         renderList,
-        bold = getCSS(el, "fontWeight", false),
-        font_style = getCSS(el, "fontStyle", false),
-        font_variant = getCSS(el, "fontVariant", false),
+        bold = getCSS(el, "fontWeight"),
+        font_style = getCSS(el, "fontStyle"),
+        font_variant = getCSS(el, "fontVariant"),
         align = false,
         newTextNode,
         textValue,
@@ -259,7 +255,7 @@ html2canvas.Parse = function (element, images, opts) {
         
         
         
-        textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform", false));	
+        textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
         text = trimText(textNode.nodeValue);
 	
         if (text.length>0){
@@ -426,10 +422,10 @@ html2canvas.Parse = function (element, images, opts) {
     function renderListItem(element, stack, elBounds) {
     
   
-        var position = getCSS(element, "listStylePosition", false),
+        var position = getCSS(element, "listStylePosition"),
         x,
         y,
-        type = getCSS(element, "listStyleType", false),
+        type = getCSS(element, "listStyleType"),
         currentIndex,
         text,
         listBounds,
@@ -483,8 +479,8 @@ html2canvas.Parse = function (element, images, opts) {
  
        
         
-            ctx.setVariable( "fillStyle", getCSS(element, "color", false) );  
-            ctx.setVariable( "font", getCSS(element, "fontVariant", false) + " " + bold + " " + getCSS(element, "fontStyle", false) + " " + getCSS(element, "fontFize", false) + " " + getCSS(element, "fontFamily", false) );
+            ctx.setVariable( "fillStyle", getCSS(element, "color") );
+            ctx.setVariable( "font", getCSS(element, "fontVariant") + " " + bold + " " + getCSS(element, "fontStyle") + " " + getCSS(element, "fontSize") + " " + getCSS(element, "fontFamily") );
 
         
             if ( position === "inside" ) {
@@ -549,13 +545,13 @@ html2canvas.Parse = function (element, images, opts) {
         // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
         
         if (!parentZ){
-            this.zStack = new html2canvas.zContext(0);
+            this.zStack = h2czContext(0);
             return this.zStack;
         }
     
         if (zIndex !== "auto"){
             needReorder = true;
-            var newContext = new html2canvas.zContext(zIndex);
+            var newContext = h2czContext(zIndex);
             parentZ.children.push(newContext);     
             return newContext;
         
@@ -589,8 +585,8 @@ html2canvas.Parse = function (element, images, opts) {
         
             for (s = 0; s < 4; s+=1){
                 borders.push({
-                    width: getCSS(el, 'border' + sides[s] + 'Width', true),
-                    color: getCSS(el, 'border' + sides[s] + 'Color', false)
+                    width: getCSSInt(el, 'border' + sides[s] + 'Width'),
+                    color: getCSS(el, 'border' + sides[s] + 'Color')
                 });          
             }
           
@@ -666,7 +662,7 @@ html2canvas.Parse = function (element, images, opts) {
         
         for (i = 0, arrLen = cssArr.length; i < arrLen; i+=1){
             style = cssArr[i];
-            valueWrap.style[style] = getCSS(el, style, false);
+            valueWrap.style[style] = getCSS(el, style);
         }
         
                 
@@ -675,7 +671,7 @@ html2canvas.Parse = function (element, images, opts) {
         valueWrap.style.display = "block";
         valueWrap.style.position = "absolute";
         if (/^(submit|reset|button|text|password)$/.test(el.type) || el.nodeName === "SELECT"){
-            valueWrap.style.lineHeight = getCSS(el, "height", false);
+            valueWrap.style.lineHeight = getCSS(el, "height");
         }
   
                 
@@ -844,8 +840,8 @@ html2canvas.Parse = function (element, images, opts) {
     function renderBackground(el,bounds,ctx){
                
         // TODO add support for multi background-images
-        var background_image = getCSS(el, "backgroundImage", false),
-        background_repeat = getCSS(el, "backgroundRepeat", false).split(",")[0],
+        var background_image = getCSS(el, "backgroundImage"),
+        background_repeat = getCSS(el, "backgroundRepeat").split(",")[0],
         image,
         bgp,
         bgy,
@@ -1007,10 +1003,10 @@ html2canvas.Parse = function (element, images, opts) {
         w = bounds.width, 
         h = bounds.height, 
         image,
-        bgcolor = getCSS(el, "backgroundColor", false),
-        cssPosition = getCSS(el, "position", false),
+        bgcolor = getCSS(el, "backgroundColor"),
+        cssPosition = getCSS(el, "position"),
         zindex,
-        opacity = getCSS(el, "opacity", false),
+        opacity = getCSS(el, "opacity"),
         stack,
         stackLength,
         borders,
@@ -1022,7 +1018,7 @@ html2canvas.Parse = function (element, images, opts) {
         paddingRight,
         paddingBottom;
         
-        if (parentStack === undefined){
+        if (!parentStack){
             docDim = docSize();
             parentStack = {
                 opacity: 1
@@ -1034,12 +1030,12 @@ html2canvas.Parse = function (element, images, opts) {
 
         //var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
    
-        zindex = setZ( getCSS( el, "zIndex", false ), parentStack.zIndex );
+        zindex = setZ( getCSS( el, "zIndex"), parentStack.zIndex );
           
 
 
         stack = {
-            ctx: new html2canvas.canvasContext( docDim.width || w , docDim.height || h ),
+            ctx: html2canvas.canvasContext( docDim.width || w , docDim.height || h ),
             zIndex: zindex,
             opacity: opacity * parentStack.opacity,
             cssPosition: cssPosition
@@ -1072,7 +1068,7 @@ html2canvas.Parse = function (element, images, opts) {
         ctx.setVariable("globalAlpha", stack.opacity);  
 
         // draw element borders
-        borders = renderBorders(el, ctx, bounds);
+        borders = renderBorders(el, ctx, bounds, false);
         stack.borders = borders;
 
     
@@ -1130,10 +1126,10 @@ html2canvas.Parse = function (element, images, opts) {
                 image = loadImage(imgSrc);
                 if (image){
 
-                    paddingLeft = getCSS(el, 'paddingLeft', true);
-                    paddingTop = getCSS(el, 'paddingTop', true);
-                    paddingRight = getCSS(el, 'paddingRight', true);
-                    paddingBottom = getCSS(el, 'paddingBottom', true);
+                    paddingLeft = getCSSInt(el, 'paddingLeft');
+                    paddingTop = getCSSInt(el, 'paddingTop');
+                    paddingRight = getCSSInt(el, 'paddingRight');
+                    paddingBottom = getCSSInt(el, 'paddingBottom');
                     
                     
                     renderImage(
@@ -1188,10 +1184,10 @@ html2canvas.Parse = function (element, images, opts) {
                 renderListItem(el, stack, bgbounds);
                 break;
             case "CANVAS":
-                paddingLeft = getCSS(el, 'paddingLeft', true);
-                paddingTop = getCSS(el, 'paddingTop', true);
-                paddingRight = getCSS(el, 'paddingRight', true);
-                paddingBottom = getCSS(el, 'paddingBottom', true);
+                paddingLeft = getCSSInt(el, 'paddingLeft');
+                paddingTop = getCSSInt(el, 'paddingTop');
+                paddingRight = getCSSInt(el, 'paddingRight');
+                paddingBottom = getCSSInt(el, 'paddingBottom');
                 renderImage(
                     ctx,
                     el,
@@ -1241,7 +1237,7 @@ html2canvas.Parse = function (element, images, opts) {
         }
     }
 
-    stack = renderElement(element);
+    stack = renderElement(element, null);
     
     // parse every child element
     for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){      
@@ -1252,7 +1248,7 @@ html2canvas.Parse = function (element, images, opts) {
 
 };
 
-html2canvas.zContext = function(zindex) {
+function h2czContext(zindex) {
     return {
         zindex: zindex,
         children: []
