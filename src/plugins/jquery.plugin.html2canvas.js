@@ -3,6 +3,9 @@
  */
 (function( $ ){
     $.fn.html2canvas = function(options) {
+        if (options && options.profile && window.console && window.console.profile) {
+            console.profile();
+        }
         var date = new Date(),
         $message = null,
         timeoutTimer = false,
@@ -14,20 +17,17 @@
                 $canvas = $(html2canvas.Renderer(queue, options)),
                 finishTime = new Date();
 
+                if (options && options.profile && window.console && window.console.profileEnd) {
+                    console.profileEnd();
+                }
                 $canvas.css({ position: 'absolute', left: 0, top: 0 }).appendTo(document.body);
                 $canvas.siblings().toggle();
 
                 $(window).click(function(){
-                    if (!$canvas.is(':visible')){
                         $canvas.toggle().siblings().toggle();
-                        throwMessage("Canvas Render visible");
-                    } else{
-                        $canvas.siblings().toggle();
-                        $canvas.toggle();
-                        throwMessage("Canvas Render hidden");
-                    }
+                    throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
                 });
-                throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)/1000) + " seconds<br />",4000);
+                throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)) + " ms<br />",4000);
             }
         }, options));
 
@@ -36,6 +36,7 @@
             timeoutTimer = window.setTimeout(function(){
                 $message.fadeOut(function(){
                     $message.remove();
+                    $message = null;
                 });
             },duration || 2000);
             if ($message)
@@ -55,8 +56,10 @@
                 width:'auto',
                 height:'auto',
                 textAlign:'center',
-                textDecoration:'none'
-            }).hide().fadeIn().appendTo('body');
+                textDecoration:'none',
+                display:'none'
+            }).appendTo(document.body).fadeIn();
+            html2canvas.log(msg);
         }
     };
 })( jQuery );
