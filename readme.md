@@ -34,3 +34,12 @@ There are still a lot of CSS properties missing, including most CSS3 properties 
 ### Examples ###
 
 For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.
+
+### Changelog ###
+
+v0.32 - 20.2.2012
+* Added changelog!
+* Added bookmarklet (<a href="https://github.com/niklasvh/html2canvas/commit/b320dd306e1a2d32a3bc5a71b6ebf6d8c060cde5">cobexer</a>)
+* Option to select single element to render (<a href="https://github.com/niklasvh/html2canvas/commit/0cb252ada91c84ef411288b317c03e97da1f12ad">niklasvh</a>)
+* Fixed closure compiler warnings (<a href="https://github.com/niklasvh/html2canvas/commit/36ff1ec7aadcbdf66851a0b77f0b9e87e4a8e4a1">cobexer</a>)
+* Enable profiling in FF (<a href="https://github.com/niklasvh/html2canvas/commit/bbd75286a8406cf9e5aea01fdb7950d547edefb9">cobexer</a>)
