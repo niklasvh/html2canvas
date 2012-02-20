@@ -10,6 +10,9 @@
         $message = null,
         timeoutTimer = false,
         timer = date.getTime();
+        options = options || {};
+        options.elements = this;
+        
 	html2canvas.logging = options && options.logging;
         html2canvas.Preload(this[0], $.extend({
             complete: function(images){

@@ -77,6 +77,8 @@ html2canvas.Renderer = function(parseQueue, opts){
         i,
         queueLen,
         a,
+        newCanvas,
+        bounds,
         storageLen,
         renderItem,
         fstyle;
@@ -171,6 +173,34 @@ html2canvas.Renderer = function(parseQueue, opts){
         html2canvas.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
         
         // this.canvasRenderStorage(queue,this.ctx);
+        queueLen = options.elements.length;
+        
+        if (queueLen === 1) {
+            if (options.elements[ 0 ] instanceof Element && options.elements[ 0 ].nodeName !== "BODY") {
+                // crop image to the bounds of selected (single) element
+                bounds = html2canvas.Util.Bounds( options.elements[ 0 ] );
+                newCanvas = doc.createElement('canvas');
+                newCanvas.width = bounds.width;
+                newCanvas.height = bounds.height;
+                ctx = newCanvas.getContext("2d");
+                ctx.drawImage( canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height );
+                delete canvas;
+                return newCanvas;
+            }
+        } else {
+            // TODO clip and resize multiple elements
+            /*
+            for ( i = 0; i < queueLen; i+=1 ) {
+                if (options.elements[ i ] instanceof Element) {
+                
+                }
+              
+            }*/
+        }
+        
+       
+       
+        
         return canvas;
     }
 
@@ -384,11 +414,10 @@ html2canvas.Renderer = function(parseQueue, opts){
          
          
     //});
+    
 
     return this;
      
 
     
 };
-
-
