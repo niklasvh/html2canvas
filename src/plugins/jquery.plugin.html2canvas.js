@@ -12,10 +12,10 @@
         timer = date.getTime();
         options = options || {};
         options.elements = this;
+        options.flashcanvas = "../external/flashcanvas.min.js";
         
 	html2canvas.logging = options && options.logging;
-        html2canvas.Preload(this[0], $.extend({
-            complete: function(images){
+        options.complete = function(images){
                 var queue = html2canvas.Parse(this[0], images, options),
                 $canvas = $(html2canvas.Renderer(queue, options)),
                 finishTime = new Date();
@@ -31,8 +31,9 @@
                     throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
                 });
                 throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)) + " ms<br />",4000);
-            }
-        }, options));
+            
+        };
+        html2canvas.Preload(this[0],  options);
 
         function throwMessage(msg,duration){
             window.clearTimeout(timeoutTimer);

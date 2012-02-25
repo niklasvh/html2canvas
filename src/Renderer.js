@@ -15,6 +15,8 @@ html2canvas.Renderer = function(parseQueue, opts){
     },
     queue = [],
     canvas,
+    usingFlashcanvas = false,
+    flashMaxSize = 2880, // flash bitmap limited to 2880x2880px // http://stackoverflow.com/questions/2033792/argumenterror-error-2015-invalid-bitmapdata
     doc = document;
     
     options = html2canvas.Util.Extend(opts, options);
@@ -83,9 +85,9 @@ html2canvas.Renderer = function(parseQueue, opts){
         renderItem,
         fstyle;
       
-        canvas.width = options.width || zStack.ctx.width;
-        canvas.height = options.height || zStack.ctx.height;
-    
+        canvas.width = canvas.style.width = (!usingFlashcanvas) ? options.width || zStack.ctx.width : Math.min(flashMaxSize, (options.width || zStack.ctx.width) );
+        canvas.height = canvas.style.height = (!usingFlashcanvas) ? options.height || zStack.ctx.height : Math.min(flashMaxSize, (options.height || zStack.ctx.height) );
+   
         fstyle = ctx.fillStyle;
         ctx.fillStyle = "#fff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -116,7 +118,6 @@ html2canvas.Renderer = function(parseQueue, opts){
                     
                     renderItem = storageContext.ctx.storage[a];
                     
-                   
                     
                     switch(renderItem.type){
                         case "variable":
@@ -124,21 +125,26 @@ html2canvas.Renderer = function(parseQueue, opts){
                             break;
                         case "function":
                             if (renderItem.name === "fillRect") {
-                        
-                                ctx.fillRect(
-                                    renderItem['arguments'][0],
-                                    renderItem['arguments'][1],
-                                    renderItem['arguments'][2],
-                                    renderItem['arguments'][3]
-                                    );
+                                
+                                if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
+                                    ctx.fillRect(
+                                        renderItem['arguments'][0],
+                                        renderItem['arguments'][1],
+                                        renderItem['arguments'][2],
+                                        renderItem['arguments'][3]
+                                        );
+                                }
                             }else if(renderItem.name === "fillText") {
-                                // console.log(renderItem.arguments[0]);
-                                ctx.fillText(renderItem['arguments'][0],renderItem['arguments'][1],renderItem['arguments'][2]);
-                    
+                                if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
+                                    ctx.fillText(
+                                        renderItem['arguments'][0], 
+                                        renderItem['arguments'][1],
+                                        renderItem['arguments'][2]
+                                        );
+                                }
                             }else if(renderItem.name === "drawImage") {
-                                //  console.log(renderItem);
-                                // console.log(renderItem.arguments[0].width);    
-                                if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){
+ 
+                                if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){    
                                     ctx.drawImage(
                                         renderItem['arguments'][0],
                                         renderItem['arguments'][1],
@@ -149,7 +155,7 @@ html2canvas.Renderer = function(parseQueue, opts){
                                         renderItem['arguments'][6],
                                         renderItem['arguments'][7],
                                         renderItem['arguments'][8]
-                                        );
+                                        );                                   
                                 }      
                             }
                        
@@ -176,20 +182,21 @@ html2canvas.Renderer = function(parseQueue, opts){
         queueLen = options.elements.length;
         
         if (queueLen === 1) {
-            if (options.elements[ 0 ] instanceof Element && options.elements[ 0 ].nodeName !== "BODY") {
+            if (typeof options.elements[ 0 ] === "object" && options.elements[ 0 ].nodeName !== "BODY" && usingFlashcanvas === false) {
                 // crop image to the bounds of selected (single) element
                 bounds = html2canvas.Util.Bounds( options.elements[ 0 ] );
                 newCanvas = doc.createElement('canvas');
                 newCanvas.width = bounds.width;
                 newCanvas.height = bounds.height;
                 ctx = newCanvas.getContext("2d");
+                
                 ctx.drawImage( canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height );
                 delete canvas;
                 return newCanvas;
             }
         } else {
-            // TODO clip and resize multiple elements
-            /*
+        // TODO clip and resize multiple elements
+        /*
             for ( i = 0; i < queueLen; i+=1 ) {
                 if (options.elements[ i ] instanceof Element) {
                 
@@ -400,6 +407,55 @@ html2canvas.Renderer = function(parseQueue, opts){
             if (canvas.getContext){
                 html2canvas.log("html2canvas: Renderer: using canvas renderer");
                 return canvasRenderer(parseQueue);
+            } else {
+                usingFlashcanvas = true;
+                html2canvas.log("html2canvas: Renderer: canvas not available, using flashcanvas");
+                var script = doc.createElement("script");
+                script.src = options.flashcanvas;
+                
+                script.onload = (function(script, func){
+                    var intervalFunc; 
+    
+                    if (script.onload === undefined) {
+                        // IE lack of support for script onload
+                                
+                        if( script.onreadystatechange !== undefined ) {
+                                    
+                            intervalFunc = function() {
+                                if (script.readyState !== "loaded" && script.readyState !== "complete") {
+                                    window.setTimeout( intervalFunc, 250 );
+                                    
+                                } else {
+                                    // it is loaded
+                                    func();
+                                    
+                                }
+              
+                            };
+                                    
+                            window.setTimeout( intervalFunc, 250 );
+
+                        } else {
+                            html2canvas.log("html2canvas: Renderer: Can't track when flashcanvas is loaded");
+
+                        }
+                                
+                    } else {
+                        return func;
+                    }
+                            
+                })(script, function(){
+                    
+                    if (typeof FlashCanvas !== "undefined") {
+                        html2canvas.log("html2canvas: Renderer: Flashcanvas initialized");
+                        FlashCanvas.initElement( canvas );
+                        canvasRenderer(parseQueue);
+                    }
+                });
+                
+                doc.body.appendChild( script );
+                
+                return canvas;
             }               
             break;
         case "svg":

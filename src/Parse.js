@@ -108,7 +108,8 @@ html2canvas.Parse = function (element, images, opts) {
 
     var getCSS = html2canvas.Util.getCSS;
     function getCSSInt(element, attribute) {
-        return parseInt(getCSS(element, attribute), 10);
+        var val = parseInt(getCSS(element, attribute), 10);
+        return (isNaN(val)) ? 0 : val; // borders in old IE are throwing 'medium' for demo.html 
     }
 
     // Drawing a rectangle
@@ -587,7 +588,7 @@ html2canvas.Parse = function (element, images, opts) {
                 borders.push({
                     width: getCSSInt(el, 'border' + sides[s] + 'Width'),
                     color: getCSS(el, 'border' + sides[s] + 'Color')
-                });          
+                });                      
             }
           
             return borders; 
@@ -662,7 +663,13 @@ html2canvas.Parse = function (element, images, opts) {
         
         for (i = 0, arrLen = cssArr.length; i < arrLen; i+=1){
             style = cssArr[i];
+
+            try {
             valueWrap.style[style] = getCSS(el, style);
+            } catch( e ) {
+                // Older IE has issues with "border"
+                html2canvas.log("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
+            }
         }
         
                 
@@ -702,13 +709,22 @@ html2canvas.Parse = function (element, images, opts) {
     function getBackgroundPosition(el, bounds, image){
         // TODO add support for multi image backgrounds
     
-        var bgpos = getCSS(el, "backgroundPosition").split(",")[0] || "0 0",
-        bgposition = bgpos.split(" "),
+        var bgposition = (function( bgp ){   
+            
+            if (bgp !== undefined) {
+                return (bgp.split(",")[0] || "0 0").split(" ");
+            } else {
+               // Older IE uses -x and -y 
+               return [ getCSS(el, "backgroundPositionX"), getCSS(el, "backgroundPositionY") ];
+            }
+            
+            
+        })( getCSS(el, "backgroundPosition") ),
         topPos,
         left,
         percentage,
         val;
-
+    
         if (bgposition.length === 1){
             val = bgposition;
             
@@ -1106,7 +1122,7 @@ html2canvas.Parse = function (element, images, opts) {
     
         }
     
-   
+
         if (bgbounds.height > 0 && bgbounds.width > 0){
             renderRect(
                 ctx,

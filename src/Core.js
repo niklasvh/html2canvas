@@ -47,12 +47,14 @@ html2canvas.Util.Bounds = function getBounds (el) {
         bounds.top = clientRect.top;
         bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
         bounds.left = clientRect.left;
-        bounds.width = clientRect.width;
-        bounds.height = clientRect.height;
+        
+        // older IE doesn't have width/height, but top/bottom instead
+        bounds.width = clientRect.width || (clientRect.right - clientRect.left);
+        bounds.height = clientRect.height || (clientRect.bottom - clientRect.top);
     
         return bounds;
             
-    } /*else{
+    }  /*else{
            
            
             p = $(el).offset();       
@@ -109,6 +111,14 @@ html2canvas.Util.getCSS = function (el, attribute) {
         }*/
     // val = $(el).css(attribute);
     // }
+    
+    /*
+    var val = $(el).css(attribute);
+    
+    if (val === "medium") {
+        val = 3;
+    }*/
+    
     return $(el).css(attribute);
     
   
