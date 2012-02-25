@@ -63,9 +63,9 @@ html2canvas.Preload = function(element, opts){
     
     function proxyGetImage(url, img){
         var callback_name,
-            scriptUrl = options.proxy,
-            script,
-            imgObj = images[url];
+        scriptUrl = options.proxy,
+        script,
+        imgObj = images[url];
 
         link.href = url;
         url = link.href; // work around for pages with base href="" set - WARNING: this may change the url -> so access imgObj from images map before changing that url!
@@ -180,8 +180,12 @@ html2canvas.Preload = function(element, opts){
 
         if (elNodeType === 1 || elNodeType === undefined){
             
-            background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
-            
+            // opera throws exception on external-content.html
+            try {
+                background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
+            }catch(e) {
+                html2canvas.log("html2canvas: failed to get background-image - Exception: " + e.message);
+            }
             if ( background_image && background_image !== "1" && background_image !== "none" ) {	
                 
                 // TODO add multi image background support
@@ -191,7 +195,10 @@ html2canvas.Preload = function(element, opts){
                     img = html2canvas.Generate.Gradient( background_image, html2canvas.Util.Bounds( el ) );
 
                     if ( img !== undefined ){
-                        images[background_image] = { img: img, succeeded: true };
+                        images[background_image] = {
+                            img: img, 
+                            succeeded: true
+                        };
                         images.numTotal++;
                         images.numLoaded++;
                         start();
@@ -221,7 +228,10 @@ html2canvas.Preload = function(element, opts){
                     //Base64 src                  
                     img = new Image();
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
-                    images[src] = { img: img, succeeded: true };
+                    images[src] = {
+                        img: img, 
+                        succeeded: true
+                    };
                     images.numTotal++;
                     images.numLoaded++;
                     start();
@@ -229,7 +239,9 @@ html2canvas.Preload = function(element, opts){
                 }else if ( isSameOrigin( src ) ) {
             
                     img = new Image();
-                    images[src] = { img: img };
+                    images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     
                     img.onload = function() {
@@ -250,7 +262,9 @@ html2canvas.Preload = function(element, opts){
                 }else if ( options.proxy ){
                     //    console.log('b'+src);
                     img = new Image();
-                    images[src] = { img: img };
+                    images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     proxyGetImage( src, img );
                 }
@@ -302,9 +316,9 @@ html2canvas.Preload = function(element, opts){
             }
         },
         renderingDone: function() {
-          if (timeoutTimer) {
-            window.clearTimeout(timeoutTimer);
-          }
+            if (timeoutTimer) {
+                window.clearTimeout(timeoutTimer);
+            }
         }
         
     };
