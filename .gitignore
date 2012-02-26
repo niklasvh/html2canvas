@@ -5,8 +5,7 @@
 /tests/cache/
 /tests/flashcanvas.html
 /lib/
-/dist/
-/build/*.js
+/build/
 index.html
 image.jpg
 screenshots.html

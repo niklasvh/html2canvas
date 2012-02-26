@@ -108,7 +108,7 @@ html2canvas.Generate.Gradient = function(src, bounds) {
             lingrad.addColorStop(increment * i, steps[i]);
         }
         catch(e) {
-            html2canvas.log(['failed to add color stop: ', e, '; tried to add: ', steps[i], '; stop: ', i, '; in: ', src]);
+            h2clog(['failed to add color stop: ', e, '; tried to add: ', steps[i], '; stop: ', i, '; in: ', src]);
         }
     }
     
