@@ -446,9 +446,9 @@ html2canvas.Renderer = function(parseQueue, opts){
                             
                 })(script, function(){
                     
-                    if (typeof FlashCanvas !== "undefined") {
+                    if (typeof window.FlashCanvas !== "undefined") {
                         h2clog("html2canvas: Renderer: Flashcanvas initialized");
-                        FlashCanvas.initElement( canvas );
+                        window.FlashCanvas.initElement( canvas );
                         canvasRenderer(parseQueue);
                     }
                 });
