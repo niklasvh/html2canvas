@@ -45,7 +45,7 @@ html2canvas.Preload = function(element, opts){
     }
     
     function start(){
-        html2canvas.log("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
+        h2clog("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
         if (!images.firstRun && images.numLoaded >= images.numTotal){
         
             /*
@@ -57,7 +57,7 @@ html2canvas.Preload = function(element, opts){
                 options.complete(images);
             }
 
-            html2canvas.log("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
+            h2clog("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
         }
     }
     
@@ -169,7 +169,7 @@ html2canvas.Preload = function(element, opts){
             elNodeType = el.nodeType;
         } catch (ex) {
             elNodeType = false;
-            html2canvas.log("html2canvas: failed to access some element's nodeType - Exception: " + ex.message);
+            h2clog("html2canvas: failed to access some element's nodeType - Exception: " + ex.message);
         }
 
         if (elNodeType === 1 || elNodeType === undefined){
@@ -256,9 +256,9 @@ html2canvas.Preload = function(element, opts){
             var img, src;
             if (!images.cleanupDone) {
                 if (cause && typeof cause === "string") {
-                    html2canvas.log("html2canvas: Cleanup because: " + cause);
+                    h2clog("html2canvas: Cleanup because: " + cause);
                 } else {
-                    html2canvas.log("html2canvas: Cleanup after timeout: " + options.timeout + " ms.");
+                    h2clog("html2canvas: Cleanup after timeout: " + options.timeout + " ms.");
                 }
 
                 for (src in images) {
@@ -276,7 +276,7 @@ html2canvas.Preload = function(element, opts){
                             }
                             images.numLoaded++;
                             images.numFailed++;
-                            html2canvas.log("html2canvas: Cleaned up failed img: '" + src + "' Steps: " + images.numLoaded + " / " + images.numTotal);
+                            h2clog("html2canvas: Cleaned up failed img: '" + src + "' Steps: " + images.numLoaded + " / " + images.numTotal);
                         }
                     }
                 }
@@ -307,19 +307,19 @@ html2canvas.Preload = function(element, opts){
     if (options.timeout > 0) {
         timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
     }
-    html2canvas.log('html2canvas: Preload starts: finding background-images');
+    h2clog('html2canvas: Preload starts: finding background-images');
     images.firstRun = true;
 
     getImages( element );
     
-    html2canvas.log('html2canvas: Preload: Finding images');
+    h2clog('html2canvas: Preload: Finding images');
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
         methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
     
     images.firstRun = false;
-    html2canvas.log('html2canvas: Preload: Done.');
+    h2clog('html2canvas: Preload: Done.');
     if ( images.numTotal === images.numLoaded ) {
         start();
     }  

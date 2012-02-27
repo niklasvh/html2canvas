@@ -1002,7 +1002,7 @@ html2canvas.Parse = function (element, images, opts) {
 					
                 }	
             }else{
-                html2canvas.log("html2canvas: Error loading background:" + background_image);
+                h2clog("html2canvas: Error loading background:" + background_image);
             //console.log(images);
             }
 					
@@ -1051,7 +1051,7 @@ html2canvas.Parse = function (element, images, opts) {
 
 
         stack = {
-            ctx: html2canvas.canvasContext( docDim.width || w , docDim.height || h ),
+            ctx: h2cRenderContext( docDim.width || w , docDim.height || h ),
             zIndex: zindex,
             opacity: opacity * parentStack.opacity,
             cssPosition: cssPosition
@@ -1162,7 +1162,7 @@ html2canvas.Parse = function (element, images, opts) {
                         );
            
                 }else{
-                    html2canvas.log("html2canvas: Error loading <img>:" + imgSrc);
+                    h2clog("html2canvas: Error loading <img>:" + imgSrc);
                 }
                 break;
             case "INPUT":

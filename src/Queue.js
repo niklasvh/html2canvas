@@ -5,7 +5,7 @@
 
   Released under MIT License
 */
-html2canvas.canvasContext = function (width, height) {
+function h2cRenderContext(width, height) {
     var storage = [];
     return {
         storage: storage,
@@ -40,4 +40,4 @@ html2canvas.canvasContext = function (width, height) {
             });
         }
     };
-};
+}

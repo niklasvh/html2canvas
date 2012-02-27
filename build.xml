@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <project name="html2canvas" basedir="." default="build">
     <property name="src.dir" location="src"/>
     <property name="lib.dir" location="../lib"/>
@@ -11,44 +11,56 @@
     <property name="JQUERY_PLUGIN_NAME" value="jquery.plugin.html2canvas.js"/>
     <loadfile property="version" srcfile="version.txt" />
 
-    <fileset id="sourcefiles" dir="${src.dir}">
-        <include name="LICENSE"/>
-        <include name="Core.js"/>
-        <include name="Generate.js"/>
-        <include name="Parse.js"/>
-        <include name="Preload.js"/>
-        <include name="Queue.js"/>
-        <include name="Renderer.js"/>
-    </fileset>
+    <path id="sourcefiles">
+        <filelist dir="${src.dir}">
+            <file name="LICENSE"/>
+            <file name="html2canvas-pre.txt"/>
+            <file name="Core.js"/>
+            <file name="Generate.js"/>
+            <file name="Parse.js"/>
+            <file name="Preload.js"/>
+            <file name="Queue.js"/>
+            <file name="Renderer.js"/>
+            <file name="Util.js"/>
+            <file name="html2canvas-post.txt"/>
+        </filelist>
+    </path>
 
     <path id="jquery-plugin">
         <fileset dir="${src.dir}" includes="LICENSE"/>
-        <fileset dir="${src.dir}/plugins" includes="${JQUERY_PLUGIN_NAME}"/>    
+        <fileset dir="${src.dir}/plugins" includes="${JQUERY_PLUGIN_NAME}"/>
     </path>
 
-    <target name="plugins">
+    <target name="build-dir">
+        <echo>Creating directory ${build.dir}...</echo>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <target name="plugins" depends="build-dir">
+        <echo>Creating ${JQUERY_PLUGIN_NAME}...</echo>
         <concat fixlastline="yes" destfile="${build.dir}/${JQUERY_PLUGIN_NAME}">
             <path refid="jquery-plugin"/>
         </concat>
         <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JQUERY_PLUGIN_NAME}" />
     </target>
 
+    <pathconvert property="prettty-sourcefiles" pathsep="${line.separator}" refid="sourcefiles"></pathconvert>
 
-    <target name="build" depends="plugins">
+    <target name="build" depends="build-dir,plugins">
+        <echo>Concatenating files:${line.separator}${prettty-sourcefiles}${line.separator}into ${build.dir}/${JS_NAME}...</echo>
         <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
-            <fileset refid="sourcefiles"/>
+            <path refid="sourcefiles"/>
         </concat>
         <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME}" />
     </target>
 
-
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
            classpath="${lib.dir}/compiler.jar" onerror="report"/>
 
-    <target name="release" depends="build">
+    <target name="syntaxcheck" depends="build-dir,build">
         <jscomp compilationLevel="simple" warning="verbose"
             debug="false"
-            output="${build.dir}/${JS_NAME_MIN}">
+            output="${build.dir}/${JS_NAME_MIN}.tmp">
             <externs dir="${lib.dir}">
                  <file name="${jquery-externs}"/>
             </externs>
@@ -61,15 +73,28 @@
                 <file name="Preload.js"/>
                 <file name="Queue.js"/>
                 <file name="Renderer.js"/>
+                <file name="Util.js"/>
+            </sources>
+        </jscomp>
+        <delete file="${build.dir}/${JS_NAME_MIN}.tmp"></delete>
+    </target>
+
+    <target name="release" depends="build-dir,build,syntaxcheck">
+        <jscomp compilationLevel="simple" warning="verbose"
+            debug="false"
+            output="${build.dir}/${JS_NAME_MIN}">
+            <externs dir="${lib.dir}">
+                 <file name="${jquery-externs}"/>
+            </externs>
+            <sources dir="${build.dir}">
+                <file name="${JS_NAME}"/>
             </sources>
         </jscomp>
         <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME_MIN}" />
     </target>
 
     <target name="clean">
-        <delete file="${build.dir}/${JS_NAME}"></delete>
-        <delete file="${build.dir}/${JS_NAME_MIN}"></delete>
-        <delete file="${build.dir}/${JQUERY_PLUGIN_NAME}"></delete>
+        <delete dir="${build.dir}"></delete>
     </target>
 </project>
 

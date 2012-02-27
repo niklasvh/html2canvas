@@ -37,6 +37,11 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 ### Changelog ###
 
+v0.33 -
+
+* Improved minification saved ~1K! (<a href="https://github.com/cobexer/html2canvas/commit/b82be022b2b9240bd503e078ac980bde2b953e43">cobexer</a>)
+
+
 v0.32 - 20.2.2012
 
 * Added changelog!

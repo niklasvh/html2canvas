@@ -10,11 +10,13 @@ var html2canvas = {};
 
 html2canvas.logging = false;
 
-html2canvas.log = function (a) {    
+function h2clog(a) {
     if (html2canvas.logging && window.console && window.console.log) {
         window.console.log(a);
     }
-};    
+}
+
+html2canvas.log = h2clog; // for compatibility with the jquery plugin
 
 html2canvas.Util = {};
 
@@ -140,8 +142,8 @@ html2canvas.Util.Children = function(el) {
     try {
       children = $(el).contents();
     } catch (ex) {
-      html2canvas.log("html2canvas.Util.Children failed with exception: " + ex.message);
+      h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
       children = [];
     }
     return children;
-}
+};
