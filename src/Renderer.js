@@ -176,7 +176,7 @@ html2canvas.Renderer = function(parseQueue, opts){
        
    
         }
-        html2canvas.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+        h2clog("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
         
         // this.canvasRenderStorage(queue,this.ctx);
         queueLen = options.elements.length;
@@ -390,7 +390,7 @@ html2canvas.Renderer = function(parseQueue, opts){
         
         
         
-        html2canvas.log("html2canvas: Renderer: SVG Renderer done - returning SVG DOM obj");
+        h2clog("html2canvas: Renderer: SVG Renderer done - returning SVG DOM obj");
         
         return svg;
 
@@ -405,11 +405,11 @@ html2canvas.Renderer = function(parseQueue, opts){
         case "canvas":
             canvas = doc.createElement('canvas');
             if (canvas.getContext){
-                html2canvas.log("html2canvas: Renderer: using canvas renderer");
+                h2clog("html2canvas: Renderer: using canvas renderer");
                 return canvasRenderer(parseQueue);
             } else {
                 usingFlashcanvas = true;
-                html2canvas.log("html2canvas: Renderer: canvas not available, using flashcanvas");
+                h2clog("html2canvas: Renderer: canvas not available, using flashcanvas");
                 var script = doc.createElement("script");
                 script.src = options.flashcanvas;
                 
@@ -436,7 +436,7 @@ html2canvas.Renderer = function(parseQueue, opts){
                             window.setTimeout( intervalFunc, 250 );
 
                         } else {
-                            html2canvas.log("html2canvas: Renderer: Can't track when flashcanvas is loaded");
+                            h2clog("html2canvas: Renderer: Can't track when flashcanvas is loaded");
 
                         }
                                 
@@ -446,9 +446,9 @@ html2canvas.Renderer = function(parseQueue, opts){
                             
                 })(script, function(){
                     
-                    if (typeof FlashCanvas !== "undefined") {
-                        html2canvas.log("html2canvas: Renderer: Flashcanvas initialized");
-                        FlashCanvas.initElement( canvas );
+                    if (typeof window.FlashCanvas !== "undefined") {
+                        h2clog("html2canvas: Renderer: Flashcanvas initialized");
+                        window.FlashCanvas.initElement( canvas );
                         canvasRenderer(parseQueue);
                     }
                 });
@@ -460,7 +460,7 @@ html2canvas.Renderer = function(parseQueue, opts){
             break;
         case "svg":
             if (doc.createElementNS){
-                html2canvas.log("html2canvas: Renderer: using SVG renderer");
+                h2clog("html2canvas: Renderer: using SVG renderer");
                 return svgRenderer(parseQueue);             
             }
             break;

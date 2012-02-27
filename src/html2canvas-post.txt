@@ -1,0 +1,2 @@
+window.html2canvas = html2canvas;
+}(window, document));
