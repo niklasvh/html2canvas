@@ -668,7 +668,7 @@ html2canvas.Parse = function (element, images, opts) {
             valueWrap.style[style] = getCSS(el, style);
             } catch( e ) {
                 // Older IE has issues with "border"
-                html2canvas.log("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
+                h2clog("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
             }
         }
         
