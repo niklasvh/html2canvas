@@ -178,7 +178,7 @@ html2canvas.Preload = function(element, opts){
             try {
                 background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
             }catch(e) {
-                html2canvas.log("html2canvas: failed to get background-image - Exception: " + e.message);
+                h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
             }
             if ( background_image && background_image !== "1" && background_image !== "none" ) {	
                 
