@@ -19,7 +19,8 @@
     setTimeout(function() {
       $(document.body).html2canvas({
         logging: true,
-        profile: true
+        profile: true,
+        useCORS: true
       });
     }, 100);
   };
