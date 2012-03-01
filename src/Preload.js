@@ -66,6 +66,7 @@ html2canvas.Preload = function(element, opts){
         }
     }
     
+    // TODO modify proxy to serve images with CORS enabled, where available
     function proxyGetImage(url, img, imageObj){
         var callback_name,
         scriptUrl = options.proxy,
@@ -110,41 +111,6 @@ html2canvas.Preload = function(element, opts){
         imageObj.script = script;
         window.document.body.appendChild(script);
 
-    /*
- 
-    //  enable xhr2 requests where available (no need for base64 / json)
-    
-        $.ajax({
-            data:{
-                xhr2:false,
-                url:url
-            },
-            url: options.proxy,
-            dataType: "jsonp",
-            success: function(a){
-            
-                if (a.substring(0,6) === "error:"){
-                    images.splice(getIndex(images, url), 2);
-                    start();  
-                }else{
-                    img.onload = function(){
-                        imagesLoaded+=1;               
-                        start();   
-               
-                    };     
-                    img.src = a; 
-                }
-
-
-            },
-            error: function(){ 
-                images.splice(getIndex(images, url), 2);
-                start();          
-            }
-        
-        
-        });
-    */
     }
     
     function getImages (el) {
