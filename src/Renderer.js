@@ -127,35 +127,16 @@ html2canvas.Renderer = function(parseQueue, opts){
                             if (renderItem.name === "fillRect") {
                                 
                                 if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
-                                    ctx.fillRect(
-                                        renderItem['arguments'][0],
-                                        renderItem['arguments'][1],
-                                        renderItem['arguments'][2],
-                                        renderItem['arguments'][3]
-                                        );
+                                    ctx.fillRect.apply( ctx, renderItem['arguments'] );
                                 }
                             }else if(renderItem.name === "fillText") {
                                 if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
-                                    ctx.fillText(
-                                        renderItem['arguments'][0], 
-                                        renderItem['arguments'][1],
-                                        renderItem['arguments'][2]
-                                        );
+                                    ctx.fillText.apply( ctx, renderItem['arguments'] );
                                 }
                             }else if(renderItem.name === "drawImage") {
  
                                 if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){    
-                                    ctx.drawImage(
-                                        renderItem['arguments'][0],
-                                        renderItem['arguments'][1],
-                                        renderItem['arguments'][2],
-                                        renderItem['arguments'][3],
-                                        renderItem['arguments'][4],
-                                        renderItem['arguments'][5],
-                                        renderItem['arguments'][6],
-                                        renderItem['arguments'][7],
-                                        renderItem['arguments'][8]
-                                        );                                   
+                                    ctx.drawImage.apply( ctx, renderItem['arguments'] );                                   
                                 }      
                             }
                        

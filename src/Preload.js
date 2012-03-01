@@ -10,7 +10,9 @@ html2canvas.Preload = function(element, opts){
     
     var options = {
         proxy: "http://html2canvas.appspot.com/",
-        timeout: 0    // no timeout
+        timeout: 0,    // no timeout
+        useCORS: false, // try to load images as CORS (where available), before falling back to proxy
+        allowTaint: false // whether to allow images to taint the canvas, won't need proxy if set to true
     },
     images = {
         numLoaded: 0,   // also failed are counted here
@@ -26,6 +28,9 @@ html2canvas.Preload = function(element, opts){
     domImages = doc.images, // TODO probably should limit it to images present in the element only
     imgLen = domImages.length,
     link = doc.createElement("a"),
+    supportCORS = (function( img ){
+        return (img.crossOrigin !== undefined);
+    })(new Image()),
     timeoutTimer;
     
     link.href = window.location.href;
@@ -41,7 +46,7 @@ html2canvas.Preload = function(element, opts){
     function isSameOrigin(url){
         link.href = url;
         var origin = link.protocol + link.host;
-        return ":" === origin || (origin === pageOrigin);
+        return (origin === pageOrigin);
     }
     
     function start(){
@@ -215,36 +220,78 @@ html2canvas.Preload = function(element, opts){
     
     function setImageLoadHandlers(img, imageObj) {
         img.onload = function() {
+            if ( imageObj.timer !== undefined ) {
+                // CORS succeeded
+                window.clearTimeout( imageObj.timer );
+            }
             images.numLoaded++;
             imageObj.succeeded = true;
             start();
         };
         img.onerror = function() {
+            
+            if (img.crossOrigin === "anonymous") {
+               // CORS failed
+                window.clearTimeout( imageObj.timer );
+
+                // let's try with proxy instead
+                if ( options.proxy ) {
+                    var src = img.src;
+                    img = new Image();
+                    imageObj.img = img;
+                    img.src = src;
+
+                    proxyGetImage( img.src, img, imageObj );
+                    return;
+                }
+            }
+            
+            
             images.numLoaded++;
             images.numFailed++;
             imageObj.succeeded = false;
             start();
+            
         };
+    }
+    
+    // work around for https://bugs.webkit.org/show_bug.cgi?id=80028
+    function isComplete() {
+       if (!this.img.complete) { 
+           this.timer = window.setTimeout(this.img.customComplete, 100) 
+       } else { 
+           this.img.onerror();         
+       }
     }
 
     methods = {
         loadImage: function( src ) {
-            var img, imageObj;
+            var img, imageObj;      
             if ( src && images[src] === undefined ) {
-                img = new Image();
+                img = new Image();                
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
                     imageObj = images[src] = { img: img };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
-                }
-                else if ( isSameOrigin( src ) ) {
+                } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {
                     imageObj = images[src] = { img: img };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
                     img.src = src;
-                }
-                else if ( options.proxy ) {
+                } else if ( supportCORS && !options.allowTaint && options.useCORS ) {
+                    // attempt to load with CORS
+                    
+                    img.crossOrigin = "anonymous";    
+                    imageObj = images[src] = { img: img };
+                    images.numTotal++;
+                    setImageLoadHandlers(img, imageObj);
+                    img.src = src;             
+                    
+                    img.customComplete = isComplete.bind(imageObj);  
+                    img.customComplete();
+                    
+                } else if ( options.proxy ) {
                     imageObj = images[src] = { img: img };
                     images.numTotal++;
                     proxyGetImage( src, img, imageObj );
