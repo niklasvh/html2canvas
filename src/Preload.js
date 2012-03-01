@@ -32,7 +32,7 @@ html2canvas.Preload = function(element, opts){
         return (img.crossOrigin !== undefined);
     })(new Image()),
     timeoutTimer;
-    
+
     link.href = window.location.href;
     pageOrigin  = link.protocol + link.host;
     opts = opts || {};
@@ -44,8 +44,9 @@ html2canvas.Preload = function(element, opts){
     element = element || doc.body;
     
     function isSameOrigin(url){
-        link.href = url;
-        var origin = link.protocol + link.host;
+        link.href = url;  
+        link.href = link.href; // YES, BELIEVE IT OR NOT, that is required for IE9 - http://jsfiddle.net/niklasvh/2e48b/
+        var origin = link.protocol + link.host;              
         return (origin === pageOrigin);
     }
     
@@ -240,7 +241,7 @@ html2canvas.Preload = function(element, opts){
                     imageObj = images[src] = { img: img };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
-                } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {
+                } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {                    
                     imageObj = images[src] = { img: img };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);

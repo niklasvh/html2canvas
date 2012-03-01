@@ -11,7 +11,8 @@ html2canvas.Renderer = function(parseQueue, opts){
     var options = {
         "width": null,
         "height": null,
-        "renderer": "canvas"
+        "renderer": "canvas",
+        "taintTest": true // do a taint test with all images before applying to canvas
     },
     queue = [],
     canvas,
@@ -81,8 +82,12 @@ html2canvas.Renderer = function(parseQueue, opts){
         a,
         newCanvas,
         bounds,
+        testCanvas = document.createElement("canvas"),
+        hasCTX = ( testCanvas.getContext !== undefined ),
         storageLen,
         renderItem,
+        testctx = ( hasCTX ) ? testCanvas.getContext("2d") : {},
+        safeImages = [],
         fstyle;
       
         canvas.width = canvas.style.width = (!usingFlashcanvas) ? options.width || zStack.ctx.width : Math.min(flashMaxSize, (options.width || zStack.ctx.width) );
@@ -136,6 +141,21 @@ html2canvas.Renderer = function(parseQueue, opts){
                             }else if(renderItem.name === "drawImage") {
  
                                 if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){    
+                                    if ( hasCTX && options.taintTest ) {
+                                        if ( safeImages.indexOf( renderItem['arguments'][ 0 ].src ) === -1 ) {
+                                            testctx.drawImage( renderItem['arguments'][ 0 ], 0, 0 );
+                                            try {
+                                                testctx.getImageData( 0, 0, 1, 1 );
+                                            } catch(e) {      
+                                                testCanvas = document.createElement("canvas");
+                                                testctx = testCanvas.getContext("2d");
+                                                continue;
+                                            }
+                                          
+                                            safeImages.push( renderItem['arguments'][ 0 ].src );
+                                        
+                                        }
+                                    }
                                     ctx.drawImage.apply( ctx, renderItem['arguments'] );                                   
                                 }      
                             }
