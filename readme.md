@@ -37,6 +37,11 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 ### Changelog ###
 
+v0.34 - 
+
+* Split renderers to their own objects (<a href="#">niklasvh</a>)
+* Simplified API, cleaned up code (<a href="https://github.com/niklasvh/html2canvas/commit/c7d526c9eaa6a4abf4754d205fe1dee360c7660e">niklasvh</a>)
+
 v0.33 - 2.3.2012
 
 * SVG taint fix, and additional taint testing options for rendering (<a href="https://github.com/niklasvh/html2canvas/commit/2dc8b9385e656696cb019d615bdfa1d98b17d5d4">niklasvh</a>)
