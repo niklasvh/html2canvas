@@ -6,15 +6,9 @@
   Released under MIT License
 */
 
-html2canvas.Preload = function(element, opts){
+_html2canvas.Preload = function(element, options){
     
-    var options = {
-        proxy: "http://html2canvas.appspot.com/",
-        timeout: 0,    // no timeout
-        useCORS: false, // try to load images as CORS (where available), before falling back to proxy
-        allowTaint: false // whether to allow images to taint the canvas, won't need proxy if set to true
-    },
-    images = {
+    var images = {
         numLoaded: 0,   // also failed are counted here
         numFailed: 0,
         numTotal: 0,
@@ -35,9 +29,9 @@ html2canvas.Preload = function(element, opts){
 
     link.href = window.location.href;
     pageOrigin  = link.protocol + link.host;
-    opts = opts || {};
+
     
-    options = html2canvas.Util.Extend(opts, options);
+ 
     
    
     
@@ -121,7 +115,7 @@ html2canvas.Preload = function(element, opts){
         // if (!this.ignoreRe.test(el.nodeName)){
         // 
 
-        var contents = html2canvas.Util.Children(el),
+        var contents = _html2canvas.Util.Children(el),
         i,
         contentsLen = contents.length,
         background_image,
@@ -148,7 +142,7 @@ html2canvas.Preload = function(element, opts){
             
             // opera throws exception on external-content.html
             try {
-                background_image = html2canvas.Util.getCSS(el, 'backgroundImage');
+                background_image = _html2canvas.Util.getCSS(el, 'backgroundImage');
             }catch(e) {
                 h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
             }
@@ -158,7 +152,7 @@ html2canvas.Preload = function(element, opts){
                 
                 if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
                   
-                    img = html2canvas.Generate.Gradient( background_image, html2canvas.Util.Bounds( el ) );
+                    img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
 
                     if ( img !== undefined ){
                         images[background_image] = {
@@ -172,8 +166,8 @@ html2canvas.Preload = function(element, opts){
                     }
                     
                 } else {	
-                    src = html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);		
-                    methods.loadImage(src); 		
+                    src = _html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);		
+                    methods.loadImage(src);
                 }
            
             /*
@@ -198,7 +192,7 @@ html2canvas.Preload = function(element, opts){
         img.onerror = function() {
             
             if (img.crossOrigin === "anonymous") {
-               // CORS failed
+                // CORS failed
                 window.clearTimeout( imageObj.timer );
 
                 // let's try with proxy instead
@@ -222,14 +216,6 @@ html2canvas.Preload = function(element, opts){
         };
     }
     
-    // work around for https://bugs.webkit.org/show_bug.cgi?id=80028
-    function isComplete() {
-       if (!this.img.complete) { 
-           this.timer = window.setTimeout(this.img.customComplete, 100) 
-       } else { 
-           this.img.onerror();         
-       }
-    }
 
     methods = {
         loadImage: function( src ) {
@@ -238,11 +224,15 @@ html2canvas.Preload = function(element, opts){
                 img = new Image();                
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
-                    imageObj = images[src] = { img: img };
+                    imageObj = images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
                 } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {                    
-                    imageObj = images[src] = { img: img };
+                    imageObj = images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
                     img.src = src;
@@ -250,16 +240,27 @@ html2canvas.Preload = function(element, opts){
                     // attempt to load with CORS
                     
                     img.crossOrigin = "anonymous";    
-                    imageObj = images[src] = { img: img };
+                    imageObj = images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
-                    img.src = src;             
+                    img.src = src;           
                     
-                    img.customComplete = isComplete.bind(imageObj);  
+                    // work around for https://bugs.webkit.org/show_bug.cgi?id=80028
+                    img.customComplete = function () {
+                        if (!this.img.complete) { 
+                            this.timer = window.setTimeout(this.img.customComplete, 100);
+                        } else { 
+                            this.img.onerror();         
+                        }
+                    }.bind(imageObj);  
                     img.customComplete();
                     
                 } else if ( options.proxy ) {
-                    imageObj = images[src] = { img: img };
+                    imageObj = images[src] = {
+                        img: img
+                    };
                     images.numTotal++;
                     proxyGetImage( src, img, imageObj );
                 }

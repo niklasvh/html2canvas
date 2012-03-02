@@ -1,6 +1,6 @@
 (function() {
     /* options, customize to your needs */
-    var server = '//html2canvas.hertzen.com/build',
+    var server = '//html2canvas.hertzen.com/js',
     proxy = '//html2canvas.appspot.com',
     debug = false,
     profile = false;

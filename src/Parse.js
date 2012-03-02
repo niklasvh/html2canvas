@@ -10,9 +10,8 @@
  *  New function for traversing elements
  */
 
-html2canvas.Parse = function (element, images, opts) {
+_html2canvas.Parse = function (element, images, options) {
     window.scroll(0,0);
-    opts = opts || {};
   
     // select body by default
     if (element === undefined) {
@@ -24,12 +23,7 @@ html2canvas.Parse = function (element, images, opts) {
         rangeBounds: false
         
     },
-    options = {
-        iframeDefault: "default",
-        ignoreElements: "IFRAME|OBJECT|PARAM",
-        useOverflow: true,
-        letterRendering: false
-    },
+
     needReorder = false,
     numDraws = 0,
     fontData = {},
@@ -47,7 +41,7 @@ html2canvas.Parse = function (element, images, opts) {
     children,
     childrenLen;
     
-    options = html2canvas.Util.Extend(opts, options);
+
 
     images = images || {};
     
@@ -106,7 +100,7 @@ html2canvas.Parse = function (element, images, opts) {
         
     }
 
-    var getCSS = html2canvas.Util.getCSS;
+    var getCSS = _html2canvas.Util.getCSS;
     function getCSSInt(element, attribute) {
         var val = parseInt(getCSS(element, attribute), 10);
         return (isNaN(val)) ? 0 : val; // borders in old IE are throwing 'medium' for demo.html 
@@ -354,7 +348,7 @@ html2canvas.Parse = function (element, images, opts) {
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement, oldTextNode);
                                     
-                    bounds = html2canvas.Util.Bounds(wrapElement);
+                    bounds = _html2canvas.Util.Bounds(wrapElement);
                         
                     textValue = oldTextNode.nodeValue;
                         
@@ -416,7 +410,7 @@ html2canvas.Parse = function (element, images, opts) {
         element.insertBefore(boundElement, element.firstChild);
 
     
-        bounds = html2canvas.Util.Bounds( boundElement );
+        bounds = _html2canvas.Util.Bounds( boundElement );
         element.removeChild( boundElement );
         element.style.listStyleType = type;
         return bounds;
@@ -453,16 +447,16 @@ html2canvas.Parse = function (element, images, opts) {
                     }     
                     break;
                 case "upper-roman":
-                    text = html2canvas.Generate.ListRoman( currentIndex );
+                    text = _html2canvas.Generate.ListRoman( currentIndex );
                     break;
                 case "lower-roman":
-                    text = html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
+                    text = _html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
                     break;
                 case "lower-alpha":
-                    text = html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();  
+                    text = _html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();  
                     break;
                 case "upper-alpha":
-                    text = html2canvas.Generate.ListAlpha( currentIndex );  
+                    text = _html2canvas.Generate.ListAlpha( currentIndex );  
                     break;
             }
 
@@ -495,20 +489,21 @@ html2canvas.Parse = function (element, images, opts) {
                 
             }else{
                 return; 
-                /* 
+            /* 
                  TODO really need to figure out some more accurate way to try and find the position. 
                  as defined in http://www.w3.org/TR/CSS21/generate.html#propdef-list-style-position, it does not even have a specified "correct" position, so each browser 
                  may display it whatever way it feels like. 
                  "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
-                */
+                
                 ctx.setVariable("textAlign", "right");
                 //  this.setFont(stack.ctx, element, true);
                 x = elBounds.left - 10;
+                 */
             }
         
             y = listBounds.bottom;
     
-            drawText(text, x, y, ctx)
+            drawText(text, x, y, ctx);
  
         
         }
@@ -517,12 +512,12 @@ html2canvas.Parse = function (element, images, opts) {
     }
     
     function loadImage (src){
-      var img = images[src];
-      if (img && img.succeeded === true) {
-        return img.img;
-      } else {
-        return false;
-      }
+        var img = images[src];
+        if (img && img.succeeded === true) {
+            return img.img;
+        } else {
+            return false;
+        }
     }
     
     
@@ -548,15 +543,15 @@ html2canvas.Parse = function (element, images, opts) {
     
     function setZ(zIndex, parentZ){
         // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
-        
+        var newContext;
         if (!parentZ){
-            this.zStack = h2czContext(0);
-            return this.zStack;
+            newContext = h2czContext(0);
+            return newContext;
         }
     
         if (zIndex !== "auto"){
             needReorder = true;
-            var newContext = h2czContext(zIndex);
+            newContext = h2czContext(zIndex);
             parentZ.children.push(newContext);     
             return newContext;
         
@@ -669,7 +664,7 @@ html2canvas.Parse = function (element, images, opts) {
             style = cssArr[i];
 
             try {
-            valueWrap.style[style] = getCSS(el, style);
+                valueWrap.style[style] = getCSS(el, style);
             } catch( e ) {
                 // Older IE has issues with "border"
                 h2clog("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
@@ -718,8 +713,8 @@ html2canvas.Parse = function (element, images, opts) {
             if (bgp !== undefined) {
                 return (bgp.split(",")[0] || "0 0").split(" ");
             } else {
-               // Older IE uses -x and -y 
-               return [ getCSS(el, "backgroundPositionX"), getCSS(el, "backgroundPositionY") ];
+                // Older IE uses -x and -y 
+                return [ getCSS(el, "backgroundPositionX"), getCSS(el, "backgroundPositionY") ];
             }
             
             
@@ -882,7 +877,7 @@ html2canvas.Parse = function (element, images, opts) {
         }
         
         if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
-            background_image = html2canvas.Util.backgroundImage( background_image );
+            background_image = _html2canvas.Util.backgroundImage( background_image );
             image = loadImage( background_image );
 					
 
@@ -945,9 +940,7 @@ html2canvas.Parse = function (element, images, opts) {
                             bgsy = 0;
                         }    
     
-                  
-                        //   bgh = Math.abs(bgh);
-                        //   bgw = Math.abs(bgw);
+
                         if (bgh>0 && bgw > 0){        
                             renderImage(
                                 ctx,
@@ -961,9 +954,7 @@ html2canvas.Parse = function (element, images, opts) {
                                 bgw, // destination width : 18
                                 bgh // destination height : 1677
                                 );
-                            
-                        // ctx.drawImage(image,(bounds.left+bgp.left),(bounds.top+bgp.top));	                      
-                            
+                                                                       
                         }
                         break;
                     default:
@@ -1017,7 +1008,7 @@ html2canvas.Parse = function (element, images, opts) {
  
     function renderElement(el, parentStack){
 		
-        var bounds = html2canvas.Util.Bounds(el), 
+        var bounds = _html2canvas.Util.Bounds(el), 
         x = bounds.left, 
         y = bounds.top, 
         w = bounds.width, 
@@ -1066,7 +1057,7 @@ html2canvas.Parse = function (element, images, opts) {
         // TODO correct overflow for absolute content residing under a static position
         
         if (parentStack.clip){
-            stack.clip = html2canvas.Util.Extend( {}, parentStack.clip );
+            stack.clip = _html2canvas.Util.Extend( {}, parentStack.clip );
         //stack.clip = parentStack.clip;
         //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
         } 
@@ -1219,7 +1210,7 @@ html2canvas.Parse = function (element, images, opts) {
                     y + paddingTop + borders[0].width, // dy
                     bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
                     bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
-                );
+                    );
                 break;
         }
 
@@ -1238,7 +1229,7 @@ html2canvas.Parse = function (element, images, opts) {
             ctx = stack.ctx;
     
             if ( !ignoreElementsRegExp.test( el.nodeName ) ) {
-                var elementChildren = html2canvas.Util.Children( el ),
+                var elementChildren = _html2canvas.Util.Children( el ),
                 i,
                 node,
                 childrenLen;
@@ -1276,4 +1267,4 @@ function h2czContext(zindex) {
         zindex: zindex,
         children: []
     };  
-};
+}

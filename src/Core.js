@@ -5,22 +5,21 @@
 
   Released under MIT License
 */
+"use strict";
 
-var html2canvas = {};
+var _html2canvas = {},
+html2canvas;
 
-html2canvas.logging = false;
 
 function h2clog(a) {
-    if (html2canvas.logging && window.console && window.console.log) {
+    if (_html2canvas.logging && window.console && window.console.log) {
         window.console.log(a);
     }
 }
 
-html2canvas.log = h2clog; // for compatibility with the jquery plugin
+_html2canvas.Util = {};
 
-html2canvas.Util = {};
-
-html2canvas.Util.backgroundImage = function (src) {
+_html2canvas.Util.backgroundImage = function (src) {
   
     if (/data:image\/.*;base64,/i.test( src ) || /^(-webkit|-moz|linear-gradient|-o-)/.test( src )) {
         return src;
@@ -37,7 +36,7 @@ html2canvas.Util.backgroundImage = function (src) {
     return src;  
 };
 
-html2canvas.Util.Bounds = function getBounds (el) {
+_html2canvas.Util.Bounds = function getBounds (el) {
     var clientRect,
     bounds = {};
         
@@ -70,9 +69,9 @@ html2canvas.Util.Bounds = function getBounds (el) {
             
 
         }     */      
-}
+};
 
-html2canvas.Util.getCSS = function (el, attribute) {
+_html2canvas.Util.getCSS = function (el, attribute) {
     // return jQuery(el).css(attribute);
     /*
     var val,
@@ -126,7 +125,7 @@ html2canvas.Util.getCSS = function (el, attribute) {
   
 };
 
-html2canvas.Util.Extend = function (options, defaults) {
+_html2canvas.Util.Extend = function (options, defaults) {
     var key;
     for (key in options) {              
         if (options.hasOwnProperty(key)) {
@@ -136,7 +135,7 @@ html2canvas.Util.Extend = function (options, defaults) {
     return defaults;           
 };
 
-html2canvas.Util.Children = function(el) {
+_html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     var children;
     try {

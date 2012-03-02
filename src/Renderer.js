@@ -5,22 +5,15 @@
 
   Released under MIT License
 */
-html2canvas.Renderer = function(parseQueue, opts){
+_html2canvas.Renderer = function(parseQueue, options){
 
 
-    var options = {
-        "width": null,
-        "height": null,
-        "renderer": "canvas",
-        "taintTest": true // do a taint test with all images before applying to canvas
-    },
-    queue = [],
+    var queue = [],
     canvas,
     usingFlashcanvas = false,
     flashMaxSize = 2880, // flash bitmap limited to 2880x2880px // http://stackoverflow.com/questions/2033792/argumenterror-error-2015-invalid-bitmapdata
     doc = document;
     
-    options = html2canvas.Util.Extend(opts, options);
 
 
     
@@ -185,27 +178,27 @@ html2canvas.Renderer = function(parseQueue, opts){
         if (queueLen === 1) {
             if (typeof options.elements[ 0 ] === "object" && options.elements[ 0 ].nodeName !== "BODY" && usingFlashcanvas === false) {
                 // crop image to the bounds of selected (single) element
-                bounds = html2canvas.Util.Bounds( options.elements[ 0 ] );
+                bounds = _html2canvas.Util.Bounds( options.elements[ 0 ] );
                 newCanvas = doc.createElement('canvas');
                 newCanvas.width = bounds.width;
                 newCanvas.height = bounds.height;
                 ctx = newCanvas.getContext("2d");
                 
                 ctx.drawImage( canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height );
-                delete canvas;
+                canvas = null;
                 return newCanvas;
             }
-        } else {
+        } /*else {
         // TODO clip and resize multiple elements
-        /*
+        
             for ( i = 0; i < queueLen; i+=1 ) {
                 if (options.elements[ i ] instanceof Element) {
                 
                 }
               
-            }*/
+            }
         }
-        
+        */
        
        
         
