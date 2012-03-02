@@ -8,7 +8,7 @@
 (function(document, window) {
     var scrStart = '<script type="text/javascript" src="', scrEnd = '"></script>';
     document.write(scrStart + '../external/jquery-1.6.2.js' + scrEnd);
-    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'plugins/jquery.plugin.html2canvas'], i;
+    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas', 'plugins/jquery.plugin.html2canvas'], i;
     for (i = 0; i < html2canvas.length; ++i) {
         document.write(scrStart + '../src/' + html2canvas[i] + '.js' + scrEnd);
     }

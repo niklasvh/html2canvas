@@ -22,6 +22,7 @@
             <file name="Queue.js"/>
             <file name="Renderer.js"/>
             <file name="Util.js"/>
+            <file name="renderers/Canvas.js"/>
             <file name="html2canvas-post.txt"/>
         </filelist>
     </path>
