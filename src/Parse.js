@@ -225,6 +225,7 @@ _html2canvas.Parse = function ( images, options ) {
         text,
         metrics,
         renderList,
+        listLen,
         bold = getCSS(el, "fontWeight"),
         font_style = getCSS(el, "fontStyle"),
         font_variant = getCSS(el, "fontVariant"),
@@ -298,7 +299,7 @@ _html2canvas.Parse = function ( images, options ) {
             oldTextNode = textNode;
            
             
-            for (c=0; c < renderList.length; c+=1) {
+            for ( c=0, listLen = renderList.length; c < listLen; c+=1 ) {
                 textValue = null;
     
      
