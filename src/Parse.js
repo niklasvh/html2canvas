@@ -286,9 +286,13 @@ html2canvas.Parse = function (element, images, opts) {
             }
 
             ctx.setVariable("fillStyle", color);  
-            ctx.setVariable("font", font_variant + " " + bold + " " + font_style + " " + size + " " + family);
-                
-                
+            
+            /*
+              need to be defined in the order as defined in http://www.w3.org/TR/CSS21/fonts.html#font-shorthand
+              to properly work in Firefox
+            */     
+            ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
+                              
             if (align){
                 ctx.setVariable("textAlign", "right");
             }else{
@@ -1259,6 +1263,9 @@ html2canvas.Parse = function (element, images, opts) {
     for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){      
         parseElement(children[i], stack);  
     }
+    
+    
+    stack.backgroundColor = getCSS( body, "backgroundColor" );
     
     return stack;
 
