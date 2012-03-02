@@ -10,20 +10,13 @@
  *  New function for traversing elements
  */
 
-_html2canvas.Parse = function (element, images, options) {
+_html2canvas.Parse = function ( images, options ) {
     window.scroll(0,0);
   
-    // select body by default
-    if (element === undefined) {
-        element = document.body;
-    }
-    
-    
     var support = {
         rangeBounds: false
-        
     },
-
+    element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
     needReorder = false,
     numDraws = 0,
     fontData = {},

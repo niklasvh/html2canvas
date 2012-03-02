@@ -6,7 +6,7 @@
   Released under MIT License
 */
 
-_html2canvas.Preload = function(element, options){
+_html2canvas.Preload = function( options ) {
     
     var images = {
         numLoaded: 0,   // also failed are counted here
@@ -18,6 +18,7 @@ _html2canvas.Preload = function(element, options){
     methods,
     i,
     count = 0,
+    element = options.elements[0] || document.body,
     doc = element.ownerDocument,
     domImages = doc.images, // TODO probably should limit it to images present in the element only
     imgLen = domImages.length,
@@ -35,8 +36,6 @@ _html2canvas.Preload = function(element, options){
     
    
     
-    element = element || doc.body;
-    
     function isSameOrigin(url){
         link.href = url;  
         link.href = link.href; // YES, BELIEVE IT OR NOT, that is required for IE9 - http://jsfiddle.net/niklasvh/2e48b/
@@ -47,12 +46,7 @@ _html2canvas.Preload = function(element, options){
     function start(){
         h2clog("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
         if (!images.firstRun && images.numLoaded >= images.numTotal){
-        
-            /*
-            this.log('Finished loading '+this.imagesLoaded+' images, Started parsing');
-            this.bodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
-            document.getElementsByTagName('body')[0].style.overflow = "hidden";
-            */
+            
             if (typeof options.complete === "function"){
                 options.complete(images);
             }

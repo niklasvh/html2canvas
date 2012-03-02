@@ -12,7 +12,6 @@
         timeoutTimer = false,
         timer = date.getTime();
         options = options || {};
-        options.elements = this;
 
         options.onrendered = function( canvas ) {
             var $canvas = $(canvas),
@@ -45,7 +44,7 @@
             }
         };
         
-        html2obj = html2canvas(this[0], options);
+        html2obj = html2canvas(this, options);
 
         function throwMessage(msg,duration){
             window.clearTimeout(timeoutTimer);
