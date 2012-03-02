@@ -174,7 +174,7 @@ _html2canvas.Renderer = function(parseQueue, options){
         
         // this.canvasRenderStorage(queue,this.ctx);
         queueLen = options.elements.length;
-        
+
         if (queueLen === 1) {
             if (typeof options.elements[ 0 ] === "object" && options.elements[ 0 ].nodeName !== "BODY" && usingFlashcanvas === false) {
                 // crop image to the bounds of selected (single) element

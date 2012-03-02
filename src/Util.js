@@ -14,6 +14,7 @@ html2canvas = function( elements, opts ) {
     options = {
         // general
         logging: false,
+        elements: elements,
         
         // preload options
         proxy: "http://html2canvas.appspot.com/",
@@ -40,20 +41,21 @@ html2canvas = function( elements, opts ) {
     
     _html2canvas.logging = options.logging;
     options.complete = function( images ) {
+        
         if (typeof options.onpreloaded === "function") {
             if ( options.onpreloaded( images ) === false ) {
                 return;
             }
         }
-        queue = _html2canvas.Parse( elements, images, options);
+        queue = _html2canvas.Parse( images, options );
             
         if (typeof options.onparsed === "function") {
             if ( options.onparsed( queue ) === false ) {
                 return;
             }
         }
-            
-        canvas = _html2canvas.Renderer(queue, options);
+          
+        canvas = _html2canvas.Renderer( queue, options );
         
         if (typeof options.onrendered === "function") {
             options.onrendered( canvas );
@@ -64,18 +66,18 @@ html2canvas = function( elements, opts ) {
     
     // for pages without images, we still want this to be async, i.e. return methods before executing
     window.setTimeout( function(){
-        _html2canvas.Preload( elements, options );
-    }, 0 );    
-    
+        _html2canvas.Preload( options );
+    }, 0 ); 
+        
     return {
         render: function( queue, opts ) {
-           return _html2canvas.Renderer( queue, _html2canvas.Util.Extend(opts, options) );
+            return _html2canvas.Renderer( queue, _html2canvas.Util.Extend(opts, options) );
         },
-        parse: function( elements, images, opts ) {
-           return _html2canvas.Parse( elements, images, _html2canvas.Util.Extend(opts, options) );
+        parse: function( images, opts ) {
+            return _html2canvas.Parse( images, _html2canvas.Util.Extend(opts, options) );
         },
-        preload: function( elements, opts ) {
-           return _html2canvas.Preload( elements, _html2canvas.Util.Extend(opts, options) );
+        preload: function( opts ) {
+            return _html2canvas.Preload( _html2canvas.Util.Extend(opts, options) );
         },
         log: h2clog
     };
