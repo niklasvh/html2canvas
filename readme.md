@@ -39,7 +39,7 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 v0.34 - 
 
-* Split renderers to their own objects (<a href="#">niklasvh</a>)
+* Split renderers to their own objects (<a href="https://github.com/niklasvh/html2canvas/commit/94f2f799a457cd29a21cc56ef8c06f1697866739">niklasvh</a>)
 * Simplified API, cleaned up code (<a href="https://github.com/niklasvh/html2canvas/commit/c7d526c9eaa6a4abf4754d205fe1dee360c7660e">niklasvh</a>)
 
 v0.33 - 2.3.2012

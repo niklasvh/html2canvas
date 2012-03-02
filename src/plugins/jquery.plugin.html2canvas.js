@@ -13,7 +13,7 @@
         timer = date.getTime();
         options = options || {};
 
-        options.onrendered = function( canvas ) {
+        options.onrendered = options.onrendered || function( canvas ) {
             var $canvas = $(canvas),
             finishTime = new Date();
 
