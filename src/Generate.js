@@ -58,9 +58,9 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
         getColors( tmp[1].substr( position.length + 2 ) );
         position = position.split(' ');
         
-        for (p = 0; p < position.length; p+=1) {
+        for ( p = 0, len = position.length; p < len; p+=1 ) {
             
-            switch(position[p]) {
+            switch( position[ p ] ) {
                 case 'top':
                     p3 = bounds.height;
                     break;
