@@ -6,11 +6,11 @@
   Released under MIT License
 */
 
-html2canvas.Generate = {};
+_html2canvas.Generate = {};
 
 
 
-html2canvas.Generate.Gradient = function(src, bounds) {
+_html2canvas.Generate.Gradient = function(src, bounds) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
     tmp, 
@@ -35,22 +35,24 @@ html2canvas.Generate.Gradient = function(src, bounds) {
         var j = -1, 
         color = '', 
         chr;
-        
         while( j++ < input.length ) {
             chr = input.charAt( j );
             if (chr === ')') {
                 color += chr;
                 steps.push( color );
                 color = '';
-                while (j++ < input.length && input.charAt( j ) !== ',') {
+                j = input.indexOf(",", j) + 1;
+                if (j === 0) {
+                    break;
                 }
+            //  while (j++ < input.length && input.charAt( j ) !== ',') {}
             } else {
                 color += chr;
             }
         }
     }
     
-    if ( tmp = src.match(/-webkit-linear-gradient\((.*)\)/) ) {
+    if ( (tmp = src.match(/-webkit-linear-gradient\((.*)\)/)) !== null ) {
         
         position = tmp[1].split( ",", 1 )[0];
         getColors( tmp[1].substr( position.length + 2 ) );
@@ -78,7 +80,7 @@ html2canvas.Generate.Gradient = function(src, bounds) {
             
         }
 
-    } else if (tmp = src.match(/-webkit-gradient\(linear, (\d+)[%]{0,1} (\d+)[%]{0,1}, (\d+)[%]{0,1} (\d+)[%]{0,1}, from\((.*)\), to\((.*)\)\)/)) {
+    } else if ( (tmp = src.match(/-webkit-gradient\(linear, (\d+)[%]{0,1} (\d+)[%]{0,1}, (\d+)[%]{0,1} (\d+)[%]{0,1}, from\((.*)\), to\((.*)\)\)/)) !== null ) {
         
         p0 = (tmp[1] * bounds.width) / 100;
         p1 = (tmp[2] * bounds.height) / 100;
@@ -88,7 +90,7 @@ html2canvas.Generate.Gradient = function(src, bounds) {
         steps.push(tmp[5]);
         steps.push(tmp[6]);
         
-    } else if (tmp = src.match(/-moz-linear-gradient\((\d+)[%]{0,1} (\d+)[%]{0,1}, (.*)\)/)) {
+    } else if ( (tmp = src.match(/-moz-linear-gradient\((\d+)[%]{0,1} (\d+)[%]{0,1}, (.*)\)/)) !== null ) {
         
         p0 = (tmp[1] * bounds.width) / 100;
         p1 = (tmp[2] * bounds.width) / 100;
@@ -122,9 +124,9 @@ html2canvas.Generate.Gradient = function(src, bounds) {
     
     return img;
 
-}
+};
 
-html2canvas.Generate.ListAlpha = function(number) {
+_html2canvas.Generate.ListAlpha = function(number) {
     var tmp = "",
     modulus;
     
@@ -135,9 +137,9 @@ html2canvas.Generate.ListAlpha = function(number) {
     }while((number*26) > 26);
    
     return tmp;  
-}
+};
 
-html2canvas.Generate.ListRoman = function(number) {
+_html2canvas.Generate.ListRoman = function(number) {
     var romanArray = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"],
     decimal = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
     roman = "",
@@ -157,4 +159,4 @@ html2canvas.Generate.ListRoman = function(number) {
         
     return roman;
    
-}
+};

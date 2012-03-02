@@ -7,17 +7,15 @@
             console.profile();
         }
         var date = new Date(),
+        html2obj,
         $message = null,
         timeoutTimer = false,
         timer = date.getTime();
         options = options || {};
         options.elements = this;
-        options.flashcanvas = "../external/flashcanvas.min.js";
-        
-        html2canvas.logging = options && options.logging;
-        options.complete = function(images){
-            var queue = html2canvas.Parse(this[0], images, options),
-            $canvas = $(html2canvas.Renderer(queue, options)),
+
+        options.onrendered = function( canvas ) {
+            var $canvas = $(canvas),
             finishTime = new Date();
 
             if (options && options.profile && window.console && window.console.profileEnd) {
@@ -45,9 +43,9 @@
                     alert("Canvas is tainted, unable to read data");
                 }
             }
-            
         };
-        html2canvas.Preload(this[0],  options);
+        
+        html2obj = html2canvas(this[0], options);
 
         function throwMessage(msg,duration){
             window.clearTimeout(timeoutTimer);
@@ -77,7 +75,7 @@
                 textDecoration:'none',
                 display:'none'
             }).appendTo(document.body).fadeIn();
-            html2canvas.log(msg);
+            html2obj.log(msg);
         }
     };
 })( jQuery );

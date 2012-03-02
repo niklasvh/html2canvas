@@ -37,7 +37,7 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 ### Changelog ###
 
-v0.33 -
+v0.33 - 2.3.2012
 
 * SVG taint fix, and additional taint testing options for rendering (<a href="https://github.com/niklasvh/html2canvas/commit/2dc8b9385e656696cb019d615bdfa1d98b17d5d4">niklasvh</a>)
 * Added support for CORS images and option to create canvas as tainted (<a href="https://github.com/niklasvh/html2canvas/commit/3ad49efa0032cde25c6ed32a39e35d1505d3b2ef">niklasvh</a>)
