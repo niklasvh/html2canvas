@@ -76,7 +76,6 @@ $(function() {
                 } else if (expect === "thick") {
                     expect = "5px";
                 }
-                
                 QUnit.equal( _html2canvas.Util.getCSS(el, prop), expect, "div #" + (i + 1) + " property " + prop + " equals " + $(el).css(prop) ); 
             });
             
@@ -86,10 +85,12 @@ $(function() {
     var propsToTest2 = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft"],
     numDivs2 = $('#padding div').length;
     
-    test('padding width', propsToTest2.length * numDivs2, function() {  
+    test('padding width', propsToTest2.length * numDivs2 * 2, function() {  
             
         $('#padding div').each(function(i, el) {
             $.each(propsToTest2, function(s, prop) {
+                var isPx = _html2canvas.Util.getCSS(el, prop).indexOf("px");
+                QUnit.notEqual( isPx, -1, "div #" + (i + 1) + " property " + prop + " is in pixels" );
                 QUnit.equal( _html2canvas.Util.getCSS(el, prop), $(el).css(prop), "div #" + (i + 1) + " property " + prop + " equals " + $(el).css(prop) ); 
             });
             
@@ -135,5 +136,5 @@ $(function() {
         });
     }); 
     
-    // TODO add backgroundPosition % tests
+// TODO add backgroundPosition % tests
 });
