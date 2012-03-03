@@ -34,11 +34,16 @@
                 width:50px;
                 height:50px;
             }
+
+            #paddingPercentage div {
+                width:50px;
+                height:50px;
+            }
         </style>
     </head>
     <body>
         <div id="qunit"></div>
-        <div id="qunit-fixture" style="display:none;">
+        <div id="qunit-fixture" style="visibility:none; height:1px; overflow:scroll;">
             <div id="borders">
                 <div style="border-width: 1px 0;"></div>
                 <div style="border-width: 1em 0;"></div>
@@ -55,12 +60,16 @@
                 <div style="padding: 1px 0;"></div>
                 <div style="padding: 1em 0;"></div>
                 <div style="padding: thin medium thick;"></div>
-                <div style="padding: 5% 6px 12%;"></div> 
                 <div style="padding: 5em 5ex 5in 5cm;"></div>
                 <div style="padding: 500em 500ex 500in 500cm;"></div>
                 <div style="padding: 5mm 5pt 5pc 5px;"></div> 
                 <div style="padding: 500mm 500pt 500pc 500px;"></div> 
+                <div style="padding: 1px 5%;"></div>
+                <div style="padding: 15% 0 3%;"></div>
             </div>
+
+
+
 
             <div id="backgroundPosition">
                 <div style="background-position: 1px 0;"></div>

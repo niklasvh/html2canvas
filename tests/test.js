@@ -5,7 +5,7 @@
 
   Released under MIT License
 */
-var h2cSelector = document.body, h2cOptions;
+var h2cSelector, h2cOptions;
 (function(document, window) {
     var scrStart = '<script type="text/javascript" src="', scrEnd = '"></script>';
     document.write(scrStart + '../external/jquery-1.6.2.js' + scrEnd);
@@ -17,7 +17,9 @@ var h2cSelector = document.body, h2cOptions;
         if (window.setUp) {
             window.setUp();
         }
+        h2cSelector = [document.body];
         setTimeout(function() {
+            
             $(h2cSelector).html2canvas($.extend({
                 flashcanvas: "../external/flashcanvas.min.js",
                 logging: true,

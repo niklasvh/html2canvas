@@ -46,15 +46,15 @@ _html2canvas.Preload = function( options ) {
     function start(){
         h2clog("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
         if (!images.firstRun && images.numLoaded >= images.numTotal){
+            h2clog("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
             
             if (typeof options.complete === "function"){
                 options.complete(images);
             }
-
-            h2clog("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
+        
         }
     }
-    
+            
     // TODO modify proxy to serve images with CORS enabled, where available
     function proxyGetImage(url, img, imageObj){
         var callback_name,
@@ -179,6 +179,7 @@ _html2canvas.Preload = function( options ) {
                 // CORS succeeded
                 window.clearTimeout( imageObj.timer );
             }
+            
             images.numLoaded++;
             imageObj.succeeded = true;
             start();
@@ -208,6 +209,16 @@ _html2canvas.Preload = function( options ) {
             start();
             
         };
+        
+        // TODO Opera has no load/error event for SVG images
+        
+        // Opera ninja onload's cached images
+        window.setTimeout(function(){
+            if ( img.width !== 0 && imageObj.succeeded === undefined ) {
+                img.onload();
+            }        
+        }, 100); // needs a reflow for base64 encoded images? interestingly timeout of 0 doesn't work but 1 does.
+
     }
     
 

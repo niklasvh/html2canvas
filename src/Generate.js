@@ -4,7 +4,7 @@
   http://www.twitter.com/niklasvh
 
   Released under MIT License
-*/
+ */
 
 _html2canvas.Generate = {};
 
@@ -30,7 +30,7 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     canvas.width = bounds.width;
     canvas.height = bounds.height;
     
-
+    
     function getColors(input) {      
         var j = -1, 
         color = '', 
@@ -51,7 +51,7 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
             }
         }
     }
-    
+      
     if ( (tmp = src.match(/-webkit-linear-gradient\((.*)\)/)) !== null ) {
         
         position = tmp[1].split( ",", 1 )[0];

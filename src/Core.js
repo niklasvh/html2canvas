@@ -4,7 +4,7 @@
   http://www.twitter.com/niklasvh
 
   Released under MIT License
-*/
+ */
 "use strict";
 
 var _html2canvas = {},
@@ -55,72 +55,98 @@ _html2canvas.Util.Bounds = function getBounds (el) {
     
         return bounds;
             
-    }  /*else{
-           
-           
-            p = $(el).offset();       
-          
-            return {               
-                left: p.left + getCSS(el,"borderLeftWidth", true),
-                top: p.top + getCSS(el,"borderTopWidth", true),
-                width:$(el).innerWidth(),
-                height:$(el).innerHeight()                
-            };
-            
-
-        }     */      
+    }       
 };
 
 _html2canvas.Util.getCSS = function (el, attribute) {
-    // return jQuery(el).css(attribute);
-    /*
-    var val,
-    left,
-    rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
-    style = el.style;
+    // return $(el).css(attribute);
     
-    if ( el.currentStyle ) {
-        val = el.currentStyle[ attribute ];
-    } else if (window.getComputedStyle) {
-        val = document.defaultView.getComputedStyle(el, null)[ attribute ];
-    }
-    */
-    // Check if we are not dealing with pixels, (Opera has issues with this)
-    // Ported from jQuery css.js
-    // From the awesome hack by Dean Edwards
-    // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
-
-    // If we're not dealing with a regular pixel number
-    // but a number that has a weird ending, we need to convert it to pixels
+    var val;
     
-    // if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
-    /*
-        // Remember the original values
-        left = style.left;
+    function toPX( attribute, val ) {
+        var rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
+        left,
+        style = el.style;
+                
+        // Check if we are not dealing with pixels, (Opera has issues with this)
+        // Ported from jQuery css.js
+        // From the awesome hack by Dean Edwards
+        // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
 
-        // Put in the new values to get a computed value out
-        if ( rsLeft ) {
-            el.runtimeStyle.left = el.currentStyle.left;
+        // If we're not dealing with a regular pixel number
+        // but a number that has a weird ending, we need to convert it to pixels   
+        if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+
+            // Remember the original values
+            left = style.left;
+
+            // Put in the new values to get a computed value out
+            if ( rsLeft ) {
+                el.runtimeStyle.left = el.currentStyle.left;
+            }
+            style.left = attribute === "fontSize" ? "1em" : (val || 0);
+            val = style.pixelLeft + "px";
+
+            // Revert the changed values
+            style.left = left;
+            if ( rsLeft ) {
+                el.runtimeStyle.left = rsLeft;
+            }
+
         }
-        style.left = attribute === "fontSize" ? "1em" : (val || 0);
-        val = style.pixelLeft + "px";
+        return val;
+    }
+    
+    
+    if ( window.getComputedStyle ) {
+        val = document.defaultView.getComputedStyle(el, null)[ attribute ];
+        
+        if ( attribute === "backgroundPosition" ) {
+            
+            val = (val.split(",")[0] || "0 0").split(" ");
+           
+            val[ 0 ] = ( val[0].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
+            val[ 1 ] = ( val[1] === undefined ) ? val[0] : val[1]; // IE 9 doesn't return double digit always
+            val[ 1 ] = ( val[1].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
+        } 
+        
+    } else if ( el.currentStyle ) {
+        // IE 9>       
+        if (attribute === "backgroundPosition") {
+            // Older IE uses -x and -y 
+            val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "X" ]  ) ];
+            
+        } else {
 
-        // Revert the changed values
-        style.left = left;
-        if ( rsLeft ) {
-            el.runtimeStyle.left = rsLeft;
-        }*/
-    // val = $(el).css(attribute);
-    // }
+            val = toPX(  attribute, el.currentStyle[ attribute ]  );
+            
+            if (/^(border)/i.test( attribute ) && /^(medium|thin|thick)$/i.test( val )) {
+                switch (val) {
+                    case "thin":
+                        val = "1px";
+                        break;
+                    case "medium":
+                        val = "0px"; // this is wrong, it should be 3px but IE uses medium for no border as well.. TODO find a work around
+                        break;
+                    case "thick":
+                        val = "5px";
+                        break;
+                }
+            }    
+        }
+
+
+
+    }
+
+
+
     
-    /*
-    var val = $(el).css(attribute);
+    return val;
     
-    if (val === "medium") {
-        val = 3;
-    }*/
+
     
-    return $(el).css(attribute);
+//return $(el).css(attribute);
     
   
 };
@@ -129,17 +155,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 _html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
     // TODO add support for multi image backgrounds
     
-    var bgposition = (function( bgp ){   
-            
-        if (bgp !== undefined) {
-            return (bgp.split(",")[0] || "0 0").split(" ");
-        } else {
-            // Older IE uses -x and -y 
-            return [ _html2canvas.Util.getCSS( el, "backgroundPositionX" ), _html2canvas.Util.getCSS( el, "backgroundPositionY" ) ];
-        }
-            
-            
-    })( _html2canvas.Util.getCSS( el, "backgroundPosition" ) ),
+    var bgposition =  _html2canvas.Util.getCSS( el, "backgroundPosition" ) ,
     topPos,
     left,
     percentage,
