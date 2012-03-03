@@ -699,61 +699,7 @@ _html2canvas.Parse = function ( images, options ) {
     
 
     
-    function getBackgroundPosition(el, bounds, image){
-        // TODO add support for multi image backgrounds
-    
-        var bgposition = (function( bgp ){   
-            
-            if (bgp !== undefined) {
-                return (bgp.split(",")[0] || "0 0").split(" ");
-            } else {
-                // Older IE uses -x and -y 
-                return [ getCSS(el, "backgroundPositionX"), getCSS(el, "backgroundPositionY") ];
-            }
-            
-            
-        })( getCSS(el, "backgroundPosition") ),
-        topPos,
-        left,
-        percentage,
-        val;
-    
-        if (bgposition.length === 1){
-            val = bgposition;
-            
-            bgposition = [];
-        
-            bgposition[0] = val;
-            bgposition[1] = val;
-        }  
-
-    
-
-        if (bgposition[0].toString().indexOf("%") !== -1){    
-            percentage = (parseFloat(bgposition[0])/100);        
-            left =  ((bounds.width * percentage)-(image.width*percentage));
-      
-        }else{
-            left = parseInt(bgposition[0],10);
-        }
-
-        if (bgposition[1].toString().indexOf("%") !== -1){  
-
-            percentage = (parseFloat(bgposition[1])/100);     
-            topPos =  ((bounds.height * percentage)-(image.height*percentage));
-        }else{      
-            topPos = parseInt(bgposition[1],10);      
-        }
-
-    
-
-           
-        return {
-            top: topPos,
-            left: left
-        };
-         
-    }
+   
     
     function renderImage (ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) {
         ctx.drawImage(
@@ -875,7 +821,7 @@ _html2canvas.Parse = function ( images, options ) {
             image = loadImage( background_image );
 					
 
-            bgp = getBackgroundPosition(el, bounds, image);
+            bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
             
 
             if ( image ){
