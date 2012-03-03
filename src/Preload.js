@@ -7,7 +7,7 @@
 */
 
 _html2canvas.Preload = function( options ) {
-    
+
     var images = {
         numLoaded: 0,   // also failed are counted here
         numFailed: 0,
@@ -31,30 +31,30 @@ _html2canvas.Preload = function( options ) {
     link.href = window.location.href;
     pageOrigin  = link.protocol + link.host;
 
-    
- 
-    
-   
-    
+
+
+
+
+
     function isSameOrigin(url){
-        link.href = url;  
+        link.href = url;
         link.href = link.href; // YES, BELIEVE IT OR NOT, that is required for IE9 - http://jsfiddle.net/niklasvh/2e48b/
-        var origin = link.protocol + link.host;              
+        var origin = link.protocol + link.host;
         return (origin === pageOrigin);
     }
-    
+
     function start(){
         h2clog("html2canvas: start: images: " + images.numLoaded + " / " + images.numTotal + " (failed: " + images.numFailed + ")");
         if (!images.firstRun && images.numLoaded >= images.numTotal){
             h2clog("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
-            
+
             if (typeof options.complete === "function"){
                 options.complete(images);
             }
-        
+
         }
     }
-            
+
     // TODO modify proxy to serve images with CORS enabled, where available
     function proxyGetImage(url, img, imageObj){
         var callback_name,
@@ -66,7 +66,7 @@ _html2canvas.Preload = function( options ) {
 
         callback_name = 'html2canvas_' + (count++);
         imageObj.callbackname = callback_name;
-        
+
         if (scriptUrl.indexOf("?") > -1) {
             scriptUrl += "&";
         } else {
@@ -80,10 +80,10 @@ _html2canvas.Preload = function( options ) {
                 imageObj.succeeded = false;
                 images.numLoaded++;
                 images.numFailed++;
-                start();  
+                start();
             } else {
                 setImageLoadHandlers(img, imageObj);
-                img.src = a; 
+                img.src = a;
             }
             window[callback_name] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
             try {
@@ -101,13 +101,13 @@ _html2canvas.Preload = function( options ) {
         window.document.body.appendChild(script);
 
     }
-    
+
     function getImages (el) {
-        
-     
-    
+
+
+
         // if (!this.ignoreRe.test(el.nodeName)){
-        // 
+        //
 
         var contents = _html2canvas.Util.Children(el),
         i,
@@ -116,14 +116,14 @@ _html2canvas.Preload = function( options ) {
         src,
         img,
         elNodeType = false;
-        
+
         for (i = 0;  i < contentsLen; i+=1 ){
             // var ignRe = new RegExp("("+this.ignoreElements+")");
             // if (!ignRe.test(element.nodeName)){
             getImages(contents[i]);
         // }
         }
-            
+
         // }
         try {
             elNodeType = el.nodeType;
@@ -133,59 +133,59 @@ _html2canvas.Preload = function( options ) {
         }
 
         if (elNodeType === 1 || elNodeType === undefined){
-            
+
             // opera throws exception on external-content.html
             try {
                 background_image = _html2canvas.Util.getCSS(el, 'backgroundImage');
             }catch(e) {
                 h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
             }
-            if ( background_image && background_image !== "1" && background_image !== "none" ) {	
-                
+            if ( background_image && background_image !== "1" && background_image !== "none" ) {
+
                 // TODO add multi image background support
-                
+
                 if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
-                  
+
                     img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
 
                     if ( img !== undefined ){
                         images[background_image] = {
-                            img: img, 
+                            img: img,
                             succeeded: true
                         };
                         images.numTotal++;
                         images.numLoaded++;
                         start();
-                        
+
                     }
-                    
-                } else {	
-                    src = _html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);		
+
+                } else {
+                    src = _html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
                     methods.loadImage(src);
                 }
-           
+
             /*
             if (background_image && background_image !== "1" && background_image !== "none" && background_image.substring(0,7) !== "-webkit" && background_image.substring(0,3)!== "-o-" && background_image.substring(0,4) !== "-moz"){
                 // TODO add multi image background support
-                src = html2canvas.Util.backgroundImage(background_image.split(",")[0]);                    
-                methods.loadImage(src);            */        
+                src = html2canvas.Util.backgroundImage(background_image.split(",")[0]);
+                methods.loadImage(src);            */
             }
         }
-    }  
-    
+    }
+
     function setImageLoadHandlers(img, imageObj) {
         img.onload = function() {
             if ( imageObj.timer !== undefined ) {
                 // CORS succeeded
                 window.clearTimeout( imageObj.timer );
             }
-            
+
             images.numLoaded++;
             imageObj.succeeded = true;
             start();
         };
         img.onerror = function() {
-            
+
             if (img.crossOrigin === "anonymous") {
                 // CORS failed
                 window.clearTimeout( imageObj.timer );
@@ -201,32 +201,33 @@ _html2canvas.Preload = function( options ) {
                     return;
                 }
             }
-            
-            
+
+
             images.numLoaded++;
             images.numFailed++;
             imageObj.succeeded = false;
             start();
-            
+
         };
-        
+
         // TODO Opera has no load/error event for SVG images
-        
+
         // Opera ninja onload's cached images
+        /*
         window.setTimeout(function(){
             if ( img.width !== 0 && imageObj.succeeded === undefined ) {
                 img.onload();
-            }        
+            }
         }, 100); // needs a reflow for base64 encoded images? interestingly timeout of 0 doesn't work but 1 does.
-
+        */
     }
-    
+
 
     methods = {
         loadImage: function( src ) {
-            var img, imageObj;      
+            var img, imageObj;
             if ( src && images[src] === undefined ) {
-                img = new Image();                
+                img = new Image();
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
                     imageObj = images[src] = {
@@ -234,7 +235,7 @@ _html2canvas.Preload = function( options ) {
                     };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
-                } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {                    
+                } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {
                     imageObj = images[src] = {
                         img: img
                     };
@@ -243,25 +244,25 @@ _html2canvas.Preload = function( options ) {
                     img.src = src;
                 } else if ( supportCORS && !options.allowTaint && options.useCORS ) {
                     // attempt to load with CORS
-                    
-                    img.crossOrigin = "anonymous";    
+
+                    img.crossOrigin = "anonymous";
                     imageObj = images[src] = {
                         img: img
                     };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
-                    img.src = src;           
-                    
+                    img.src = src;
+
                     // work around for https://bugs.webkit.org/show_bug.cgi?id=80028
                     img.customComplete = function () {
-                        if (!this.img.complete) { 
+                        if (!this.img.complete) {
                             this.timer = window.setTimeout(this.img.customComplete, 100);
-                        } else { 
-                            this.img.onerror();         
+                        } else {
+                            this.img.onerror();
                         }
-                    }.bind(imageObj);  
+                    }.bind(imageObj);
                     img.customComplete();
-                    
+
                 } else if ( options.proxy ) {
                     imageObj = images[src] = {
                         img: img
@@ -269,8 +270,8 @@ _html2canvas.Preload = function( options ) {
                     images.numTotal++;
                     proxyGetImage( src, img, imageObj );
                 }
-            }     
-          
+            }
+
         },
         cleanupDOM: function(cause) {
             var img, src;
@@ -321,7 +322,7 @@ _html2canvas.Preload = function( options ) {
                 window.clearTimeout(timeoutTimer);
             }
         }
-        
+
     };
 
     if (options.timeout > 0) {
@@ -331,21 +332,21 @@ _html2canvas.Preload = function( options ) {
     images.firstRun = true;
 
     getImages( element );
-    
+
     h2clog('html2canvas: Preload: Finding images');
     // load <img> images
     for (i = 0; i < imgLen; i+=1){
         methods.loadImage( domImages[i].getAttribute( "src" ) );
     }
-    
+
     images.firstRun = false;
     h2clog('html2canvas: Preload: Done.');
     if ( images.numTotal === images.numLoaded ) {
         start();
-    }  
-    
+    }
+
     return methods;
-    
+
 };
 
 

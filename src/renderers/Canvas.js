@@ -219,7 +219,7 @@ html2canvas.Renderer.Canvas = function( options ) {
         
             return canvas;
         }
-    }
+    };
     
     return methods;
 

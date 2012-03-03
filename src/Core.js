@@ -213,6 +213,7 @@ _html2canvas.Util.Children = function(el) {
     var children;
     try {
         children = $(el).contents();
+      //  children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document : Array.prototype.push.call([], el.childNodes );
     } catch (ex) {
         h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
         children = [];

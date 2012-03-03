@@ -14,10 +14,12 @@ var h2cSelector, h2cOptions;
         document.write(scrStart + '../src/' + html2canvas[i] + '.js' + scrEnd);
     }
     window.onload = function() {
+        h2cSelector = [document.body];
+        
         if (window.setUp) {
             window.setUp();
         }
-        h2cSelector = [document.body];
+        
         setTimeout(function() {
             
             $(h2cSelector).html2canvas($.extend({
