@@ -1,9 +1,3 @@
-/* 
-* @author Niklas von Hertzen <niklas at hertzen.com>
-* @created 3.3.2012 
-* @website http://hertzen.com
- */
-
 module("CSS");
 $(function() {  
    
@@ -76,7 +70,7 @@ $(function() {
                 } else if (expect === "thick") {
                     expect = "5px";
                 }
-                QUnit.equal( _html2canvas.Util.getCSS(el, prop), expect, "div #" + (i + 1) + " property " + prop + " equals " + $(el).css(prop) ); 
+                QUnit.equal( _html2canvas.Util.getCSS(el, prop), expect, "div #" + (i + 1) + " property " + prop + " equals " + expect ); 
             });
             
         });
@@ -97,6 +91,8 @@ $(function() {
         });
     }); 
     
+        
+
     
         
     var propsToTest3 = ["backgroundPosition"],
@@ -109,11 +105,17 @@ $(function() {
                 var img =  new Image();
                 img.width = 50;
                 img.height = 50;
-                var item = _html2canvas.Util.getCSS(el, prop),
-                pos = _html2canvas.Util.BackgroundPosition(el, _html2canvas.Util.Bounds(el), img);
                 
-
-                var split = $(el).css(prop).split(" ");
+                var item = _html2canvas.Util.getCSS(el, prop),
+                pos = _html2canvas.Util.BackgroundPosition(el, _html2canvas.Util.Bounds(el), img),
+                split;
+                
+                if ( window.getComputedStyle ) {
+                    split = $(el).css(prop).split(" ");
+                } else {
+                    split = [$(el).css(prop+"X"),$(el).css(prop+"Y")]
+                }
+                
                 var testEl = $('<div />').css({
                     'position': 'absolute',
                     'left': split[0],
@@ -125,8 +127,8 @@ $(function() {
                 
                 
                 
-                QUnit.equal( pos.left, parseFloat(testEl.css('left'), 10), "div #" + (i + 1) + " background-position-x equals " + pos.left + " from " + item ); 
-                QUnit.equal( pos.top, parseFloat(testEl.css('top'), 10), "div #" + (i + 1) + " background-position-y equals " + pos.top ); 
+                QUnit.equal( pos.left, Math.round(parseFloat(testEl.css('left'), 10)), "div #" + (i + 1) + " background-position-x equals " + pos.left + " from " + item ); 
+                QUnit.equal( pos.top, Math.round(parseFloat(testEl.css('top'), 10)), "div #" + (i + 1) + " background-position-y equals " + pos.top ); 
                 
                 testEl.remove();
                 
