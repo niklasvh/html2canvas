@@ -1196,7 +1196,7 @@ _html2canvas.Parse = function ( images, options ) {
     }
     
     
-    stack.backgroundColor = getCSS( body, "backgroundColor" );
+    stack.backgroundColor = getCSS( document.documentElement, "backgroundColor" );
     
     return stack;
 
