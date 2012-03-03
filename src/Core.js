@@ -125,6 +125,63 @@ _html2canvas.Util.getCSS = function (el, attribute) {
   
 };
 
+
+_html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
+    // TODO add support for multi image backgrounds
+    
+    var bgposition = (function( bgp ){   
+            
+        if (bgp !== undefined) {
+            return (bgp.split(",")[0] || "0 0").split(" ");
+        } else {
+            // Older IE uses -x and -y 
+            return [ _html2canvas.Util.getCSS( el, "backgroundPositionX" ), _html2canvas.Util.getCSS( el, "backgroundPositionY" ) ];
+        }
+            
+            
+    })( _html2canvas.Util.getCSS( el, "backgroundPosition" ) ),
+    topPos,
+    left,
+    percentage,
+    val;
+    
+    if (bgposition.length === 1){
+        val = bgposition;
+            
+        bgposition = [];
+        
+        bgposition[0] = val;
+        bgposition[1] = val;
+    }  
+
+    
+
+    if (bgposition[0].toString().indexOf("%") !== -1){    
+        percentage = (parseFloat(bgposition[0])/100);        
+        left =  ((bounds.width * percentage)-(image.width*percentage));
+      
+    }else{
+        left = parseInt(bgposition[0],10);
+    }
+
+    if (bgposition[1].toString().indexOf("%") !== -1){  
+
+        percentage = (parseFloat(bgposition[1])/100);     
+        topPos =  ((bounds.height * percentage)-(image.height*percentage));
+    }else{      
+        topPos = parseInt(bgposition[1],10);      
+    }
+
+    
+
+           
+    return {
+        top: topPos,
+        left: left
+    };
+         
+};
+
 _html2canvas.Util.Extend = function (options, defaults) {
     var key;
     for (key in options) {              
@@ -139,10 +196,10 @@ _html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     var children;
     try {
-      children = $(el).contents();
+        children = $(el).contents();
     } catch (ex) {
-      h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
-      children = [];
+        h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
+        children = [];
     }
     return children;
 };
