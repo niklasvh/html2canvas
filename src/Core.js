@@ -75,7 +75,8 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 
         // If we're not dealing with a regular pixel number
         // but a number that has a weird ending, we need to convert it to pixels   
-        if ( !/^-?\d+(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+        
+        if ( !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
 
             // Remember the original values
             left = style.left;
@@ -94,7 +95,13 @@ _html2canvas.Util.getCSS = function (el, attribute) {
             }
 
         }
+        
+        if (!/^(thin|medium|thick)$/i.test( val )) {
+            return Math.round(parseFloat( val )) + "px";
+        } 
+        
         return val;
+     
     }
     
     
@@ -104,7 +111,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
         if ( attribute === "backgroundPosition" ) {
             
             val = (val.split(",")[0] || "0 0").split(" ");
-           
+          
             val[ 0 ] = ( val[0].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
             val[ 1 ] = ( val[1] === undefined ) ? val[0] : val[1]; // IE 9 doesn't return double digit always
             val[ 1 ] = ( val[1].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
@@ -114,8 +121,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
         // IE 9>       
         if (attribute === "backgroundPosition") {
             // Older IE uses -x and -y 
-            val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "X" ]  ) ];
-            
+            val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "Y" ]  ) ];  
         } else {
 
             val = toPX(  attribute, el.currentStyle[ attribute ]  );
@@ -212,8 +218,9 @@ _html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     var children;
     try {
-        children = $(el).contents();
-      //  children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document : Array.prototype.push.call([], el.childNodes );
+        //   children = $(el).contents();
+        children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document :  el.childNodes ;
+       
     } catch (ex) {
         h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
         children = [];

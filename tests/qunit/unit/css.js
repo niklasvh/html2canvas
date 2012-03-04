@@ -1,8 +1,9 @@
 // declare vars (preventing JSHint messages)
+/* this breaks the testing for IE<9, haven't really looked into why
 var test = test || function(){},
     QUnit = QUnit || {},
     _html2canvas = _html2canvas || {};
-
+*/
 
 module("CSS");
 $(function() {
@@ -144,6 +145,6 @@ $(function() {
         });
     }); 
     
-// TODO add backgroundPosition % tests
+    // TODO add backgroundPosition % tests
     
 });
