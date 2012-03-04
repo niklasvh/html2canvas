@@ -1,3 +1,9 @@
+// declare vars (preventing JSHint messages)
+var test = test || function(){},
+    QUnit = QUnit || {},
+    _html2canvas = _html2canvas || {};
+
+
 module("CSS");
 $(function() {  
    
@@ -113,7 +119,7 @@ $(function() {
                 if ( window.getComputedStyle ) {
                     split = $(el).css(prop).split(" ");
                 } else {
-                    split = [$(el).css(prop+"X"),$(el).css(prop+"Y")]
+                    split = [$(el).css(prop+"X"),$(el).css(prop+"Y")];
                 }
                 
                 var testEl = $('<div />').css({
