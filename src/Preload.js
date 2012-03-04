@@ -144,7 +144,7 @@ _html2canvas.Preload = function( options ) {
 
                 // TODO add multi image background support
 
-                if (!/^(-webkit|-o|-moz|-ms|linear)-/.test( src )) {
+                if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image )) {
                     //       if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
 
                     img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
