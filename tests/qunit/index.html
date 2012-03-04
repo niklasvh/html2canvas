@@ -22,7 +22,7 @@
         <script type="text/javascript" src="../../src/renderers/Canvas.js"></script>
 
         <script src="unit/css.js"></script>
-
+        <script src="unit/utils.js"></script> 
 
         <style>
             #borders div {
@@ -44,10 +44,11 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture" style="visibility:none; height:1px; overflow:scroll;">
-            <div id="borders">
-                <div style="border-width: 1px 0;"></div>
-                <div style="border-width: 1em 0;"></div>
-                <div style="border-width: thin medium thick;"></div>
+            All the tests here. <b>Testing different <span>stuff</span> for contents()</b>
+            <div id="borders">Yep, here's some more.
+                <div style="border-width: 1px 0;">Div 1</div>
+                <div style="border-width: 1em 0;">Div 2</div>
+                <div style="border-width: thin medium thick;">Some more divs</div>
                 <div style="border-width: 5% 6px 12%;"></div> <!-- percentages aren't valid -->
                 <div style="border-width: 5em 5ex 5in 5cm;"></div>
                 <div style="border-width: 500em 500ex 500in 500cm;"></div>
@@ -93,8 +94,25 @@
                 <div style="background-position: left bottom;"></div> 
             </div>
         </div>
+        <!--
+       <div id="fixture-iframes"></div>
 
-        <!-- <iframe src="../borders.html" id="borders"></iframe>  -->
+       <script>
+           var pages = ["background","borders","external-content","forms","images","lists","origin","overflow","proxy","text-linethrough"],
+           fixtures = $("#fixture-iframes");
+  
+
+           $.each(pages, function(i, page){
+          
+               var iframe = $('<iframe />').attr('src',"../" + page + ".html");
+               
+               iframe.insertAfter( fixtures );
+           });
+       
+           
+       </script>
+
+       <iframe src="../borders.html" id="borders"></iframe>  -->
 
 
     </body>
