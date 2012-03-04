@@ -180,7 +180,7 @@ $(function() {
                     
                     overallColor += (red + green + blue) / 3;
                 }
-                overallColor /= len;
+                overallColor /= (len / 4);
                 
                 QUnit.notEqual(overallColor, 255, 'No Background Gradient - CSS was ' + src);
             });
