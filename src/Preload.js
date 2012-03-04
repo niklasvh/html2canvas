@@ -144,7 +144,8 @@ _html2canvas.Preload = function( options ) {
 
                 // TODO add multi image background support
 
-                if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
+                if (!/^(-webkit|-o|-moz|-ms|linear)-/.test( src )) {
+                    //       if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
 
                     img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
 
@@ -210,10 +211,10 @@ _html2canvas.Preload = function( options ) {
 
         };
 
-        // TODO Opera has no load/error event for SVG images
+    // TODO Opera has no load/error event for SVG images
 
-        // Opera ninja onload's cached images
-        /*
+    // Opera ninja onload's cached images
+    /*
         window.setTimeout(function(){
             if ( img.width !== 0 && imageObj.succeeded === undefined ) {
                 img.onload();
