@@ -1,10 +1,12 @@
 // declare vars (preventing JSHint messages)
+/* this breaks the testing for IE<9
 var test = test || function(){},
     QUnit = QUnit || {},
     _html2canvas = _html2canvas || {};
+*/
 
 
-module("Generate");
+//module("Generate"); // <- overwrites predefined CSS-module ?
 $(function() {
     
     var propsToTest = {},
