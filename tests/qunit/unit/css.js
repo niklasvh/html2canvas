@@ -159,7 +159,7 @@ $(function() {
                 img = _html2canvas.Generate.Gradient(src, {
                     width: 50,
                     height: 50
-                }, img);
+                });
                 
                 canvas = document.createElement('canvas');
                 canvas.width = 50;
