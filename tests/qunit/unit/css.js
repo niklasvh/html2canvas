@@ -1,9 +1,19 @@
+// declare vars (preventing JSHint messages)
+var test = test || function(){},
+    QUnit = QUnit || {},
+    _html2canvas = _html2canvas || {};
+
+
 module("CSS");
-$(function() {  
+$(function() {
+    
+    var propsToTest = {},
+        numDivs = {};
+    
    
   
-    var propsToTest = ["borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"],
-    numDivs = $('#borders div').length;
+    propsToTest['border-width'] = ["borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"],
+    numDivs['border-width'] = $('#borders div').length;
     /*
     expecting = [
     // #1
@@ -56,10 +66,10 @@ $(function() {
     ];
        */
        
-    test('border-width', propsToTest.length * numDivs, function() {  
+    test('border-width', propsToTest['border-width'].length * numDivs['border-width'], function() {  
             
         $('#borders div').each(function(i, el) {
-            $.each(propsToTest, function(s, prop) {
+            $.each(propsToTest['border-width'], function(s, prop) {
                 var expect = $(el).css(prop);
                 
                 // older IE's don't necessarily return px even with jQuery
@@ -76,32 +86,28 @@ $(function() {
         });
     });  
     
-    var propsToTest2 = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft"],
-    numDivs2 = $('#padding div').length;
+    propsToTest['padding width'] = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft"];
+    numDivs['padding width'] = $('#padding div').length;
     
-    test('padding width', propsToTest2.length * numDivs2 * 2, function() {  
+    test('padding width', propsToTest['padding width'].length * numDivs['padding width'] * 2, function() {  
             
         $('#padding div').each(function(i, el) {
-            $.each(propsToTest2, function(s, prop) {
+            $.each(propsToTest['padding width'], function(s, prop) {
                 var isPx = _html2canvas.Util.getCSS(el, prop).indexOf("px");
                 QUnit.notEqual( isPx, -1, "div #" + (i + 1) + " property " + prop + " is in pixels" );
                 QUnit.equal( _html2canvas.Util.getCSS(el, prop), $(el).css(prop), "div #" + (i + 1) + " property " + prop + " equals " + $(el).css(prop) ); 
             });
             
         });
-    }); 
-    
+    });
         
-
+    propsToTest['background-position'] = ["backgroundPosition"];
+    numDivs['background-position'] = $('#backgroundPosition div').length;
     
-        
-    var propsToTest3 = ["backgroundPosition"],
-    numDivs3 = $('#backgroundPosition div').length;
-    
-    test('background-position', propsToTest3.length * numDivs3 * 2, function() {  
+    test('background-position', propsToTest['background-position'].length * numDivs['background-position'] * 2, function() {  
             
         $('#backgroundPosition div').each(function(i, el) {
-            $.each(propsToTest3, function(s, prop) {
+            $.each(propsToTest['background-position'], function(s, prop) {
                 var img =  new Image();
                 img.width = 50;
                 img.height = 50;
@@ -113,7 +119,7 @@ $(function() {
                 if ( window.getComputedStyle ) {
                     split = $(el).css(prop).split(" ");
                 } else {
-                    split = [$(el).css(prop+"X"),$(el).css(prop+"Y")]
+                    split = [$(el).css(prop+"X"),$(el).css(prop+"Y")];
                 }
                 
                 var testEl = $('<div />').css({
@@ -139,4 +145,45 @@ $(function() {
     }); 
     
 // TODO add backgroundPosition % tests
+
+    propsToTest['background-gradient'] = ["backgroundImage"];
+    numDivs['background-gradient'] = $('#backgroundGradients div').length;
+    
+    test('background-gradient', propsToTest['background-gradient'].length * numDivs['background-gradient'], function() {  
+            
+        $('#backgroundGradients div').each(function(i, el) {
+            $.each(propsToTest['background-gradient'], function(s, prop) {
+                var src, img, canvas, ctx, id, data, len, red, green, blue, overallColor = 0;
+                
+                src = _html2canvas.Util.getCSS(el, prop),
+                img = _html2canvas.Generate.Gradient(src, {
+                    width: 50,
+                    height: 50
+                });
+                
+                canvas = document.createElement('canvas');
+                canvas.width = 50;
+                canvas.height = 50;
+                ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                id = ctx.getImageData(0, 0, 50, 50);
+                data = id.data;
+                len = data.length;
+                
+                //console.log(img);
+                
+                for (var i = 0; i < len; i += 4) {
+                    red = data[i]; // red
+                    green = data[i + 1]; // green
+                    blue = data[i + 2]; // blue
+                    // i+3 is alpha (the fourth element)
+                    
+                    overallColor += (red + green + blue) / 3;
+                }
+                overallColor /= (len / 4);
+                
+                QUnit.notEqual(overallColor, 255, 'No Background Gradient - CSS was ' + src);
+            });
+        });
+    }); 
 });
