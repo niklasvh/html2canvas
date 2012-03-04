@@ -69,14 +69,10 @@
                 <div style="padding: 15% 0 3%;"></div>
             </div>
 
-
-
-
             <div id="backgroundPosition">
                 <div style="background-position: 1px 0;"></div>
                 <div style="background-position: 1em 0;"></div>
                 <div style="background-position: thin medium;"></div>
-
                 <div style="background-position: 5em 5ex;"></div>
                 <div style="background-position: 5in 5cm;"></div>
                 <div style="background-position: 500in 500cm;"></div>
@@ -85,13 +81,49 @@
                 <div style="background-position: 500pc 500px;"></div> 
                 <div style="background-position: 5mm 5pt;"></div> 
                 <div style="background-position: 500mm 500pt;"></div> 
-
             </div>
 
             <div id="backgroundPositionPercentage">
                 <div style="background-position: 5% 6px;"></div> 
                 <div style="background-position: center center;"></div> 
                 <div style="background-position: left bottom;"></div> 
+            </div>
+
+            <style>
+                .linearGradientSimple {
+                    /* FF 3.6+ */
+                    background: -moz-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                    /* Chrome,Safari4+ */
+                    background: -webkit-gradient(linear, left top, right top, color-stop(#ff0000), color-stop(#ffff00), color-stop(#00ff00));
+                    /* Chrome 10+, Safari 5.1+ */
+                    background: -webkit-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                    /* Opera 11.10+ */
+                    background: -o-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                    /* IE 10+ */
+                    background: -ms-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                    /* W3C */
+                    background: linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                }
+                .linearGradientWithStops {
+                    /* IE9 SVG */
+                    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2NlZGJlOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjE3JSIgc3RvcC1jb2xvcj0iI2FhYzVkZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzYxOTljNyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iIzNhODRjMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjU5JSIgc3RvcC1jb2xvcj0iIzQxOWFkNiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcxJSIgc3RvcC1jb2xvcj0iIzRiYjhmMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9Ijg0JSIgc3RvcC1jb2xvcj0iIzNhOGJjMiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyNjU1OGIiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+                    /* FF 3.6+ */
+                    background: -moz-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                    /* Chrome, Safari 4+ */
+                    background: -webkit-gradient(linear, left top, right top, color-stop(0%, #cedbe9), color-stop(17%, #aac5de), color-stop(50%, #6199c7), color-stop(51%, #3a84c3), color-stop(59%, #419ad6), color-stop(71%, #4bb8f0), color-stop(84%, #3a8bc2), color-stop(100%, #26558b));
+                    /* Chrome 10+, Safari 5.1+ */
+                    background: -webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                    /* Opera 11.10+ */
+                    background: -o-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                    /* IE10+ */
+                    background: -ms-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                    /* W3C */
+                    background: linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                }
+            </style>
+            <div id="backgroundGradients">
+                <div class="linearGradientSimple"></div>
+                <div class="linearGradientWithStops"></div>
             </div>
         </div>
         <!--
