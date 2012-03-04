@@ -145,45 +145,5 @@ $(function() {
     }); 
     
 // TODO add backgroundPosition % tests
-
-    propsToTest['background-gradient'] = ["backgroundImage"];
-    numDivs['background-gradient'] = $('#backgroundGradients div').length;
     
-    test('background-gradient', propsToTest['background-gradient'].length * numDivs['background-gradient'], function() {  
-            
-        $('#backgroundGradients div').each(function(i, el) {
-            $.each(propsToTest['background-gradient'], function(s, prop) {
-                var src, img, canvas, ctx, id, data, len, red, green, blue, overallColor = 0;
-                
-                src = _html2canvas.Util.getCSS(el, prop),
-                img = _html2canvas.Generate.Gradient(src, {
-                    width: 50,
-                    height: 50
-                });
-                
-                canvas = document.createElement('canvas');
-                canvas.width = 50;
-                canvas.height = 50;
-                ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                id = ctx.getImageData(0, 0, 50, 50);
-                data = id.data;
-                len = data.length;
-                
-                //console.log(img);
-                
-                for (var i = 0; i < len; i += 4) {
-                    red = data[i]; // red
-                    green = data[i + 1]; // green
-                    blue = data[i + 2]; // blue
-                    // i+3 is alpha (the fourth element)
-                    
-                    overallColor += (red + green + blue) / 3;
-                }
-                overallColor /= (len / 4);
-                
-                QUnit.notEqual(overallColor, 255, 'No Background Gradient - CSS was ' + src);
-            });
-        });
-    }); 
 });
