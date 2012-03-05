@@ -77,6 +77,31 @@ $(function() {
                     stop: 1
                 }
             ]
+        },
+        {
+            type: "linear",
+            x0: 0,
+            y0: 0,
+            x1: 0,
+            y1: 50,
+            colorStops: [
+                {
+                    color: "rgb(240, 183, 161)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(140, 51, 16)",
+                    stop: 0.5
+                },
+                {
+                    color: "rgb(117, 34, 1)",
+                    stop: 0.51
+                },
+                {
+                    color: "rgb(191, 110, 78)",
+                    stop: 1
+                }
+            ]
         }
     ];
     
