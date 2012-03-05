@@ -80,7 +80,7 @@ _html2canvas.Generate.getColorStopsFromGradient = function(css, bounds) {
                         m3 = m2[i].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%)?/);
                         if(m3[2]){
                             stop = parseFloat(m3[2]);
-                            if(m3[3]){ //percentage
+                            if(m3[3]){ // percentage
                                 stop /= 100;
                             }
                         } else {
@@ -115,7 +115,7 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     
     img = new Image();
     
-    if(gradient){
+    if(gradient && gradient.type === 'linear'){
         lingrad = ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1);
         
         for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
