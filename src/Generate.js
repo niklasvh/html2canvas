@@ -38,12 +38,12 @@ _html2canvas.Generate.getColorStopsFromGradient = function(css, bounds) {
             case '-webkit-linear-gradient':
                 
                 gradient = {
-                        type: 'linear',
-                        x0: 0,
-                        y0: 0,
-                        x1: 0,
-                        y1: 0,
-                        colorStops: []
+                    type: 'linear',
+                    x0: 0,
+                    y0: 0,
+                    x1: 0,
+                    y1: 0,
+                    colorStops: []
                 };
                 
                 // get coordinates
