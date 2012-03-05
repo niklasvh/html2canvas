@@ -10,7 +10,101 @@ var test = test || function(){},
 $(function() {
     
     var propsToTest = {},
-        numDivs = {};
+        numDivs = {},
+        expected = {};
+        
+    propsToTest['Generate.getColorStopsFromGradient'] = ["backgroundImage"];
+    numDivs['Generate.getColorStopsFromGradient'] = $('#backgroundGradients div').length;
+    expected['Generate.getColorStopsFromGradient'] = [
+        {
+            type: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 0,
+            colorStops: [
+                {
+                    color: "rgb(255, 0, 0)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(255, 255, 0)",
+                    stop: 0.5
+                },
+                {
+                    color: "rgb(0, 255, 0)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 0,
+            colorStops: [
+                {
+                    color: "rgb(206, 219, 233)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(170, 197, 222)",
+                    stop: 0.17
+                },
+                {
+                    color: "rgb(97, 153, 199)",
+                    stop: 0.5
+                },
+                {
+                    color: "rgb(58, 132, 195)",
+                    stop: 0.51
+                },
+                {
+                    color: "rgb(65, 154, 214)",
+                    stop: 0.59
+                },
+                {
+                    color: "rgb(75, 184, 240)",
+                    stop: 0.71
+                },
+                {
+                    color: "rgb(58, 139, 194)",
+                    stop: 0.84
+                },
+                {
+                    color: "rgb(38, 85, 139)",
+                    stop: 1
+                }
+            ]
+        }
+    ];
+    
+    test('Generate.getColorStopsFromGradient', propsToTest['Generate.getColorStopsFromGradient'].length * numDivs['Generate.getColorStopsFromGradient'], function() {  
+            
+        $('#backgroundGradients div').each(function(i, el) {
+            $.each(propsToTest['Generate.getColorStopsFromGradient'], function(s, prop) {
+                var src, gradient, exptd;
+                
+                src = _html2canvas.Util.getCSS(el, prop);
+                
+                if (/^(-webkit|-o|-moz|-ms|linear)-/.test(src)) {
+                    
+                    gradient = _html2canvas.Generate.getColorStopsFromGradient(src, {
+                        width: 50,
+                        height: 50
+                    });
+                    
+                    // compare
+                    exptd = expected['Generate.getColorStopsFromGradient'][i];
+                    
+                    QUnit.deepEqual(gradient, exptd, 'Parsed gradient; got: ' + JSON.stringify(gradient));
+                } else {
+                    QUnit.ok(true, 'No CSS Background Gradient support');
+                }
+            });
+        });
+    });
     
 
     propsToTest['Generate.Gradient'] = ["backgroundImage"];
@@ -58,5 +152,5 @@ $(function() {
                 }
             });
         });
-    }); 
+    });
 });
