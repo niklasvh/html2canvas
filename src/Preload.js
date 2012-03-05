@@ -183,6 +183,7 @@ _html2canvas.Preload = function( options ) {
 
             images.numLoaded++;
             imageObj.succeeded = true;
+            img.onerror = img.onload = null;
             start();
         };
         img.onerror = function() {
@@ -207,6 +208,7 @@ _html2canvas.Preload = function( options ) {
             images.numLoaded++;
             images.numFailed++;
             imageObj.succeeded = false;
+            img.onerror = img.onload = null;
             start();
 
         };
