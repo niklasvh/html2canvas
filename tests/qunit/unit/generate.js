@@ -109,7 +109,7 @@ $(function() {
             
         $('#backgroundGradients div').each(function(i, el) {
             $.each(propsToTest['Generate.parseGradient'], function(s, prop) {
-                var src, gradient, exptd;
+                var src, gradient;
                 
                 src = _html2canvas.Util.getCSS(el, prop);
                 
@@ -120,10 +120,7 @@ $(function() {
                         height: 50
                     });
                     
-                    // compare
-                    exptd = expected['Generate.parseGradient'][i];
-                    
-                    QUnit.deepEqual(gradient, exptd, 'Parsed gradient; got: ' + JSON.stringify(gradient));
+                    QUnit.deepEqual(gradient, expected['Generate.parseGradient'][i], 'Parsed gradient; got: ' + JSON.stringify(gradient));
                 } else {
                     QUnit.ok(true, 'No CSS Background Gradient support');
                 }
