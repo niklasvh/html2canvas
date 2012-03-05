@@ -166,6 +166,9 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
         ctx.fillRect(0, 0, bounds.width, bounds.height);
     
         img.src = canvas.toDataURL();
+    } else if(gradient && gradient.type === 'radial'){
+        // TODO: implement radial gradient generation
+        h2clog('No radial gradient support implemented');
     }
     
     return img;
