@@ -13,9 +13,9 @@ $(function() {
         numDivs = {},
         expected = {};
         
-    propsToTest['Generate.getColorStopsFromGradient'] = ["backgroundImage"];
-    numDivs['Generate.getColorStopsFromGradient'] = $('#backgroundGradients div').length;
-    expected['Generate.getColorStopsFromGradient'] = [
+    propsToTest['Generate.parseGradient'] = ["backgroundImage"];
+    numDivs['Generate.parseGradient'] = $('#backgroundGradients div').length;
+    expected['Generate.parseGradient'] = [
         {
             type: 'linear',
             x0: 0,
@@ -80,23 +80,23 @@ $(function() {
         }
     ];
     
-    test('Generate.getColorStopsFromGradient', propsToTest['Generate.getColorStopsFromGradient'].length * numDivs['Generate.getColorStopsFromGradient'], function() {  
+    test('Generate.parseGradient', propsToTest['Generate.parseGradient'].length * numDivs['Generate.parseGradient'], function() {  
             
         $('#backgroundGradients div').each(function(i, el) {
-            $.each(propsToTest['Generate.getColorStopsFromGradient'], function(s, prop) {
+            $.each(propsToTest['Generate.parseGradient'], function(s, prop) {
                 var src, gradient, exptd;
                 
                 src = _html2canvas.Util.getCSS(el, prop);
                 
                 if (/^(-webkit|-o|-moz|-ms|linear)-/.test(src)) {
                     
-                    gradient = _html2canvas.Generate.getColorStopsFromGradient(src, {
+                    gradient = _html2canvas.Generate.parseGradient(src, {
                         width: 50,
                         height: 50
                     });
                     
                     // compare
-                    exptd = expected['Generate.getColorStopsFromGradient'][i];
+                    exptd = expected['Generate.parseGradient'][i];
                     
                     QUnit.deepEqual(gradient, exptd, 'Parsed gradient; got: ' + JSON.stringify(gradient));
                 } else {

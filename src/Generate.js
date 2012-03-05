@@ -25,7 +25,7 @@ var reGradients = [
 // ["-webkit-linear-gradient(left, rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%)", "-webkit-linear-gradient", "left", ", rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%"]
 // ["-webkit-gradient(linear, 0% 0, 0% 100%, from(rgb(252, 252, 252)), to(rgb(232, 232, 232)))", "-webkit-gradient", "linear", "0% 0", "0% 100%", ", from(rgb(252, 252, 252)), to(rgb(232, 232, 232))"]
 
-_html2canvas.Generate.getColorStopsFromGradient = function(css, bounds) {  
+_html2canvas.Generate.parseGradient = function(css, bounds) {  
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
     
     for(i = 0; i < len; i+=1){
@@ -111,7 +111,7 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     canvas.width = bounds.width;
     canvas.height = bounds.height;
     
-    gradient = _html2canvas.Generate.getColorStopsFromGradient(src, bounds);
+    gradient = _html2canvas.Generate.parseGradient(src, bounds);
     
     img = new Image();
     
