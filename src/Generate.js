@@ -14,16 +14,18 @@ _html2canvas.Generate = {};
 // -webkit-linear-gradient(left top, rgb(255, 0, 0), rgb(0, 0, 255), rgb(186, 218, 85), rgba(0, 0, 255, 0.496094))
 // -webkit-linear-gradient(left, rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%)
 // -webkit-gradient(linear, 0% 0, 0% 100%, from(rgb(252, 252, 252)), to(rgb(232, 232, 232)))
+// -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(240, 183, 161)), color-stop(0.5, rgb(140, 51, 16)), color-stop(0.51, rgb(117, 34, 1)), to(rgb(191, 110, 78)))
 // -moz-linear-gradient(100% 0%, rgb(255, 0, 0), rgb(0, 0, 255), rgb(186, 218, 85), rgba(0, 0, 255, 0.5))
 
 var reGradients = [
     /^(-webkit-linear-gradient)\(([a-z\s]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
-    /^(-webkit-gradient)\((linear|radial),\s((?:[a-z]+|\d{1,3}%?)\s(?:[a-z]+|\d{1,3}%?)),\s((?:[a-z]+|\d{1,3}%?)\s(?:[a-z]+|\d{1,3}%?))((?:,\s(?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+)\)$/
+    /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))((?:,\s(?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+)\)$/
 ];
 
 // ["-webkit-linear-gradient(left top, rgb(255, 0, 0), rgb(0, 0, 255), rgb(186, 218, 85), rgba(0, 0, 255, 0.496094))", "-webkit-linear-gradient", "left top", ", rgb(255, 0, 0), rgb(0, 0, 255), rgb(186, 218, 85), rgba(0, 0, 255, 0.496094)"]
 // ["-webkit-linear-gradient(left, rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%)", "-webkit-linear-gradient", "left", ", rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%"]
 // ["-webkit-gradient(linear, 0% 0, 0% 100%, from(rgb(252, 252, 252)), to(rgb(232, 232, 232)))", "-webkit-gradient", "linear", "0% 0", "0% 100%", ", from(rgb(252, 252, 252)), to(rgb(232, 232, 232))"]
+// ["-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(240, 183, 161)), color-stop(0.5, rgb(140, 51, 16)), color-stop(0.51, rgb(117, 34, 1)), to(rgb(191, 110, 78)))", "-webkit-gradient", "linear", "0% 0%, 0% 100%", ", from(rgb(240, 183, 161)), color-stop(0.5, rgb(140, 51, 16)), color-stop(0.51, rgb(117, 34, 1)), to(rgb(191, 110, 78))"]
 
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
@@ -95,7 +97,40 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 break;
                 
             case '-webkit-gradient':
-                // stop = m2[1] == 'from' ? 0.0 : 1.0;
+                
+                gradient = {
+                    type: m1[2],
+                    x0: 0,
+                    y0: 0,
+                    x1: 0,
+                    y1: 0,
+                    colorStops: []
+                };
+                
+                // get coordinates
+                m2 = m1[3].match(/(\d{1,3})%?\s(\d{1,3})%?,\s(\d{1,3})%?\s(\d{1,3})%?/);
+                if(m2){
+                    gradient.x0 = (m2[1] * bounds.width) / 100;
+                    gradient.y0 = (m2[2] * bounds.height) / 100;
+                    gradient.x1 = (m2[3] * bounds.width) / 100;
+                    gradient.y1 = (m2[4] * bounds.height) / 100;
+                }
+                
+                // get colors and stops
+                m2 = m1[4].match(/((?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+/g);
+                if(m2){
+                    m2Len = m2.length;
+                    for(i = 0; i < m2Len; i+=1){
+                        m3 = m2[i].match(/(from|to|color-stop)\(([0-9\.]+)?(?:,\s)?((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\)/);
+                        stop = parseFloat(m3[2]);
+                        if(m3[1] === 'from') stop = 0.0;
+                        if(m3[1] === 'to') stop = 1.0;
+                        gradient.colorStops.push({
+                            color: m3[3],
+                            stop: stop
+                        });
+                    }
+                }
                 break;
         }
     }
