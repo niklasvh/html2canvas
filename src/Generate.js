@@ -18,9 +18,13 @@ _html2canvas.Generate = {};
 // -moz-linear-gradient(0% 50%, rgb(255, 0, 0), rgb(255, 255, 0), rgb(0, 255, 0))
 // -moz-linear-gradient(0% 50%, rgb(206, 219, 233) 0%, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%)
 // -moz-linear-gradient(50% 0%, rgb(240, 183, 161) 0%, rgb(140, 51, 16) 50%, rgb(117, 34, 1) 51%, rgb(191, 110, 78) 100%)
+// -o-linear-gradient(left, rgb(255, 0, 0), rgb(255, 255, 0), rgb(0, 255, 0))
+// -o-linear-gradient(left, rgb(206, 219, 233) 0px, rgb(170, 197, 222) 17%, rgb(97, 153, 199) 50%, rgb(58, 132, 195) 51%, rgb(65, 154, 214) 59%, rgb(75, 184, 240) 71%, rgb(58, 139, 194) 84%, rgb(38, 85, 139) 100%)
+// -o-linear-gradient(top, rgb(240, 183, 161) 0px, rgb(140, 51, 16) 50%, rgb(117, 34, 1) 51%, rgb(191, 110, 78) 100%)
 
 var reGradients = [
     /^(-webkit-linear-gradient)\(([a-z\s]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
+    /^(-o-linear-gradient)\(([a-z\s]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+)\)$/,
     /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))((?:,\s(?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+)\)$/,
     /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/
 ];
@@ -47,6 +51,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
     if(m1) {
         switch(m1[1]) {
             case '-webkit-linear-gradient':
+            case '-o-linear-gradient':
                 
                 gradient = {
                     type: 'linear',
@@ -83,16 +88,18 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 }
                 
                 // get colors and stops
-                m2 = m1[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g);
+                m2 = m1[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g);
                 if(m2){
                     m2Len = m2.length;
                     step = 1 / Math.max(m2Len - 1, 1);
                     for(i = 0; i < m2Len; i+=1){
-                        m3 = m2[i].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%)?/);
+                        m3 = m2[i].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/);
                         if(m3[2]){
                             stop = parseFloat(m3[2]);
-                            if(m3[3]){ // percentage
+                            if(m3[3] === '%'){
                                 stop /= 100;
+                            } else { // px - stupid opera
+                                stop /= bounds.width;
                             }
                         } else {
                             stop = i * step;
