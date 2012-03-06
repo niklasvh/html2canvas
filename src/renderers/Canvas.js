@@ -107,85 +107,88 @@ html2canvas.Renderer.Canvas = function( options ) {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = fstyle;
 
-            for (i = 0, queueLen = queue.length; i < queueLen; i+=1){
+            if ( options.svgRendering && zStack.svgRender !== undefined ) {
+                // TODO: enable async rendering to support this 
+                ctx.drawImage( zStack.svgRender, 0, 0 );
+            } else {
+                for ( i = 0, queueLen = queue.length; i < queueLen; i+=1 ) {
             
-                storageContext = queue.splice(0, 1)[0];
-                storageContext.canvasPosition = storageContext.canvasPosition || {};   
+                    storageContext = queue.splice(0, 1)[0];
+                    storageContext.canvasPosition = storageContext.canvasPosition || {};   
            
-                //this.canvasRenderContext(storageContext,parentctx);           
+                    //this.canvasRenderContext(storageContext,parentctx);           
 
-                // set common settings for canvas
-                ctx.textBaseline = "bottom";
+                    // set common settings for canvas
+                    ctx.textBaseline = "bottom";
    
-                if (storageContext.clip){
-                    ctx.save();
-                    ctx.beginPath();
-                    // console.log(storageContext);
-                    ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
-                    ctx.clip();
+                    if (storageContext.clip){
+                        ctx.save();
+                        ctx.beginPath();
+                        // console.log(storageContext);
+                        ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
+                        ctx.clip();
         
-                }
+                    }
         
-                if (storageContext.ctx.storage){
+                    if (storageContext.ctx.storage){
                
-                    for (a = 0, storageLen = storageContext.ctx.storage.length; a < storageLen; a+=1){
+                        for (a = 0, storageLen = storageContext.ctx.storage.length; a < storageLen; a+=1){
                     
-                        renderItem = storageContext.ctx.storage[a];
+                            renderItem = storageContext.ctx.storage[a];
                     
                     
-                        switch(renderItem.type){
-                            case "variable":
-                                ctx[renderItem.name] = renderItem['arguments'];              
-                                break;
-                            case "function":
-                                if (renderItem.name === "fillRect") {
+                            switch(renderItem.type){
+                                case "variable":
+                                    ctx[renderItem.name] = renderItem['arguments'];              
+                                    break;
+                                case "function":
+                                    if (renderItem.name === "fillRect") {
                                 
-                                    if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
-                                        ctx.fillRect.apply( ctx, renderItem['arguments'] );
-                                    }
-                                }else if(renderItem.name === "fillText") {
-                                    if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
-                                        ctx.fillText.apply( ctx, renderItem['arguments'] );
-                                    }
-                                }else if(renderItem.name === "drawImage") {
- 
-                                    if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){    
-                                        if ( hasCTX && options.taintTest ) {
-                                            if ( safeImages.indexOf( renderItem['arguments'][ 0 ].src ) === -1 ) {
-                                                testctx.drawImage( renderItem['arguments'][ 0 ], 0, 0 );
-                                                try {
-                                                    testctx.getImageData( 0, 0, 1, 1 );
-                                                } catch(e) {      
-                                                    testCanvas = doc.createElement("canvas");
-                                                    testctx = testCanvas.getContext("2d");
-                                                    continue;
-                                                }
-                                          
-                                                safeImages.push( renderItem['arguments'][ 0 ].src );
-                                        
-                                            }
+                                        if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
+                                            ctx.fillRect.apply( ctx, renderItem['arguments'] );
                                         }
-                                        ctx.drawImage.apply( ctx, renderItem['arguments'] );                                   
-                                    }      
-                                }
+                                    }else if(renderItem.name === "fillText") {
+                                        if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
+                                            ctx.fillText.apply( ctx, renderItem['arguments'] );
+                                        }
+                                    }else if(renderItem.name === "drawImage") {
+ 
+                                        if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){    
+                                            if ( hasCTX && options.taintTest ) {
+                                                if ( safeImages.indexOf( renderItem['arguments'][ 0 ].src ) === -1 ) {
+                                                    testctx.drawImage( renderItem['arguments'][ 0 ], 0, 0 );
+                                                    try {
+                                                        testctx.getImageData( 0, 0, 1, 1 );
+                                                    } catch(e) {      
+                                                        testCanvas = doc.createElement("canvas");
+                                                        testctx = testCanvas.getContext("2d");
+                                                        continue;
+                                                    }
+                                          
+                                                    safeImages.push( renderItem['arguments'][ 0 ].src );
+                                        
+                                                }
+                                            }
+                                            ctx.drawImage.apply( ctx, renderItem['arguments'] );                                   
+                                        }      
+                                    }
                        
   
-                                break;
-                            default:
+                                    break;
+                                default:
                                
-                        }
+                            }
             
+                        }
+
+                    }  
+                    if (storageContext.clip){
+                        ctx.restore();
                     }
-
-                }  
-                if (storageContext.clip){
-                    ctx.restore();
-                }
     
-
-       
-   
+                }  
             }
+            
             h2clog("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
         
             queueLen = options.elements.length;

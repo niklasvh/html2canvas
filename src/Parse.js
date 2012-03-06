@@ -14,8 +14,8 @@ _html2canvas.Parse = function ( images, options ) {
     window.scroll(0,0);
   
     var support = {
-        rangeBounds: false
-        /*,svgRendering: (function( ){
+        rangeBounds: false,
+        svgRendering: options.svgRendering && (function( ){
             var img = new Image(),
             canvas = document.createElement("canvas"),
             ctx = (canvas.getContext === undefined) ? false : canvas.getContext("2d");
@@ -43,7 +43,7 @@ _html2canvas.Parse = function ( images, options ) {
             h2clog('html2canvas: Parse: SVG powered rendering available');
             return true; 
             
-        })()*/
+        })()
     },
     element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
     needReorder = false,
@@ -63,86 +63,24 @@ _html2canvas.Parse = function ( images, options ) {
     children,
     childrenLen;
     
-    /*
-    SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards,
-    but due to bug https://bugzilla.mozilla.org/show_bug.cgi?id=733345 excluding this code out for now
     
-    if (support.svgRendering || true) {
-        (function( body, width, height ){
-            var img = new Image(),
-            html = "";
-           
-            function parseDOM( el ) {
-                var children = _html2canvas.Util.Children( el ),
-                len = children.length,
-                attr,
-                a,
-                alen,
-                elm,
-                i;
-                for ( i = 0; i < len; i+=1 ) {
-                    elm = children[ i ];
-                    if ( elm.nodeType === 3 ) {
-                        // Text node
-                        
-                        html += elm.nodeValue.replace(/\</g,"&lt;").replace(/\>/g,"&gt;");
-                    } else if ( elm.nodeType === 1 ) {
-                        // Element
-                        if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {                
-                            
-                            html += "<" + elm.nodeName.toLowerCase();
-                        
-                            // add attributes
-                            if ( elm.hasAttributes() ) {
-                                attr = elm.attributes;
-                                alen = attr.length;
-                                for ( a = 0; a < alen; a+=1 ) {
-                                    html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
-                                }
-                            }
-                        
-                           
-                            html += '>';
-                           
-                            parseDOM( elm );
-                            
-                            
-                            html += "</" + elm.nodeName.toLowerCase() + ">";
-                        }
-                    }
-                    
-                }
-                
-            }
-           
-            parseDOM( body );
-            img.src = [
-            "data:image/svg+xml,",
-            "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + width + "' height='" + height + "'>",
-            "<foreignObject width='" + width + "' height='" + height + "'>",
-            "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
-            html,
-            "</html>",
-            "</foreignObject>",
-            "</svg>"
-            ].join("");
-            
-            console.log(img.src);
-            img.onerror = function(e) {
-                console.log(e);
-            };
-           
-            img.onload = function() {
-                console.log("loaded");
-            };
-            
-            document.body.appendChild(img);
-        })( document.documentElement, 1280, 1024 );
+    function docSize(){
+
+        return {
+            width: Math.max(
+                Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
+                Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
+                Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
+                ),
+            height: Math.max(
+                Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
+                Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
+                Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
+                )
+        };  
         
     }
-    return;
-    */
-    
+
     images = images || {};
     
     // Test whether we can use ranges to measure bounding boxes
@@ -183,22 +121,7 @@ _html2canvas.Parse = function ( images, options ) {
      */
 
 
-    function docSize(){
 
-        return {
-            width: Math.max(
-                Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
-                Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
-                Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
-                ),
-            height: Math.max(
-                Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
-                Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
-                Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
-                )
-        };  
-        
-    }
 
     var getCSS = _html2canvas.Util.getCSS;
     function getCSSInt(element, attribute) {
@@ -930,7 +853,7 @@ _html2canvas.Parse = function ( images, options ) {
 
             bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
             
-
+            // TODO add support for background-origin
             if ( image ){
                 switch ( background_repeat ) {
 					
@@ -1296,6 +1219,83 @@ _html2canvas.Parse = function ( images, options ) {
     }
 
     stack = renderElement(element, null);
+    
+    /*
+    SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards
+    */
+    
+    if ( support.svgRendering ) {
+        (function( body ){
+            var img = new Image(),
+            size =  docSize(),
+            html = "";
+           
+            function parseDOM( el ) {
+                var children = _html2canvas.Util.Children( el ),
+                len = children.length,
+                attr,
+                a,
+                alen,
+                elm,
+                i;
+                for ( i = 0; i < len; i+=1 ) {
+                    elm = children[ i ];
+                    if ( elm.nodeType === 3 ) {
+                        // Text node
+                        
+                        html += elm.nodeValue.replace(/\</g,"&lt;").replace(/\>/g,"&gt;");
+                    } else if ( elm.nodeType === 1 ) {
+                        // Element
+                        if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {                
+                            
+                            html += "<" + elm.nodeName.toLowerCase();
+                        
+                            // add attributes
+                            if ( elm.hasAttributes() ) {
+                                attr = elm.attributes;
+                                alen = attr.length;
+                                for ( a = 0; a < alen; a+=1 ) {
+                                    html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
+                                }
+                            }
+                        
+                           
+                            html += '>';
+                           
+                            parseDOM( elm );
+                            
+                            
+                            html += "</" + elm.nodeName.toLowerCase() + ">";
+                        }
+                    }
+                    
+                }
+                
+            }
+           
+            parseDOM( body );
+            img.src = [
+            "data:image/svg+xml,",
+            "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + size.width + "' height='" + size.height + "'>",
+            "<foreignObject width='" + size.width + "' height='" + size.height + "'>",
+            "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
+            html.replace(/\#/g,"%23"),
+            "</html>",
+            "</foreignObject>",
+            "</svg>"
+            ].join("");
+            
+           
+
+           
+            img.onload = function() {
+                stack.svgRender = img;
+            };
+            
+        })( document.documentElement );
+        
+    }
+    
     
     // parse every child element
     for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){      
