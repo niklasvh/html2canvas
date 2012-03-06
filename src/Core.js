@@ -205,13 +205,12 @@ _html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {
-    var key;
-    for (key in options) {              
+    for (var key in options) {
         if (options.hasOwnProperty(key)) {
             defaults[key] = options[key];
         }
     }
-    return defaults;           
+    return defaults;
 };
 
 _html2canvas.Util.Children = function(el) {
