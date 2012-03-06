@@ -218,8 +218,8 @@ _html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     var children;
     try {
-        //   children = $(el).contents();
-        children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document :  el.childNodes ;
+        children = $(el).contents();
+    //children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document :  el.childNodes ;
        
     } catch (ex) {
         h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
