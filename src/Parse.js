@@ -15,6 +15,35 @@ _html2canvas.Parse = function ( images, options ) {
   
     var support = {
         rangeBounds: false
+        /*,svgRendering: (function( ){
+            var img = new Image(),
+            canvas = document.createElement("canvas"),
+            ctx = (canvas.getContext === undefined) ? false : canvas.getContext("2d");
+            if (ctx === false) {
+                // browser doesn't support canvas, good luck supporting SVG on canvas
+                return false;
+            }
+            canvas.width = canvas.height = 10; 
+            img.src = [
+            "data:image/svg+xml,",
+            "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'>",
+            "<foreignObject width='10' height='10'>",
+            "<div xmlns='http://www.w3.org/1999/xhtml' style='width:10;height:10;'>",
+            "sup",
+            "</div>",
+            "</foreignObject>",
+            "</svg>"
+            ].join("");
+            try {
+                ctx.drawImage(img, 0, 0);
+                canvas.toDataURL();
+            } catch(e) {
+                return false;
+            }
+            h2clog('html2canvas: Parse: SVG powered rendering available');
+            return true; 
+            
+        })()*/
     },
     element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
     needReorder = false,
@@ -34,8 +63,86 @@ _html2canvas.Parse = function ( images, options ) {
     children,
     childrenLen;
     
-
-
+    /*
+    SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards,
+    but due to bug https://bugzilla.mozilla.org/show_bug.cgi?id=733345 excluding this code out for now
+    
+    if (support.svgRendering || true) {
+        (function( body, width, height ){
+            var img = new Image(),
+            html = "";
+           
+            function parseDOM( el ) {
+                var children = _html2canvas.Util.Children( el ),
+                len = children.length,
+                attr,
+                a,
+                alen,
+                elm,
+                i;
+                for ( i = 0; i < len; i+=1 ) {
+                    elm = children[ i ];
+                    if ( elm.nodeType === 3 ) {
+                        // Text node
+                        
+                        html += elm.nodeValue.replace(/\</g,"&lt;").replace(/\>/g,"&gt;");
+                    } else if ( elm.nodeType === 1 ) {
+                        // Element
+                        if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {                
+                            
+                            html += "<" + elm.nodeName.toLowerCase();
+                        
+                            // add attributes
+                            if ( elm.hasAttributes() ) {
+                                attr = elm.attributes;
+                                alen = attr.length;
+                                for ( a = 0; a < alen; a+=1 ) {
+                                    html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
+                                }
+                            }
+                        
+                           
+                            html += '>';
+                           
+                            parseDOM( elm );
+                            
+                            
+                            html += "</" + elm.nodeName.toLowerCase() + ">";
+                        }
+                    }
+                    
+                }
+                
+            }
+           
+            parseDOM( body );
+            img.src = [
+            "data:image/svg+xml,",
+            "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + width + "' height='" + height + "'>",
+            "<foreignObject width='" + width + "' height='" + height + "'>",
+            "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
+            html,
+            "</html>",
+            "</foreignObject>",
+            "</svg>"
+            ].join("");
+            
+            console.log(img.src);
+            img.onerror = function(e) {
+                console.log(e);
+            };
+           
+            img.onload = function() {
+                console.log("loaded");
+            };
+            
+            document.body.appendChild(img);
+        })( document.documentElement, 1280, 1024 );
+        
+    }
+    return;
+    */
+    
     images = images || {};
     
     // Test whether we can use ranges to measure bounding boxes
