@@ -21,6 +21,11 @@ var reGradients = [
     /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/
 ];
 
+/*
+ * TODO: Add IE10 vendor prefix (-ms) support
+ * TODO: Add radial gradient parsing
+ * TODO: Maybe some RegExp optimizations are possible ;o)
+ */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
     
