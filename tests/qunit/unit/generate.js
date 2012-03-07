@@ -19,9 +19,9 @@ $(function() {
         {
             type: 'linear',
             x0: 0,
-            y0: 25,
+            y0: 35,
             x1: 50,
-            y1: 25,
+            y1: 35,
             colorStops: [
                 {
                     color: "rgb(255, 0, 0)",
@@ -40,9 +40,9 @@ $(function() {
         {
             type: 'linear',
             x0: 0,
-            y0: 25,
+            y0: 35,
             x1: 50,
-            y1: 25,
+            y1: 35,
             colorStops: [
                 {
                     color: "rgb(206, 219, 233)",
@@ -83,7 +83,7 @@ $(function() {
             x0: 25,
             y0: 0,
             x1: 25,
-            y1: 50,
+            y1: 70,
             colorStops: [
                 {
                     color: "rgb(240, 183, 161)",
@@ -117,7 +117,7 @@ $(function() {
                     
                     gradient = _html2canvas.Generate.parseGradient(src, {
                         width: 50,
-                        height: 50
+                        height: 70
                     });
                     
                     //QUnit.deepEqual(gradient, expected['Generate.parseGradient'][i], 'Parsed gradient; got: ' + JSON.stringify(gradient));
