@@ -19,9 +19,9 @@ $(function() {
         {
             type: 'linear',
             x0: 0,
-            y0: 0,
+            y0: 25,
             x1: 50,
-            y1: 0,
+            y1: 25,
             colorStops: [
                 {
                     color: "rgb(255, 0, 0)",
@@ -40,9 +40,9 @@ $(function() {
         {
             type: 'linear',
             x0: 0,
-            y0: 0,
+            y0: 25,
             x1: 50,
-            y1: 0,
+            y1: 25,
             colorStops: [
                 {
                     color: "rgb(206, 219, 233)",
@@ -80,9 +80,9 @@ $(function() {
         },
         {
             type: "linear",
-            x0: 0,
+            x0: 25,
             y0: 0,
-            x1: 0,
+            x1: 25,
             y1: 50,
             colorStops: [
                 {
@@ -120,7 +120,8 @@ $(function() {
                         height: 50
                     });
                     
-                    QUnit.deepEqual(gradient, expected['Generate.parseGradient'][i], 'Parsed gradient; got: ' + JSON.stringify(gradient));
+                    //QUnit.deepEqual(gradient, expected['Generate.parseGradient'][i], 'Parsed gradient; got: ' + JSON.stringify(gradient));
+                    QUnit.deepEqual(gradient, expected['Generate.parseGradient'][i], 'Parsed gradient with CSS: ' + src);
                 } else {
                     QUnit.ok(true, 'No CSS Background Gradient support');
                 }

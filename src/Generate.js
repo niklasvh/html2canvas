@@ -42,10 +42,10 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 
                 gradient = {
                     type: 'linear',
-                    x0: 0,
-                    y0: 0,
-                    x1: 0,
-                    y1: 0,
+                    x0: null,
+                    y0: null,
+                    x1: null,
+                    y1: null,
                     colorStops: []
                 };
                 
@@ -56,22 +56,32 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     for(i = 0; i < m2Len; i+=1){
                         switch(m2[i]) {
                             case 'top':
+                                gradient.y0 = 0;
                                 gradient.y1 = bounds.height;
                                 break;
                                 
                             case 'right':
                                 gradient.x0 = bounds.width;
+                                gradient.x1 = 0;
                                 break;
                                 
                             case 'bottom':
                                 gradient.y0 = bounds.height;
+                                gradient.y1 = 0;
                                 break;
                                 
                             case 'left':
+                                gradient.x0 = 0;
                                 gradient.x1 = bounds.width;
                                 break;
                         }
                     }
+                }
+                if(gradient.x0 === null && gradient.x1 === null){ // center
+                    gradient.x0 = gradient.x1 = bounds.width / 2;
+                }
+                if(gradient.y0 === null && gradient.y1 === null){ // center
+                    gradient.y0 = gradient.y1 = bounds.height / 2;
                 }
                 
                 // get colors and stops
@@ -164,12 +174,6 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     gradient.x1 = bounds.width - gradient.x0;
                     gradient.y1 = bounds.height - gradient.y0;
                 }
-                
-                if(gradient.x0 === gradient.x1) // center
-                    gradient.x0 = gradient.x1 = 0;
-                
-                if(gradient.y0 === gradient.y1) // center
-                    gradient.y0 = gradient.y1 = 0;
                 
                 // get colors and stops
                 m2 = m1[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g);
