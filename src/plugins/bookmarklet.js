@@ -16,11 +16,10 @@
         'src/plugins/jquery.plugin.html2canvas'
     ],
     relFiles = [
-	'//code.jquery.com/jquery-1.6.4.js',
+        '//code.jquery.com/jquery-1.6.4.js',
         'html2canvas',
         'jquery.plugin.html2canvas'
-    ],
-    i = 0, el = null;
+    ];
     var loader = {
         index: 0,
         head: document.getElementsByTagName('head')[0],
@@ -37,12 +36,12 @@
                 el.onerror = function() {
                     _.statusline.style.color = 'red';
                     _.statusline.innerHTML = _.statusline.innerHTML + ' failed';
-		    _.statusline.onclick = function() {
+                    _.statusline.onclick = function() {
                         _.statusline.parentNode.removeChild(_.statusline);
                     };
                 };
-		if (_.files[_.index].substr(0, 2) === '//') {
-		    el.src = _.files[_.index];
+                if (_.files[_.index].substr(0, 2) === '//') {
+                    el.src = _.files[_.index];
                 }
                 else {
                     el.src = server + '/' + _.files[_.index] + '.js';
@@ -56,7 +55,8 @@
                 delete _.statusline;
                 $(document.documentElement).html2canvas({
                     logging: debug,
-                    profile: profile
+                    profile: profile,
+                    proxy: proxy
                 });
             }
         }

@@ -40,7 +40,7 @@ _html2canvas.Util.Bounds = function getBounds (el) {
     var clientRect,
     bounds = {};
         
-    if (el.getBoundingClientRect){	
+    if (el.getBoundingClientRect){    
         clientRect = el.getBoundingClientRect();
 
             
@@ -205,21 +205,20 @@ _html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {
-    var key;
-    for (key in options) {              
+    for (var key in options) {
         if (options.hasOwnProperty(key)) {
             defaults[key] = options[key];
         }
     }
-    return defaults;           
+    return defaults;
 };
 
 _html2canvas.Util.Children = function(el) {
     // $(el).contents() !== el.childNodes, Opera / IE have issues with that
     var children;
     try {
-        //   children = $(el).contents();
-        children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document :  el.childNodes ;
+        children = $(el).contents();
+    //children = (el.nodeName && el.nodeName.toUpperCase() === "IFRAME") ? el.contentDocument || el.contentWindow.document :  el.childNodes ;
        
     } catch (ex) {
         h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
