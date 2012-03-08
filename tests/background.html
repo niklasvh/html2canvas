@@ -120,6 +120,31 @@
                 /* W3C */
                 background: radial-gradient(center, ellipse cover,  #959595 0%,#0d0d0d 48%,#2f7bd8 50%,#0a0a0a 64%,#4e4e4e 80%,#383838 87%,#1b1b1b 100%);
             }
+            
+            .radialGradient2 {
+                /* thx to https://twitter.com/#!/markjmclaren/status/13067366701 */
+                
+                background-color: #FFF;
+                
+                background-image:
+                    -webkit-gradient(radial, 45 45, 10, 52 50, 30, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62)),
+                    -webkit-gradient(radial, 105 105, 20, 112 120, 50, from(#ff5f98), to(rgba(255,1,136,0)), color-stop(75%, #ff0188)),
+                    -webkit-gradient(radial, 95 15, 15, 102 20, 40, from(#00c9ff), to(rgba(0,201,255,0)), color-stop(80%, #00b5e2)),
+                    -webkit-gradient(radial, 0 150, 50, 0 140, 90, from(#f4f201), to(rgba(228, 199,0,0)), color-stop(80%, #e4c700));
+                
+                background-image:
+                    -moz-radial-gradient(42px 42px, circle farthest-corner, #A7D30C 0%, #A7D30C 3%, rgba(1,159,98,0) 11%),
+                    -moz-radial-gradient(45px 45px, circle farthest-corner, #019F62 0%, #019F62 13%, rgba(255,255,255,0) 16%, rgba(255,255,255,0) 100%),
+                    
+                    -moz-radial-gradient(102px 102px, circle farthest-corner, #ff5f98 0%, #ff5f98 15%,  rgba(255,1,136,0) 27%),
+                    -moz-radial-gradient(105px 105px, circle farthest-corner, #FF0188 0%, #FF0188 28%,  rgba(255,255,255,0) 32%, rgba(255,255,255,0) 100%),
+                    
+                    -moz-radial-gradient(92px 12px, circle farthest-corner, #00c9ff 0%, #00c9ff 10%, rgba(0,181,226,0) 26%),
+                    -moz-radial-gradient(95px 15px, circle farthest-corner, #00b5e2 0%, #00b5e2 28%, rgba(255,255,255,0) 31%, rgba(255,255,255,0) 100%),
+                    
+                    -moz-radial-gradient(0px 150px, circle farthest-corner, #f4f201 0%, #f4f201 25%, rgba(228,199,0,0) 45%),
+                    -moz-radial-gradient(0px 150px, circle farthest-corner, #e4c700 0%, #e4c700 47%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+            }
         </style>
 
     </head>
@@ -131,6 +156,7 @@
             <div class="linearGradient4">&nbsp;</div>
             <div class="linearGradient5">&nbsp;</div>
             <div class="radialGradient">&nbsp;</div>
+            <div class="radialGradient2">&nbsp;</div>
         </div>
 
         <div class="medium">
