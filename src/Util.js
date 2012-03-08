@@ -23,6 +23,7 @@ html2canvas = function( elements, opts ) {
         allowTaint: false, // whether to allow images to taint the canvas, won't need proxy if set to true
         
         // parse options
+        svgRendering: false, // use svg powered rendering where available (FF11+)
         iframeDefault: "default",
         ignoreElements: "IFRAME|OBJECT|PARAM",
         useOverflow: true,

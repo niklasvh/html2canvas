@@ -22,7 +22,8 @@
         <script type="text/javascript" src="../../src/renderers/Canvas.js"></script>
 
         <script src="unit/css.js"></script>
-
+        <script src="unit/generate.js"></script>
+        <!--  <script src="unit/utils.js"></script> -->
 
         <style>
             #borders div {
@@ -44,10 +45,11 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture" style="visibility:none; height:1px; overflow:scroll;">
-            <div id="borders">
-                <div style="border-width: 1px 0;"></div>
-                <div style="border-width: 1em 0;"></div>
-                <div style="border-width: thin medium thick;"></div>
+            All the tests here. <b>Testing different <span>stuff</span> for contents()</b>
+            <div id="borders">Yep, here's some more.
+                <div style="border-width: 1px 0;">Div 1</div>
+                <div style="border-width: 1em 0;">Div 2</div>
+                <div style="border-width: thin medium thick;">Some more divs</div>
                 <div style="border-width: 5% 6px 12%;"></div> <!-- percentages aren't valid -->
                 <div style="border-width: 5em 5ex 5in 5cm;"></div>
                 <div style="border-width: 500em 500ex 500in 500cm;"></div>
@@ -93,7 +95,7 @@
                     /* FF 3.6+ */
                     background: -moz-linear-gradient(left, #ff0000, #ffff00, #00ff00);
                     /* Chrome,Safari4+ */
-                    background: -webkit-gradient(linear, left top, right top, color-stop(#ff0000), color-stop(#ffff00), color-stop(#00ff00));
+                    background: -webkit-gradient(linear, left center, right center, color-stop(#ff0000), color-stop(#ffff00), color-stop(#00ff00));
                     /* Chrome 10+, Safari 5.1+ */
                     background: -webkit-linear-gradient(left, #ff0000, #ffff00, #00ff00);
                     /* Opera 11.10+ */
@@ -109,7 +111,7 @@
                     /* FF 3.6+ */
                     background: -moz-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
                     /* Chrome, Safari 4+ */
-                    background: -webkit-gradient(linear, left top, right top, color-stop(0%, #cedbe9), color-stop(17%, #aac5de), color-stop(50%, #6199c7), color-stop(51%, #3a84c3), color-stop(59%, #419ad6), color-stop(71%, #4bb8f0), color-stop(84%, #3a8bc2), color-stop(100%, #26558b));
+                    background: -webkit-gradient(linear, left center, right center, color-stop(0%, #cedbe9), color-stop(17%, #aac5de), color-stop(50%, #6199c7), color-stop(51%, #3a84c3), color-stop(59%, #419ad6), color-stop(71%, #4bb8f0), color-stop(84%, #3a8bc2), color-stop(100%, #26558b));
                     /* Chrome 10+, Safari 5.1+ */
                     background: -webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
                     /* Opera 11.10+ */
@@ -119,14 +121,46 @@
                     /* W3C */
                     background: linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
                 }
+                .linearGradient3 {
+                    /* IE9 SVG */
+                    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YwYjdhMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzhjMzMxMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iIzc1MjIwMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiZjZlNGUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+                    /* FF 3.6+ */
+                    background: -moz-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                    /* Chrome, Safari 4+ */
+                    background: -webkit-gradient(linear, center top, center bottom, color-stop(0%, #f0b7a1), color-stop(50%, #8c3310), color-stop(51%, #752201), color-stop(100%, #bf6e4e));
+                    /* Opera 11.10+ */
+                    background: -o-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                    /* IE 10+ */
+                    background: -ms-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                    /* W3C */
+                    background: linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                }
             </style>
             <div id="backgroundGradients">
                 <div class="linearGradientSimple"></div>
                 <div class="linearGradientWithStops"></div>
+                <div class="linearGradient3"></div>
             </div>
         </div>
+        <!--
+       <div id="fixture-iframes"></div>
 
-        <!-- <iframe src="../borders.html" id="borders"></iframe>  -->
+       <script>
+           var pages = ["background","borders","external-content","forms","images","lists","origin","overflow","proxy","text-linethrough"],
+           fixtures = $("#fixture-iframes");
+  
+
+           $.each(pages, function(i, page){
+          
+               var iframe = $('<iframe />').attr('src',"../" + page + ".html");
+               
+               iframe.insertAfter( fixtures );
+           });
+       
+           
+       </script>
+
+       <iframe src="../borders.html" id="borders"></iframe>  -->
 
 
     </body>
