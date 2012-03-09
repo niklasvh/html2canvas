@@ -20,7 +20,8 @@ var reGradients = [
     /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)-]+)\)$/,
     /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/,
     /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s([a-z-]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
-    /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s?([a-z-]*)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/
+    /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s?([a-z-]*)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
+    /^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s([a-z-]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+)\)$/
 ];
 
 /*
@@ -204,6 +205,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 
             case '-webkit-radial-gradient':
             case '-moz-radial-gradient':
+            case '-o-radial-gradient':
                 console.log(m1);
                 
                 gradient = {
@@ -298,16 +300,18 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 }
                 
                 // color stops
-                m2 = m1[5].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g);
+                m2 = m1[5].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g);
                 if(m2){
                     m2Len = m2.length;
                     step = 1 / Math.max(m2Len - 1, 1);
                     for(i = 0; i < m2Len; i+=1){
-                        m3 = m2[i].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%)?/);
+                        m3 = m2[i].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/);
                         if(m3[2]){
                             stop = parseFloat(m3[2]);
-                            if(m3[3]){ // percent
+                            if(m3[3] === '%'){
                                 stop /= 100;
+                            } else { // px - stupid opera
+                                stop /= bounds.width;
                             }
                         } else {
                             stop = i * step;
