@@ -14,27 +14,13 @@
     
 _html2canvas.Generate = {};
 
-/*
--webkit-gradient(radial, 45 45, 10, 52 50, 30, from(rgb(167, 211, 12)), color-stop(0.9, rgb(1, 159, 98)), to(rgba(1, 159, 98, 0))), -webkit-gradient(radial, 105 105, 20, 112 120, 50, from(rgb(255, 95, 152)), color-stop(0.75, rgb(255, 1, 136)), to(rgba(255, 1, 136, 0))), -webkit-gradient(radial, 95 15, 15, 102 20, 40, from(rgb(0, 201, 255)), color-stop(0.8, rgb(0, 181, 226)), to(rgba(0, 201, 255, 0))), -webkit-gradient(radial, 0 150, 50, 0 140, 90, from(rgb(244, 242, 1)), color-stop(0.8, rgb(228, 199, 0)), to(rgba(228, 199, 0, 0)))
-
--webkit-radial-gradient(50% 50%, ellipse cover, rgb(149, 149, 149) 0%, rgb(13, 13, 13) 48%, rgb(47, 123, 216) 50%, rgb(10, 10, 10) 64%, rgb(78, 78, 78) 80%, rgb(56, 56, 56) 87%, rgb(27, 27, 27) 100%)
--webkit-radial-gradient(75% 19%, ellipse closest-side, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(75% 19%, ellipse closest-corner, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(75% 19%, ellipse farthest-side, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(75% 19%, ellipse farthest-corner, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(75% 19%, ellipse contain, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(75% 19%, ellipse cover, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(100% 19%, ellipse cover, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(0% 19%, ellipse cover, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
--webkit-radial-gradient(0% 0%, circle cover, rgb(171, 171, 171), rgb(0, 0, 255) 33%, rgb(153, 31, 31) 100%)
-*/
-
 var reGradients = [
     /^(-webkit-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/,
     /^(-o-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/,
     /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)-]+)\)$/,
     /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/,
-    /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s(contain|cover|farthest-corner|closest-corner|farthest-side|closest-side)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/
+    /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s([a-z-]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
+    /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s?([a-z-]*)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/
 ];
 
 /*
@@ -45,6 +31,8 @@ var reGradients = [
  */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
+    
+    console.log(css);
     
     for(i = 0; i < len; i+=1){
         m1 = css.match(reGradients[i]);
@@ -215,6 +203,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 break;
                 
             case '-webkit-radial-gradient':
+            case '-moz-radial-gradient':
                 console.log(m1);
                 
                 gradient = {
@@ -239,11 +228,12 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 
                 // size
                 m2 = m1[3].match(/ellipse|circle/);
-                m3 = m1[4].match(/contain|cover|farthest-corner|closest-corner|farthest-side|closest-side/);
+                m3 = m1[4].match(/[a-z-]*/);
                 if(m2 && m3){
                     switch(m3[0]){
                         case 'farthest-corner':
                         case 'cover': // is equivalent to farthest-corner
+                        case '': // mozilla removes "cover" from definition :(
                             var tl = Math.sqrt(Math.pow(gradient.cx, 2) + Math.pow(gradient.cy, 2));
                             var tr = Math.sqrt(Math.pow(gradient.cx, 2) + Math.pow(gradient.y1 - gradient.cy, 2));
                             var br = Math.sqrt(Math.pow(gradient.x1 - gradient.cx, 2) + Math.pow(gradient.y1 - gradient.cy, 2));
@@ -331,8 +321,6 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 break;
         }
     }
-    
-    console.log(gradient);
     
     return gradient;
 };
