@@ -335,6 +335,7 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     canvas.width = bounds.width;
     canvas.height = bounds.height;
     
+    // TODO: add support for multi defined background gradients (like radial gradient example in background.html)
     gradient = _html2canvas.Generate.parseGradient(src, bounds);
     
     img = new Image();
