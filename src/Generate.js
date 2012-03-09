@@ -204,7 +204,6 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
             case '-webkit-radial-gradient':
             case '-moz-radial-gradient':
             case '-o-radial-gradient':
-                console.log(m1);
                 
                 gradient = {
                     type: 'radial',
