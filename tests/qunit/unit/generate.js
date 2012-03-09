@@ -102,6 +102,156 @@ $(function() {
                     stop: 1
                 }
             ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 12.5,
+            ry: 13.3,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 18.25212316416915,
+            ry: 18.25212316416915,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 37.5,
+            ry: 56.7,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 67.97896733549283,
+            ry: 67.97896733549283,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 12.5,
+            ry: 13.3,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
+        },
+        {
+            type: "radial",
+            x0: 0,
+            y0: 0,
+            x1: 50,
+            y1: 70,
+            cx: 37.5,
+            cy: 13.3,
+            rx: 67.97896733549283,
+            ry: 67.97896733549283,
+            colorStops: [
+                {
+                    color: "rgb(171, 171, 171)",
+                    stop: 0
+                },
+                {
+                    color: "rgb(0, 0, 255)",
+                    stop: 0.33
+                },
+                {
+                    color: "rgb(153, 31, 31)",
+                    stop: 1
+                }
+            ]
         }
     ];
     
