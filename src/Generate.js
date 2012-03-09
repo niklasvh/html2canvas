@@ -355,6 +355,8 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     
         img.src = canvas.toDataURL();
     } else if(gradient && gradient.type === 'radial'){
+        
+        // TODO: Add support for "ellipsis" drawing
         grad = ctx.createRadialGradient(gradient.cx, gradient.cy, 0, gradient.cx, gradient.cy, gradient.rx);
         
         for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
