@@ -19,9 +19,9 @@ var reGradients = [
     /^(-o-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/,
     /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)-]+)\)$/,
     /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/,
-    /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s([a-z-]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
-    /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s?([a-z-]*)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+)\)$/,
-    /^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(ellipse|circle)\s([a-z-]+)((?:,\s(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+)\)$/
+    /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z-]+)([\w\d\.\s,%\(\)]+)\)$/,
+    /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s?([a-z-]*)([\w\d\.\s,%\(\)]+)\)$/,
+    /^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z-]+)([\w\d\.\s,%\(\)]+)\)$/
 ];
 
 /*
@@ -32,8 +32,6 @@ var reGradients = [
  */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
-    
-    console.log(css);
     
     for(i = 0; i < len; i+=1){
         m1 = css.match(reGradients[i]);
@@ -229,7 +227,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 }
                 
                 // size
-                m2 = m1[3].match(/ellipse|circle/);
+                m2 = m1[3].match(/\w+/);
                 m3 = m1[4].match(/[a-z-]*/);
                 if(m2 && m3){
                     switch(m3[0]){
