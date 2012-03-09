@@ -247,7 +247,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                             gradient.rx = gradient.ry = Math.min(tl, tr, br, bl);
                             break;
                         case 'farthest-side':
-                            if(m2[0] == 'circle'){
+                            if(m2[0] === 'circle'){
                                 gradient.rx = gradient.ry = Math.max(
                                     gradient.cx,
                                     gradient.cy,
@@ -270,7 +270,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                             break;
                         case 'closest-side':
                         case 'contain': // is equivalent to closest-side
-                            if(m2[0] == 'circle'){
+                            if(m2[0] === 'circle'){
                                 gradient.rx = gradient.ry = Math.min(
                                     gradient.cx,
                                     gradient.cy,
