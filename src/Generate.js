@@ -27,6 +27,7 @@ var reGradients = [
 /*
  * TODO: Add IE10 vendor prefix (-ms) support
  * TODO: Add W3C gradient (linear-gradient) support
+ * TODO: Add old Webkit -webkit-gradient(radial, ...) support (new Chrome doesn´t support old syntax?!)
  * TODO: Maybe some RegExp optimizations are possible ;o)
  */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
