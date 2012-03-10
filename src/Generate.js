@@ -27,6 +27,7 @@ var reGradients = [
 /*
  * TODO: Add IE10 vendor prefix (-ms) support
  * TODO: Add W3C gradient (linear-gradient) support
+ * TODO: Add old Webkit -webkit-gradient(radial, ...) support (new Chrome doesn´t support old syntax?!)
  * TODO: Maybe some RegExp optimizations are possible ;o)
  */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
@@ -205,7 +206,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
             case '-o-radial-gradient':
                 
                 gradient = {
-                    type: 'radial',
+                    type: 'circle',
                     x0: 0,
                     y0: 0,
                     x1: bounds.width,
@@ -255,7 +256,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                 );
                             } else { // ellipse
                             
-                                h2clog('No ellipse gradient supported by now, cause canvas can´t draw ellipse :(');
+                                gradient.type = m2[0];
                                 
                                 gradient.rx = Math.max(
                                     gradient.cx,
@@ -278,7 +279,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                 );
                             } else { // ellipse
                             
-                                h2clog('No ellipse gradient supported by now, cause canvas can´t draw ellipse :(');
+                                gradient.type = m2[0];
                             
                                 gradient.rx = Math.min(
                                     gradient.cx,
@@ -338,40 +339,75 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     
     img = new Image();
     
-    if(gradient && gradient.type === 'linear'){
-        grad = ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1);
+    if(gradient){
+        if(gradient.type === 'linear'){
+            grad = ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1);
+            
+            for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
+                try {
+                    grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
+                }
+                catch(e) {
+                    h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
+                }
+            }
+            
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, bounds.width, bounds.height);
         
-        for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
-            try {
-                grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
+            img.src = canvas.toDataURL();
+        } else if(gradient.type === 'circle'){
+            
+            grad = ctx.createRadialGradient(gradient.cx, gradient.cy, 0, gradient.cx, gradient.cy, gradient.rx);
+            
+            for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
+                try {
+                    grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
+                }
+                catch(e) {
+                    h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
+                }
             }
-            catch(e) {
-                h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
+            
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, bounds.width, bounds.height);
+        
+            img.src = canvas.toDataURL();
+        } else if(gradient.type === 'ellipse'){
+            
+            // draw circle
+            var canvasRadial = document.createElement('canvas'),
+                ctxRadial = canvasRadial.getContext('2d'),
+                ri = Math.max(gradient.rx, gradient.ry),
+                di = ri * 2, imgRadial;
+                
+            canvasRadial.width = canvasRadial.height = di;
+            
+            grad = ctxRadial.createRadialGradient(gradient.rx, gradient.ry, 0, gradient.rx, gradient.ry, ri);
+            
+            for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
+                try {
+                    grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
+                }
+                catch(e) {
+                    h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
+                }
             }
+            
+            ctxRadial.fillStyle = grad;
+            ctxRadial.fillRect(0, 0, di, di);
+        
+            imgRadial = new Image();
+            imgRadial.src = canvasRadial.toDataURL();
+            
+            // transform circle to ellipse
+            ctx.fillStyle = gradient.colorStops[i - 1].color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.drawImage(imgRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
+            
+            img.src = canvas.toDataURL();
         }
-        
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, bounds.width, bounds.height);
-    
-        img.src = canvas.toDataURL();
-    } else if(gradient && gradient.type === 'radial'){
-        
-        // TODO: Add support for "ellipsis" drawing
-        grad = ctx.createRadialGradient(gradient.cx, gradient.cy, 0, gradient.cx, gradient.cy, gradient.rx);
-        
-        for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
-            try {
-                grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
-            }
-            catch(e) {
-                h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
-            }
-        }
-        
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, bounds.width, bounds.height);
-    
-        img.src = canvas.toDataURL();
     }
     
     return img;
