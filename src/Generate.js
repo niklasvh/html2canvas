@@ -27,7 +27,7 @@ var reGradients = [
 /*
  * TODO: Add IE10 vendor prefix (-ms) support
  * TODO: Add W3C gradient (linear-gradient) support
- * TODO: Add old Webkit -webkit-gradient(radial, ...) support (new Chrome doesn´t support old syntax?!)
+ * TODO: Add old Webkit -webkit-gradient(radial, ...) support
  * TODO: Maybe some RegExp optimizations are possible ;o)
  */
 _html2canvas.Generate.parseGradient = function(css, bounds) {  
@@ -115,7 +115,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
             case '-webkit-gradient':
                 
                 gradient = {
-                    type: m1[2],
+                    type: m1[2] === 'radial' ? 'circle' : m1[2], // TODO: Add radial gradient support for older mozilla definitions
                     x0: 0,
                     y0: 0,
                     x1: 0,
@@ -396,17 +396,20 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
             
             ctxRadial.fillStyle = grad;
             ctxRadial.fillRect(0, 0, di, di);
-        
-            imgRadial = new Image();
-            imgRadial.src = canvasRadial.toDataURL();
             
-            // transform circle to ellipse
             ctx.fillStyle = gradient.colorStops[i - 1].color;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.drawImage(imgRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
-            
-            img.src = canvas.toDataURL();
+            imgRadial = new Image();
+            imgRadial.onload = function() { // wait until the image is filled
+                
+                // transform circle to ellipse
+                ctx.drawImage(imgRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
+                
+                img.src = canvas.toDataURL();
+                
+            }
+            imgRadial.src = canvasRadial.toDataURL();
         }
     }
     
