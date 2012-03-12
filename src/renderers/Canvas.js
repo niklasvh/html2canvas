@@ -7,7 +7,7 @@
 */
 
 
-html2canvas.Renderer.Canvas = function( options ) {
+_html2canvas.Renderer.Canvas = function( options ) {
 
     options = options || {};
     
@@ -21,11 +21,11 @@ html2canvas.Renderer.Canvas = function( options ) {
 
     
     if (canvas.getContext){
-        html2canvas.log("html2canvas: Renderer: using canvas renderer");
+        h2clog("html2canvas: Renderer: using canvas renderer");
         canvasReadyToDraw = true;
     } else if ( options.flashcanvas !== undefined ){
         usingFlashcanvas = true;
-        html2canvas.log("html2canvas: Renderer: canvas not available, using flashcanvas");
+        h2clog("html2canvas: Renderer: canvas not available, using flashcanvas");
         var script = doc.createElement("script");
         script.src = options.flashcanvas;
                 
@@ -52,7 +52,7 @@ html2canvas.Renderer.Canvas = function( options ) {
                     window.setTimeout( intervalFunc, 250 );
 
                 } else {
-                    html2canvas.log("html2canvas: Renderer: Can't track when flashcanvas is loaded");
+                    h2clog("html2canvas: Renderer: Can't track when flashcanvas is loaded");
                 }
                                 
             } else {
@@ -62,7 +62,7 @@ html2canvas.Renderer.Canvas = function( options ) {
         })(script, function(){
                     
             if (typeof window.FlashCanvas !== "undefined") {
-                html2canvas.log("html2canvas: Renderer: Flashcanvas initialized");
+                h2clog("html2canvas: Renderer: Flashcanvas initialized");
                 window.FlashCanvas.initElement( canvas );
                 
                 canvasReadyToDraw = true;

@@ -75,6 +75,7 @@
                 <file name="Queue.js"/>
                 <file name="Renderer.js"/>
                 <file name="Util.js"/>
+                <file name="renderers/Canvas.js"/>
             </sources>
         </jscomp>
         <delete file="${build.dir}/${JS_NAME_MIN}.tmp"></delete>

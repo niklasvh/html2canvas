@@ -13,6 +13,8 @@
         'src/Preload',
         'src/Queue',
         'src/Renderer',
+        'src/Util',
+        'src/renderers/Canvas',
         'src/plugins/jquery.plugin.html2canvas'
     ],
     relFiles = [
