@@ -168,7 +168,7 @@ _html2canvas.Preload = function( options ) {
             /*
             if (background_image && background_image !== "1" && background_image !== "none" && background_image.substring(0,7) !== "-webkit" && background_image.substring(0,3)!== "-o-" && background_image.substring(0,4) !== "-moz"){
                 // TODO add multi image background support
-                src = html2canvas.Util.backgroundImage(background_image.split(",")[0]);
+                src = _html2canvas.Util.backgroundImage(background_image.split(",")[0]);
                 methods.loadImage(src);            */
             }
         }
