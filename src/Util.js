@@ -40,7 +40,7 @@ html2canvas = function( elements, opts ) {
     
     options = _html2canvas.Util.Extend(opts, options);
     
-    options.renderer = options.renderer || html2canvas.Renderer.Canvas( options );
+    options.renderer = options.renderer || _html2canvas.Renderer.Canvas( options );
     
     _html2canvas.logging = options.logging;
     options.complete = function( images ) {

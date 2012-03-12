@@ -9,7 +9,7 @@
 
 // WARNING THIS file is outdated, and hasn't been tested in quite a while
 
-html2canvas.Renderer.SVG = function( options ) {
+_html2canvas.Renderer.SVG = function( options ) {
 
     options = options || {};
     
