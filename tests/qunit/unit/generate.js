@@ -104,7 +104,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "ellipse",
             x0: 0,
             y0: 0,
             x1: 50,
@@ -129,7 +129,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "circle",
             x0: 0,
             y0: 0,
             x1: 50,
@@ -154,7 +154,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "ellipse",
             x0: 0,
             y0: 0,
             x1: 50,
@@ -179,7 +179,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "circle",
             x0: 0,
             y0: 0,
             x1: 50,
@@ -204,7 +204,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "ellipse",
             x0: 0,
             y0: 0,
             x1: 50,
@@ -229,7 +229,7 @@ $(function() {
             ]
         },
         {
-            type: "radial",
+            type: "circle",
             x0: 0,
             y0: 0,
             x1: 50,
