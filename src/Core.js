@@ -40,7 +40,7 @@ _html2canvas.Util.Bounds = function getBounds (el) {
     var clientRect,
     bounds = {};
         
-    if (el.getBoundingClientRect){	
+    if (el.getBoundingClientRect){    
         clientRect = el.getBoundingClientRect();
 
             

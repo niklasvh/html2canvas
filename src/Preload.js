@@ -353,4 +353,3 @@ _html2canvas.Preload = function( options ) {
 };
 
 
-
