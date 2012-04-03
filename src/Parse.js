@@ -334,7 +334,7 @@ _html2canvas.Parse = function ( images, options ) {
     
      
                     
-                if (support.rangeBounds){
+                if (!options.renderRootAtOrigin && support.rangeBounds){
                     // getBoundingClientRect is supported for ranges
                     if (text_decoration !== "none" || trimText(renderList[c]).length !== 0) {
                         textValue = renderList[c];
@@ -372,7 +372,7 @@ _html2canvas.Parse = function ( images, options ) {
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement, oldTextNode);
                                     
-                    bounds = _html2canvas.Util.Bounds(wrapElement);
+                    bounds = _html2canvas.Util.Bounds(wrapElement, element, options);
                         
                     textValue = oldTextNode.nodeValue;
                         
@@ -434,7 +434,7 @@ _html2canvas.Parse = function ( images, options ) {
         element.insertBefore(boundElement, element.firstChild);
 
     
-        bounds = _html2canvas.Util.Bounds( boundElement );
+        bounds = _html2canvas.Util.Bounds( boundElement, element, options);
         element.removeChild( boundElement );
         element.style.listStyleType = type;
         return bounds;
@@ -978,7 +978,7 @@ _html2canvas.Parse = function ( images, options ) {
  
     function renderElement(el, parentStack){
 		
-        var bounds = _html2canvas.Util.Bounds(el), 
+        var bounds = _html2canvas.Util.Bounds(el, element, options), 
         x = bounds.left, 
         y = bounds.top, 
         w = bounds.width, 
