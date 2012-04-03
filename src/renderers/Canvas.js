@@ -196,7 +196,7 @@ _html2canvas.Renderer.Canvas = function( options ) {
             if (queueLen === 1) {
                 if (typeof options.elements[ 0 ] === "object" && options.elements[ 0 ].nodeName !== "BODY" && usingFlashcanvas === false) {
                     // crop image to the bounds of selected (single) element
-                    bounds = _html2canvas.Util.Bounds( options.elements[ 0 ] );
+                    bounds = _html2canvas.Util.Bounds( options.elements[ 0 ], options.elements[ 0 ], options );
                     newCanvas = doc.createElement('canvas');
                     newCanvas.width = bounds.width;
                     newCanvas.height = bounds.height;
