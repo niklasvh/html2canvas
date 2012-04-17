@@ -23,6 +23,7 @@
             <file name="Renderer.js"/>
             <file name="Util.js"/>
             <file name="renderers/Canvas.js"/>
+            <file name="renderers/SVG.js"/>
             <file name="html2canvas-post.txt"/>
         </filelist>
     </path>
@@ -76,6 +77,7 @@
                 <file name="Renderer.js"/>
                 <file name="Util.js"/>
                 <file name="renderers/Canvas.js"/>
+                <file name="renderers/SVG.js"/>
             </sources>
         </jscomp>
         <delete file="${build.dir}/${JS_NAME_MIN}.tmp"></delete>
