@@ -135,10 +135,10 @@ _html2canvas.Renderer.SVG = function( options ) {
                                     
                                         el = doc.createElementNS(svgNS, "image");
                                         el.setAttributeNS(xlinkNS, "xlink:href", renderItem['arguments'][0].src);
-                                        el.setAttribute("width", renderItem['arguments'][0].width);                 
-                                        el.setAttribute("height", renderItem['arguments'][0].height);           
-                                        el.setAttribute("x", renderItem['arguments'][5] - renderItem['arguments'][1]);                 
-                                        el.setAttribute("y", renderItem['arguments'][6] - renderItem['arguments'][2]);
+                                        el.setAttribute("width", renderItem['arguments'][7]);                 
+                                        el.setAttribute("height", renderItem['arguments'][8]);           
+                                        el.setAttribute("x", renderItem['arguments'][5]);                 
+                                        el.setAttribute("y", renderItem['arguments'][6]);
                                         el.setAttribute("clip-path", "url(#clipId" + clipId + ")");
                                         // el.setAttribute("xlink:href", );
                                     
