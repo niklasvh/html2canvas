@@ -43,7 +43,7 @@ html2canvas = function( elements, opts ) {
 	if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
 		options._renderer = _html2canvas.Renderer[options.renderer]( options );
 	} else if (typeof options.renderer === "function") {
-		options._renderer = _html2canvas.Renderer.Canvas( options );
+		options._renderer = options.renderer( options );
 	} else {
 		throw("Unknown renderer");
 	}
