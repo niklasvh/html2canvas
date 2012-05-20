@@ -22,11 +22,27 @@
             <file name="Queue.js"/>
             <file name="Renderer.js"/>
             <file name="Util.js"/>
-            <file name="renderers/Canvas.js"/>
-            <file name="renderers/SVG.js"/>
+			<file name="renderers/Canvas.js"/>
             <file name="html2canvas-post.txt"/>
-        </filelist>
-    </path>
+		</filelist>
+	</path>
+
+    <path id="sourcefiles-allrends">
+        <filelist dir="${src.dir}">
+            <file name="LICENSE"/>
+            <file name="html2canvas-pre.txt"/>
+            <file name="Core.js"/>
+            <file name="Generate.js"/>
+            <file name="Parse.js"/>
+            <file name="Preload.js"/>
+            <file name="Queue.js"/>
+            <file name="Renderer.js"/>
+            <file name="Util.js"/>
+			<file name="renderers/Canvas.js"/>
+			<file name="renderers/SVG.js"/>
+            <file name="html2canvas-post.txt"/>
+		</filelist>
+	</path>
 
     <path id="jquery-plugin">
         <fileset dir="${src.dir}" includes="LICENSE"/>
@@ -47,11 +63,21 @@
     </target>
 
     <pathconvert property="prettty-sourcefiles" pathsep="${line.separator}" refid="sourcefiles"></pathconvert>
+	
+	<pathconvert property="prettty-sourcefiles-allrends" pathsep="${line.separator}" refid="sourcefiles-allrends"></pathconvert>
 
     <target name="build" depends="build-dir,plugins">
         <echo>Concatenating files:${line.separator}${prettty-sourcefiles}${line.separator}into ${build.dir}/${JS_NAME}...</echo>
-        <concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
-            <path refid="sourcefiles"/>
+		<concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
+			<path refid="sourcefiles"/>
+        </concat>
+        <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME}" />
+	</target>
+
+    <target name="build-allrends" depends="build-dir,plugins">
+        <echo>Concatenating files:${line.separator}${prettty-sourcefiles-allrends}${line.separator}into ${build.dir}/${JS_NAME}...</echo>
+		<concat fixlastline="yes" destfile="${build.dir}/${JS_NAME}">
+			<path refid="sourcefiles-allrends"/>
         </concat>
         <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME}" />
     </target>
@@ -76,14 +102,51 @@
                 <file name="Queue.js"/>
                 <file name="Renderer.js"/>
                 <file name="Util.js"/>
-                <file name="renderers/Canvas.js"/>
-                <file name="renderers/SVG.js"/>
+				<file name="renderers/Canvas.js"/>
+            </sources>
+        </jscomp>
+        <delete file="${build.dir}/${JS_NAME_MIN}.tmp"></delete>
+	</target>
+
+    <target name="syntaxcheck-allrends" depends="build-dir,build-allrends">
+        <jscomp compilationLevel="simple" warning="verbose"
+            debug="false"
+            output="${build.dir}/${JS_NAME_MIN}.tmp">
+            <externs dir="${lib.dir}">
+                 <file name="${jquery-externs}"/>
+            </externs>
+            <sources dir="${src.dir}">
+                <!-- need to write them again here since the closure compiler doesn't understand filesets,... -->
+                <file name="LICENSE"/>
+                <file name="Core.js"/>
+                <file name="Generate.js"/>
+                <file name="Parse.js"/>
+                <file name="Preload.js"/>
+                <file name="Queue.js"/>
+                <file name="Renderer.js"/>
+                <file name="Util.js"/>
+				<file name="renderers/Canvas.js"/>
+				<file name="renderers/SVG.js"/>
             </sources>
         </jscomp>
         <delete file="${build.dir}/${JS_NAME_MIN}.tmp"></delete>
     </target>
 
     <target name="release" depends="build-dir,build,syntaxcheck">
+        <jscomp compilationLevel="simple" warning="verbose"
+            debug="false"
+            output="${build.dir}/${JS_NAME_MIN}">
+            <externs dir="${lib.dir}">
+                 <file name="${jquery-externs}"/>
+            </externs>
+            <sources dir="${build.dir}">
+                <file name="${JS_NAME}"/>
+            </sources>
+        </jscomp>
+        <replaceregexp match="@VERSION@" replace="${version}" flags="g" byline="true" file="${build.dir}/${JS_NAME_MIN}" />
+    </target>
+
+    <target name="release-allrends" depends="build-dir,build-allrends,syntaxcheck-allrends">
         <jscomp compilationLevel="simple" warning="verbose"
             debug="false"
             output="${build.dir}/${JS_NAME_MIN}">
