@@ -58,9 +58,9 @@ _html2canvas.Renderer = function(parseQueue, options){
 
 
     sortZ(parseQueue.zIndex);
-    if ( typeof options.renderer._create !== "function" ) {
+    if ( typeof options._renderer._create !== "function" ) {
         throw new Error("Invalid renderer defined");
     }
-    return options.renderer._create( parseQueue, options, document, queue, _html2canvas );
+    return options._renderer._create( parseQueue, options, document, queue, _html2canvas );
 
 };
