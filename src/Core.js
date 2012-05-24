@@ -8,6 +8,8 @@
 "use strict";
 
 var _html2canvas = {},
+previousElement,
+computedCSS,
 html2canvas;
 
 
@@ -106,7 +108,10 @@ _html2canvas.Util.getCSS = function (el, attribute) {
     
     
     if ( window.getComputedStyle ) {
-        val = document.defaultView.getComputedStyle(el, null)[ attribute ];
+        if ( previousElement !== el ) {
+            computedCSS = document.defaultView.getComputedStyle(el, null);
+        }
+        val = computedCSS[ attribute ];
         
         if ( attribute === "backgroundPosition" ) {
             
