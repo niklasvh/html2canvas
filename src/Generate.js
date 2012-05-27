@@ -331,8 +331,8 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     ctx = canvas.getContext('2d'),
     gradient, grad, i, len, img;
     
-    canvas.width = bounds.width;
-    canvas.height = bounds.height;
+    canvas.width = Math.min(bounds.width, 3000);
+    canvas.height = Math.min(bounds.height, 3000);
     
     // TODO: add support for multi defined background gradients (like radial gradient example in background.html)
     gradient = _html2canvas.Generate.parseGradient(src, bounds);
