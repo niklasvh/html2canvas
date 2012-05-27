@@ -36,18 +36,26 @@ _html2canvas.Util.backgroundImage = function (src) {
     return src;  
 };
 
-_html2canvas.Util.Bounds = function getBounds (el) {
+_html2canvas.Util.Bounds = function getBounds (el, elRelTo, options) {
     var clientRect,
-    bounds = {};
+    bounds = {},
+    relBounds = {top:0, left:0};
+
+    if (options.renderRootAtOrigin === true) {
+        var relRect = elRelTo.getBoundingClientRect();
+        relBounds.top = relRect.top;
+        relBounds.left = relRect.left;
+    }
+
         
     if (el.getBoundingClientRect){	
         clientRect = el.getBoundingClientRect();
 
             
         // TODO add scroll position to bounds, so no scrolling of window necessary
-        bounds.top = clientRect.top;
-        bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
-        bounds.left = clientRect.left;
+        bounds.top = clientRect.top - relBounds.top;
+        bounds.bottom = (clientRect.bottom || (clientRect.top + clientRect.height)) - relBounds.top;
+        bounds.left = clientRect.left - relBounds.left;
         
         // older IE doesn't have width/height, but top/bottom instead
         bounds.width = clientRect.width || (clientRect.right - clientRect.left);
