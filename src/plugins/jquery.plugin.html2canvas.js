@@ -21,8 +21,8 @@
                 console.profileEnd();
             }
             $canvas.css({
-                position: 'absolute', 
-                left: 0, 
+                position: 'absolute',
+                left: 0,
                 top: 0
             }).appendTo(document.body);
             $canvas.siblings().toggle();
@@ -32,7 +32,7 @@
                 throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
             });
             throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)) + " ms<br />",4000);
-            
+
             // test if canvas is read-able
             try {
                 $canvas[0].toDataURL();
@@ -43,7 +43,7 @@
                 }
             }
         };
-        
+
         html2obj = html2canvas(this, options);
 
         function throwMessage(msg,duration){

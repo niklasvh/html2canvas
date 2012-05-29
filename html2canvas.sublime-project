@@ -1,0 +1,57 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": [".svn", ".git", ".hg", "CVS", "node_modules"],
+			"file_exclude_patterns": ["*.sublime-workspace"]
+		}
+	],
+	"settings":
+	{
+		// The number of spaces a tab is considered equal to
+		"tab_size": 4,
+
+		// Set to true to insert spaces when tab is pressed
+		"translate_tabs_to_spaces": true,
+
+		// If translate_tabs_to_spaces is true, use_tab_stops will make tab and
+		// backspace insert/delete up to the next tabstop
+		"use_tab_stops": false,
+
+		// Set to false to disable detection of tabs vs. spaces on load
+		"detect_indentation": false,
+
+		// Set to true to removing trailing white space on save
+		"trim_trailing_white_space_on_save": true,
+
+		// Set to true to ensure the last line of the file ends in a newline
+		// character when saving
+		"ensure_newline_at_eof_on_save": false,
+
+		// Linting
+		"jshint_options": {
+			"eqeqeq": false,
+
+			"laxbreak": true,
+			"undef": true,
+			"newcap": true,
+			"noarg": true,
+			"strict": false,
+			"trailing": true,
+			"onecase": true,
+
+			"boss": true,
+			"eqnull": true,
+
+			"onevar": false,
+
+			"evil": true,
+			"regexdash": true,
+			"browser": true,
+			"wsh": true,
+			"trailing": true,
+			"sub": true
+		}
+	}
+}
