@@ -2,7 +2,7 @@
   html2canvas @VERSION@ <http://html2canvas.hertzen.com>
   Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
   http://www.twitter.com/niklasvh
-  
+
   Contributor(s):
       Niklas von Hertzen <http://www.twitter.com/niklasvh>
       André Fiedler      <http://www.twitter.com/sonnenkiste>
@@ -11,7 +11,7 @@
  */
 
 (function(){
-    
+
 _html2canvas.Generate = {};
 
 var reGradients = [
@@ -30,19 +30,19 @@ var reGradients = [
  * TODO: Add old Webkit -webkit-gradient(radial, ...) support
  * TODO: Maybe some RegExp optimizations are possible ;o)
  */
-_html2canvas.Generate.parseGradient = function(css, bounds) {  
+_html2canvas.Generate.parseGradient = function(css, bounds) {
     var gradient, i, len = reGradients.length, m1, stop, m2, m2Len, step, m3;
-    
+
     for(i = 0; i < len; i+=1){
         m1 = css.match(reGradients[i]);
         if(m1) break;
     }
-    
+
     if(m1) {
         switch(m1[1]) {
             case '-webkit-linear-gradient':
             case '-o-linear-gradient':
-                
+
                 gradient = {
                     type: 'linear',
                     x0: null,
@@ -51,7 +51,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     y1: null,
                     colorStops: []
                 };
-                
+
                 // get coordinates
                 m2 = m1[2].match(/\w+/g);
                 if(m2){
@@ -62,17 +62,17 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                 gradient.y0 = 0;
                                 gradient.y1 = bounds.height;
                                 break;
-                                
+
                             case 'right':
                                 gradient.x0 = bounds.width;
                                 gradient.x1 = 0;
                                 break;
-                                
+
                             case 'bottom':
                                 gradient.y0 = bounds.height;
                                 gradient.y1 = 0;
                                 break;
-                                
+
                             case 'left':
                                 gradient.x0 = 0;
                                 gradient.x1 = bounds.width;
@@ -86,7 +86,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 if(gradient.y0 === null && gradient.y1 === null){ // center
                     gradient.y0 = gradient.y1 = bounds.height / 2;
                 }
-                
+
                 // get colors and stops
                 m2 = m1[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g);
                 if(m2){
@@ -111,9 +111,9 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     }
                 }
                 break;
-                
+
             case '-webkit-gradient':
-                
+
                 gradient = {
                     type: m1[2] === 'radial' ? 'circle' : m1[2], // TODO: Add radial gradient support for older mozilla definitions
                     x0: 0,
@@ -122,7 +122,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     y1: 0,
                     colorStops: []
                 };
-                
+
                 // get coordinates
                 m2 = m1[3].match(/(\d{1,3})%?\s(\d{1,3})%?,\s(\d{1,3})%?\s(\d{1,3})%?/);
                 if(m2){
@@ -131,7 +131,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     gradient.x1 = (m2[3] * bounds.width) / 100;
                     gradient.y1 = (m2[4] * bounds.height) / 100;
                 }
-                
+
                 // get colors and stops
                 m2 = m1[4].match(/((?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+/g);
                 if(m2){
@@ -148,9 +148,9 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     }
                 }
                 break;
-                
+
             case '-moz-linear-gradient':
-                
+
                 gradient = {
                     type: 'linear',
                     x0: 0,
@@ -159,25 +159,25 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     y1: 0,
                     colorStops: []
                 };
-                
+
                 // get coordinates
                 m2 = m1[2].match(/(\d{1,3})%?\s(\d{1,3})%?/);
-                
+
                 // m2[1] == 0%   -> left
                 // m2[1] == 50%  -> center
                 // m2[1] == 100% -> right
-                
+
                 // m2[2] == 0%   -> top
                 // m2[2] == 50%  -> center
                 // m2[2] == 100% -> bottom
-                
+
                 if(m2){
                     gradient.x0 = (m2[1] * bounds.width) / 100;
                     gradient.y0 = (m2[2] * bounds.height) / 100;
                     gradient.x1 = bounds.width - gradient.x0;
                     gradient.y1 = bounds.height - gradient.y0;
                 }
-                
+
                 // get colors and stops
                 m2 = m1[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g);
                 if(m2){
@@ -200,11 +200,11 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     }
                 }
                 break;
-                
+
             case '-webkit-radial-gradient':
             case '-moz-radial-gradient':
             case '-o-radial-gradient':
-                
+
                 gradient = {
                     type: 'circle',
                     x0: 0,
@@ -217,14 +217,14 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                     ry: 0,
                     colorStops: []
                 };
-                
+
                 // center
                 m2 = m1[2].match(/(\d{1,3})%?\s(\d{1,3})%?/);
                 if(m2){
                     gradient.cx = (m2[1] * bounds.width) / 100;
                     gradient.cy = (m2[2] * bounds.height) / 100;
                 }
-                
+
                 // size
                 m2 = m1[3].match(/\w+/);
                 m3 = m1[4].match(/[a-z-]*/);
@@ -255,9 +255,9 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                     gradient.y1 - gradient.cy
                                 );
                             } else { // ellipse
-                            
+
                                 gradient.type = m2[0];
-                                
+
                                 gradient.rx = Math.max(
                                     gradient.cx,
                                     gradient.x1 - gradient.cx
@@ -278,9 +278,9 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                     gradient.y1 - gradient.cy
                                 );
                             } else { // ellipse
-                            
+
                                 gradient.type = m2[0];
-                            
+
                                 gradient.rx = Math.min(
                                     gradient.cx,
                                     gradient.x1 - gradient.cx
@@ -291,11 +291,11 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                                 );
                             }
                             break;
-                        
+
                         // TODO: add support for "30px 40px" sizes (webkit only)
                     }
                 }
-                
+
                 // color stops
                 m2 = m1[5].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g);
                 if(m2){
@@ -322,7 +322,7 @@ _html2canvas.Generate.parseGradient = function(css, bounds) {
                 break;
         }
     }
-    
+
     return gradient;
 };
 
@@ -330,19 +330,19 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
     gradient, grad, i, len, img;
-    
+
     canvas.width = bounds.width;
     canvas.height = bounds.height;
-    
+
     // TODO: add support for multi defined background gradients (like radial gradient example in background.html)
     gradient = _html2canvas.Generate.parseGradient(src, bounds);
-    
+
     img = new Image();
-    
+
     if(gradient){
         if(gradient.type === 'linear'){
             grad = ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1);
-            
+
             for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
                 try {
                     grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
@@ -351,15 +351,15 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
                     h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
                 }
             }
-            
+
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, bounds.width, bounds.height);
-        
+
             img.src = canvas.toDataURL();
         } else if(gradient.type === 'circle'){
-            
+
             grad = ctx.createRadialGradient(gradient.cx, gradient.cy, 0, gradient.cx, gradient.cy, gradient.rx);
-            
+
             for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
                 try {
                     grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
@@ -368,23 +368,23 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
                     h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
                 }
             }
-            
+
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, bounds.width, bounds.height);
-        
+
             img.src = canvas.toDataURL();
         } else if(gradient.type === 'ellipse'){
-            
+
             // draw circle
             var canvasRadial = document.createElement('canvas'),
                 ctxRadial = canvasRadial.getContext('2d'),
                 ri = Math.max(gradient.rx, gradient.ry),
                 di = ri * 2, imgRadial;
-                
+
             canvasRadial.width = canvasRadial.height = di;
-            
+
             grad = ctxRadial.createRadialGradient(gradient.rx, gradient.ry, 0, gradient.rx, gradient.ry, ri);
-            
+
             for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
                 try {
                     grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
@@ -393,40 +393,40 @@ _html2canvas.Generate.Gradient = function(src, bounds) {
                     h2clog(['failed to add color stop: ', e, '; tried to add: ', gradient.colorStops[i], '; stop: ', i, '; in: ', src]);
                 }
             }
-            
+
             ctxRadial.fillStyle = grad;
             ctxRadial.fillRect(0, 0, di, di);
-            
+
             ctx.fillStyle = gradient.colorStops[i - 1].color;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+
             imgRadial = new Image();
             imgRadial.onload = function() { // wait until the image is filled
-                
+
                 // transform circle to ellipse
                 ctx.drawImage(imgRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
-                
+
                 img.src = canvas.toDataURL();
-                
+
             }
             imgRadial.src = canvasRadial.toDataURL();
         }
     }
-    
+
     return img;
 };
 
 _html2canvas.Generate.ListAlpha = function(number) {
     var tmp = "",
     modulus;
-    
+
     do {
-        modulus = number % 26; 
+        modulus = number % 26;
         tmp = String.fromCharCode((modulus) + 64) + tmp;
         number = number / 26;
     }while((number*26) > 26);
-   
-    return tmp;  
+
+    return tmp;
 };
 
 _html2canvas.Generate.ListRoman = function(number) {
@@ -436,19 +436,19 @@ _html2canvas.Generate.ListRoman = function(number) {
     v,
     len = romanArray.length;
 
-    if (number <= 0 || number >= 4000) { 
+    if (number <= 0 || number >= 4000) {
         return number;
     }
-    
+
     for (v=0; v < len; v+=1) {
-        while (number >= decimal[v]) { 
+        while (number >= decimal[v]) {
             number -= decimal[v];
             roman += romanArray[v];
         }
     }
-        
+
     return roman;
-   
+
 };
 
 })();
