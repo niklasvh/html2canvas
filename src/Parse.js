@@ -1008,6 +1008,10 @@ _html2canvas.Parse = function ( images, options ) {
             docDim = {};
         }
 
+        // if the body has no background color or a transparent one, make it white
+        if( el.nodeName == "BODY" && (bgcolor=="rgba(0, 0, 0, 0)" || bgcolor=="transparent") ){
+          bgcolor = "rgb(255,255,255)";
+        }
 
         //var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
 
