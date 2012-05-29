@@ -12,7 +12,7 @@
 
 _html2canvas.Parse = function ( images, options ) {
     window.scroll(0,0);
-  
+
     var support = {
         rangeBounds: false,
         svgRendering: options.svgRendering && (function( ){
@@ -23,7 +23,7 @@ _html2canvas.Parse = function ( images, options ) {
                 // browser doesn't support canvas, good luck supporting SVG on canvas
                 return false;
             }
-            canvas.width = canvas.height = 10; 
+            canvas.width = canvas.height = 10;
             img.src = [
             "data:image/svg+xml,",
             "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'>",
@@ -41,8 +41,8 @@ _html2canvas.Parse = function ( images, options ) {
                 return false;
             }
             h2clog('html2canvas: Parse: SVG powered rendering available');
-            return true; 
-            
+            return true;
+
         })()
     },
     element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
@@ -56,14 +56,14 @@ _html2canvas.Parse = function ( images, options ) {
     testElement,
     rangeBounds,
     rangeHeight,
-    stack, 
+    stack,
     ctx,
     docDim,
     i,
     children,
     childrenLen;
-    
-    
+
+
     function docSize(){
 
         return {
@@ -77,16 +77,16 @@ _html2canvas.Parse = function ( images, options ) {
                 Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
                 Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
                 )
-        };  
-        
+        };
+
     }
 
     images = images || {};
-    
+
     // Test whether we can use ranges to measure bounding boxes
     // Opera doesn't provide valid bounds.height/bottom even though it supports the method.
 
-    
+
     if (doc.createRange) {
         r = doc.createRange();
         //this.support.rangeBounds = new Boolean(r.getBoundingClientRect);
@@ -95,7 +95,7 @@ _html2canvas.Parse = function ( images, options ) {
             testElement.style.height = "123px";
             testElement.style.display = "block";
             body.appendChild(testElement);
-            
+
             r.selectNode(testElement);
             rangeBounds = r.getBoundingClientRect();
             rangeHeight = rangeBounds.height;
@@ -105,19 +105,19 @@ _html2canvas.Parse = function ( images, options ) {
             }
             body.removeChild(testElement);
 
-            
+
         }
-        
+
     }
-    
-    
+
+
     /*
-    var rootStack = new this.storageContext($(document).width(),$(document).height());  
+    var rootStack = new this.storageContext($(document).width(),$(document).height());
     rootStack.opacity = this.getCSS(this.element,"opacity");
     var stack = this.newElement(this.element,rootStack);
-        
-        
-    this.parseElement(this.element,stack);  
+
+
+    this.parseElement(this.element,stack);
      */
 
 
@@ -126,7 +126,7 @@ _html2canvas.Parse = function ( images, options ) {
     var getCSS = _html2canvas.Util.getCSS;
     function getCSSInt(element, attribute) {
         var val = parseInt(getCSS(element, attribute), 10);
-        return (isNaN(val)) ? 0 : val; // borders in old IE are throwing 'medium' for demo.html 
+        return (isNaN(val)) ? 0 : val; // borders in old IE are throwing 'medium' for demo.html
     }
 
     // Drawing a rectangle
@@ -137,49 +137,49 @@ _html2canvas.Parse = function ( images, options ) {
             numDraws+=1;
         }
     }
-    
-    
+
+
     function textTransform (text, transform) {
         switch(transform){
             case "lowercase":
-                return text.toLowerCase();     
-					
+                return text.toLowerCase();
+
             case "capitalize":
                 return text.replace( /(^|\s|:|-|\(|\))([a-z])/g , function (m, p1, p2) {
                     if (m.length > 0) {
                         return p1 + p2.toUpperCase();
                     }
-                } );            
-					
+                } );
+
             case "uppercase":
                 return text.toUpperCase();
-                
+
             default:
                 return text;
-				
+
         }
-        
+
     }
-    
+
     function trimText (text) {
         return text.replace(/^\s*/g, "").replace(/\s*$/g, "");
     }
-    
+
     function fontMetrics (font, fontSize) {
-    
+
         if (fontData[font + "-" + fontSize] !== undefined) {
             return fontData[font + "-" + fontSize];
         }
 
-    
+
         var container = doc.createElement('div'),
         img = doc.createElement('img'),
         span = doc.createElement('span'),
         baseline,
         middle,
         metricsObj;
-        
-        
+
+
         container.style.visibility = "hidden";
         container.style.fontFamily = font;
         container.style.fontSize = fontSize;
@@ -187,14 +187,14 @@ _html2canvas.Parse = function ( images, options ) {
         container.style.padding = 0;
 
         body.appendChild(container);
-        
+
 
 
         // http://probablyprogramming.com/2009/03/15/the-tiniest-gif-ever (handtinywhite.gif)
         img.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACwAAAAAAQABAAACAkQBADs=";
         img.width = 1;
         img.height = 1;
-    
+
         img.style.margin = 0;
         img.style.padding = 0;
         img.style.verticalAlign = "baseline";
@@ -203,46 +203,46 @@ _html2canvas.Parse = function ( images, options ) {
         span.style.fontSize = fontSize;
         span.style.margin = 0;
         span.style.padding = 0;
-        
- 
-    
-    
+
+
+
+
         span.appendChild(doc.createTextNode('Hidden Text'));
         container.appendChild(span);
         container.appendChild(img);
         baseline = (img.offsetTop - span.offsetTop) + 1;
-    
+
         container.removeChild(span);
         container.appendChild(doc.createTextNode('Hidden Text'));
-    
+
         container.style.lineHeight = "normal";
         img.style.verticalAlign = "super";
-        
+
         middle = (img.offsetTop-container.offsetTop) + 1;
         metricsObj = {
             baseline: baseline,
             lineWidth: 1,
             middle: middle
         };
-    
-    
+
+
         fontData[font + "-" + fontSize] = metricsObj;
-        
+
         body.removeChild(container);
 
         return metricsObj;
-    
+
     }
-    
-        
-    function drawText(currentText, x, y, ctx){       
-        if (trimText(currentText).length>0) {	
+
+
+    function drawText(currentText, x, y, ctx){
+        if (trimText(currentText).length>0) {
             ctx.fillText(currentText,x,y);
             numDraws+=1;
-        }           
+        }
     }
-    
-    
+
+
     function renderText(el, textNode, stack) {
         var ctx = stack.ctx,
         family = getCSS(el, "fontFamily"),
@@ -271,29 +271,29 @@ _html2canvas.Parse = function ( images, options ) {
         backupText;
 
         // apply text-transform:ation to the text
-        
-        
-        
+
+
+
         textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
         text = trimText(textNode.nodeValue);
-	
+
         if (text.length>0){
-         
+
             if (text_decoration !== "none"){
-                metrics = fontMetrics(family, size);         
-            }    
-                
+                metrics = fontMetrics(family, size);
+            }
+
             text_align = text_align.replace(["-webkit-auto"],["auto"]);
 
             if (options.letterRendering === false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
-                // this.setContextVariable(ctx,"textAlign",text_align);  
+                // this.setContextVariable(ctx,"textAlign",text_align);
                 renderList = textNode.nodeValue.split(/(\b| )/);
-           
+
             }else{
                 //  this.setContextVariable(ctx,"textAlign","left");
                 renderList = textNode.nodeValue.split("");
             }
-                     
+
             switch(parseInt(bold, 10)){
                 case 401:
                     bold = "bold";
@@ -303,37 +303,37 @@ _html2canvas.Parse = function ( images, options ) {
                     break;
             }
 
-            ctx.setVariable("fillStyle", color);  
-            
+            ctx.setVariable("fillStyle", color);
+
             /*
               need to be defined in the order as defined in http://www.w3.org/TR/CSS21/fonts.html#font-shorthand
               to properly work in Firefox
-            */     
+            */
             ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
-                              
+
             if (align){
                 ctx.setVariable("textAlign", "right");
             }else{
                 ctx.setVariable("textAlign", "left");
             }
 
-        
+
             /*
         if (stack.clip){
         ctx.rect (stack.clip.left, stack.clip.top, stack.clip.width, stack.clip.height);
         ctx.clip();
         }
              */
-       
-      
+
+
             oldTextNode = textNode;
-           
-            
+
+
             for ( c=0, listLen = renderList.length; c < listLen; c+=1 ) {
                 textValue = null;
-    
-     
-                    
+
+
+
                 if (support.rangeBounds){
                     // getBoundingClientRect is supported for ranges
                     if (text_decoration !== "none" || trimText(renderList[c]).length !== 0) {
@@ -347,49 +347,49 @@ _html2canvas.Parse = function ( images, options ) {
                             // TODO add IE support
                             range = body.createTextRange();
                         }
-                        
+
                         if (range.getBoundingClientRect()) {
                             bounds = range.getBoundingClientRect();
                         }else{
                             bounds = {};
                         }
-                        
+
                     }
                 }else{
                     // it isn't supported, so let's wrap it inside an element instead and get the bounds there
-               
+
                     // IE 9 bug
                     if (typeof oldTextNode.nodeValue !== "string" ){
                         continue;
                     }
-               
+
                     newTextNode = oldTextNode.splitText(renderList[c].length);
-               
+
                     parent = oldTextNode.parentNode;
                     wrapElement = doc.createElement('wrapper');
                     backupText = oldTextNode.cloneNode(true);
 
                     wrapElement.appendChild(oldTextNode.cloneNode(true));
                     parent.replaceChild(wrapElement, oldTextNode);
-                                    
+
                     bounds = _html2canvas.Util.Bounds(wrapElement);
-                        
+
                     textValue = oldTextNode.nodeValue;
-                        
+
                     oldTextNode = newTextNode;
-                    parent.replaceChild(backupText, wrapElement);    
-                   
-                        
+                    parent.replaceChild(backupText, wrapElement);
+
+
                 }
-            
+
                 if (textValue !== null){
                     drawText(textValue, bounds.left, bounds.bottom, ctx);
                 }
 
                 switch(text_decoration) {
-                    case "underline":	
+                    case "underline":
                         // Draws a line at the baseline of the font
-                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size         
+                        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
                         renderRect(ctx, bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, color);
                         break;
                     case "overline":
@@ -399,52 +399,52 @@ _html2canvas.Parse = function ( images, options ) {
                         // TODO try and find exact position for line-through
                         renderRect(ctx, bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, color);
                         break;
-                    
-                }	
-                
-                
-            
-              
-                  
+
+                }
+
+
+
+
+
                 textOffset += renderList[c].length;
-                  
+
             }
-        
-         
-					
+
+
+
         }
-			
+
     }
-    
+
     function listPosition (element, val) {
         var boundElement = doc.createElement( "boundelement" ),
         type,
         bounds;
-        
+
         boundElement.style.display = "inline";
         //boundElement.style.width = "1px";
         //boundElement.style.height = "1px";
-    
+
         type = element.style.listStyleType;
         element.style.listStyleType = "none";
-    
+
         boundElement.appendChild( doc.createTextNode( val ) );
-    
+
 
         element.insertBefore(boundElement, element.firstChild);
 
-    
+
         bounds = _html2canvas.Util.Bounds( boundElement );
         element.removeChild( boundElement );
         element.style.listStyleType = type;
         return bounds;
 
     }
-    
-   
+
+
     function renderListItem(element, stack, elBounds) {
-    
-  
+
+
         var position = getCSS(element, "listStylePosition"),
         x,
         y,
@@ -453,12 +453,12 @@ _html2canvas.Parse = function ( images, options ) {
         text,
         listBounds,
         bold = getCSS(element, "fontWeight");
-    
+
         if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)) {
-            
+
             // TODO remove jQuery dependency
             currentIndex = $(element).index()+1;
-            
+
             switch(type){
                 case "decimal":
                     text = currentIndex;
@@ -467,8 +467,8 @@ _html2canvas.Parse = function ( images, options ) {
                     if (currentIndex.toString().length === 1){
                         text = currentIndex = "0" + currentIndex.toString();
                     }else{
-                        text = currentIndex.toString();   
-                    }     
+                        text = currentIndex.toString();
+                    }
                     break;
                 case "upper-roman":
                     text = _html2canvas.Generate.ListRoman( currentIndex );
@@ -477,19 +477,19 @@ _html2canvas.Parse = function ( images, options ) {
                     text = _html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
                     break;
                 case "lower-alpha":
-                    text = _html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();  
+                    text = _html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();
                     break;
                 case "upper-alpha":
-                    text = _html2canvas.Generate.ListAlpha( currentIndex );  
+                    text = _html2canvas.Generate.ListAlpha( currentIndex );
                     break;
             }
 
-           
+
             text += ". ";
             listBounds = listPosition(element, text);
-        
-      
-    
+
+
+
             switch(bold){
                 case 401:
                     bold = "bold";
@@ -498,43 +498,43 @@ _html2canvas.Parse = function ( images, options ) {
                     bold = "normal";
                     break;
             }
-    
- 
-       
-        
+
+
+
+
             ctx.setVariable( "fillStyle", getCSS(element, "color") );
             ctx.setVariable( "font", getCSS(element, "fontVariant") + " " + bold + " " + getCSS(element, "fontStyle") + " " + getCSS(element, "fontSize") + " " + getCSS(element, "fontFamily") );
 
-        
+
             if ( position === "inside" ) {
                 ctx.setVariable("textAlign", "left");
-                //   this.setFont(stack.ctx, element, false);     
+                //   this.setFont(stack.ctx, element, false);
                 x = elBounds.left;
-                
+
             }else{
-                return; 
-            /* 
-                 TODO really need to figure out some more accurate way to try and find the position. 
-                 as defined in http://www.w3.org/TR/CSS21/generate.html#propdef-list-style-position, it does not even have a specified "correct" position, so each browser 
-                 may display it whatever way it feels like. 
+                return;
+            /*
+                 TODO really need to figure out some more accurate way to try and find the position.
+                 as defined in http://www.w3.org/TR/CSS21/generate.html#propdef-list-style-position, it does not even have a specified "correct" position, so each browser
+                 may display it whatever way it feels like.
                  "The position of the list-item marker adjacent to floats is undefined in CSS 2.1. CSS 2.1 does not specify the precise location of the marker box or its position in the painting order"
-                
+
                 ctx.setVariable("textAlign", "right");
                 //  this.setFont(stack.ctx, element, true);
                 x = elBounds.left - 10;
                  */
             }
-        
+
             y = listBounds.bottom;
-    
+
             drawText(text, x, y, ctx);
- 
-        
+
+
         }
- 
-    
+
+
     }
-    
+
     function loadImage (src){
         var img = images[src];
         if (img && img.succeeded === true) {
@@ -543,28 +543,28 @@ _html2canvas.Parse = function ( images, options ) {
             return false;
         }
     }
-    
-    
 
 
- 
-    
+
+
+
+
     function clipBounds(src, dst){
- 
+
         var x = Math.max(src.left, dst.left),
         y = Math.max(src.top, dst.top),
         x2 = Math.min((src.left + src.width), (dst.left + dst.width)),
         y2 = Math.min((src.top + src.height), (dst.top + dst.height));
- 
+
         return {
             left:x,
             top:y,
             width:x2-x,
             height:y2-y
         };
- 
+
     }
-    
+
     function setZ(zIndex, parentZ){
         // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
         var newContext;
@@ -572,25 +572,25 @@ _html2canvas.Parse = function ( images, options ) {
             newContext = h2czContext(0);
             return newContext;
         }
-    
+
         if (zIndex !== "auto"){
             needReorder = true;
             newContext = h2czContext(zIndex);
-            parentZ.children.push(newContext);     
+            parentZ.children.push(newContext);
             return newContext;
-        
+
         }
-        
+
         return parentZ;
-        
+
     }
-    
+
     function renderBorders(el, ctx, bounds, clip){
-     
+
         /*
-         *  TODO add support for different border-style's than solid   
-         */     
-    
+         *  TODO add support for different border-style's than solid
+         */
+
         var x = bounds.left,
         y = bounds.top,
         w = bounds.width,
@@ -606,28 +606,28 @@ _html2canvas.Parse = function ( images, options ) {
             var borders = [],
             sides = ["Top","Right","Bottom","Left"],
             s;
-        
+
             for (s = 0; s < 4; s+=1){
                 borders.push({
                     width: getCSSInt(el, 'border' + sides[s] + 'Width'),
                     color: getCSS(el, 'border' + sides[s] + 'Color')
-                });                      
+                });
             }
-          
-            return borders; 
-            
-        }(el));    
-        
+
+            return borders;
+
+        }(el));
+
 
         for (borderSide = 0; borderSide < 4; borderSide+=1){
             borderData = borders[borderSide];
-                
+
             if (borderData.width>0){
                 bx = x;
                 by = y;
                 bw = w;
                 bh = h - (borders[2].width);
-                
+
                 switch(borderSide){
                     case 0:
                         // top border
@@ -636,7 +636,7 @@ _html2canvas.Parse = function ( images, options ) {
                     case 1:
                         // right border
                         bx = x + w - (borders[1].width);
-                        bw = borders[1].width;                              
+                        bw = borders[1].width;
                         break;
                     case 2:
                         // bottom border
@@ -645,37 +645,37 @@ _html2canvas.Parse = function ( images, options ) {
                         break;
                     case 3:
                         // left border
-                        bw = borders[3].width;  
+                        bw = borders[3].width;
                         break;
-                }		
-                   
+                }
+
                 borderBounds = {
                     left:bx,
                     top:by,
                     width: bw,
                     height:bh
                 };
-                   
+
                 if (clip){
                     borderBounds = clipBounds(borderBounds, clip);
                 }
-                   
-                   
-                if (borderBounds.width>0 && borderBounds.height>0){                           
+
+
+                if (borderBounds.width>0 && borderBounds.height>0){
                     renderRect(ctx, bx, by, borderBounds.width, borderBounds.height, borderData.color);
                 }
-                
-          
+
+
             }
         }
 
         return borders;
-    
+
     }
-    
-    
+
+
     function renderFormValue (el, bounds, stack){
-    
+
         var valueWrap = doc.createElement('valuewrap'),
         cssArr = ['lineHeight','textAlign','fontFamily','color','fontSize','paddingLeft','paddingTop','width','height','border','borderLeftWidth','borderTopWidth'],
         i,
@@ -683,7 +683,7 @@ _html2canvas.Parse = function ( images, options ) {
         textNode,
         arrLen,
         style;
-        
+
         for (i = 0, arrLen = cssArr.length; i < arrLen; i+=1){
             style = cssArr[i];
 
@@ -694,43 +694,43 @@ _html2canvas.Parse = function ( images, options ) {
                 h2clog("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
             }
         }
-        
-                
-        valueWrap.style.borderColor = "black";            
-        valueWrap.style.borderStyle = "solid";  
+
+
+        valueWrap.style.borderColor = "black";
+        valueWrap.style.borderStyle = "solid";
         valueWrap.style.display = "block";
         valueWrap.style.position = "absolute";
         if (/^(submit|reset|button|text|password)$/.test(el.type) || el.nodeName === "SELECT"){
             valueWrap.style.lineHeight = getCSS(el, "height");
         }
-  
-                
+
+
         valueWrap.style.top = bounds.top + "px";
         valueWrap.style.left = bounds.left + "px";
-        
+
         if (el.nodeName === "SELECT"){
             // TODO increase accuracy of text position
             textValue = el.options[el.selectedIndex].text;
-        } else{   
-            textValue = el.value;   
+        } else{
+            textValue = el.value;
         }
         textNode = doc.createTextNode(textValue);
-    
+
         valueWrap.appendChild(textNode);
         body.appendChild(valueWrap);
-        
-                
-        renderText(el, textNode, stack);
-        body.removeChild(valueWrap);        
-  
-   
-    
-    }
-    
 
-    
-   
-    
+
+        renderText(el, textNode, stack);
+        body.removeChild(valueWrap);
+
+
+
+    }
+
+
+
+
+
     function renderImage (ctx, image, sx, sy, sw, sh, dx, dy, dw, dh) {
         ctx.drawImage(
             image,
@@ -741,20 +741,20 @@ _html2canvas.Parse = function ( images, options ) {
             dx, //dx
             dy, // dy
             dw, //dw
-            dh //dh      
+            dh //dh
             );
-        numDraws+=1; 
-    
+        numDraws+=1;
+
     }
 
-            
+
     function renderBackgroundRepeat (ctx, image, x, y, width, height, elx, ely){
         var sourceX = 0,
         sourceY=0;
         if (elx-x>0){
             sourceX = elx-x;
         }
-        
+
         if (ely-y>0){
             sourceY = ely-y;
         }
@@ -763,7 +763,7 @@ _html2canvas.Parse = function ( images, options ) {
             ctx,
             image,
             sourceX, // source X
-            sourceY, // source Y 
+            sourceY, // source Y
             width-sourceX, // source Width
             height-sourceY, // source Height
             x+sourceX, // destination X
@@ -772,58 +772,58 @@ _html2canvas.Parse = function ( images, options ) {
             height-sourceY // destination height
             );
     }
-    
-    
+
+
     function renderBackgroundRepeatY (ctx, image, bgp, x, y, w, h){
-        
+
         var height,
-        width = Math.min(image.width,w),bgy;   
-            
-        bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;                
-        
-        
-        for(bgy=(y+bgp.top);bgy<h+y;){   
-            
-         
+        width = Math.min(image.width,w),bgy;
+
+        bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;
+
+
+        for(bgy=(y+bgp.top);bgy<h+y;){
+
+
             if ( Math.floor(bgy+image.height)>h+y){
                 height = (h+y)-bgy;
             }else{
                 height = image.height;
             }
-            renderBackgroundRepeat(ctx,image,x+bgp.left,bgy,width,height,x,y);   
-      
-            bgy = Math.floor(bgy+image.height); 
-                              
-        } 
+            renderBackgroundRepeat(ctx,image,x+bgp.left,bgy,width,height,x,y);
+
+            bgy = Math.floor(bgy+image.height);
+
+        }
     }
-    
+
     function renderBackgroundRepeatX(ctx, image, bgp, x, y, w, h){
-                           
+
         var height = Math.min(image.height,h),
-        width,bgx;             
-        
-            
-        bgp.left = bgp.left-Math.ceil(bgp.left/image.width)*image.width;                
-        
-        
-        for (bgx=(x+bgp.left);bgx<w+x;) {   
+        width,bgx;
+
+
+        bgp.left = bgp.left-Math.ceil(bgp.left/image.width)*image.width;
+
+
+        for (bgx=(x+bgp.left);bgx<w+x;) {
 
             if (Math.floor(bgx+image.width)>w+x){
                 width = (w+x)-bgx;
             }else{
                 width = image.width;
             }
-                
-            renderBackgroundRepeat(ctx,image,bgx,(y+bgp.top),width,height,x,y);       
-             
-            bgx = Math.floor(bgx+image.width); 
 
-                                
-        } 
+            renderBackgroundRepeat(ctx,image,bgx,(y+bgp.top),width,height,x,y);
+
+            bgx = Math.floor(bgx+image.width);
+
+
+        }
     }
-    
+
     function renderBackground(el,bounds,ctx){
-               
+
         // TODO add support for multi background-images
         var background_image = getCSS(el, "backgroundImage"),
         background_repeat = getCSS(el, "backgroundRepeat").split(",")[0],
@@ -839,32 +839,32 @@ _html2canvas.Parse = function ( images, options ) {
         h,
         height,
         add;
-        
+
         //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
-      
-        if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {   
+
+        if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {
             background_image = background_image.split(",")[0];
         }
-        
+
         if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
             background_image = _html2canvas.Util.backgroundImage( background_image );
             image = loadImage( background_image );
-					
+
 
             bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
-            
+
             // TODO add support for background-origin
             if ( image ){
                 switch ( background_repeat ) {
-					
+
                     case "repeat-x":
-                        renderBackgroundRepeatX( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                     
+                        renderBackgroundRepeatX( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );
                         break;
-                         
+
                     case "repeat-y":
-                        renderBackgroundRepeatY( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );                                             
+                        renderBackgroundRepeatY( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );
                         break;
-                          
+
                     case "no-repeat":
                         /*
                     this.drawBackgroundRepeat(
@@ -877,8 +877,8 @@ _html2canvas.Parse = function ( images, options ) {
                         bounds.left,
                         bounds.top
                         );*/
-                            
-      
+
+
                         // console.log($(el).css('background-image'));
                         bgw = bounds.width - bgp.left;
                         bgh = bounds.height - bgp.top;
@@ -889,33 +889,33 @@ _html2canvas.Parse = function ( images, options ) {
 
                         //
                         //     bgw = Math.min(bgw,image.width);
-                        //  bgh = Math.min(bgh,image.height);     
-                    
+                        //  bgh = Math.min(bgh,image.height);
+
                         if (bgsx<0){
                             bgsx = Math.abs(bgsx);
-                            bgdx += bgsx; 
+                            bgdx += bgsx;
                             bgw = Math.min(bounds.width,image.width-bgsx);
                         }else{
                             bgw = Math.min(bgw,image.width);
                             bgsx = 0;
                         }
-                           
+
                         if (bgsy<0){
                             bgsy = Math.abs(bgsy);
-                            bgdy += bgsy; 
+                            bgdy += bgsy;
                             // bgh = bgh-bgsy;
                             bgh = Math.min(bounds.height,image.height-bgsy);
                         }else{
-                            bgh = Math.min(bgh,image.height); 
+                            bgh = Math.min(bgh,image.height);
                             bgsy = 0;
-                        }    
-    
+                        }
 
-                        if (bgh>0 && bgw > 0){        
+
+                        if (bgh>0 && bgw > 0){
                             renderImage(
                                 ctx,
                                 image,
-                                bgsx, // source X : 0 
+                                bgsx, // source X : 0
                                 bgsy, // source Y : 1695
                                 bgw, // source Width : 18
                                 bgh, // source Height : 1677
@@ -924,65 +924,65 @@ _html2canvas.Parse = function ( images, options ) {
                                 bgw, // destination width : 18
                                 bgh // destination height : 1677
                                 );
-                                                                       
+
                         }
                         break;
                     default:
-                        
-                        
-                              
-                        bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;                
-                        
-                        
-                        for(bgy=(bounds.top+bgp.top);bgy<bounds.height+bounds.top;){  
-           
-                        
-           
+
+
+
+                        bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;
+
+
+                        for(bgy=(bounds.top+bgp.top);bgy<bounds.height+bounds.top;){
+
+
+
                             h = Math.min(image.height,(bounds.height+bounds.top)-bgy);
-                           
-                            
+
+
                             if ( Math.floor(bgy+image.height)>h+bgy){
                                 height = (h+bgy)-bgy;
                             }else{
                                 height = image.height;
                             }
                             // console.log(height);
-                            
+
                             if (bgy<bounds.top){
                                 add = bounds.top-bgy;
                                 bgy = bounds.top;
-                                
+
                             }else{
                                 add = 0;
                             }
-                                              
-                            renderBackgroundRepeatX(ctx,image,bgp,bounds.left,bgy,bounds.width,height);  
+
+                            renderBackgroundRepeatX(ctx,image,bgp,bounds.left,bgy,bounds.width,height);
                             if (add>0){
                                 bgp.top += add;
                             }
-                            bgy = Math.floor(bgy+image.height)-add; 
+                            bgy = Math.floor(bgy+image.height)-add;
                         }
                         break;
-                        
-					
-                }	
+
+
+                }
             }else{
                 h2clog("html2canvas: Error loading background:" + background_image);
             //console.log(images);
             }
-					
+
         }
     }
 
 
- 
+
     function renderElement(el, parentStack){
-		
-        var bounds = _html2canvas.Util.Bounds(el), 
-        x = bounds.left, 
-        y = bounds.top, 
-        w = bounds.width, 
-        h = bounds.height, 
+
+        var bounds = _html2canvas.Util.Bounds(el),
+        x = bounds.left,
+        y = bounds.top,
+        w = bounds.width,
+        h = bounds.height,
         image,
         bgcolor = getCSS(el, "backgroundColor"),
         cssPosition = getCSS(el, "position"),
@@ -998,7 +998,7 @@ _html2canvas.Parse = function ( images, options ) {
         paddingTop,
         paddingRight,
         paddingBottom;
-        
+
         if (!parentStack){
             docDim = docSize();
             parentStack = {
@@ -1007,12 +1007,12 @@ _html2canvas.Parse = function ( images, options ) {
         }else{
             docDim = {};
         }
-        
+
 
         //var zindex = this.formatZ(this.getCSS(el,"zIndex"),cssPosition,parentStack.zIndex,el.parentNode);
-   
+
         zindex = setZ( getCSS( el, "zIndex"), parentStack.zIndex );
-          
+
 
 
         stack = {
@@ -1021,55 +1021,55 @@ _html2canvas.Parse = function ( images, options ) {
             opacity: opacity * parentStack.opacity,
             cssPosition: cssPosition
         };
-    
-    
- 
+
+
+
         // TODO correct overflow for absolute content residing under a static position
-        
+
         if (parentStack.clip){
             stack.clip = _html2canvas.Util.Extend( {}, parentStack.clip );
         //stack.clip = parentStack.clip;
         //   stack.clip.height = stack.clip.height - parentStack.borders[2].width;
-        } 
- 
- 
+        }
+
+
         if ( options.useOverflow === true && /(hidden|scroll|auto)/.test(getCSS(el, "overflow")) === true && /(BODY)/i.test(el.nodeName) === false ){
             if (stack.clip){
                 stack.clip = clipBounds(stack.clip, bounds);
             }else{
                 stack.clip = bounds;
             }
-        }   
+        }
 
 
         stackLength =  zindex.children.push(stack);
-        
-        ctx = zindex.children[stackLength-1].ctx; 
-    
-        ctx.setVariable("globalAlpha", stack.opacity);  
+
+        ctx = zindex.children[stackLength-1].ctx;
+
+        ctx.setVariable("globalAlpha", stack.opacity);
 
         // draw element borders
         borders = renderBorders(el, ctx, bounds, false);
         stack.borders = borders;
 
-    
+
         // let's modify clip area for child elements, so borders dont get overwritten
-    
+
         /*
     if (stack.clip){
-        stack.clip.width = stack.clip.width-(borders[1].width); 
-        stack.clip.height = stack.clip.height-(borders[2].width); 
+        stack.clip.width = stack.clip.width-(borders[1].width);
+        stack.clip.height = stack.clip.height-(borders[2].width);
     }
      */
-        if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){ 
+        if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){
             if (options.iframeDefault === "default"){
                 bgcolor = "#efefef";
             }else{
-                bgcolor = options.iframeDefault;           
+                bgcolor = options.iframeDefault;
             }
         }
-               
-        // draw base element bgcolor   
+
+        // draw base element bgcolor
 
         bgbounds = {
             left: x + borders[3].width,
@@ -1077,16 +1077,16 @@ _html2canvas.Parse = function ( images, options ) {
             width: w - (borders[1].width + borders[3].width),
             height: h - (borders[0].width + borders[2].width)
         };
-        
-        //if (this.withinBounds(stack.clip,bgbounds)){  
-        
+
+        //if (this.withinBounds(stack.clip,bgbounds)){
+
         if (stack.clip){
             bgbounds = clipBounds(bgbounds, stack.clip);
-        
-        //}    
-    
+
+        //}
+
         }
-    
+
 
         if (bgbounds.height > 0 && bgbounds.width > 0){
             renderRect(
@@ -1097,10 +1097,10 @@ _html2canvas.Parse = function ( images, options ) {
                 bgbounds.height,
                 bgcolor
                 );
-           
-            renderBackground(el, bgbounds, ctx);     
+
+            renderBackground(el, bgbounds, ctx);
         }
-        
+
         switch(el.nodeName){
             case "IMG":
                 imgSrc = el.getAttribute('src');
@@ -1111,8 +1111,8 @@ _html2canvas.Parse = function ( images, options ) {
                     paddingTop = getCSSInt(el, 'paddingTop');
                     paddingRight = getCSSInt(el, 'paddingRight');
                     paddingBottom = getCSSInt(el, 'paddingBottom');
-                    
-                    
+
+
                     renderImage(
                         ctx,
                         image,
@@ -1123,9 +1123,9 @@ _html2canvas.Parse = function ( images, options ) {
                         x + paddingLeft + borders[3].width, //dx
                         y + paddingTop + borders[0].width, // dy
                         bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
-                        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh       
+                        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
                         );
-           
+
                 }else{
                     h2clog("html2canvas: Error loading <img>:" + imgSrc);
                 }
@@ -1134,13 +1134,13 @@ _html2canvas.Parse = function ( images, options ) {
                 // TODO add all relevant type's, i.e. HTML5 new stuff
                 // todo add support for placeholder attribute for browsers which support it
                 if (/^(text|url|email|submit|button|reset)$/.test(el.type) && el.value.length > 0){
-                
+
                     renderFormValue(el, bounds, stack);
-                
+
 
                 /*
                  this just doesn't work well enough
-                
+
                 this.newText(el,{
                     nodeValue:el.value,
                     splitText: function(){
@@ -1186,18 +1186,18 @@ _html2canvas.Parse = function ( images, options ) {
 
         return zindex.children[stackLength - 1];
     }
-    
-   
-    
+
+
+
     function parseElement (el, stack) {
-      
+
         // skip hidden elements and their children
-        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden") { 
-     
+        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden") {
+
             stack = renderElement(el, stack) || stack;
-          
+
             ctx = stack.ctx;
-    
+
             if ( !ignoreElementsRegExp.test( el.nodeName ) ) {
                 var elementChildren = _html2canvas.Util.Children( el ),
                 i,
@@ -1205,31 +1205,31 @@ _html2canvas.Parse = function ( images, options ) {
                 childrenLen;
                 for (i = 0, childrenLen = elementChildren.length; i < childrenLen; i+=1) {
                     node = elementChildren[i];
-                    
+
                     if ( node.nodeType === 1 ) {
-                        parseElement(node, stack);								
-                    }else if ( node.nodeType === 3 ) {   
+                        parseElement(node, stack);
+                    }else if ( node.nodeType === 3 ) {
                         renderText(el, node, stack);
-                    }      
-                    
+                    }
+
                 }
-               
-            } 
+
+            }
         }
     }
 
     stack = renderElement(element, null);
-    
+
     /*
     SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards
     */
-    
+
     if ( support.svgRendering ) {
         (function( body ){
             var img = new Image(),
             size =  docSize(),
             html = "";
-           
+
             function parseDOM( el ) {
                 var children = _html2canvas.Util.Children( el ),
                 len = children.length,
@@ -1242,14 +1242,14 @@ _html2canvas.Parse = function ( images, options ) {
                     elm = children[ i ];
                     if ( elm.nodeType === 3 ) {
                         // Text node
-                        
+
                         html += elm.nodeValue.replace(/\</g,"&lt;").replace(/\>/g,"&gt;");
                     } else if ( elm.nodeType === 1 ) {
                         // Element
-                        if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {                
-                            
+                        if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {
+
                             html += "<" + elm.nodeName.toLowerCase();
-                        
+
                             // add attributes
                             if ( elm.hasAttributes() ) {
                                 attr = elm.attributes;
@@ -1258,21 +1258,21 @@ _html2canvas.Parse = function ( images, options ) {
                                     html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
                                 }
                             }
-                        
-                           
+
+
                             html += '>';
-                           
+
                             parseDOM( elm );
-                            
-                            
+
+
                             html += "</" + elm.nodeName.toLowerCase() + ">";
                         }
                     }
-                    
+
                 }
-                
+
             }
-           
+
             parseDOM( body );
             img.src = [
             "data:image/svg+xml,",
@@ -1284,27 +1284,27 @@ _html2canvas.Parse = function ( images, options ) {
             "</foreignObject>",
             "</svg>"
             ].join("");
-            
-           
 
-           
+
+
+
             img.onload = function() {
                 stack.svgRender = img;
             };
-            
+
         })( document.documentElement );
-        
+
     }
-    
-    
+
+
     // parse every child element
-    for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){      
-        parseElement(children[i], stack);  
+    for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){
+        parseElement(children[i], stack);
     }
-    
-    
+
+
     stack.backgroundColor = getCSS( document.documentElement, "backgroundColor" );
-    
+
     return stack;
 
 };
@@ -1313,5 +1313,5 @@ function h2czContext(zindex) {
     return {
         zindex: zindex,
         children: []
-    };  
+    };
 }
