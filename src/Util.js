@@ -8,20 +8,20 @@
 
 
 html2canvas = function( elements, opts ) {
-    
+
     var queue,
     canvas,
     options = {
         // general
         logging: false,
         elements: elements,
-        
+
         // preload options
         proxy: "http://html2canvas.appspot.com/",
         timeout: 0,    // no timeout
         useCORS: false, // try to load images as CORS (where available), before falling back to proxy
         allowTaint: false, // whether to allow images to taint the canvas, won't need proxy if set to true
-        
+
         // parse options
         svgRendering: false, // use svg powered rendering where available (FF11+)
         iframeDefault: "default",
@@ -35,11 +35,11 @@ html2canvas = function( elements, opts ) {
         width: null,
         height: null,
         taintTest: true, // do a taint test with all images before applying to canvas
-		renderer: "Canvas"	
+		renderer: "Canvas"
     }, renderer;
-    
+
     options = _html2canvas.Util.Extend(opts, options);
-   
+
 	if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
 		options._renderer = _html2canvas.Renderer[options.renderer]( options );
 	} else if (typeof options.renderer === "function") {
@@ -50,34 +50,34 @@ html2canvas = function( elements, opts ) {
 
     _html2canvas.logging = options.logging;
     options.complete = function( images ) {
-        
+
         if (typeof options.onpreloaded === "function") {
             if ( options.onpreloaded( images ) === false ) {
                 return;
             }
         }
         queue = _html2canvas.Parse( images, options );
-            
+
         if (typeof options.onparsed === "function") {
             if ( options.onparsed( queue ) === false ) {
                 return;
             }
         }
-          
+
         canvas = _html2canvas.Renderer( queue, options );
-        
+
         if (typeof options.onrendered === "function") {
             options.onrendered( canvas );
         }
-        
-        
+
+
     };
-    
+
     // for pages without images, we still want this to be async, i.e. return methods before executing
     window.setTimeout( function(){
         _html2canvas.Preload( options );
-    }, 0 ); 
-        
+    }, 0 );
+
     return {
         render: function( queue, opts ) {
             return _html2canvas.Renderer( queue, _html2canvas.Util.Extend(opts, options) );
