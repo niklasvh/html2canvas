@@ -10,3 +10,4 @@ image.jpg
 /.project
 /.settings/
 .envrc
+*.sublime-workspace

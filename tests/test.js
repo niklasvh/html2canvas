@@ -15,13 +15,13 @@ var h2cSelector, h2cOptions;
     }
     window.onload = function() {
         h2cSelector = [document.body];
-        
+
         if (window.setUp) {
             window.setUp();
         }
-        
+
         setTimeout(function() {
-            
+
             $(h2cSelector).html2canvas($.extend({
                 flashcanvas: "../external/flashcanvas.min.js",
                 logging: true,
