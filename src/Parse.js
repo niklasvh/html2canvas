@@ -440,7 +440,26 @@ _html2canvas.Parse = function ( images, options ) {
         return bounds;
 
     }
+    
 
+    
+    function elementIndex( el ) {
+        var i = -1,
+        count = 1,
+        childs = el.parentNode.childNodes;
+
+        if ( el.parentNode ) {
+            while( childs[ ++i ] !== el ) {
+               if ( childs[ i ].nodeType === 1 ) {
+                   count++;
+               }
+            }
+            return count;
+        } else {
+            return -1;
+        }
+       
+    }
 
     function renderListItem(element, stack, elBounds) {
 
@@ -456,8 +475,7 @@ _html2canvas.Parse = function ( images, options ) {
 
         if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)) {
 
-            // TODO remove jQuery dependency
-            currentIndex = $(element).index()+1;
+            currentIndex = elementIndex( element );
 
             switch(type){
                 case "decimal":
@@ -879,7 +897,7 @@ _html2canvas.Parse = function ( images, options ) {
                         );*/
 
 
-                        // console.log($(el).css('background-image'));
+                       
                         bgw = bounds.width - bgp.left;
                         bgh = bounds.height - bgp.top;
                         bgsx = bgp.left;
