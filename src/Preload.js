@@ -4,7 +4,7 @@
   http://www.twitter.com/niklasvh
 
   Released under MIT License
-*/
+ */
 
 _html2canvas.Preload = function( options ) {
 
@@ -108,21 +108,26 @@ _html2canvas.Preload = function( options ) {
 
         // if (!this.ignoreRe.test(el.nodeName)){
         //
-
+        
         var contents = _html2canvas.Util.Children(el),
         i,
-        contentsLen = contents.length,
         background_image,
         src,
         img,
         elNodeType = false;
 
-        for (i = 0;  i < contentsLen; i+=1 ){
-            // var ignRe = new RegExp("("+this.ignoreElements+")");
-            // if (!ignRe.test(element.nodeName)){
-            getImages(contents[i]);
-        // }
+        // Firefox fails with permission denied on pages with iframes
+        try {
+            var contentsLen = contents.length;
+            for (i = 0;  i < contentsLen; i+=1 ){
+                // var ignRe = new RegExp("("+this.ignoreElements+")");
+                // if (!ignRe.test(element.nodeName)){
+                getImages(contents[i]);
+                // }
+            }
         }
+        catch( e ) {}
+
 
         // }
         try {
@@ -145,7 +150,6 @@ _html2canvas.Preload = function( options ) {
                 // TODO add multi image background support
 
                 if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image )) {
-                    //       if (background_image.substring(0,7) === "-webkit" || background_image.substring(0,3) === "-o-" || background_image.substring(0,4) === "-moz") {
 
                     img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
 
@@ -165,7 +169,7 @@ _html2canvas.Preload = function( options ) {
                     methods.loadImage(src);
                 }
 
-            /*
+                /*
             if (background_image && background_image !== "1" && background_image !== "none" && background_image.substring(0,7) !== "-webkit" && background_image.substring(0,3)!== "-o-" && background_image.substring(0,4) !== "-moz"){
                 // TODO add multi image background support
                 src = _html2canvas.Util.backgroundImage(background_image.split(",")[0]);
@@ -213,16 +217,16 @@ _html2canvas.Preload = function( options ) {
 
         };
 
-    // TODO Opera has no load/error event for SVG images
+        // TODO Opera has no load/error event for SVG images
 
-    // Opera ninja onload's cached images
-    /*
+        // Opera ninja onload's cached images
+        /*
         window.setTimeout(function(){
             if ( img.width !== 0 && imageObj.succeeded === undefined ) {
                 img.onload();
             }
         }, 100); // needs a reflow for base64 encoded images? interestingly timeout of 0 doesn't work but 1 does.
-        */
+         */
     }
 
 
