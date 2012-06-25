@@ -31,6 +31,22 @@ Note that the compatibility will most likely be increased in future builds, as m
 There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon. 
  There is no support for <code>frame</code> and <code>object</code> content such as Flash.
 
+### Usage ###
+To render an `element` with html2canvas, simply call:
+` html2canvas( [ element ], options);`
+
+To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
+
+    html2canvas( [ document.body ], {
+        onrendered: function( canvas ) {
+            /* canvas is the actual canvas element, 
+               to append it to the page call for example 
+               document.body.appendChild( canvas );
+            */
+            }
+    );
+ 
+
 ### Examples ###
 
 For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.
@@ -39,7 +55,7 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 v0.34 - 26.6.2012
 
-* Removed (last?) jQuery dependencies
+* Removed (last?) jQuery dependencies (<a href="https://github.com/niklasvh/html2canvas/commit/343b86705fe163766fcf735eb0217130e4bd5b17">niklasvh</a>)
 * Radial gradients (<a href="https://github.com/niklasvh/html2canvas/commit/4f22c18043a73c0c3bbf3b5e4d62714c56acd3c7">SunboX</a>)
 * Split renderers to their own objects (<a href="https://github.com/niklasvh/html2canvas/commit/94f2f799a457cd29a21cc56ef8c06f1697866739">niklasvh</a>)
 * Simplified API, cleaned up code (<a href="https://github.com/niklasvh/html2canvas/commit/c7d526c9eaa6a4abf4754d205fe1dee360c7660e">niklasvh</a>)
