@@ -37,8 +37,10 @@ For more information and examples, please visit the <a href="http://html2canvas.
 
 ### Changelog ###
 
-v0.34 - 
+v0.34 - 26.6.2012
 
+* Removed (last?) jQuery dependencies
+* Radial gradients (<a href="https://github.com/niklasvh/html2canvas/commit/4f22c18043a73c0c3bbf3b5e4d62714c56acd3c7">SunboX</a>)
 * Split renderers to their own objects (<a href="https://github.com/niklasvh/html2canvas/commit/94f2f799a457cd29a21cc56ef8c06f1697866739">niklasvh</a>)
 * Simplified API, cleaned up code (<a href="https://github.com/niklasvh/html2canvas/commit/c7d526c9eaa6a4abf4754d205fe1dee360c7660e">niklasvh</a>)
 

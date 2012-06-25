@@ -1233,7 +1233,7 @@ _html2canvas.Parse = function ( images, options ) {
                 }
 
             }
-        }
+        } 
     }
 
     stack = renderElement(element, null);
