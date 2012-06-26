@@ -147,11 +147,24 @@ _html2canvas.Renderer.Canvas = function( options ) {
                                         if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
                                             ctx.fillRect.apply( ctx, renderItem['arguments'] );
                                         }
-                                    }else if(renderItem.name === "fillText") {
+                                    } else if (renderItem.name === "drawShape") {
+                                        
+                                        ( function( args ) {
+                                          
+                                            var i, len = args.length;
+                                            ctx.beginPath();
+                                            for ( i = 0; i < len; i++ ) {   
+                                                ctx[ args[ i ].name ].apply( ctx, args[ i ]['arguments'] );
+                                            }
+                                            ctx.closePath();
+                                            ctx.fill();
+                                        })( renderItem['arguments'] );
+                                        
+                                    } else if (renderItem.name === "fillText") {
                                         if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
                                             ctx.fillText.apply( ctx, renderItem['arguments'] );
                                         }
-                                    }else if(renderItem.name === "drawImage") {
+                                    } else if (renderItem.name === "drawImage") {
 
                                         if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){
                                             if ( hasCTX && options.taintTest ) {

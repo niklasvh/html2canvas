@@ -18,6 +18,44 @@ function h2cRenderContext(width, height) {
                 'arguments': arguments
             });
         },
+        drawShape: function() {
+          
+            var shape = [];
+            
+            storage.push({
+                type: "function",
+                name: "drawShape",
+                'arguments': shape
+            });
+          
+            return {
+                moveTo: function() {
+                    shape.push({
+                        name: "moveTo",
+                        'arguments': arguments
+                    });
+                },
+                lineTo: function() {
+                    shape.push({
+                        name: "lineTo",
+                        'arguments': arguments
+                    });
+                },
+                bezierCurveTo: function() {
+                    shape.push({
+                        name: "bezierCurveTo",
+                        'arguments': arguments
+                    });
+                },
+                quadraticCurveTo: function() {
+                    shape.push({
+                        name: "quadraticCurveTo",
+                        'arguments': arguments
+                    });
+                }
+            };
+          
+        },
         drawImage: function () {
             storage.push({
                 type: "function",

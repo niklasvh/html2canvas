@@ -4,7 +4,7 @@
   http://www.twitter.com/niklasvh
 
   Released under MIT License
-*/
+ */
 
 /*
  *  New function for traversing elements
@@ -131,7 +131,7 @@ _html2canvas.Parse = function ( images, options ) {
 
     // Drawing a rectangle
     function renderRect (ctx, x, y, w, h, bgcolor) {
-        if (bgcolor !=="transparent"){
+        if ( bgcolor !== "transparent" ){
             ctx.setVariable("fillStyle", bgcolor);
             ctx.fillRect (x, y, w, h);
             numDraws+=1;
@@ -308,7 +308,7 @@ _html2canvas.Parse = function ( images, options ) {
             /*
               need to be defined in the order as defined in http://www.w3.org/TR/CSS21/fonts.html#font-shorthand
               to properly work in Firefox
-            */
+             */
             ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
 
             if (align){
@@ -450,9 +450,9 @@ _html2canvas.Parse = function ( images, options ) {
 
         if ( el.parentNode ) {
             while( childs[ ++i ] !== el ) {
-               if ( childs[ i ].nodeType === 1 ) {
-                   count++;
-               }
+                if ( childs[ i ].nodeType === 1 ) {
+                    count++;
+                }
             }
             return count;
         } else {
@@ -619,6 +619,7 @@ _html2canvas.Parse = function ( images, options ) {
         by,
         bw,
         bh,
+        borderArgs,
         borderBounds,
         borders = (function(el){
             var borders = [],
@@ -634,12 +635,24 @@ _html2canvas.Parse = function ( images, options ) {
 
             return borders;
 
-        }(el));
+        }(el)),
+        borderRadius = (function( el ) {
+            var borders = [],
+            sides = ["TopLeft","TopRight","BottomLeft","BottomRight"],
+            s;
+            
+            for (s = 0; s < 4; s+=1){
+                borders.push( getCSS(el, 'border' + sides[s] + 'Radius') );
+            }
+
+            return borders;
+        })( el );
 
 
-        for (borderSide = 0; borderSide < 4; borderSide+=1){
-            borderData = borders[borderSide];
 
+        for ( borderSide = 0; borderSide < 4; borderSide+=1 ) {
+            borderData = borders[ borderSide ];
+            borderArgs = [];
             if (borderData.width>0){
                 bx = x;
                 by = y;
@@ -650,20 +663,44 @@ _html2canvas.Parse = function ( images, options ) {
                     case 0:
                         // top border
                         bh = borders[0].width;
+                        
+                        borderArgs[ 0 ] = [ bx, by ];  // top left
+                        borderArgs[ 1 ] = [ bx + bw, by ]; // top right
+                        borderArgs[ 2 ] = [ bx + bw - borders[ 1 ].width, by + bh  ]; // bottom right
+                        borderArgs[ 3 ] = [ bx + borders[ 3 ].width, by + bh ]; // bottom left
+                        
                         break;
                     case 1:
                         // right border
                         bx = x + w - (borders[1].width);
                         bw = borders[1].width;
+                        
+                        borderArgs[ 0 ] = [ bx, by + borders[ 0 ].width];  // top left
+                        borderArgs[ 1 ] = [ bx + bw, by ]; // top right
+                        borderArgs[ 2 ] = [ bx + bw, by + bh + borders[ 2 ].width ]; // bottom right
+                        borderArgs[ 3 ] = [ bx, by + bh ]; // bottom left
+                        
                         break;
                     case 2:
                         // bottom border
                         by = (by + h) - (borders[2].width);
                         bh = borders[2].width;
+                                                   
+                        borderArgs[ 0 ] = [ bx + borders[ 3 ].width, by ];  // top left
+                        borderArgs[ 1 ] = [ bx + bw - borders[ 2 ].width, by ]; // top right
+                        borderArgs[ 2 ] = [ bx + bw, by + bh ]; // bottom right
+                        borderArgs[ 3 ] = [ bx, by + bh ]; // bottom left
+                        
                         break;
                     case 3:
                         // left border
                         bw = borders[3].width;
+                        
+                        borderArgs[ 0 ] = [ bx, by ];  // top left
+                        borderArgs[ 1 ] = [ bx + bw, by + borders[ 0 ].width ]; // top right
+                        borderArgs[ 2 ] = [ bx + bw, by + bh ]; // bottom right
+                        borderArgs[ 3 ] = [ bx, by + bh + borders[ 2 ].width ]; // bottom left
+                        
                         break;
                 }
 
@@ -679,8 +716,24 @@ _html2canvas.Parse = function ( images, options ) {
                 }
 
 
-                if (borderBounds.width>0 && borderBounds.height>0){
-                    renderRect(ctx, bx, by, borderBounds.width, borderBounds.height, borderData.color);
+                if ( borderBounds.width > 0 && borderBounds.height > 0 ) {
+                    
+                    if ( borderData.color !== "transparent" ){
+                        ctx.setVariable( "fillStyle", borderData.color );
+                        
+                        var shape = ctx.drawShape();
+                        shape.moveTo.apply( null, borderArgs[ 0 ] ); // top left
+                        shape.lineTo.apply( null, borderArgs[ 1 ] ); // top right 
+                        shape.lineTo.apply( null, borderArgs[ 2 ] ); // bottom right 
+                        shape.lineTo.apply( null, borderArgs[ 3 ] ); // bottom left 
+                        // ctx.fillRect (x, y, w, h);
+                        numDraws+=1;
+                    }
+                    
+                    
+            
+                    
+                //  renderRect(ctx, bx, by, borderBounds.width, borderBounds.height, borderData.color);
                 }
 
 
@@ -1240,7 +1293,7 @@ _html2canvas.Parse = function ( images, options ) {
 
     /*
     SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards
-    */
+ */
 
     if ( support.svgRendering ) {
         (function( body ){
