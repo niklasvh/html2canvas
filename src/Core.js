@@ -120,6 +120,14 @@ _html2canvas.Util.getCSS = function (el, attribute) {
             val[ 0 ] = ( val[0].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
             val[ 1 ] = ( val[1] === undefined ) ? val[0] : val[1]; // IE 9 doesn't return double digit always
             val[ 1 ] = ( val[1].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
+        } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
+            var arr = val.split(" ");
+            if ( arr.length <= 1 ) {
+                arr[ 1 ] = arr[ 0 ];
+            }
+            arr[ 0 ] = parseInt( arr[ 0 ], 10 );
+            arr[ 1 ] = parseInt( arr[ 1 ], 10 );
+            val = arr;
         }
 
     } else if ( el.currentStyle ) {
