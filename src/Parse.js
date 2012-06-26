@@ -619,6 +619,7 @@ _html2canvas.Parse = function ( images, options ) {
         by,
         bw,
         bh,
+        i,
         borderArgs,
         borderBounds,
         borders = (function(el){
@@ -636,9 +637,10 @@ _html2canvas.Parse = function ( images, options ) {
             return borders;
 
         }(el)),
+        // http://www.w3.org/TR/css3-background/#the-border-radius
         borderRadius = (function( el ) {
             var borders = [],
-            sides = ["TopLeft","TopRight","BottomLeft","BottomRight"],
+            sides = ["TopLeft","TopRight","BottomRight","BottomLeft"],
             s;
             
             for (s = 0; s < 4; s+=1){
@@ -664,10 +666,11 @@ _html2canvas.Parse = function ( images, options ) {
                         // top border
                         bh = borders[0].width;
                         
-                        borderArgs[ 0 ] = [ bx, by ];  // top left
-                        borderArgs[ 1 ] = [ bx + bw, by ]; // top right
-                        borderArgs[ 2 ] = [ bx + bw - borders[ 1 ].width, by + bh  ]; // bottom right
-                        borderArgs[ 3 ] = [ bx + borders[ 3 ].width, by + bh ]; // bottom left
+                        i = 0;
+                        borderArgs[ i++ ] = [ "line", bx, by ];  // top left
+                        borderArgs[ i++ ] = [ "line", bx + bw, by ]; // top right
+                        borderArgs[ i++ ] = [ "line", bx + bw - borders[ 1 ].width, by + bh  ]; // bottom right
+                        borderArgs[ i++ ] = [ "line", bx + borders[ 3 ].width, by + bh ]; // bottom left
                         
                         break;
                     case 1:
@@ -675,31 +678,35 @@ _html2canvas.Parse = function ( images, options ) {
                         bx = x + w - (borders[1].width);
                         bw = borders[1].width;
                         
-                        borderArgs[ 0 ] = [ bx, by + borders[ 0 ].width];  // top left
-                        borderArgs[ 1 ] = [ bx + bw, by ]; // top right
-                        borderArgs[ 2 ] = [ bx + bw, by + bh + borders[ 2 ].width ]; // bottom right
-                        borderArgs[ 3 ] = [ bx, by + bh ]; // bottom left
+                        i = 0;
+                        borderArgs[ i++ ] = [ "line", bx, by + borders[ 0 ].width];  // top left
+                        borderArgs[ i++ ] = [ "line", bx + bw, by ]; // top right
+                        borderArgs[ i++ ] = [ "line", bx + bw, by + bh + borders[ 2 ].width ]; // bottom right
+                        borderArgs[ i++ ] = [ "line", bx, by + bh ]; // bottom left
                         
                         break;
                     case 2:
                         // bottom border
                         by = (by + h) - (borders[2].width);
                         bh = borders[2].width;
-                                                   
-                        borderArgs[ 0 ] = [ bx + borders[ 3 ].width, by ];  // top left
-                        borderArgs[ 1 ] = [ bx + bw - borders[ 2 ].width, by ]; // top right
-                        borderArgs[ 2 ] = [ bx + bw, by + bh ]; // bottom right
-                        borderArgs[ 3 ] = [ bx, by + bh ]; // bottom left
+                                             
+                                    
+                        i = 0;
+                        borderArgs[ i++ ] = [ "line", bx + borders[ 3 ].width, by ];  // top left
+                        borderArgs[ i++ ] = [ "line", bx + bw - borders[ 2 ].width, by ]; // top right
+                        borderArgs[ i++ ] = [ "line", bx + bw, by + bh ]; // bottom right
+                        borderArgs[ i++ ] = [ "line", bx, by + bh ]; // bottom left
                         
                         break;
                     case 3:
                         // left border
                         bw = borders[3].width;
                         
-                        borderArgs[ 0 ] = [ bx, by ];  // top left
-                        borderArgs[ 1 ] = [ bx + bw, by + borders[ 0 ].width ]; // top right
-                        borderArgs[ 2 ] = [ bx + bw, by + bh ]; // bottom right
-                        borderArgs[ 3 ] = [ bx, by + bh + borders[ 2 ].width ]; // bottom left
+                        i = 0;
+                        borderArgs[ i++ ] = [ "line", bx, by ];  // top left
+                        borderArgs[ i++ ] = [ "line", bx + bw, by + borders[ 0 ].width ]; // top right
+                        borderArgs[ i++ ] = [ "line", bx + bw, by + bh ]; // bottom right
+                        borderArgs[ i++ ] = [ "line", bx, by + bh + borders[ 2 ].width ]; // bottom left
                         
                         break;
                 }
@@ -721,12 +728,13 @@ _html2canvas.Parse = function ( images, options ) {
                     if ( borderData.color !== "transparent" ){
                         ctx.setVariable( "fillStyle", borderData.color );
                         
-                        var shape = ctx.drawShape();
-                        shape.moveTo.apply( null, borderArgs[ 0 ] ); // top left
-                        shape.lineTo.apply( null, borderArgs[ 1 ] ); // top right 
-                        shape.lineTo.apply( null, borderArgs[ 2 ] ); // bottom right 
-                        shape.lineTo.apply( null, borderArgs[ 3 ] ); // bottom left 
-                        // ctx.fillRect (x, y, w, h);
+                        var shape = ctx.drawShape(),
+                        numBorderArgs = borderArgs.length;
+                        
+                        for ( i = 0; i < numBorderArgs; i++ ) {
+                            shape[( i === 0) ? "moveTo" : borderArgs[ i ][ 0 ] + "To" ].apply( null, borderArgs[ i ].slice(1) );
+                        }
+
                         numDraws+=1;
                     }
                     
