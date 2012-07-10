@@ -44,7 +44,7 @@ To access the created canvas, provide the `onrendered` event in the options whic
                document.body.appendChild( canvas );
             */
             }
-    );
+    });
  
 
 ### Examples ###
