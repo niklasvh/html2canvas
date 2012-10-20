@@ -20,8 +20,8 @@ _html2canvas.Preload = function( options ) {
     count = 0,
     element = options.elements[0] || document.body,
     doc = element.ownerDocument,
-    domImages = doc.images, // TODO probably should limit it to images present in the element only
-    imgLen = domImages.length,
+    domImages = $(element).find('img'), // Find the images only inside the contained element
+    imgLen = domImages.length || 0, //just it case
     link = doc.createElement("a"),
     supportCORS = (function( img ){
         return (img.crossOrigin !== undefined);
