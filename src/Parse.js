@@ -363,7 +363,10 @@ _html2canvas.Parse = function ( images, options ) {
                         continue;
                     }
 
-                    newTextNode = oldTextNode.splitText(renderList[c].length);
+                    if (i < listLen-1)
+                        newTextNode = oldTextNode.splitText(renderList[c].length);
+                    else
+                        newTextNode = null;
 
                     parent = oldTextNode.parentNode;
                     wrapElement = doc.createElement('wrapper');
