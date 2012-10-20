@@ -285,7 +285,7 @@ _html2canvas.Parse = function ( images, options ) {
 
             text_align = text_align.replace(["-webkit-auto"],["auto"]);
 
-            if (options.letterRendering === false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none)$/.test(letter_spacing)){
+            if (options.letterRendering === false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none|0px)$/.test(letter_spacing)){
                 // this.setContextVariable(ctx,"textAlign",text_align);
                 renderList = textNode.nodeValue.split(/(\b| )/);
 
