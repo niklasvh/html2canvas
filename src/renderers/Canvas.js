@@ -97,12 +97,25 @@ _html2canvas.Renderer.Canvas = function( options ) {
             renderItem,
             testctx = ( hasCTX ) ? testCanvas.getContext("2d") : {},
             safeImages = [],
-            fstyle;
+            fstyle,
+            scaleX = 1,
+            scaleY = 1;
 
             canvas.width = canvas.style.width = (!usingFlashcanvas) ? options.width || zStack.ctx.width : Math.min(flashMaxSize, (options.width || zStack.ctx.width) );
             canvas.height = canvas.style.height = (!usingFlashcanvas) ? options.height || zStack.ctx.height : Math.min(flashMaxSize, (options.height || zStack.ctx.height) );
 
             fstyle = ctx.fillStyle;
+
+            if (options.scale) {
+                if (!isNaN(options.scale))
+                    scaleX = scaleY = options.scale;
+                else {
+                    scaleX = options.scale.x;
+                    scaleY = options.scale.y;
+                }
+                ctx.scale(scaleX, scaleY);
+            }
+
             ctx.fillStyle = zStack.backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = fstyle;
@@ -211,11 +224,11 @@ _html2canvas.Renderer.Canvas = function( options ) {
                     // crop image to the bounds of selected (single) element
                     bounds = _html2canvas.Util.Bounds( options.elements[ 0 ] );
                     newCanvas = doc.createElement('canvas');
-                    newCanvas.width = bounds.width;
-                    newCanvas.height = bounds.height;
-                    ctx = newCanvas.getContext("2d");
+                    newCanvas.width = bounds.width * scaleX;
+                    newCanvas.height = bounds.height * scaleY;
 
-                    ctx.drawImage( canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height );
+                    ctx = newCanvas.getContext("2d");
+                    ctx.drawImage( canvas, bounds.left * scaleX, bounds.top * scaleY, bounds.width * scaleX, bounds.height * scaleY, 0, 0, bounds.width * scaleX, bounds.height * scaleY );
                     canvas = null;
                     return newCanvas;
                 }
