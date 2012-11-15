@@ -28,6 +28,7 @@ html2canvas = function( elements, opts ) {
         ignoreElements: "IFRAME|OBJECT|PARAM",
         useOverflow: true,
         letterRendering: false,
+	renderHidden : false,
 
         // render options
 
