@@ -1,0 +1,12 @@
+{
+  "title": "html2canvas",
+  "name": "html2canvas",
+  "description": "File archive management library in JavaScript",
+  "version": "0.4.0",
+  "author": {
+    "name":"Niklas von Hertzen (@niklasvh)"
+  },
+  "homepage": "http://html2canvas.hertzen.com",
+  "licenses": [{"type": "MIT"}]
+
+}
