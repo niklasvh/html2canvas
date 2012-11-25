@@ -200,16 +200,56 @@ _html2canvas.Parse = function ( images, options ) {
   }
 
   function drawText(currentText, x, y, ctx){
-    if (trimText(currentText).length > 0) {
+    if (currentText !== null && trimText(currentText).length > 0) {
       ctx.fillText(currentText, x, y);
       numDraws+=1;
     }
   }
 
-  function renderText(el, textNode, stack) {
-    var ctx = stack.ctx,
+  function setTextVariables(ctx, el, text_decoration, color) {
+    var align = false,
+    font_style = getCSS(el, "fontStyle"),
+    bold = getCSS(el, "fontWeight"),
     family = getCSS(el, "fontFamily"),
     size = getCSS(el, "fontSize"),
+    font_variant = getCSS(el, "fontVariant");
+
+    switch(parseInt(bold, 10)){
+      case 401:
+        bold = "bold";
+        break;
+      case 400:
+        bold = "normal";
+        break;
+    }
+
+    ctx.setVariable("fillStyle", color);
+    ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
+    ctx.setVariable("textAlign", (align) ? "right" : "left");
+    if (text_decoration !== "none"){
+      return fontMetrics(family, size);
+    }
+  }
+
+  function renderTextDecoration(text_decoration, bounds, metrics, color) {
+    switch(text_decoration) {
+      case "underline":
+        // Draws a line at the baseline of the font
+        // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
+        renderRect(ctx, bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, color);
+        break;
+      case "overline":
+        renderRect(ctx, bounds.left, bounds.top, bounds.width, 1, color);
+        break;
+      case "line-through":
+        // TODO try and find exact position for line-through
+        renderRect(ctx, bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, color);
+        break;
+    }
+  }
+
+  function renderText(el, textNode, stack) {
+    var ctx = stack.ctx,
     color = getCSS(el, "color"),
     text_decoration = getCSS(el, "textDecoration"),
     text_align = getCSS(el, "textAlign"),
@@ -219,10 +259,6 @@ _html2canvas.Parse = function ( images, options ) {
     metrics,
     renderList,
     listLen,
-    bold = getCSS(el, "fontWeight"),
-    font_style = getCSS(el, "fontStyle"),
-    font_variant = getCSS(el, "fontVariant"),
-    align = false,
     newTextNode,
     textValue,
     textOffset = 0,
@@ -236,29 +272,13 @@ _html2canvas.Parse = function ( images, options ) {
     textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
     text = trimText(textNode.nodeValue);
 
-    if (text.length>0){
-
-      if (text_decoration !== "none"){
-        metrics = fontMetrics(family, size);
-      }
+    if (text.length > 0){
 
       text_align = text_align.replace(["-webkit-auto"],["auto"]);
 
       renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing)) ? textNode.nodeValue.split(/(\b| )/) : textNode.nodeValue.split("");
 
-      switch(parseInt(bold, 10)){
-        case 401:
-          bold = "bold";
-          break;
-        case 400:
-          bold = "normal";
-          break;
-      }
-
-      ctx.setVariable("fillStyle", color);
-      ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
-      ctx.setVariable("textAlign", (align) ? "right" : "left");
-
+      metrics = setTextVariables(ctx, el, text_decoration, color);
       oldTextNode = textNode;
 
       for ( c=0, listLen = renderList.length; c < listLen; c+=1 ) {
@@ -311,24 +331,9 @@ _html2canvas.Parse = function ( images, options ) {
 
         }
 
-        if (textValue !== null){
-          drawText(textValue, bounds.left, bounds.bottom, ctx);
-        }
 
-        switch(text_decoration) {
-          case "underline":
-            // Draws a line at the baseline of the font
-            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
-            renderRect(ctx, bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, color);
-            break;
-          case "overline":
-            renderRect(ctx, bounds.left, bounds.top, bounds.width, 1, color);
-            break;
-          case "line-through":
-            // TODO try and find exact position for line-through
-            renderRect(ctx, bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, color);
-            break;
-        }
+        drawText(textValue, bounds.left, bounds.bottom, ctx);
+        renderTextDecoration(text_decoration, bounds, metrics, color);
 
         textOffset += renderList[c].length;
 
@@ -357,8 +362,6 @@ _html2canvas.Parse = function ( images, options ) {
     element.style.listStyleType = type;
     return bounds;
   }
-
-
 
   function elementIndex( el ) {
     var i = -1,
