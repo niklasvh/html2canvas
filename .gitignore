@@ -9,5 +9,7 @@
 image.jpg
 /.project
 /.settings/
+node_modules/
 .envrc
+tests/selenium.js
 *.sublime-workspace

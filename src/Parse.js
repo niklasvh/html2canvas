@@ -1271,7 +1271,7 @@ _html2canvas.Parse = function ( images, options ) {
   function parseElement (el, stack) {
 
     // skip hidden elements and their children
-    if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden") {
+    if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden" && !el.hasAttribute("data-html2canvas-ignore")) {
 
       stack = renderElement(el, stack) || stack;
 
