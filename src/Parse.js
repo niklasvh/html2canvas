@@ -220,7 +220,7 @@ _html2canvas.Parse = function ( images, options ) {
     }
 
     ctx.setVariable("fillStyle", color);
-    ctx.setVariable("font", font_style+ " " + font_variant  + " " + bold + " " + size + " " + family);
+    ctx.setVariable("font", [font_style, font_variant, bold, size, family].join(" "));
     ctx.setVariable("textAlign", (align) ? "right" : "left");
     if (text_decoration !== "none"){
       return fontMetrics(family, size);
