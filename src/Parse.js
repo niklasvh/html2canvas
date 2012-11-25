@@ -114,20 +114,16 @@ _html2canvas.Parse = function ( images, options ) {
     switch(transform){
       case "lowercase":
         return text.toLowerCase();
-
       case "capitalize":
         return text.replace( /(^|\s|:|-|\(|\))([a-z])/g , function (m, p1, p2) {
           if (m.length > 0) {
             return p1 + p2.toUpperCase();
           }
         } );
-
       case "uppercase":
         return text.toUpperCase();
-
       default:
         return text;
-
     }
   }
 
@@ -381,63 +377,49 @@ _html2canvas.Parse = function ( images, options ) {
 
   }
 
+  function listItemText(element, type) {
+    var currentIndex = elementIndex(element),
+    text;
+    switch(type){
+      case "decimal":
+        text = currentIndex;
+        break;
+      case "decimal-leading-zero":
+        text = (currentIndex.toString().length === 1) ? currentIndex = "0" + currentIndex.toString() : currentIndex.toString();
+        break;
+      case "upper-roman":
+        text = _html2canvas.Generate.ListRoman( currentIndex );
+        break;
+      case "lower-roman":
+        text = _html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
+        break;
+      case "lower-alpha":
+        text = _html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();
+        break;
+      case "upper-alpha":
+        text = _html2canvas.Generate.ListAlpha( currentIndex );
+        break;
+    }
+
+    text += ". ";
+    return text;
+  }
+
   function renderListItem(element, stack, elBounds) {
     var position = getCSS(element, "listStylePosition"),
     x,
     y,
-    type = getCSS(element, "listStyleType"),
-    currentIndex,
     text,
-    listBounds,
-    bold = getCSS(element, "fontWeight");
+    type = getCSS(element, "listStyleType"),
+    listBounds;
 
     if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(type)) {
-
-      currentIndex = elementIndex( element );
-
-      switch(type){
-        case "decimal":
-          text = currentIndex;
-          break;
-        case "decimal-leading-zero":
-          if (currentIndex.toString().length === 1){
-            text = currentIndex = "0" + currentIndex.toString();
-          }else{
-            text = currentIndex.toString();
-          }
-          break;
-        case "upper-roman":
-          text = _html2canvas.Generate.ListRoman( currentIndex );
-          break;
-        case "lower-roman":
-          text = _html2canvas.Generate.ListRoman( currentIndex ).toLowerCase();
-          break;
-        case "lower-alpha":
-          text = _html2canvas.Generate.ListAlpha( currentIndex ).toLowerCase();
-          break;
-        case "upper-alpha":
-          text = _html2canvas.Generate.ListAlpha( currentIndex );
-          break;
-      }
-
-      text += ". ";
+      text = listItemText(element, type);
       listBounds = listPosition(element, text);
+      setTextVariables(ctx, element, "none", getCSS(element, "color"));
 
-      switch(bold){
-        case 401:
-          bold = "bold";
-          break;
-        case 400:
-          bold = "normal";
-          break;
-      }
-
-      ctx.setVariable( "fillStyle", getCSS(element, "color") );
-      ctx.setVariable( "font", getCSS(element, "fontVariant") + " " + bold + " " + getCSS(element, "fontStyle") + " " + getCSS(element, "fontSize") + " " + getCSS(element, "fontFamily") );
-
-      if ( position === "inside" ) {
+      if (position === "inside") {
         ctx.setVariable("textAlign", "left");
-        //   this.setFont(stack.ctx, element, false);
         x = elBounds.left;
       } else {
         return;
