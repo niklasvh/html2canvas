@@ -157,7 +157,7 @@ _html2canvas.Renderer.Canvas = function( options ) {
                     }
                   } else if (renderItem.name === "drawImage") {
 
-                    if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7]){
+                    if (renderItem['arguments'][8] > 0 && renderItem['arguments'][7] > 0) {
                       if ( hasCTX && options.taintTest ) {
                         if ( safeImages.indexOf( renderItem['arguments'][ 0 ].src ) === -1 ) {
                           testctx.drawImage( renderItem['arguments'][ 0 ], 0, 0 );
