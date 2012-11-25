@@ -1,15 +1,3 @@
-/*
-  html2canvas @VERSION@ <http://html2canvas.hertzen.com>
-  Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
-  http://www.twitter.com/niklasvh
-
-  Released under MIT License
- */
-
-/*
- *  New function for traversing elements
- */
-
 _html2canvas.Parse = function ( images, options ) {
   window.scroll(0,0);
 
@@ -109,17 +97,6 @@ _html2canvas.Parse = function ( images, options ) {
     }
 
   }
-
-
-  /*
-    var rootStack = new this.storageContext($(document).width(),$(document).height());
-    rootStack.opacity = this.getCSS(this.element,"opacity");
-    var stack = this.newElement(this.element,rootStack);
-
-
-    this.parseElement(this.element,stack);
-     */
-
 
 
 
@@ -350,12 +327,12 @@ _html2canvas.Parse = function ( images, options ) {
 
             if (range.getBoundingClientRect()) {
               bounds = range.getBoundingClientRect();
-            }else{
+            } else {
               bounds = {};
             }
 
           }
-        }else{
+        } else {
           // it isn't supported, so let's wrap it inside an element instead and get the bounds there
 
           // IE 9 bug
