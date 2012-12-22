@@ -1,4 +1,4 @@
-_html2canvas.Parse = function ( images, options ) {
+_html2canvas.Parse = function (images, options) {
   window.scroll(0,0);
 
   var support = {
@@ -96,16 +96,16 @@ _html2canvas.Parse = function ( images, options ) {
   }
 
   var getCSS = _html2canvas.Util.getCSS;
+
   function getCSSInt(element, attribute) {
     var val = parseInt(getCSS(element, attribute), 10);
     return (isNaN(val)) ? 0 : val; // borders in old IE are throwing 'medium' for demo.html
   }
 
-  // Drawing a rectangle
   function renderRect (ctx, x, y, w, h, bgcolor) {
     if (bgcolor !== "transparent"){
       ctx.setVariable("fillStyle", bgcolor);
-      ctx.fillRect (x, y, w, h);
+      ctx.fillRect(x, y, w, h);
       numDraws+=1;
     }
   }
@@ -144,6 +144,7 @@ _html2canvas.Parse = function ( images, options ) {
     var container = doc.createElement('div'),
     img = doc.createElement('img'),
     span = doc.createElement('span'),
+    sampleText = 'Hidden Text',
     baseline,
     middle,
     metricsObj;
@@ -170,13 +171,13 @@ _html2canvas.Parse = function ( images, options ) {
     span.style.margin = 0;
     span.style.padding = 0;
 
-    span.appendChild(doc.createTextNode('Hidden Text'));
+    span.appendChild(doc.createTextNode(sampleText));
     container.appendChild(span);
     container.appendChild(img);
     baseline = (img.offsetTop - span.offsetTop) + 1;
 
     container.removeChild(span);
-    container.appendChild(doc.createTextNode('Hidden Text'));
+    container.appendChild(doc.createTextNode(sampleText));
 
     container.style.lineHeight = "normal";
     img.style.verticalAlign = "super";
@@ -222,6 +223,7 @@ _html2canvas.Parse = function ( images, options ) {
     ctx.setVariable("fillStyle", color);
     ctx.setVariable("font", [font_style, font_variant, bold, size, family].join(" "));
     ctx.setVariable("textAlign", (align) ? "right" : "left");
+
     if (text_decoration !== "none"){
       return fontMetrics(family, size);
     }
@@ -327,8 +329,9 @@ _html2canvas.Parse = function ( images, options ) {
 
         }
 
-
-        drawText(textValue, bounds.left, bounds.bottom, ctx);
+        if (textValue !== null) {
+          drawText(textValue, bounds.left, bounds.bottom, ctx);
+        }
         renderTextDecoration(text_decoration, bounds, metrics, color);
 
         textOffset += renderList[c].length;
@@ -341,21 +344,21 @@ _html2canvas.Parse = function ( images, options ) {
 
   function listPosition (element, val) {
     var boundElement = doc.createElement( "boundelement" ),
-    type,
+    originalType,
     bounds;
 
     boundElement.style.display = "inline";
 
-    type = element.style.listStyleType;
+    originalType = element.style.listStyleType;
     element.style.listStyleType = "none";
 
-    boundElement.appendChild( doc.createTextNode( val ) );
+    boundElement.appendChild(doc.createTextNode(val));
 
     element.insertBefore(boundElement, element.firstChild);
 
-    bounds = _html2canvas.Util.Bounds( boundElement );
-    element.removeChild( boundElement );
-    element.style.listStyleType = type;
+    bounds = _html2canvas.Util.Bounds(boundElement);
+    element.removeChild(boundElement);
+    element.style.listStyleType = originalType;
     return bounds;
   }
 
@@ -406,9 +409,7 @@ _html2canvas.Parse = function ( images, options ) {
   }
 
   function renderListItem(element, stack, elBounds) {
-    var position = getCSS(element, "listStylePosition"),
-    x,
-    y,
+    var x,
     text,
     type = getCSS(element, "listStyleType"),
     listBounds;
@@ -418,16 +419,14 @@ _html2canvas.Parse = function ( images, options ) {
       listBounds = listPosition(element, text);
       setTextVariables(ctx, element, "none", getCSS(element, "color"));
 
-      if (position === "inside") {
+      if (getCSS(element, "listStylePosition") === "inside") {
         ctx.setVariable("textAlign", "left");
         x = elBounds.left;
       } else {
         return;
       }
 
-      y = listBounds.bottom;
-
-      drawText(text, x, y, ctx);
+      drawText(text, x, listBounds.bottom, ctx);
     }
   }
 
@@ -731,15 +730,13 @@ _html2canvas.Parse = function ( images, options ) {
     height,
     add;
 
-    //   if (typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false && /^(-webkit|-moz|linear-gradient|-o-)/.test(background_image)===false){
-
     if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {
       background_image = background_image.split(",")[0];
     }
 
-    if ( typeof background_image !== "undefined" && /^(1|none)$/.test( background_image ) === false ) {
-      background_image = _html2canvas.Util.backgroundImage( background_image );
-      image = loadImage( background_image );
+    if ( typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false ) {
+      background_image = _html2canvas.Util.backgroundImage(background_image);
+      image = loadImage(background_image);
 
 
       bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
@@ -748,11 +745,11 @@ _html2canvas.Parse = function ( images, options ) {
       if ( image ){
         switch ( background_repeat ) {
           case "repeat-x":
-            renderBackgroundRepeatX( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );
+            renderBackgroundRepeatX(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);
             break;
 
           case "repeat-y":
-            renderBackgroundRepeatY( ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height );
+            renderBackgroundRepeatY(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);
             break;
 
           case "no-repeat":
@@ -890,18 +887,16 @@ _html2canvas.Parse = function ( images, options ) {
 
     ctx.setVariable("globalAlpha", stack.opacity);
 
-    // draw element borders
+
     borders = renderBorders(el, ctx, bounds, false);
     stack.borders = borders;
 
 
-    // let's modify clip area for child elements, so borders dont get overwritten
 
     if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){
       bgcolor = (options.iframeDefault === "default") ? "#efefef" : options.iframeDefault;
     }
 
-    // draw base element bgcolor
 
     bgbounds = {
       left: x + borders[3].width,

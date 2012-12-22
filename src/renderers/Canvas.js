@@ -94,7 +94,7 @@ _html2canvas.Renderer.Canvas = function( options ) {
       canvas.height = canvas.style.height = (!usingFlashcanvas) ? options.height || zStack.ctx.height : Math.min(flashMaxSize, (options.height || zStack.ctx.height) );
 
       fstyle = ctx.fillStyle;
-      ctx.fillStyle = zStack.backgroundColor;
+      ctx.fillStyle = (zStack.backgroundColor === "transparent") ? "#fff" : zStack.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = fstyle;
 
