@@ -12,5 +12,4 @@ image.jpg
 node_modules/
 .envrc
 server.js
-tests/selenium.js
 *.sublime-workspace
