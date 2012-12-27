@@ -9,7 +9,7 @@ var h2cSelector, h2cOptions;
 (function(document, window) {
     var srcStart = '<script type="text/javascript" src="', scrEnd = '"></script>';
 
-    document.write(srcStart + '/external/jquery-1.6.2.js' + scrEnd);
+    document.write(srcStart + '/tests/assets/jquery-1.6.2.js' + scrEnd);
     document.write(srcStart + '/tests/assets/jquery.plugin.html2canvas.js' + scrEnd);
     var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas'], i;
     for (i = 0; i < html2canvas.length; ++i) {
