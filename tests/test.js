@@ -10,7 +10,8 @@ var h2cSelector, h2cOptions;
     var srcStart = '<script type="text/javascript" src="', scrEnd = '"></script>';
 
     document.write(srcStart + '/external/jquery-1.6.2.js' + scrEnd);
-    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas',  'plugins/jquery.plugin.html2canvas'], i;
+    document.write(srcStart + '/tests/assets/jquery.plugin.html2canvas.js' + scrEnd);
+    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas'], i;
     for (i = 0; i < html2canvas.length; ++i) {
         document.write(srcStart + '/src/' + html2canvas[i] + '.js' + scrEnd);
     }
@@ -27,6 +28,7 @@ var h2cSelector, h2cOptions;
                 flashcanvas: "../external/flashcanvas.min.js",
                 logging: true,
                 profile: true,
+                proxy: "http://html2canvas.appspot.com/query",
                 useCORS: true
             }, h2cOptions));
         }, 100);

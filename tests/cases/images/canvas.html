@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script type="text/javascript" src="../../test.js"></script>
+    <script type="text/javascript">
+      function setUp() {
+        if ($('#testcanvas')[0].getContext) {
+          var ctx = $('#testcanvas')[0].getContext('2d');
+
+          ctx.fillStyle = "rgb(200,0,0)";
+          ctx.fillRect (10, 10, 55, 50);
+
+          ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+          ctx.fillRect (30, 30, 55, 50);
+        } else {
+          $('#testcanvas').remove();
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <canvas id="testcanvas" style="width:700px;height:300px;"></canvas>
+  </body>
+</html>

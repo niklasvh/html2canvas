@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>List tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+
+    <script type="text/javascript">
+      function setUp() {
+        var supportedTypes = ["decimal","decimal-leading-zero","upper-roman","lower-roman","lower-alpha","upper-alpha"];
+        for (var i = 1;i<=100;i++){
+          $('#dynamic').append($('<li />').text(i).css('list-style-type',supportedTypes[1]));
+        }
+      }
+    </script>
+
+    <style>
+      #dynamic{
+        list-style-type:decimal;
+        list-style-position: inside;
+        font-size:20px;
+        line-height:50px;
+
+      }
+
+      .small{
+        font-size:14px;
+      }
+
+      .medium{
+        font-size:18px;
+      }
+      .large{
+        font-size:24px;
+      }
+      div{
+        float:left;
+      }
+      h2 {
+        clear:both;
+      }
+      li{
+        border:1px solid black;
+        width:100px;
+        margin:0;
+      }
+      ol{
+        margin:0;
+
+      }
+    </style>
+
+  </head>
+  <body>
+    <ol id="dynamic"></ol>
+  </body>
+</html>
