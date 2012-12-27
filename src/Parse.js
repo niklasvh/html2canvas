@@ -274,7 +274,9 @@ _html2canvas.Parse = function (images, options) {
 
       text_align = text_align.replace(["-webkit-auto"],["auto"]);
 
-      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing)) ? textNode.nodeValue.split(/(\b| )/) : textNode.nodeValue.split("");
+      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing))
+      ? textNode.nodeValue.split(/(\b| )/)
+      : textNode.nodeValue.split("");
 
       metrics = setTextVariables(ctx, el, text_decoration, color);
       oldTextNode = textNode;
@@ -307,7 +309,7 @@ _html2canvas.Parse = function (images, options) {
           // it isn't supported, so let's wrap it inside an element instead and get the bounds there
 
           // IE 9 bug
-          if (typeof oldTextNode.nodeValue !== "string" ){
+          if (!oldTextNode || typeof oldTextNode.nodeValue !== "string" ){
             continue;
           }
 
@@ -326,7 +328,6 @@ _html2canvas.Parse = function (images, options) {
 
           oldTextNode = newTextNode;
           parent.replaceChild(backupText, wrapElement);
-
         }
 
         if (textValue !== null) {
@@ -1002,25 +1003,22 @@ _html2canvas.Parse = function (images, options) {
 
     // skip hidden elements and their children
     if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden" && !el.hasAttribute("data-html2canvas-ignore")) {
-
       stack = renderElement(el, stack) || stack;
-
       ctx = stack.ctx;
 
-      if ( !ignoreElementsRegExp.test( el.nodeName ) ) {
-        var elementChildren = _html2canvas.Util.Children( el ),
+      if (!ignoreElementsRegExp.test(el.nodeName)) {
+        var elementChildren = _html2canvas.Util.Children(el),
         i,
         node,
         childrenLen;
+
         for (i = 0, childrenLen = elementChildren.length; i < childrenLen; i+=1) {
           node = elementChildren[i];
-
-          if ( node.nodeType === 1 ) {
+          if (node.nodeType === 1) {
             parseElement(node, stack);
-          }else if ( node.nodeType === 3 ) {
+          } else if (node.nodeType === 3) {
             renderText(el, node, stack);
           }
-
         }
 
       }
@@ -1081,7 +1079,7 @@ _html2canvas.Parse = function (images, options) {
 
       }
 
-      parseDOM( body );
+      parseDOM(body);
       img.src = [
       "data:image/svg+xml,",
       "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + size.width + "' height='" + size.height + "'>",
@@ -1093,14 +1091,11 @@ _html2canvas.Parse = function (images, options) {
       "</svg>"
       ].join("");
 
-
-
-
       img.onload = function() {
         stack.svgRender = img;
       };
 
-    })( document.documentElement );
+    })(document.documentElement);
 
   }
 
@@ -1110,8 +1105,7 @@ _html2canvas.Parse = function (images, options) {
     parseElement(children[i], stack);
   }
 
-
-  stack.backgroundColor = getCSS( document.documentElement, "backgroundColor" );
+  stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
 
   return stack;
 
