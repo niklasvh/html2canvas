@@ -13,3 +13,4 @@ node_modules/
 .envrc
 server.js
 *.sublime-workspace
+chromedriver.log
