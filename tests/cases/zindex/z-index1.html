@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>z-index tests #1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+
+      div { font: 12px Arial; }
+
+      span.bold { font-weight: bold; }
+
+      #div1,#div3 {
+        height: 80px;
+        position: relative;
+        border: 1px solid #669966;
+        background-color: #ccffcc;
+        padding-left: 5px;
+      }
+
+      #div2 {
+        opacity: 0.8;
+        z-index: 1;
+        position: absolute;
+        width: 150px;
+        height: 200px;
+        top: 20px;
+        left: 170px;
+        border: 1px solid #990000;
+        background-color: #ffdddd;
+        text-align: center;
+      }
+
+      #div4 {
+        opacity: 0.8;
+        z-index: 2;
+        position: absolute;
+        width: 200px;
+        height: 70px;
+        top: 65px;
+        left: 50px;
+        border: 1px solid #000099;
+        background-color: #ddddff;
+        text-align: left;
+        padding-left: 10px;
+      }
+
+    </style>
+
+  </head>
+  <body>
+
+    <div>
+      <br />
+
+      No z-indexed content
+      <div id="div1">
+        <br /><span class="bold">DIV #1</span>
+        <br />position: relative;
+        <div id="div2">
+          <br /><span class="bold">DIV #2</span>
+          <br />position: absolute;
+          <br />z-index: 1;
+        </div>
+      </div>
+
+      <br />
+
+      <div id="div3">
+        <br /><span class="bold">DIV #3</span>
+        <br />position: relative;
+        <div id="div4">
+          <br /><span class="bold">DIV #4</span>
+          <br />position: absolute;
+          <br />z-index: 2;
+        </div>
+      </div>
+      Some more non-zindexed content
+    </div>
+  </body>
+</html>
