@@ -1,25 +1,18 @@
-<!--
-* @author Niklas von Hertzen <niklas at hertzen.com>
-* @created 16.7.2011 
-* @website http://hertzen.com
--->
 <!DOCTYPE html>
 <html>
     <head>
         <title>Text-decoration:underline tests</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="#" type="text/css" rel="stylesheet"> 
-
-        <script type="text/javascript" src="test.js"></script>
+        <script type="text/javascript" src="../../test.js"></script>
         <script type="text/javascript">
             function setUp() {
                 $('body').empty();
                 $.each(['arial','verdana','tahoma','courier new'],function(i,e){
                     var div = $('<div />').css('font-family',e).appendTo('body');
-                    for(var i=0;i<=20;i++){
+                    for(var i=0;i<=10;i++){
                         $('<div />').text('Testing texts').css('margin-top',1).css('border','1px solid black').css('font-size',(16+i*6)).appendTo(div);
-                    } 
-                    
+                    }
+
                 });
             }
         </script>
@@ -50,7 +43,7 @@
         </style>
 
     </head>
-    <body>          
+    <body>
         Creating content through JavaScript
     </body>
 </html>
