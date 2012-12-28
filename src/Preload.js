@@ -159,15 +159,15 @@ _html2canvas.Preload = function( options ) {
     if(!value) { return results; }
     while(n++ < 100 && !!(match = value.match(rxBackgroundImage))) {
       var def = match[2];
-      if(def.substr(0,1) === '"') {
+      if(def.substr( 0, 1 ) === '"') {
          def = def.substr(1, def.length-2);
       }
-      results.push({
+      results.push( {
         method: match[1],
         definition: def,
         value: match[0]
-      });  
-      value = value.replace(match[0],'');
+      } );  
+      value = value.replace( match[0], '' );
     }  
     return results;
   }
