@@ -32,7 +32,7 @@ _html2canvas.Util.backgroundImage = function (src) {
 };
 
 _html2canvas.Util.parseBackgroundImage = function (value) {
-    var rxBackgroundImage = /([a-z\-]+)\((("[^"]+)|([^)]+))\)/i,
+    var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [], 
         c, mode = 0, numParen = 0;
 
@@ -62,15 +62,10 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
     appendResult();
     for(var i = 0, ii = value.length; i<ii; i++) {
         c = value[i];
+        if(mode === 0 && whitespace.indexOf( c ) > -1){
+            continue;
+        }
         switch(c) {
-            case ' ':
-            case '\t':
-            case '\n':
-            case '\r':
-                if(mode == 0){
-                    continue;
-                }
-                
             case '(':
                 if(mode === 0) {
                     mode = 1;
