@@ -94,6 +94,7 @@ _html2canvas.Preload = function( options ) {
     var contents = _html2canvas.Util.Children(el),
     i,
     background_image,
+    background_images,
     src,
     img,
     elNodeType = false;
@@ -122,32 +123,53 @@ _html2canvas.Preload = function( options ) {
       }catch(e) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
-      if ( background_image && background_image !== "1" && background_image !== "none" ) {
 
-        // TODO add multi image background support
+      background_images = parseBackgroundImage(background_image);
+      while(!!(background_image = background_images.shift())) {
 
-        if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image )) {
+        if ( background_image.value && background_image.value !== "1" && background_image.value !== "none" ) {
+          if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image.method )) {
 
-          img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
+            img = _html2canvas.Generate.Gradient( background_image.value, _html2canvas.Util.Bounds( el ) );
 
-          if ( img !== undefined ){
-            images[background_image] = {
-              img: img,
-              succeeded: true
-            };
-            images.numTotal++;
-            images.numLoaded++;
-            start();
+            if ( img !== undefined ){
+              images[background_image] = {
+                img: img,
+                succeeded: true
+              };
+              images.numTotal++;
+              images.numLoaded++;
+              start();
 
+            }
+
+          } else {
+            src = _html2canvas.Util.backgroundImage(background_image.definition);
+            methods.loadImage(src);
           }
 
-        } else {
-          src = _html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
-          methods.loadImage(src);
         }
-
       }
     }
+  }
+
+  function parseBackgroundImage(value) {
+    var rxBackgroundImage = /([a-z\-]+)\((("[^"]+)|([^)]+))\)/i,
+      match, results = [], n = 0;
+    if(!value) return results;
+    while(n++ < 100 && !!(match = value.match(rxBackgroundImage))) {
+      var def = match[2];
+      if(def.substr(0,1) === '"') {
+         def = def.substr(1, def.length-2);
+      }
+      results.push({
+        method: match[1],
+        definition: def,
+        value: match[0]
+      });  
+      value = value.replace(match[0],'');
+    }  
+    return results;
   }
 
   function setImageLoadHandlers(img, imageObj) {
