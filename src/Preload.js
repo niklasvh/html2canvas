@@ -144,7 +144,7 @@ _html2canvas.Preload = function( options ) {
             }
 
           } else {
-            src = _html2canvas.Util.backgroundImage(background_image.definition);
+            src = _html2canvas.Util.backgroundImage(background_image.value);
             methods.loadImage(src);
           }
 
