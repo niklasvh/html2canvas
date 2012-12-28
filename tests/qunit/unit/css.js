@@ -148,20 +148,20 @@ $(function() {
     test('background-image', function () {
         test_parse_background_image(
             'url(test)', 
-            { method: 'url', definition: 'test', value: 'url(test)' }, 
+            { prefix: '', method: 'url', definition: 'test', value: 'url(test)' }, 
             'basic url'
         );
 
         test_parse_background_image(
             'url("test")', 
-            { method: 'url', definition: 'test', value: 'url("test")' }, 
+            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' }, 
             'quoted url'
         );
 
         test_parse_background_image(
             'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)', 
             { 
-                method: 'url', 
+                prefix: '', method: 'url', 
                 definition: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
                 value: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)' 
             }, 
@@ -170,15 +170,21 @@ $(function() {
 
         test_parse_background_image(
             'linear-gradient(red,black)', 
-            { method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' }, 
+            { prefix: '', method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' }, 
+            'linear-gradient'
+        );
+
+        test_parse_background_image(
+            '-webkit-linear-gradient(red,black)', 
+            { prefix: '-webkit-', method: 'linear-gradient', definition: 'red,black', value: '-webkit-linear-gradient(red,black)' }, 
             'linear-gradient'
         );
 
         test_parse_background_image(
             'linear-gradient(red,black), url(test), url("test")', [
-            { method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' },
-            { method: 'url', definition: 'test', value: 'url(test)' },
-            { method: 'url', definition: 'test', value: 'url("test")' }
+            { prefix: '', method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' },
+            { prefix: '', method: 'url', definition: 'test', value: 'url(test)' },
+            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' }
             ],
             'multiple backgrounds'
         );
