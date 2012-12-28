@@ -27,7 +27,7 @@ _html2canvas.Util.backgroundImage = function (src) {
         return src;
     }
 
-    if (src.toLowerCase().substr( 0, 5 ) === 'url("') {
+    if (/^url\(['"]/i.test( src )) {
         src = src.substr( 5 );
         src = src.substr( 0, src.length - 2 );
     } else {
