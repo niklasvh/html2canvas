@@ -33,29 +33,81 @@ _html2canvas.Util.backgroundImage = function (src) {
 
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var rxBackgroundImage = /([a-z\-]+)\((("[^"]+)|([^)]+))\)/i,
-        match, results = [], n = 0;
-    if(!value) { return results; }
+        method, definition, prefix, prefix_i, block, results = [], 
+        c, mode = 0, numParen = 0;
 
-    while( n++ < 100 && !!(match = value.match(rxBackgroundImage)) ) {
-        var def = match[2], 
-            method = match[1],
-            prefix = '', i;
-        if(def.substr( 0, 1 ) === '"') {
-            def = def.substr( 1, def.length-2 );
+    var appendResult = function(){
+        if(method) {
+            if(definition.substr( 0, 1 ) === '"') {
+                definition = definition.substr( 1, definition.length - 2 );
+            }
+            if(method.substr( 0, 1 ) === '-' && 
+                    (prefix_i = method.indexOf( '-', 1 ) + 1) > 0) {
+                prefix = method.substr( 0, prefix_i);
+                method = method.substr( prefix_i );
+            }
+            results.push({
+                prefix: prefix,
+                method: method,
+                definition: definition,
+                value: block
+            });
         }
-        if(method.substr( 0, 1 ) === '-' && 
-                (i = method.indexOf( '-', 1 ) + 1) > 0) {
-            prefix = method.substr( 0, i);
-            method = method.substr( i );
+        method = 
+            prefix =
+            definition =
+            block = '';
+    };
+
+    appendResult();
+    for(var i = 0, ii = value.length; i<ii; i++) {
+        c = value[i];
+        switch(c) {
+            case ' ':
+            case '\t':
+            case '\n':
+            case '\r':
+                if(mode == 0){
+                    continue;
+                }
+                
+            case '(':
+                if(mode === 0) {
+                    mode = 1;
+                    block += c;
+                    continue;
+                } else {
+                    numParen++;
+                }
+                break;
+
+            case ')':
+                if(mode === 1) {
+                    if(numParen === 0) {
+                        mode = 0;
+                        block += c;
+                        appendResult();
+                        continue;
+                    } else { 
+                        numParen--; 
+                    }
+                }
+                break;
+
+            case ',':
+                if(mode === 0) {
+                    appendResult();
+                    continue;
+                }
+                break;
         }
-        results.push({
-            prefix: prefix,
-            method: method,
-            definition: def,
-            value: match[0]
-        });  
-        value = value.replace( match[0], '' );
-    }  
+
+        block += c;
+        if(mode === 0) { method += c; }
+        else { definition += c; }
+    }
+    appendResult();
+
     return results;
 };
 
