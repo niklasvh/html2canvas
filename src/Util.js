@@ -1,4 +1,4 @@
-html2canvas = function( elements, opts ) {
+html2canvas = window.html2canvas = function( elements, opts ) {
 
   var queue,
   canvas,
