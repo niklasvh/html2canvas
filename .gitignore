@@ -13,4 +13,4 @@ node_modules/
 server.js
 *.sublime-workspace
 chromedriver.log
-.baseline
+*.baseline
