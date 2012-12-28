@@ -145,6 +145,54 @@ $(function() {
         });
     }); 
     
+    test('background-image', function () {
+        test_parse_background_image(
+            'url(test)', 
+            { method: 'url', definition: 'test', value: 'url(test)' }, 
+            'basic url'
+        );
+
+        test_parse_background_image(
+            'url("test")', 
+            { method: 'url', definition: 'test', value: 'url("test")' }, 
+            'quoted url'
+        );
+
+        test_parse_background_image(
+            'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)', 
+            { 
+                method: 'url', 
+                definition: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
+                value: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)' 
+            }, 
+            'data url'
+        );
+
+        test_parse_background_image(
+            'linear-gradient(red,black)', 
+            { method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' }, 
+            'linear-gradient'
+        );
+
+        test_parse_background_image(
+            'linear-gradient(red,black), url(test), url("test")', [
+            { method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' },
+            { method: 'url', definition: 'test', value: 'url(test)' },
+            { method: 'url', definition: 'test', value: 'url("test")' }
+            ],
+            'multiple backgrounds'
+        );
+
+    });
+
+    function test_parse_background_image(value, expected, name) {
+        deepEqual(
+            _html2canvas.Util.parseBackgroundImage(value), 
+            Array.isArray(expected) ? expected : [expected], 
+            name
+        );
+    }
+
     // TODO add backgroundPosition % tests
     
 });

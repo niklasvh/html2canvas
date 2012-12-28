@@ -124,7 +124,7 @@ _html2canvas.Preload = function( options ) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
 
-      background_images = parseBackgroundImage(background_image);
+      background_images = _html2canvas.Util.parseBackgroundImage(background_image);
       while(!!(background_image = background_images.shift())) {
 
         if ( background_image.value && background_image.value !== "1" && background_image.value !== "none" ) {
@@ -151,25 +151,6 @@ _html2canvas.Preload = function( options ) {
         }
       }
     }
-  }
-
-  function parseBackgroundImage(value) {
-    var rxBackgroundImage = /([a-z\-]+)\((("[^"]+)|([^)]+))\)/i,
-      match, results = [], n = 0;
-    if(!value) { return results; }
-    while(n++ < 100 && !!(match = value.match(rxBackgroundImage))) {
-      var def = match[2];
-      if(def.substr( 0, 1 ) === '"') {
-         def = def.substr(1, def.length-2);
-      }
-      results.push( {
-        method: match[1],
-        definition: def,
-        value: match[0]
-      } );  
-      value = value.replace( match[0], '' );
-    }  
-    return results;
   }
 
   function setImageLoadHandlers(img, imageObj) {
