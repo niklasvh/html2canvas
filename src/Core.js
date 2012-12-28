@@ -37,16 +37,24 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
     if(!value) { return results; }
 
     while( n++ < 100 && !!(match = value.match(rxBackgroundImage)) ) {
-      var def = match[2];
-      if(def.substr( 0, 1 ) === '"') {
-        def = def.substr(1, def.length-2);
-    }
-    results.push({
-        method: match[1],
-        definition: def,
-        value: match[0]
-    });  
-    value = value.replace( match[0], '' );
+        var def = match[2], 
+            method = match[1],
+            prefix = '', i;
+        if(def.substr( 0, 1 ) === '"') {
+            def = def.substr( 1, def.length-2 );
+        }
+        if(method.substr( 0, 1 ) === '-' && 
+                (i = method.indexOf( '-', 1 ) + 1) > 0) {
+            prefix = method.substr( 0, i);
+            method = method.substr( i );
+        }
+        results.push({
+            prefix: prefix,
+            method: method,
+            definition: def,
+            value: match[0]
+        });  
+        value = value.replace( match[0], '' );
     }  
     return results;
 };
