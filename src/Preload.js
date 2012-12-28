@@ -156,7 +156,7 @@ _html2canvas.Preload = function( options ) {
   function parseBackgroundImage(value) {
     var rxBackgroundImage = /([a-z\-]+)\((("[^"]+)|([^)]+))\)/i,
       match, results = [], n = 0;
-    if(!value) return results;
+    if(!value) { return results; }
     while(n++ < 100 && !!(match = value.match(rxBackgroundImage))) {
       var def = match[2];
       if(def.substr(0,1) === '"') {
