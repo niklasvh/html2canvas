@@ -175,16 +175,23 @@ $(function() {
         );
 
         test_parse_background_image(
+            'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))', 
+            { prefix: '', method: 'linear-gradient', definition: 'top,rgb(255,0,0),rgb(0,0,0)', value: 'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))' }, 
+            'linear-gradient'
+        );
+
+        test_parse_background_image(
             '-webkit-linear-gradient(red,black)', 
             { prefix: '-webkit-', method: 'linear-gradient', definition: 'red,black', value: '-webkit-linear-gradient(red,black)' }, 
             'linear-gradient'
         );
 
         test_parse_background_image(
-            'linear-gradient(red,black), url(test), url("test")', [
+            'linear-gradient(red,black), url(test), url("test"),\n none, ', [
             { prefix: '', method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' },
             { prefix: '', method: 'url', definition: 'test', value: 'url(test)' },
-            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' }
+            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' },
+            { prefix: '', method: 'none', definition: '', value: 'none' }
             ],
             'multiple backgrounds'
         );
