@@ -274,9 +274,9 @@ _html2canvas.Parse = function (images, options) {
 
       text_align = text_align.replace(["-webkit-auto"],["auto"]);
 
-      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing))
-      ? textNode.nodeValue.split(/(\b| )/)
-      : textNode.nodeValue.split("");
+      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing)) ?
+        textNode.nodeValue.split(/(\b| )/) :
+        textNode.nodeValue.split("");
 
       metrics = setTextVariables(ctx, el, text_decoration, color);
       oldTextNode = textNode;
