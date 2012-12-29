@@ -11,7 +11,7 @@
   function createServer(port) {
     return http.createServer(function(request, response) {
       var uri = url.parse(request.url).pathname,
-      filename = path.join(process.cwd(), "../" + uri);
+      filename = path.join(process.cwd(), uri);
 
       fs.exists(filename, function(exists) {
         if(!exists) {
@@ -73,9 +73,15 @@
     (new PNG(arraybuffer)).decode(func);
   }
 
+  function getBaselineFiles() {
+    return fs.readdirSync("tests/results/").filter(function(name) {
+      return /\.baseline$/.test(name);
+    }).map(function(item) {
+      return "tests/results/" + item;
+    });
+  }
 
   function testPage(browser, url, done) {
-
     browser.url(url)
     .$(".html2canvas", 5000, function(){
       this.execute(function(){
@@ -105,7 +111,7 @@
 
   var openResultFile = function(stats, browser) {
     var tests = stats[browser].tests,
-    filename = "results/" + browser + ".json",
+    filename = "tests/results/" + browser + ".json",
     write = writeResultFile.bind(null, filename, JSON.stringify(stats[browser]));
 
     fs.exists(filename, function(exists) {
@@ -118,44 +124,53 @@
   };
 
   var setColor = function(color, text) {
-    return color + text.amount + "% " + text.test;
+    return [color, "  * ", ((isNaN(text.amount)) ? "NEW" : text.amount + "%"), " ", text.test].join("");
   };
 
   var parseResultFile = function(tests, browser, createResultFile, err, file) {
     if (err) throw err;
     var data = JSON.parse(file),
     improved = [],
+    regressed = [],
+    newItems = [],
     colors = {
       red: "\x1b[1;31m",
+      blue: "\x1b[1;36m",
+      violet: "\x1b[0;35m",
       green: "\x1b[0;32m"
-    },
-    regressed = [];
+    };
 
     Object.keys(tests).forEach(function(test){
       var testResult = tests[test],
       dataResult = data.tests[test],
       dataObject = {
-        amount: testResult - dataResult,
+        amount: (Math.abs(testResult - dataResult) < 0.02) ? 0 : testResult - dataResult,
         test: test
       };
 
-      if (testResult > dataResult) {
+      if (dataObject.amount > 0) {
         improved.push(dataObject);
-      } else if (testResult < dataResult) {
+      } else if (dataObject.amount < 0) {
         regressed.push(dataObject);
+      } else if (dataResult === undefined) {
+        newItems.push(dataObject);
       }
 
     });
 
-    if (improved.length > 0 || regressed.length > 0) {
+    if (newItems.length > 0 || improved.length > 0 || regressed.length > 0) {
       if (regressed.length === 0) {
         createResultFile(".baseline");
       }
 
+      console.log(colors.violet, "********************");
       console.log((regressed.length > 0) ? colors.red : colors.green, browser);
 
-      improved.map(setColor.bind(null, colors.green)).concat(regressed.map(setColor.bind(null, colors.red))).forEach(function(item) {
-        console.log(" *", item);
+      improved.map(setColor.bind(null, colors.green))
+      .concat(regressed.map(setColor.bind(null, colors.red)))
+      .concat(newItems.map(setColor.bind(null, colors.blue)))
+      .forEach(function(item) {
+        console.log(item);
       });
     }
 
@@ -202,7 +217,7 @@
 
       function processPage(index) {
         var page = pages[index++];
-        testPage(browser, "http://localhost:" + port + "/tests/" + page + "?selenium", function(result) {
+        testPage(browser, "http://localhost:" + port + "/" + page + "?selenium", function(result) {
           if (numPages > index) {
             processPage(index);
           } else {
@@ -215,9 +230,20 @@
     });
   }
 
-  walkDir("cases", function(err, results) {
-    if (err) throw err;
-    runBrowsers(results.slice(0, 2));
-  });
+  exports.tests = function() {
+    getBaselineFiles().forEach(fs.unlinkSync.bind(fs));
+    walkDir("tests/cases", function(err, results) {
+      if (err) throw err;
+      runBrowsers(results);
+    });
+  };
+
+  exports.baseline = function() {
+    getBaselineFiles().forEach(function(file) {
+      var newName = file.substring(0, file.length - 9);
+      fs.renameSync(file, newName);
+      console.log(newName, "created");
+    });
+  };
 
 })();
