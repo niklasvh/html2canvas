@@ -718,6 +718,17 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function renderBackgroundColor(ctx, backgroundBounds, bgcolor) {
+    renderRect(
+      ctx,
+      backgroundBounds.left,
+      backgroundBounds.top,
+      backgroundBounds.width,
+      backgroundBounds.height,
+      bgcolor
+      );
+  }
+
   function renderBackground(el,bounds,ctx){
     // TODO add support for multi background-images
     var background_image = getCSS(el, "backgroundImage"),
@@ -859,10 +870,6 @@ _html2canvas.Parse = function (images, options) {
 
   function renderElement(el, parentStack){
     var bounds = _html2canvas.Util.Bounds(el),
-    x = bounds.left,
-    y = bounds.top,
-    w = bounds.width,
-    h = bounds.height,
     image,
     bgcolor = getCSS(el, "backgroundColor"),
     zindex,
@@ -870,12 +877,7 @@ _html2canvas.Parse = function (images, options) {
     stackLength,
     borders,
     ctx,
-    backgroundBounds,
-    imgSrc,
-    paddingLeft,
-    paddingTop,
-    paddingRight,
-    paddingBottom;
+    backgroundBounds;
 
     stack = createStack(el, parentStack, bounds);
     zindex = stack.zIndex;
@@ -903,26 +905,16 @@ _html2canvas.Parse = function (images, options) {
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip);
 
     if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
-      renderRect(
-        ctx,
-        backgroundBounds.left,
-        backgroundBounds.top,
-        backgroundBounds.width,
-        backgroundBounds.height,
-        bgcolor
-        );
-
+      renderBackgroundColor(ctx, backgroundBounds, bgcolor);
       renderBackground(el, backgroundBounds, ctx);
     }
 
     switch(el.nodeName){
       case "IMG":
-        imgSrc = el.getAttribute('src');
-        image = loadImage(el.getAttribute('src'));
-        if (image) {
+        if ((image = loadImage(el.getAttribute('src')))) {
           renderImage(ctx, el, image, bounds, borders);
         } else {
-          h2clog("html2canvas: Error loading <img>:" + imgSrc);
+          h2clog("html2canvas: Error loading <img>:" + el.getAttribute('src'));
         }
         break;
       case "INPUT":
