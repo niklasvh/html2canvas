@@ -655,32 +655,26 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderImage (ctx) {
-    ctx.drawImage.apply(ctx, Array.prototype.slice.call(arguments,1));
+    var args = Array.prototype.slice.call(arguments,1);
+    ctx.drawImage.apply(ctx, args);
     numDraws+=1;
   }
 
   function renderBackgroundRepeat (ctx, image, x, y, width, height, elx, ely){
-    var sourceX = 0,
-    sourceY=0;
-    if (elx-x>0){
-      sourceX = elx-x;
-    }
-
-    if (ely-y>0){
-      sourceY = ely-y;
-    }
+    var sourceX = (elx - x > 0) ? elx-x :0,
+    sourceY= (ely - y > 0) ? ely-y : 0;
 
     renderImage(
       ctx,
       image,
-      sourceX, // source X
-      sourceY, // source Y
-      width-sourceX, // source Width
-      height-sourceY, // source Height
-      x+sourceX, // destination X
-      y+sourceY, // destination Y
-      width-sourceX, // destination width
-      height-sourceY // destination height
+      Math.floor(sourceX), // source X
+      Math.floor(sourceY), // source Y
+      Math.ceil(width-sourceX), // source Width
+      Math.ceil(height-sourceY), // source Height
+      Math.ceil(x+sourceX), // destination X
+      Math.ceil(y+sourceY), // destination Y
+      Math.ceil(width-sourceX), // destination width
+      Math.ceil(height-sourceY) // destination height
       );
   }
 
@@ -695,7 +689,7 @@ _html2canvas.Parse = function (images, options) {
     for(bgy=(y + bgp.top);bgy < h + y;){
       height = (Math.floor(bgy + image.height) > h + y) ? (h+y) - bgy : image.height;
       renderBackgroundRepeat(ctx, image, x+bgp.left, bgy,width, height, x, y);
-      bgy = Math.floor(bgy + image.height);
+      bgy = Math.round(bgy + image.height);
     }
   }
 
@@ -709,7 +703,7 @@ _html2canvas.Parse = function (images, options) {
     for (bgx=(x + bgp.left); bgx < w + x;) {
       width = (Math.floor(bgx + image.width) > w + x) ? (w + x) - bgx : image.width;
       renderBackgroundRepeat(ctx, image, bgx,(y + bgp.top), width, height, x, y);
-      bgx = Math.floor(bgx + image.width);
+      bgx = Math.round(bgx + image.width);
     }
   }
 
