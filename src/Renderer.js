@@ -1,66 +1,58 @@
 _html2canvas.Renderer = function(parseQueue, options){
-  var queue = [], renderer;
 
-  function sortZ(zStack){
-    var subStacks = [],
-    stackValues = [],
-    zStackChildren = zStack.children,
-    s,
-    i,
-    stackLen,
-    zValue,
-    zLen,
-    stackChild,
-    b,
-    subStackLen;
+  function createRenderQueue(parseQueue) {
+    var queue = [];
 
+    var sortZ = function(zStack){
+      var subStacks = [],
+      stackValues = [];
 
-    for (s = 0, zLen = zStackChildren.length; s < zLen; s+=1){
-
-      stackChild = zStackChildren[s];
-
-      if (stackChild.children && stackChild.children.length > 0){
-        subStacks.push(stackChild);
-        stackValues.push(stackChild.zindex);
-      }else{
-        queue.push(stackChild);
-      }
-
-    }
-
-    stackValues.sort(function(a, b) {
-      return a - b;
-    });
-
-    for (i = 0, stackLen = stackValues.length; i < stackLen; i+=1){
-      zValue = stackValues[i];
-      for (b = 0, subStackLen = subStacks.length; b <= subStackLen; b+=1){
-
-        if (subStacks[b].zindex === zValue){
-          stackChild = subStacks.splice(b, 1);
-          sortZ(stackChild[0]);
-          break;
-
+      zStack.children.forEach(function(stackChild) {
+        if (stackChild.children && stackChild.children.length > 0){
+          subStacks.push(stackChild);
+          stackValues.push(stackChild.zindex);
+        } else {
+          queue.push(stackChild);
         }
-      }
+      });
+
+      stackValues.sort(function(a, b) {
+        return a - b;
+      });
+
+      stackValues.forEach(function(zValue) {
+        var index;
+        
+        subStacks.some(function(stack, i){
+          index = i;
+          return (stack.zindex === zValue);
+        });
+        sortZ(subStacks.splice(index, 1)[0]);
+
+      });
+    };
+
+    sortZ(parseQueue.zIndex);
+
+    return queue;
+  }
+
+  function getRenderer(rendererName) {
+    var renderer;
+
+    if (typeof options.renderer === "string" && _html2canvas.Renderer[rendererName] !== undefined) {
+      renderer = _html2canvas.Renderer[rendererName](options);
+    } else if (typeof rendererName === "function") {
+      renderer = rendererName(options);
+    } else {
+      throw new Error("Unknown renderer");
     }
 
+    if ( typeof renderer._create !== "function" ) {
+      throw new Error("Invalid renderer defined");
+    }
+    return renderer;
   }
 
-  sortZ(parseQueue.zIndex);
-
-  if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
-    renderer = _html2canvas.Renderer[options.renderer](options);
-  } else if (typeof options.renderer === "function") {
-    renderer = options.renderer(options);
-  } else {
-    throw new Error("Unknown renderer");
-  }
-
-  if ( typeof renderer._create !== "function" ) {
-    throw new Error("Invalid renderer defined");
-  }
-
-  return renderer._create( parseQueue, options, document, queue, _html2canvas );
-
+  return getRenderer(options.renderer)._create(parseQueue, options, document, createRenderQueue(parseQueue), _html2canvas);
 };
