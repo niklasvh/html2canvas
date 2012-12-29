@@ -470,6 +470,27 @@ _html2canvas.Parse = function (images, options) {
     return parentZ;
   }
 
+  function renderImage(ctx, element, image, bounds, borders) {
+
+    var paddingLeft = getCSSInt(element, 'paddingLeft'),
+    paddingTop = getCSSInt(element, 'paddingTop'),
+    paddingRight = getCSSInt(element, 'paddingRight'),
+    paddingBottom = getCSSInt(element, 'paddingBottom');
+
+    drawImage(
+      ctx,
+      image,
+      0, //sx
+      0, //sy
+      image.width, //sw
+      image.height, //sh
+      bounds.left + paddingLeft + borders[3].width, //dx
+      bounds.top + paddingTop + borders[0].width, // dy
+      bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
+      bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
+      );
+  }
+
   function renderBorders(el, ctx, bounds, clip){
     var x = bounds.left,
     y = bounds.top,
@@ -647,7 +668,7 @@ _html2canvas.Parse = function (images, options) {
     body.removeChild(valueWrap);
   }
 
-  function renderImage (ctx) {
+  function drawImage (ctx) {
     ctx.drawImage.apply(ctx, Array.prototype.slice.call(arguments, 1));
     numDraws+=1;
   }
@@ -656,7 +677,7 @@ _html2canvas.Parse = function (images, options) {
     var sourceX = (elx - x > 0) ? elx-x :0,
     sourceY= (ely - y > 0) ? ely-y : 0;
 
-    renderImage(
+    drawImage(
       ctx,
       image,
       Math.floor(sourceX), // source X
@@ -764,7 +785,7 @@ _html2canvas.Parse = function (images, options) {
             }
 
             if (bgh>0 && bgw > 0){
-              renderImage(
+              drawImage(
                 ctx,
                 image,
                 bgsx, // source X : 0
@@ -897,29 +918,10 @@ _html2canvas.Parse = function (images, options) {
     switch(el.nodeName){
       case "IMG":
         imgSrc = el.getAttribute('src');
-        image = loadImage(imgSrc);
-        if (image){
-
-          paddingLeft = getCSSInt(el, 'paddingLeft');
-          paddingTop = getCSSInt(el, 'paddingTop');
-          paddingRight = getCSSInt(el, 'paddingRight');
-          paddingBottom = getCSSInt(el, 'paddingBottom');
-
-
-          renderImage(
-            ctx,
-            image,
-            0, //sx
-            0, //sy
-            image.width, //sw
-            image.height, //sh
-            x + paddingLeft + borders[3].width, //dx
-            y + paddingTop + borders[0].width, // dy
-            bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
-            bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
-            );
-
-        }else{
+        image = loadImage(el.getAttribute('src'));
+        if (image) {
+          renderImage(ctx, el, image, bounds, borders);
+        } else {
           h2clog("html2canvas: Error loading <img>:" + imgSrc);
         }
         break;
@@ -944,22 +946,7 @@ _html2canvas.Parse = function (images, options) {
         renderListItem(el, stack, backgroundBounds);
         break;
       case "CANVAS":
-        paddingLeft = getCSSInt(el, 'paddingLeft');
-        paddingTop = getCSSInt(el, 'paddingTop');
-        paddingRight = getCSSInt(el, 'paddingRight');
-        paddingBottom = getCSSInt(el, 'paddingBottom');
-        renderImage(
-          ctx,
-          el,
-          0,
-          0,
-          el.width,
-          el.height,
-          x + paddingLeft + borders[3].width,
-          y + paddingTop + borders[0].width,
-          bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
-          bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)
-          );
+        renderImage(ctx, el, el, bounds, borders);
         break;
     }
 
