@@ -14,7 +14,6 @@ window.html2canvas = function(elements, opts) {
 
     // parse options
     svgRendering: false, // use svg powered rendering where available (FF11+)
-    iframeDefault: "default",
     ignoreElements: "IFRAME|OBJECT|PARAM",
     useOverflow: true,
     letterRendering: false,

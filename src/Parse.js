@@ -49,23 +49,6 @@ _html2canvas.Parse = function (images, options) {
   children,
   childrenLen;
 
-
-  function documentWidth () {
-    return Math.max(
-      Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
-      Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
-      Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
-      );
-  }
-
-  function documentHeight () {
-    return Math.max(
-      Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
-      Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
-      Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
-      );
-  }
-
   images = images || {};
 
   // Test whether we can use ranges to measure bounding boxes
@@ -94,6 +77,22 @@ _html2canvas.Parse = function (images, options) {
   }
 
   var getCSS = _html2canvas.Util.getCSS;
+
+  function documentWidth () {
+    return Math.max(
+      Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
+      Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
+      Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
+      );
+  }
+
+  function documentHeight () {
+    return Math.max(
+      Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
+      Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
+      Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
+      );
+  }
 
   function getCSSInt(element, attribute) {
     var val = parseInt(getCSS(element, attribute), 10);
@@ -840,15 +839,30 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function setOpacity(ctx, element, parentStack) {
+    var opacity = getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1);
+    ctx.setVariable("globalAlpha", opacity);
+    return opacity;
+  }
+
   function createStack(element, parentStack, bounds) {
 
-    var stack = {
-      ctx: h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
+    var ctx = h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
+    stack = {
+      ctx: ctx,
       zIndex: setZ(getCSS(element, "zIndex"), (parentStack) ? parentStack.zIndex : null),
-      opacity: getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1),
+      opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
+      borders: renderBorders(element, ctx, bounds, false),
       clip: (parentStack && parentStack.clip) ? _html2canvas.Util.Extend( {}, parentStack.clip ) : null
     };
+
+    // TODO correct overflow for absolute content residing under a static position
+    if (options.useOverflow === true && /(hidden|scroll|auto)/.test(getCSS(element, "overflow")) === true && /(BODY)/i.test(element.nodeName) === false){
+      stack.clip = (stack.clip) ? clipBounds(stack.clip, bounds) : bounds;
+    }
+
+    stack.zIndex.children.push(stack);
 
     return stack;
   }
@@ -868,81 +882,54 @@ _html2canvas.Parse = function (images, options) {
     return backgroundBounds;
   }
 
-  function renderElement(el, parentStack){
-    var bounds = _html2canvas.Util.Bounds(el),
+  function renderElement(element, parentStack){
+    var bounds = _html2canvas.Util.Bounds(element),
     image,
-    bgcolor = getCSS(el, "backgroundColor"),
-    zindex,
-    stack,
-    stackLength,
-    borders,
-    ctx,
-    backgroundBounds;
-
-    stack = createStack(el, parentStack, bounds);
-    zindex = stack.zIndex;
-
-    // TODO correct overflow for absolute content residing under a static position
-
-    if (options.useOverflow === true && /(hidden|scroll|auto)/.test(getCSS(el, "overflow")) === true && /(BODY)/i.test(el.nodeName) === false){
-      stack.clip = (stack.clip) ? clipBounds(stack.clip, bounds) : bounds;
-    }
-
-    stackLength = zindex.children.push(stack);
-
-    ctx = zindex.children[stackLength-1].ctx;
-
-    ctx.setVariable("globalAlpha", stack.opacity);
-
-
-    borders = renderBorders(el, ctx, bounds, false);
-    stack.borders = borders;
-
-    if (ignoreElementsRegExp.test(el.nodeName) && options.iframeDefault !== "transparent"){
-      bgcolor = (options.iframeDefault === "default") ? "#efefef" : options.iframeDefault;
-    }
-
+    bgcolor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor"),
+    stack = createStack(element, parentStack, bounds),
+    borders = stack.borders,
+    ctx = stack.ctx,
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip);
 
     if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
       renderBackgroundColor(ctx, backgroundBounds, bgcolor);
-      renderBackground(el, backgroundBounds, ctx);
+      renderBackground(element, backgroundBounds, ctx);
     }
 
-    switch(el.nodeName){
+    switch(element.nodeName){
       case "IMG":
-        if ((image = loadImage(el.getAttribute('src')))) {
-          renderImage(ctx, el, image, bounds, borders);
+        if ((image = loadImage(element.getAttribute('src')))) {
+          renderImage(ctx, element, image, bounds, borders);
         } else {
-          h2clog("html2canvas: Error loading <img>:" + el.getAttribute('src'));
+          h2clog("html2canvas: Error loading <img>:" + element.getAttribute('src'));
         }
         break;
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset)$/.test(el.type) && el.value.length > 0){
-          renderFormValue(el, bounds, stack);
+        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && element.value.length > 0){
+          renderFormValue(element, bounds, stack);
         }
         break;
       case "TEXTAREA":
-        if (el.value.length > 0){
-          renderFormValue(el, bounds, stack);
+        if (element.value.length > 0){
+          renderFormValue(element, bounds, stack);
         }
         break;
       case "SELECT":
-        if (el.options.length > 0){
-          renderFormValue(el, bounds, stack);
+        if (element.options.length > 0){
+          renderFormValue(element, bounds, stack);
         }
         break;
       case "LI":
-        renderListItem(el, stack, backgroundBounds);
+        renderListItem(element, stack, backgroundBounds);
         break;
       case "CANVAS":
-        renderImage(ctx, el, el, bounds, borders);
+        renderImage(ctx, element, element, bounds, borders);
         break;
     }
 
-    return zindex.children[stackLength - 1];
+    return stack;
   }
 
   function isElementVisible(element) {
@@ -1051,7 +1038,6 @@ _html2canvas.Parse = function (images, options) {
   stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
 
   return stack;
-
 };
 
 function h2czContext(zindex) {
