@@ -45,27 +45,25 @@ _html2canvas.Parse = function (images, options) {
   rangeHeight,
   stack,
   ctx,
-  docDim,
   i,
   children,
   childrenLen;
 
 
-  function docSize(){
+  function documentWidth () {
+    return Math.max(
+      Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
+      Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
+      Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
+      );
+  }
 
-    return {
-      width: Math.max(
-        Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
-        Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
-        Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
-        ),
-      height: Math.max(
-        Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
-        Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
-        Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
-        )
-    };
-
+  function documentHeight () {
+    return Math.max(
+      Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
+      Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
+      Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
+      );
   }
 
   images = images || {};
@@ -810,7 +808,33 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function createStack(element, parentStack, bounds) {
 
+    var stack = {
+      ctx: h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
+      zIndex: setZ(getCSS(element, "zIndex"), (parentStack) ? parentStack.zIndex : null),
+      opacity: getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1),
+      cssPosition: getCSS(element, "position"),
+      clip: (parentStack && parentStack.clip) ? _html2canvas.Util.Extend( {}, parentStack.clip ) : null
+    };
+
+    return stack;
+  }
+
+  function getBackgroundBounds(borders, bounds, clip) {
+    var backgroundBounds = {
+      left: bounds.left + borders[3].width,
+      top: bounds.top + borders[0].width,
+      width: bounds.width - (borders[1].width + borders[3].width),
+      height: bounds.height - (borders[0].width + borders[2].width)
+    };
+
+    if (clip) {
+      backgroundBounds = clipBounds(backgroundBounds, clip);
+    }
+
+    return backgroundBounds;
+  }
 
   function renderElement(el, parentStack){
     var bounds = _html2canvas.Util.Bounds(el),
@@ -820,49 +844,28 @@ _html2canvas.Parse = function (images, options) {
     h = bounds.height,
     image,
     bgcolor = getCSS(el, "backgroundColor"),
-    cssPosition = getCSS(el, "position"),
     zindex,
-    opacity = getCSS(el, "opacity"),
     stack,
     stackLength,
     borders,
     ctx,
-    bgbounds,
+    backgroundBounds,
     imgSrc,
     paddingLeft,
     paddingTop,
     paddingRight,
     paddingBottom;
 
-    if (!parentStack){
-      docDim = docSize();
-      parentStack = {
-        opacity: 1
-      };
-    }else{
-      docDim = {};
-    }
-
-    zindex = setZ( getCSS( el, "zIndex"), parentStack.zIndex );
-
-    stack = {
-      ctx: h2cRenderContext( docDim.width || w , docDim.height || h ),
-      zIndex: zindex,
-      opacity: opacity * parentStack.opacity,
-      cssPosition: cssPosition
-    };
+    stack = createStack(el, parentStack, bounds);
+    zindex = stack.zIndex;
 
     // TODO correct overflow for absolute content residing under a static position
-
-    if (parentStack.clip){
-      stack.clip = _html2canvas.Util.Extend( {}, parentStack.clip );
-    }
 
     if (options.useOverflow === true && /(hidden|scroll|auto)/.test(getCSS(el, "overflow")) === true && /(BODY)/i.test(el.nodeName) === false){
       stack.clip = (stack.clip) ? clipBounds(stack.clip, bounds) : bounds;
     }
 
-    stackLength =  zindex.children.push(stack);
+    stackLength = zindex.children.push(stack);
 
     ctx = zindex.children[stackLength-1].ctx;
 
@@ -876,28 +879,19 @@ _html2canvas.Parse = function (images, options) {
       bgcolor = (options.iframeDefault === "default") ? "#efefef" : options.iframeDefault;
     }
 
-    bgbounds = {
-      left: x + borders[3].width,
-      top: y + borders[0].width,
-      width: w - (borders[1].width + borders[3].width),
-      height: h - (borders[0].width + borders[2].width)
-    };
+    backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip);
 
-    if (stack.clip){
-      bgbounds = clipBounds(bgbounds, stack.clip);
-    }
-
-    if (bgbounds.height > 0 && bgbounds.width > 0){
+    if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
       renderRect(
         ctx,
-        bgbounds.left,
-        bgbounds.top,
-        bgbounds.width,
-        bgbounds.height,
+        backgroundBounds.left,
+        backgroundBounds.top,
+        backgroundBounds.width,
+        backgroundBounds.height,
         bgcolor
         );
 
-      renderBackground(el, bgbounds, ctx);
+      renderBackground(el, backgroundBounds, ctx);
     }
 
     switch(el.nodeName){
@@ -947,7 +941,7 @@ _html2canvas.Parse = function (images, options) {
         }
         break;
       case "LI":
-        renderListItem(el, stack, bgbounds);
+        renderListItem(el, stack, backgroundBounds);
         break;
       case "CANVAS":
         paddingLeft = getCSSInt(el, 'paddingLeft');
@@ -1003,7 +997,8 @@ _html2canvas.Parse = function (images, options) {
   if ( support.svgRendering ) {
     (function( body ){
       var img = new Image(),
-      size =  docSize(),
+      docWidth = documentWidth(),
+      docHeight = documentHeight(),
       html = "";
 
       function parseDOM( el ) {
@@ -1051,8 +1046,8 @@ _html2canvas.Parse = function (images, options) {
       parseDOM(body);
       img.src = [
       "data:image/svg+xml,",
-      "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + size.width + "' height='" + size.height + "'>",
-      "<foreignObject width='" + size.width + "' height='" + size.height + "'>",
+      "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + docWidth + "' height='" + docHeight + "'>",
+      "<foreignObject width='" + docWidth + "' height='" + docHeight + "'>",
       "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
       html.replace(/\#/g,"%23"),
       "</html>",
