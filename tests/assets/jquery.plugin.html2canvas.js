@@ -3,7 +3,7 @@
  */
 (function( $ ){
   $.fn.html2canvas = function(options) {
-    if (options && options.profile && window.console && window.console.profile) {
+    if (options && options.profile && window.console && window.console.profile && window.location.search !== "?selenium2") {
       console.profile();
     }
     var date = new Date(),
