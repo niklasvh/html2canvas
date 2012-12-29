@@ -20,6 +20,7 @@ _html2canvas.Preload = function( options ) {
     count = 0,
     element = options.elements[0] || document.body,
     doc = element.ownerDocument,
+    imagesCache = (doc.imagesCache = doc.imagesCache || {}),
     domImages = doc.images, // TODO probably should limit it to images present in the element only
     imgLen = domImages.length,
     link = doc.createElement("a"),
@@ -28,7 +29,7 @@ _html2canvas.Preload = function( options ) {
     })(new Image()),
     timeoutTimer;
 
-    link.href = window.location.href;
+    link.href = options.windowHref || window.location.href;
     pageOrigin  = link.protocol + link.host;
 
 
@@ -49,7 +50,7 @@ _html2canvas.Preload = function( options ) {
             h2clog("Finished loading images: # " + images.numTotal + " (failed: " + images.numFailed + ")");
 
             if (typeof options.complete === "function"){
-                options.complete(images);
+                options.complete(imagesCache);
             }
 
         }
@@ -154,7 +155,7 @@ _html2canvas.Preload = function( options ) {
                     img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
 
                     if ( img !== undefined ){
-                        images[background_image] = {
+                        imagesCache[background_image] = {
                             img: img,
                             succeeded: true
                         };
@@ -233,17 +234,17 @@ _html2canvas.Preload = function( options ) {
     methods = {
         loadImage: function( src ) {
             var img, imageObj;
-            if ( src && images[src] === undefined ) {
+            if ( src && imagesCache[src] === undefined ) {
                 img = new Image();
                 if ( src.match(/data:image\/.*;base64,/i) ) {
                     img.src = src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, '');
-                    imageObj = images[src] = {
+                    imageObj = imagesCache[src] = {
                         img: img
                     };
                     images.numTotal++;
                     setImageLoadHandlers(img, imageObj);
                 } else if ( isSameOrigin( src ) || options.allowTaint ===  true ) {
-                    imageObj = images[src] = {
+                    imageObj = imagesCache[src] = {
                         img: img
                     };
                     images.numTotal++;
@@ -253,7 +254,7 @@ _html2canvas.Preload = function( options ) {
                     // attempt to load with CORS
 
                     img.crossOrigin = "anonymous";
-                    imageObj = images[src] = {
+                    imageObj = imagesCache[src] = {
                         img: img
                     };
                     images.numTotal++;
@@ -271,7 +272,7 @@ _html2canvas.Preload = function( options ) {
                     img.customComplete();
 
                 } else if ( options.proxy ) {
-                    imageObj = images[src] = {
+                    imageObj = imagesCache[src] = {
                         img: img
                     };
                     images.numTotal++;
@@ -291,7 +292,7 @@ _html2canvas.Preload = function( options ) {
 
                 for (src in images) {
                     if (images.hasOwnProperty(src)) {
-                        img = images[src];
+                        img = imagesCache[src];
                         if (typeof img === "object" && img.callbackname && img.succeeded === undefined) {
                             // cancel proxy image request
                             window[img.callbackname] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
