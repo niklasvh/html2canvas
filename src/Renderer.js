@@ -1,5 +1,5 @@
 _html2canvas.Renderer = function(parseQueue, options){
-  var queue = [];
+  var queue = [], renderer;
 
   function sortZ(zStack){
     var subStacks = [],
@@ -47,11 +47,20 @@ _html2canvas.Renderer = function(parseQueue, options){
 
   }
 
-
   sortZ(parseQueue.zIndex);
-  if ( typeof options._renderer._create !== "function" ) {
+
+  if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
+    renderer = _html2canvas.Renderer[options.renderer](options);
+  } else if (typeof options.renderer === "function") {
+    renderer = options.renderer(options);
+  } else {
+    throw new Error("Unknown renderer");
+  }
+
+  if ( typeof renderer._create !== "function" ) {
     throw new Error("Invalid renderer defined");
   }
-  return options._renderer._create( parseQueue, options, document, queue, _html2canvas );
+
+  return renderer._create( parseQueue, options, document, queue, _html2canvas );
 
 };
