@@ -7,13 +7,12 @@ html2canvas
 
 
 ###How does it work?###
-The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements. However, as many elements are displayed differently on different browsers and operating systems (such as form elements such as radio buttons or checkboxes) as well as
+The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements.
 
-It does <b>not require any rendering from the server</b>, as the whole image is created on the <b>clients browser</b>. However, for browsers without <code>canvas</code> support alternatives such as <a href="http://flashcanvas.net/">flashcanvas</a> or <a href="http://excanvas.sourceforge.net/">ExplorerCanvas</a> are necessary to create the image.
+It does <b>not require any rendering from the server</b>, as the whole image is created on the <b>clients browser</b>. However, as it is heavily dependent on the browser, this library is *not suitable* to be used on for example on node.js.
+It doesn't magically circumvent and browser content policy restrictions either, so rendering cross origin content will require a <a href="https://github.com/niklasvh/html2canvas/wiki/Proxies">proxy</a> to get the content to the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin</a>.
 
-Additionally, to render <code>iframe</code> content or images situated outside of the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a> a proxy will be necessary to load the content to the users browser.
-
-The script is still in a very experimental state, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made. However, please do test it out and report your findings, especially if something should be working, but is displaying it incorrectly.
+The script is still in a **very experimental state**, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made.
 
 ###Browser compatibility###
 
@@ -21,8 +20,8 @@ The script should work fine on the following browsers:
 
 * Firefox 3.5+
 * Google Chrome
-* Newer versions of Opera (exactly how new is yet to be determined)
-* >=IE9 (Older versions compatible with the use of flashcanvas)
+* Opera 12+
+* IE9+
 
 Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.
 
@@ -46,12 +45,47 @@ To access the created canvas, provide the `onrendered` event in the options whic
             }
     });
 
+### Building ###
+
+The library uses <a href="http://gruntjs.com/">grunt</a> for building. Alternatively, you can download ready builds from the <a href="https://github.com/niklasvh/html2canvas/downloads">downloads page</a>.
+
+Run the full build process (including lint, qunit and webdriver tests):
+
+    $ grunt
+
+Skip lint tests and simply build from source:
+
+    $ grunt concat
+    $ grunt min
+
+### Running tests ###
+
+The library has two sets of tests. The first set is a number of qunit tests that check that different values parsed by browsers are correctly converted in html2canvas. To run these tests with grunt you'll need <a href="http://phantomjs.org/">phantomjs</a>.
+
+The other set of tests run Firefox, Chrome and Internet Explorer with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>. They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while commiting changes, these should generally not go decrease from the baseline values.
+
+Run qunit tests:
+
+    $ grunt test
+
+Run webdriver tests:
+
+    $ grunt webdriver
+
+Commiting improvements in baseline values:
+
+    $ grunt webdriver:baseline
 
 ### Examples ###
 
 For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.
 
 ### Changelog ###
+
+v0.40 -
+ * Switched to using grunt for building
+ * Reformatted all tests to small units to test specific features
+ * Added rendering tests with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>
 
 v0.34 - 26.6.2012
 
