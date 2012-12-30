@@ -6,7 +6,14 @@
   "author": {
     "name":"Niklas von Hertzen (@niklasvh)"
   },
+  "dependencies": {
+    "base64-arraybuffer": ">= 0.1.0",
+    "png-js": ">= 0.1.1",
+    "webdriver.js": ">= 0.1.0"
+  },
   "homepage": "http://html2canvas.hertzen.com",
-  "licenses": [{"type": "MIT"}]
+  "licenses": [{
+    "type": "MIT"
+  }]
 
 }

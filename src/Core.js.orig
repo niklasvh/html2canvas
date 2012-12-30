@@ -153,10 +153,16 @@ _html2canvas.Util.Bounds = function getBounds (el) {
 };
 
 _html2canvas.Util.getCSS = function (el, attribute) {
-  // return $(el).css(attribute);
+<<<<<<< HEAD
+    // return $(el).css(attribute);
 
     var val,
     isBackgroundSizePosition = !!attribute.match( /^background(Size|Position)$/ );
+=======
+  // return $(el).css(attribute);
+>>>>>>> niklasvh/develop
+
+  var val;
 
   function toPX( attribute, val ) {
     var rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
@@ -191,8 +197,62 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 
     }
 
+<<<<<<< HEAD
+
+
+    if ( window.getComputedStyle ) {
+        if ( previousElement !== el ) {
+            computedCSS = document.defaultView.getComputedStyle(el, null);
+        }
+        val = computedCSS[ attribute ];
+
+        if ( isBackgroundSizePosition ) {
+
+            val = (val.split(",")[0] || "0 0").split(" ");
+
+            val[ 0 ] = ( val[0].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
+            val[ 1 ] = ( val[1] === undefined ) ? val[0] : val[1]; // IE 9 doesn't return double digit always
+            val[ 1 ] = ( val[1].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
+        } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
+            var arr = val.split(" ");
+            if ( arr.length <= 1 ) {
+                arr[ 1 ] = arr[ 0 ];
+            }
+            arr[ 0 ] = parseInt( arr[ 0 ], 10 );
+            arr[ 1 ] = parseInt( arr[ 1 ], 10 );
+            val = arr;
+        }
+
+    } else if ( el.currentStyle ) {
+        // IE 9>
+        if ( isBackgroundSizePosition ) {
+            // Older IE uses -x and -y
+            val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "Y" ]  ) ];
+        } else {
+
+            val = toPX(  attribute, el.currentStyle[ attribute ]  );
+
+            if (/^(border)/i.test( attribute ) && /^(medium|thin|thick)$/i.test( val )) {
+                switch (val) {
+                    case "thin":
+                        val = "1px";
+                        break;
+                    case "medium":
+                        val = "0px"; // this is wrong, it should be 3px but IE uses medium for no border as well.. TODO find a work around
+                        break;
+                    case "thick":
+                        val = "5px";
+                        break;
+                }
+            }
+        }
+
+
+
+=======
     if (!/^(thin|medium|thick)$/i.test( val )) {
       return Math.round(parseFloat( val )) + "px";
+>>>>>>> niklasvh/develop
     }
 
     return val;
@@ -200,14 +260,38 @@ _html2canvas.Util.getCSS = function (el, attribute) {
   }
 
 
+<<<<<<< HEAD
+//return $(el).css(attribute);
 
+
+};
+
+
+function backgroundBoundsFactory( prop, el, bounds, image ) {
+    // TODO add support for multi image backgrounds
+
+    var bgposition =  _html2canvas.Util.getCSS( el, prop ) ,
+    topPos,
+    left,
+    percentage,
+    val;
+
+    if (bgposition.length === 1){
+        val = bgposition;
+
+        bgposition = [];
+
+        bgposition[0] = val;
+        bgposition[1] = val;
+=======
   if ( window.getComputedStyle ) {
     if ( previousElement !== el ) {
       computedCSS = document.defaultView.getComputedStyle(el, null);
+>>>>>>> niklasvh/develop
     }
     val = computedCSS[ attribute ];
 
-    if ( isBackgroundSizePosition ) {
+    if ( attribute === "backgroundPosition" ) {
 
       val = (val.split(",")[0] || "0 0").split(" ");
 
@@ -217,7 +301,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
     } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
       var arr = val.split(" ");
       if ( arr.length <= 1 ) {
-              arr[ 1 ] = arr[ 0 ];
+        arr[ 1 ] = arr[ 0 ];
       }
       arr[ 0 ] = parseInt( arr[ 0 ], 10 );
       arr[ 1 ] = parseInt( arr[ 1 ], 10 );
@@ -226,7 +310,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 
   } else if ( el.currentStyle ) {
     // IE 9>
-    if ( isBackgroundSizePosition ) {
+    if (attribute === "backgroundPosition") {
       // Older IE uses -x and -y
       val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "Y" ]  ) ];
     } else {
@@ -249,14 +333,28 @@ _html2canvas.Util.getCSS = function (el, attribute) {
     }
   }
 
+<<<<<<< HEAD
+    return [left, topPos];
+}
+=======
   return val;
 };
+>>>>>>> niklasvh/develop
 
+_html2canvas.Util.BackgroundPosition = function( el, bounds, image ) {
+    var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image );
+    return { left: result[0], top: result[1] };
+};
 
-function backgroundBoundsFactory( prop, el, bounds, image ) {
+<<<<<<< HEAD
+_html2canvas.Util.BackgroundSize = function( el, bounds, image ) {
+    var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image );
+    return { width: result[1], height: result[0] };
+=======
+_html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
   // TODO add support for multi image backgrounds
 
-  var bgposition =  _html2canvas.Util.getCSS( el, prop ) ,
+  var bgposition =  _html2canvas.Util.getCSS( el, "backgroundPosition" ) ,
   topPos,
   left,
   percentage,
@@ -285,15 +383,11 @@ function backgroundBoundsFactory( prop, el, bounds, image ) {
     topPos = parseInt(bgposition[1],10);
   }
 
-    return [left, topPos];
-}
-_html2canvas.Util.BackgroundPosition = function( el, bounds, image ) {
-    var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image );
-    return { left: result[0], top: result[1] };
-};
-_html2canvas.Util.BackgroundSize = function( el, bounds, image ) {
-    var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image );
-    return { width: result[1], height: result[0] };
+  return {
+    top: topPos,
+    left: left
+  };
+>>>>>>> niklasvh/develop
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {

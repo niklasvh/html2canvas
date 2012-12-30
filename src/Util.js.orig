@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+html2canvas = window.html2canvas = function( elements, opts ) {
+
+=======
 window.html2canvas = function(elements, opts) {
+>>>>>>> niklasvh/develop
   var queue,
   canvas,
   options = {

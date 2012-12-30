@@ -4,6 +4,7 @@
 /tests/cache/
 /tests/flashcanvas.html
 /lib/
+/bin/
 /build/
 image.jpg
 /.project
@@ -13,3 +14,4 @@ node_modules/
 server.js
 *.sublime-workspace
 chromedriver.log
+*.baseline
