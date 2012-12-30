@@ -21,7 +21,7 @@
 <tr><td>list/upper-roman.html</td><td>99.45%</td><td>99.61%</td><td>35.11%</td></tr>
 <tr><td>overflow.html</td><td>96.85%</td><td>97.49%</td><td>96.51%</td></tr>
 <tr><td>text/linethrough.html</td><td>97.14%</td><td>94.12%</td><td>45.74%</td></tr>
-<tr><td>text/text.html</td><td>95.42%</td><td>94.41%</td><td>79.85%</td></tr>
+<tr><td>text/text.html</td><td>95.71%</td><td>94.67%</td><td>79.85%</td></tr>
 <tr><td>text/underline-lineheight.html</td><td>97.06%</td><td>92.35%</td><td>51.38%</td></tr>
 <tr><td>text/underline.html</td><td>97.65%</td><td>93.5%</td><td>45.69%</td></tr>
 <tr><td>visibility.html</td><td>99.19%</td><td>98.92%</td><td>99.39%</td></tr>

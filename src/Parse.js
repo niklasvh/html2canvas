@@ -168,7 +168,7 @@ _html2canvas.Parse = function (images, options) {
         renderRect(ctx, bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, color);
         break;
       case "overline":
-        renderRect(ctx, bounds.left, bounds.top, bounds.width, 1, color);
+        renderRect(ctx, bounds.left, Math.round(bounds.top), bounds.width, 1, color);
         break;
       case "line-through":
         // TODO try and find exact position for line-through
