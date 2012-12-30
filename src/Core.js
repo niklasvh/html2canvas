@@ -51,7 +51,7 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
             }
             results.push({
                 prefix: prefix,
-                method: method,
+                method: method.toLowerCase(),
                 value: block,
                 args: args
             });
