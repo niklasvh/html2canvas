@@ -126,28 +126,30 @@ _html2canvas.Preload = function( options ) {
 
       background_images = _html2canvas.Util.parseBackgroundImage(background_image);
       while(!!(background_image = background_images.shift())) {
+        if(!background_image || 
+            !background_image.method || 
+            !background_image.args || 
+            background_image.args.length === 0 ) {
+          continue;
+        }
 
-        if ( background_image.value && background_image.value !== "1" && background_image.value !== "none" ) {
-          if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image.method )) {
+        if (background_image.method === 'url') {
+          src = background_image.args[0];
+          methods.loadImage(src);
 
-            img = _html2canvas.Generate.Gradient( background_image.value, _html2canvas.Util.Bounds( el ) );
+        } else if( background_image.method.match( /\-gradient$/ ) ) {
+          img = _html2canvas.Generate.Gradient( background_image.value, _html2canvas.Util.Bounds( el ) );
 
-            if ( img !== undefined ){
-              images[background_image.value] = {
-                img: img,
-                succeeded: true
-              };
-              images.numTotal++;
-              images.numLoaded++;
-              start();
+          if ( img !== undefined ){
+            images[background_image.value] = {
+              img: img,
+              succeeded: true
+            };
+            images.numTotal++;
+            images.numLoaded++;
+            start();
 
-            }
-
-          } else {
-            src = _html2canvas.Util.backgroundImage(background_image.value);
-            methods.loadImage(src);
           }
-
         }
       }
     }
