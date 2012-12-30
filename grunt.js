@@ -62,8 +62,8 @@ module.exports = function(grunt) {
 
     if (arguments.length === 0) {
       selenium.tests();
-    } else if (arg1 === "baseline") {
-      selenium.baseline();
+    } else {
+      selenium[arg1].apply(null, arguments);
     }
   });
 
