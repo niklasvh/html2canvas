@@ -291,7 +291,6 @@ _html2canvas.Parse = function (images, options) {
     };
 
     if (trimText(textNode.nodeValue).length > 0) {
-
       textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
       textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
 
@@ -336,7 +335,7 @@ _html2canvas.Parse = function (images, options) {
     count = 1,
     childs = el.parentNode.childNodes;
 
-    if ( el.parentNode ) {
+    if (el.parentNode) {
       while( childs[ ++i ] !== el ) {
         if ( childs[ i ].nodeType === 1 ) {
           count++;
@@ -346,7 +345,6 @@ _html2canvas.Parse = function (images, options) {
     } else {
       return -1;
     }
-
   }
 
   function listItemText(element, type) {
@@ -643,7 +641,7 @@ _html2canvas.Parse = function (images, options) {
     numDraws+=1;
   }
 
-  function renderBackgroundRepeat (ctx, image, x, y, width, height, elx, ely){
+  function renderBackgroundSlice (ctx, image, x, y, width, height, elx, ely){
     var sourceX = (elx - x > 0) ? elx-x :0,
     sourceY= (ely - y > 0) ? ely-y : 0;
 
@@ -661,6 +659,75 @@ _html2canvas.Parse = function (images, options) {
       );
   }
 
+  function renderBackgroundRepeat(ctx, image, backgroundPosition, bounds) {
+    var bgy,
+    height,
+    add,
+    h;
+
+    backgroundPosition.top -= Math.ceil(backgroundPosition.top / image.height) * image.height;
+
+    for(bgy = (bounds.top + backgroundPosition.top); bgy < (bounds.height + bounds.top); bgy = Math.floor(bgy+image.height) - add) {
+      h = Math.min(image.height,(bounds.height + bounds.top) - bgy);
+
+      height = (Math.floor(bgy + image.height) > h + bgy) ? (h + bgy) - bgy : image.height;
+
+      if (bgy < bounds.top){
+        add = bounds.top - bgy;
+        bgy = bounds.top;
+      } else {
+        add = 0;
+      }
+
+      renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bgy, bounds.width, height);
+
+      if (add > 0){
+        backgroundPosition.top += add;
+      }
+    }
+  }
+
+  function renderBackgroundNoRepeat(ctx, image, backgroundPosition, bounds) {
+    var bgw = bounds.width - backgroundPosition.left,
+    bgh = bounds.height - backgroundPosition.top,
+    bgsx = backgroundPosition.left,
+    bgsy = backgroundPosition.top,
+    bgdx = backgroundPosition.left + bounds.left,
+    bgdy = backgroundPosition.top + bounds.top;
+
+    if (bgsx<0){
+      bgsx = Math.abs(bgsx);
+      bgdx += bgsx;
+      bgw = Math.min(bounds.width,image.width-bgsx);
+    } else {
+      bgw = Math.min(bgw,image.width);
+      bgsx = 0;
+    }
+
+    if (bgsy < 0){
+      bgsy = Math.abs(bgsy);
+      bgdy += bgsy;
+      bgh = Math.min(bounds.height, image.height - bgsy);
+    }else{
+      bgh = Math.min(bgh, image.height);
+      bgsy = 0;
+    }
+
+    if (bgh>0 && bgw > 0){
+      drawImage(
+        ctx,
+        image,
+        bgsx, // source X : 0
+        bgsy, // source Y : 1695
+        bgw, // source Width : 18
+        bgh, // source Height : 1677
+        bgdx, // destination X :906
+        bgdy, // destination Y : 1020
+        bgw, // destination width : 18
+        bgh // destination height : 1677
+        );
+    }
+  }
 
   function renderBackgroundRepeatY (ctx, image, backgroundPosition, x, y, w, h){
     var height,
@@ -671,7 +738,7 @@ _html2canvas.Parse = function (images, options) {
 
     for (bgy = y + backgroundPosition.top; bgy < h + y; bgy = Math.round(bgy + image.height)){
       height = (Math.floor(bgy + image.height) > h + y) ? (h+y) - bgy : image.height;
-      renderBackgroundRepeat(ctx, image, x + backgroundPosition.left, bgy,width, height, x, y);
+      renderBackgroundSlice(ctx, image, x + backgroundPosition.left, bgy,width, height, x, y);
     }
   }
 
@@ -684,7 +751,7 @@ _html2canvas.Parse = function (images, options) {
 
     for (bgx = x + backgroundPosition.left; bgx < w + x; bgx = Math.round(bgx + image.width)) {
       width = (Math.floor(bgx + image.width) > w + x) ? (w + x) - bgx : image.width;
-      renderBackgroundRepeat(ctx, image, bgx,(y + backgroundPosition.top), width, height, x, y);
+      renderBackgroundSlice(ctx, image, bgx,(y + backgroundPosition.top), width, height, x, y);
     }
   }
 
@@ -699,37 +766,24 @@ _html2canvas.Parse = function (images, options) {
       );
   }
 
-  function renderBackground(el,bounds,ctx){
+  function renderBackground(el, bounds, ctx) {
     // TODO add support for multi background-images
-    var background_image = getCSS(el, "backgroundImage"),
+    var backgroundImage = getCSS(el, "backgroundImage"),
     background_repeat = getCSS(el, "backgroundRepeat").split(",")[0],
     image,
-    bgp,
-    bgy,
-    bgw,
-    bgsx,
-    bgsy,
-    bgdx,
-    bgdy,
-    bgh,
-    h,
-    height,
-    add;
+    bgp;
 
-    if ( !/data:image\/.*;base64,/i.test(background_image) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(background_image) ) {
-      background_image = background_image.split(",")[0];
+    if (!/data:image\/.*;base64,/i.test(backgroundImage) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(backgroundImage)) {
+      backgroundImage = backgroundImage.split(",")[0];
     }
 
-    if ( typeof background_image !== "undefined" && /^(1|none)$/.test(background_image) === false ) {
-      background_image = _html2canvas.Util.backgroundImage(background_image);
-      image = loadImage(background_image);
-
-
-      bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
+    if (typeof backgroundImage !== "undefined" && /^(1|none)$/.test(backgroundImage) === false) {
+      image = loadImage(_html2canvas.Util.backgroundImage(backgroundImage));
 
       // TODO add support for background-origin
-      if ( image ){
-        switch ( background_repeat ) {
+      if (image) {
+        bgp = _html2canvas.Util.BackgroundPosition(el, bounds, image);
+        switch (background_repeat) {
           case "repeat-x":
             renderBackgroundRepeatX(ctx, image, bgp, bounds.left, bounds.top, bounds.width, bounds.height);
             break;
@@ -739,72 +793,15 @@ _html2canvas.Parse = function (images, options) {
             break;
 
           case "no-repeat":
-            bgw = bounds.width - bgp.left;
-            bgh = bounds.height - bgp.top;
-            bgsx = bgp.left;
-            bgsy = bgp.top;
-            bgdx = bgp.left+bounds.left;
-            bgdy = bgp.top+bounds.top;
-
-            if (bgsx<0){
-              bgsx = Math.abs(bgsx);
-              bgdx += bgsx;
-              bgw = Math.min(bounds.width,image.width-bgsx);
-            }else{
-              bgw = Math.min(bgw,image.width);
-              bgsx = 0;
-            }
-
-            if (bgsy<0){
-              bgsy = Math.abs(bgsy);
-              bgdy += bgsy;
-              // bgh = bgh-bgsy;
-              bgh = Math.min(bounds.height,image.height-bgsy);
-            }else{
-              bgh = Math.min(bgh,image.height);
-              bgsy = 0;
-            }
-
-            if (bgh>0 && bgw > 0){
-              drawImage(
-                ctx,
-                image,
-                bgsx, // source X : 0
-                bgsy, // source Y : 1695
-                bgw, // source Width : 18
-                bgh, // source Height : 1677
-                bgdx, // destination X :906
-                bgdy, // destination Y : 1020
-                bgw, // destination width : 18
-                bgh // destination height : 1677
-                );
-
-            }
+            renderBackgroundNoRepeat(ctx, image, bgp, bounds);
             break;
+
           default:
-            bgp.top = bgp.top-Math.ceil(bgp.top/image.height)*image.height;
-
-            for(bgy=(bounds.top+bgp.top);bgy<bounds.height+bounds.top;) {
-              h = Math.min(image.height,(bounds.height+bounds.top)-bgy);
-              height = (Math.floor(bgy+image.height) > h + bgy) ? (h+bgy)-bgy : image.height;
-              if (bgy<bounds.top){
-                add = bounds.top-bgy;
-                bgy = bounds.top;
-              }else{
-                add = 0;
-              }
-
-              renderBackgroundRepeatX(ctx, image, bgp, bounds.left, bgy, bounds.width, height);
-              if (add>0){
-                bgp.top += add;
-              }
-              bgy = Math.floor(bgy+image.height)-add;
-            }
+            renderBackgroundRepeat(ctx, image, bgp, bounds);
             break;
-
         }
-      }else{
-        h2clog("html2canvas: Error loading background:" + background_image);
+      } else {
+        h2clog("html2canvas: Error loading background:" + backgroundImage);
       }
 
     }
