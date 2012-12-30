@@ -113,6 +113,65 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+<<<<<<< HEAD
+  function renderText(el, textNode, stack) {
+    var ctx = stack.ctx,
+    color = getCSS(el, "color"),
+    text_decoration = getCSS(el, "textDecoration"),
+    text_align = getCSS(el, "textAlign"),
+    letter_spacing = getCSS(el, "letterSpacing"),
+    bounds,
+    text,
+    metrics,
+    renderList,
+    listLen,
+    newTextNode,
+    textValue,
+    textOffset = 0,
+    oldTextNode,
+    c,
+    range,
+    parent,
+    wrapElement,
+    backupText;
+
+    textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
+    text = trimText(textNode.nodeValue);
+
+    if (text.length > 0){
+
+      text_align = text_align.replace(["-webkit-auto"],["auto"]);
+
+      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing)) ?
+        textNode.nodeValue.split(/(\b| )/) :
+        textNode.nodeValue.split("");
+
+      metrics = setTextVariables(ctx, el, text_decoration, color);
+      oldTextNode = textNode;
+
+      for ( c=0, listLen = renderList.length; c < listLen; c+=1 ) {
+        textValue = null;
+
+        if (support.rangeBounds){
+          // getBoundingClientRect is supported for ranges
+          if (text_decoration !== "none" || trimText(renderList[c]).length !== 0) {
+            textValue = renderList[c];
+            if (doc.createRange){
+              range = doc.createRange();
+
+              range.setStart(textNode, textOffset);
+              range.setEnd(textNode, textOffset + textValue.length);
+            } else {
+              // TODO add IE support
+              range = body.createTextRange();
+            }
+
+            if (range.getBoundingClientRect()) {
+              bounds = range.getBoundingClientRect();
+            } else {
+              bounds = {};
+            }
+=======
   function getTextBounds(state, text, textDecoration, isLast) {
     var bounds;
     if (support.rangeBounds) {
@@ -127,6 +186,7 @@ _html2canvas.Parse = function (images, options) {
     }
     return bounds;
   }
+>>>>>>> niklasvh/develop
 
   function textRangeBounds(text, textNode, textOffset) {
     var range = doc.createRange();

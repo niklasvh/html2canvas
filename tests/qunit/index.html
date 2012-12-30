@@ -9,7 +9,7 @@
 
 
         <!-- src files -->
-        <script type="text/javascript" src="../../external/jquery-1.6.2.js"></script>
+        <script type="text/javascript" src="../assets/jquery-1.6.2.js"></script>
 
         <!-- 'Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas' -->
         <script type="text/javascript" src="../../src/Core.js"></script>
@@ -53,9 +53,9 @@
                 <div style="border-width: 5% 6px 12%;"></div> <!-- percentages aren't valid -->
                 <div style="border-width: 5em 5ex 5in 5cm;"></div>
                 <div style="border-width: 500em 500ex 500in 500cm;"></div>
-                <div style="border-width: 5mm 5pt 5pc 5px;"></div> 
-                <div style="border-width: auto inherit;"></div> 
-                <div style="border-width: 500mm 500pt 500pc 500px;"></div> 
+                <div style="border-width: 5mm 5pt 5pc 5px;"></div>
+                <div style="border-width: auto inherit;"></div>
+                <div style="border-width: 500mm 500pt 500pc 500px;"></div>
             </div>
 
             <div id="padding">
@@ -64,8 +64,8 @@
                 <div style="padding: thin medium thick;"></div>
                 <div style="padding: 5em 5ex 5in 5cm;"></div>
                 <div style="padding: 500em 500ex 500in 500cm;"></div>
-                <div style="padding: 5mm 5pt 5pc 5px;"></div> 
-                <div style="padding: 500mm 500pt 500pc 500px;"></div> 
+                <div style="padding: 5mm 5pt 5pc 5px;"></div>
+                <div style="padding: 500mm 500pt 500pc 500px;"></div>
                 <div style="padding: 1px 5%;"></div>
                 <div style="padding: 15% 0 3%;"></div>
             </div>
@@ -78,16 +78,16 @@
                 <div style="background-position: 5in 5cm;"></div>
                 <div style="background-position: 500in 500cm;"></div>
                 <div style="background-position: 500em 500ex;"></div>
-                <div style="background-position: 5pc 5px;"></div> 
-                <div style="background-position: 500pc 500px;"></div> 
-                <div style="background-position: 5mm 5pt;"></div> 
-                <div style="background-position: 500mm 500pt;"></div> 
+                <div style="background-position: 5pc 5px;"></div>
+                <div style="background-position: 500pc 500px;"></div>
+                <div style="background-position: 5mm 5pt;"></div>
+                <div style="background-position: 500mm 500pt;"></div>
             </div>
 
             <div id="backgroundPositionPercentage">
-                <div style="background-position: 5% 6px;"></div> 
-                <div style="background-position: center center;"></div> 
-                <div style="background-position: left bottom;"></div> 
+                <div style="background-position: 5% 6px;"></div>
+                <div style="background-position: center center;"></div>
+                <div style="background-position: left bottom;"></div>
             </div>
 
             <style>
@@ -138,7 +138,7 @@
                     background: -ms-radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
                     background: radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
                 }
-    
+
                 .radialGradient2 {
                     background: -moz-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
                     background: -webkit-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
@@ -193,16 +193,16 @@
        <script>
            var pages = ["background","borders","external-content","forms","images","lists","origin","overflow","proxy","text-linethrough"],
            fixtures = $("#fixture-iframes");
-  
+
 
            $.each(pages, function(i, page){
-          
+
                var iframe = $('<iframe />').attr('src',"../" + page + ".html");
-               
+
                iframe.insertAfter( fixtures );
            });
-       
-           
+
+
        </script>
 
        <iframe src="../borders.html" id="borders"></iframe>  -->
