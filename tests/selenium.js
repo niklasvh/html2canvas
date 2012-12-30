@@ -246,4 +246,27 @@
     });
   };
 
+  exports.markdown = function() {
+    var data = {}, html = "<table><thead><tr><td></td>",
+    browsers = ["chrome", "firefox", "iexplorer"];
+
+    browsers.forEach(function(browser) {
+      data[browser] = JSON.parse(fs.readFileSync("tests/results/" + browser + ".json"));
+      html += "<th>" + browser + "<br />" + data[browser].version + "</th>";
+    });
+    html += "</tr></thead><tbody>\n";
+
+    Object.keys(data[browsers[0]].tests).forEach(function(testFile) {
+      html += "<tr><td>" + testFile.substring(12) + "</td>";
+      browsers.forEach(function(browser) {
+        html += "<td>" + Math.round(data[browser].tests[testFile] * 100) / 100 + "%</td>";
+      });
+      html += "</tr>\n"
+    });
+
+    html += "</tbody></table>";
+
+    fs.writeFileSync("tests/results.md", html);
+  };
+
 })();
