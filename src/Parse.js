@@ -243,101 +243,72 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function getTextBounds(state, text, textDecoration, isLast) {
+    var bounds;
+    if (support.rangeBounds) {
+      if (textDecoration !== "none" || trimText(text).length !== 0) {
+        bounds = textRangeBounds(text, state.node, state.textOffset);
+      }
+      state.textOffset += text.length;
+    } else if (state.node && typeof state.node.nodeValue === "string" ){
+      var newTextNode = (isLast) ? state.node.splitText(text.length) : null;
+      bounds = textWrapperBounds(state.node);
+      state.node = newTextNode;
+    }
+    return bounds;
+  }
+
+  function textRangeBounds(text, textNode, textOffset) {
+    var range = doc.createRange();
+    range.setStart(textNode, textOffset);
+    range.setEnd(textNode, textOffset + text.length);
+    return range.getBoundingClientRect();
+  }
+
+  function textWrapperBounds(oldTextNode) {
+    var parent = oldTextNode.parentNode,
+    wrapElement = doc.createElement('wrapper'),
+    backupText = oldTextNode.cloneNode(true);
+
+    wrapElement.appendChild(oldTextNode.cloneNode(true));
+    parent.replaceChild(wrapElement, oldTextNode);
+
+    var bounds = _html2canvas.Util.Bounds(wrapElement);
+    parent.replaceChild(backupText, wrapElement);
+    return bounds;
+  }
+
   function renderText(el, textNode, stack) {
     var ctx = stack.ctx,
     color = getCSS(el, "color"),
-    text_decoration = getCSS(el, "textDecoration"),
-    text_align = getCSS(el, "textAlign"),
-    letter_spacing = getCSS(el, "letterSpacing"),
-    bounds,
-    text,
+    textDecoration = getCSS(el, "textDecoration"),
+    textAlign = getCSS(el, "textAlign"),
     metrics,
-    renderList,
-    listLen,
-    newTextNode,
-    textValue,
-    textOffset = 0,
-    oldTextNode,
-    c,
-    range,
-    parent,
-    wrapElement,
-    backupText;
+    textList,
+    state = {
+      node: textNode,
+      textOffset: 0
+    };
 
-    textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
-    text = trimText(textNode.nodeValue);
+    if (trimText(textNode.nodeValue).length > 0) {
 
-    if (text.length > 0){
+      textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
+      textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
 
-      text_align = text_align.replace(["-webkit-auto"],["auto"]);
-
-      renderList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(text_align) && noLetterSpacing(letter_spacing)) ?
+      textList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(textAlign) && noLetterSpacing(getCSS(el, "letterSpacing"))) ?
       textNode.nodeValue.split(/(\b| )/)
       : textNode.nodeValue.split("");
 
-      metrics = setTextVariables(ctx, el, text_decoration, color);
-      oldTextNode = textNode;
+      metrics = setTextVariables(ctx, el, textDecoration, color);
 
-      for ( c=0, listLen = renderList.length; c < listLen; c+=1 ) {
-        textValue = null;
-
-        if (support.rangeBounds){
-          // getBoundingClientRect is supported for ranges
-          if (text_decoration !== "none" || trimText(renderList[c]).length !== 0) {
-            textValue = renderList[c];
-            if (doc.createRange){
-              range = doc.createRange();
-
-              range.setStart(textNode, textOffset);
-              range.setEnd(textNode, textOffset + textValue.length);
-            } else {
-              // TODO add IE support
-              range = body.createTextRange();
-            }
-
-            if (range.getBoundingClientRect()) {
-              bounds = range.getBoundingClientRect();
-            } else {
-              bounds = {};
-            }
-
-          }
-        } else {
-          // it isn't supported, so let's wrap it inside an element instead and get the bounds there
-
-          // IE 9 bug
-          if (!oldTextNode || typeof oldTextNode.nodeValue !== "string" ){
-            continue;
-          }
-
-          newTextNode = (i < listLen-1) ? oldTextNode.splitText(renderList[c].length) : null;
-
-          parent = oldTextNode.parentNode;
-          wrapElement = doc.createElement('wrapper');
-          backupText = oldTextNode.cloneNode(true);
-
-          wrapElement.appendChild(oldTextNode.cloneNode(true));
-          parent.replaceChild(wrapElement, oldTextNode);
-
-          bounds = _html2canvas.Util.Bounds(wrapElement);
-
-          textValue = oldTextNode.nodeValue;
-
-          oldTextNode = newTextNode;
-          parent.replaceChild(backupText, wrapElement);
+      textList.forEach(function(text, index) {
+        var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
+        if (bounds) {
+          drawText(text, bounds.left, bounds.bottom, ctx);
+          renderTextDecoration(textDecoration, bounds, metrics, color);
         }
-
-        if (textValue !== null) {
-          drawText(textValue, bounds.left, bounds.bottom, ctx);
-        }
-        renderTextDecoration(text_decoration, bounds, metrics, color);
-
-        textOffset += renderList[c].length;
-
-      }
-
+      });
     }
-
   }
 
   function listPosition (element, val) {
