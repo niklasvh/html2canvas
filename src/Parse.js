@@ -1,82 +1,21 @@
 _html2canvas.Parse = function (images, options) {
   window.scroll(0,0);
 
-  var support = {
-    rangeBounds: false,
-    svgRendering: options.svgRendering && (function( ){
-      var img = new Image(),
-      canvas = document.createElement("canvas"),
-      ctx = (canvas.getContext === undefined) ? false : canvas.getContext("2d");
-      if (ctx === false) {
-        // browser doesn't support canvas, good luck supporting SVG on canvas
-        return false;
-      }
-      canvas.width = canvas.height = 10;
-      img.src = [
-      "data:image/svg+xml,",
-      "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'>",
-      "<foreignObject width='10' height='10'>",
-      "<div xmlns='http://www.w3.org/1999/xhtml' style='width:10;height:10;'>",
-      "sup",
-      "</div>",
-      "</foreignObject>",
-      "</svg>"
-      ].join("");
-      try {
-        ctx.drawImage(img, 0, 0);
-        canvas.toDataURL();
-      } catch(e) {
-        return false;
-      }
-      h2clog('html2canvas: Parse: SVG powered rendering available');
-      return true;
-
-    })()
-  },
-  element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
+  var element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
   numDraws = 0,
   fontData = {},
   doc = element.ownerDocument,
+  support = _html2canvas.Util.Support(options, doc),
   ignoreElementsRegExp = new RegExp("(" + options.ignoreElements + ")"),
   body = doc.body,
-  r,
-  testElement,
-  rangeBounds,
-  rangeHeight,
   stack,
   ctx,
   i,
   children,
-  childrenLen;
+  childrenLen,
+  getCSS = _html2canvas.Util.getCSS;
 
   images = images || {};
-
-  // Test whether we can use ranges to measure bounding boxes
-  // Opera doesn't provide valid bounds.height/bottom even though it supports the method.
-
-
-  if (doc.createRange) {
-    r = doc.createRange();
-    //this.support.rangeBounds = new Boolean(r.getBoundingClientRect);
-    if (r.getBoundingClientRect){
-      testElement = doc.createElement('boundtest');
-      testElement.style.height = "123px";
-      testElement.style.display = "block";
-      body.appendChild(testElement);
-
-      r.selectNode(testElement);
-      rangeBounds = r.getBoundingClientRect();
-      rangeHeight = rangeBounds.height;
-
-      if (rangeHeight === 123) {
-        support.rangeBounds = true;
-      }
-      body.removeChild(testElement);
-    }
-
-  }
-
-  var getCSS = _html2canvas.Util.getCSS;
 
   function documentWidth () {
     return Math.max(

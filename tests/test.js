@@ -11,7 +11,7 @@ var h2cSelector, h2cOptions;
 
     document.write(srcStart + '/tests/assets/jquery-1.6.2.js' + scrEnd);
     document.write(srcStart + '/tests/assets/jquery.plugin.html2canvas.js' + scrEnd);
-    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'renderers/Canvas'], i;
+    var html2canvas = ['Core', 'Generate', 'Parse', 'Preload', 'Queue', 'Renderer', 'Util', 'Support', 'renderers/Canvas'], i;
     for (i = 0; i < html2canvas.length; ++i) {
         document.write(srcStart + '/src/' + html2canvas[i] + '.js' + scrEnd);
     }
