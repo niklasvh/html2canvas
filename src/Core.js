@@ -155,7 +155,8 @@ _html2canvas.Util.Bounds = function getBounds (el) {
 _html2canvas.Util.getCSS = function (el, attribute) {
     // return $(el).css(attribute);
 
-    var val;
+    var val,
+    isBackgroundSizePosition = !!attribute.match( /^background(Size|Position)$/ );
 
     function toPX( attribute, val ) {
         var rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
@@ -199,13 +200,14 @@ _html2canvas.Util.getCSS = function (el, attribute) {
     }
 
 
+
     if ( window.getComputedStyle ) {
         if ( previousElement !== el ) {
             computedCSS = document.defaultView.getComputedStyle(el, null);
         }
         val = computedCSS[ attribute ];
 
-        if ( attribute === "backgroundPosition" ) {
+        if ( isBackgroundSizePosition ) {
 
             val = (val.split(",")[0] || "0 0").split(" ");
 
@@ -224,7 +226,7 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 
     } else if ( el.currentStyle ) {
         // IE 9>
-        if (attribute === "backgroundPosition") {
+        if ( isBackgroundSizePosition ) {
             // Older IE uses -x and -y
             val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "Y" ]  ) ];
         } else {
@@ -263,10 +265,10 @@ _html2canvas.Util.getCSS = function (el, attribute) {
 };
 
 
-_html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
+function backgroundBoundsFactory( prop, el, bounds, image ) {
     // TODO add support for multi image backgrounds
 
-    var bgposition =  _html2canvas.Util.getCSS( el, "backgroundPosition" ) ,
+    var bgposition =  _html2canvas.Util.getCSS( el, prop ) ,
     topPos,
     left,
     percentage,
@@ -299,14 +301,17 @@ _html2canvas.Util.BackgroundPosition = function ( el, bounds, image ) {
         topPos = parseInt(bgposition[1],10);
     }
 
+    return [left, topPos];
+}
 
+_html2canvas.Util.BackgroundPosition = function( el, bounds, image ) {
+    var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image );
+    return { left: result[0], top: result[1] };
+};
 
-
-    return {
-        top: topPos,
-        left: left
-    };
-
+_html2canvas.Util.BackgroundSize = function( el, bounds, image ) {
+    var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image );
+    return { width: result[1], height: result[0] };
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {
