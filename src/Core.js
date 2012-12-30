@@ -34,12 +34,15 @@ _html2canvas.Util.backgroundImage = function (src) {
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [], 
-        c, mode = 0, numParen = 0;
+        c, mode = 0, numParen = 0, quote, args;
 
     var appendResult = function(){
         if(method) {
             if(definition.substr( 0, 1 ) === '"') {
                 definition = definition.substr( 1, definition.length - 2 );
+            }
+            if(definition) {
+                args.push(definition);
             }
             if(method.substr( 0, 1 ) === '-' && 
                     (prefix_i = method.indexOf( '-', 1 ) + 1) > 0) {
@@ -49,10 +52,11 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
             results.push({
                 prefix: prefix,
                 method: method,
-                definition: definition,
-                value: block
+                value: block,
+                args: args
             });
         }
+        args = []; //for some odd reason, setting .length = 0 didn't work in safari
         method = 
             prefix =
             definition =
@@ -66,8 +70,18 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
             continue;
         }
         switch(c) {
+            case '"':
+                if(!quote) { 
+                    quote = c;
+                } 
+                else if(quote === c) {
+                    quote = null;
+                }
+                break;
+
             case '(':
-                if(mode === 0) {
+                if(quote) { break; }
+                else if(mode === 0) {
                     mode = 1;
                     block += c;
                     continue;
@@ -77,7 +91,8 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
                 break;
 
             case ')':
-                if(mode === 1) {
+                if(quote) { break; }
+                else if(mode === 1) {
                     if(numParen === 0) {
                         mode = 0;
                         block += c;
@@ -90,9 +105,18 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
                 break;
 
             case ',':
-                if(mode === 0) {
+                if(quote) { break; }
+                else if(mode === 0) {
                     appendResult();
                     continue;
+                }
+                else if (mode === 1) {
+                    if(numParen === 0 && !method.match(/^url$/i)) {
+                        args.push(definition);
+                        definition = '';
+                        block += c;
+                        continue;
+                    }
                 }
                 break;
         }
