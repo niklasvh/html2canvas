@@ -200,7 +200,7 @@ $(function() {
                 value: 'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))',
                 args: ['top', 'rgb(255,0,0)', 'rgb(0,0,0)']
             }, 
-            'linear-gradient'
+            'linear-gradient w/ rgb()'
         );
 
         test_parse_background_image(
@@ -210,7 +210,7 @@ $(function() {
                 value: '-webkit-linear-gradient(red,black)',
                 args: ['red','black']
             }, 
-            'linear-gradient'
+            'prefixed linear-gradient'
         );
 
         test_parse_background_image(
