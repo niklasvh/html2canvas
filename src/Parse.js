@@ -8,11 +8,6 @@ _html2canvas.Parse = function (images, options) {
   support = _html2canvas.Util.Support(options, doc),
   ignoreElementsRegExp = new RegExp("(" + options.ignoreElements + ")"),
   body = doc.body,
-  stack,
-  ctx,
-  i,
-  children,
-  childrenLen,
   getCSS = _html2canvas.Util.getCSS;
 
   images = images || {};
@@ -165,7 +160,7 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
-  function renderTextDecoration(text_decoration, bounds, metrics, color) {
+  function renderTextDecoration(ctx, text_decoration, bounds, metrics, color) {
     switch(text_decoration) {
       case "underline":
         // Draws a line at the baseline of the font
@@ -243,7 +238,7 @@ _html2canvas.Parse = function (images, options) {
         var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
         if (bounds) {
           drawText(text, bounds.left, bounds.bottom, ctx);
-          renderTextDecoration(textDecoration, bounds, metrics, color);
+          renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
         }
       });
     }
@@ -317,6 +312,7 @@ _html2canvas.Parse = function (images, options) {
   function renderListItem(element, stack, elBounds) {
     var x,
     text,
+    ctx = stack.ctx,
     type = getCSS(element, "listStyleType"),
     listBounds;
 
@@ -850,8 +846,6 @@ _html2canvas.Parse = function (images, options) {
 
     if (isElementVisible(el)) {
       stack = renderElement(el, stack) || stack;
-      ctx = stack.ctx;
-
       if (!ignoreElementsRegExp.test(el.nodeName)) {
         _html2canvas.Util.Children(el).forEach(function(node) {
           if (node.nodeType === 1) {
@@ -864,90 +858,89 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
-  stack = renderElement(element, null);
+  function svgDOMRender(body, stack) {
+    var img = new Image(),
+    docWidth = documentWidth(),
+    docHeight = documentHeight(),
+    html = "";
 
-  /*
-    SVG powered HTML rendering, non-tainted canvas available from FF 11+ onwards
- */
+    function parseDOM(el) {
+      var children = _html2canvas.Util.Children( el ),
+      len = children.length,
+      attr,
+      a,
+      alen,
+      elm,
+      i;
+      for ( i = 0; i < len; i+=1 ) {
+        elm = children[ i ];
+        if ( elm.nodeType === 3 ) {
+          // Text node
+          html += elm.nodeValue.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        } else if ( elm.nodeType === 1 ) {
+          // Element
+          if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {
 
-  if ( support.svgRendering ) {
-    (function( body ){
-      var img = new Image(),
-      docWidth = documentWidth(),
-      docHeight = documentHeight(),
-      html = "";
+            html += "<" + elm.nodeName.toLowerCase();
 
-      function parseDOM( el ) {
-        var children = _html2canvas.Util.Children( el ),
-        len = children.length,
-        attr,
-        a,
-        alen,
-        elm,
-        i;
-        for ( i = 0; i < len; i+=1 ) {
-          elm = children[ i ];
-          if ( elm.nodeType === 3 ) {
-            // Text node
-            html += elm.nodeValue.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-          } else if ( elm.nodeType === 1 ) {
-            // Element
-            if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {
-
-              html += "<" + elm.nodeName.toLowerCase();
-
-              // add attributes
-              if ( elm.hasAttributes() ) {
-                attr = elm.attributes;
-                alen = attr.length;
-                for ( a = 0; a < alen; a+=1 ) {
-                  html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
-                }
+            // add attributes
+            if ( elm.hasAttributes() ) {
+              attr = elm.attributes;
+              alen = attr.length;
+              for ( a = 0; a < alen; a+=1 ) {
+                html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
               }
-
-
-              html += '>';
-
-              parseDOM( elm );
-
-
-              html += "</" + elm.nodeName.toLowerCase() + ">";
             }
-          }
 
+
+            html += '>';
+
+            parseDOM( elm );
+
+
+            html += "</" + elm.nodeName.toLowerCase() + ">";
+          }
         }
 
       }
 
-      parseDOM(body);
-      img.src = [
-      "data:image/svg+xml,",
-      "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + docWidth + "' height='" + docHeight + "'>",
-      "<foreignObject width='" + docWidth + "' height='" + docHeight + "'>",
-      "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
-      html.replace(/\#/g,"%23"),
-      "</html>",
-      "</foreignObject>",
-      "</svg>"
-      ].join("");
+    }
 
-      img.onload = function() {
-        stack.svgRender = img;
-      };
+    parseDOM(body);
+    img.src = [
+    "data:image/svg+xml,",
+    "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + docWidth + "' height='" + docHeight + "'>",
+    "<foreignObject width='" + docWidth + "' height='" + docHeight + "'>",
+    "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
+    html.replace(/\#/g,"%23"),
+    "</html>",
+    "</foreignObject>",
+    "</svg>"
+    ].join("");
 
-    })(document.documentElement);
+    img.onload = function() {
+      stack.svgRender = img;
+    };
 
   }
 
+  function init() {
+    var stack = renderElement(element, null);
 
-  // parse every child element
-  for (i = 0, children = element.children, childrenLen = children.length; i < childrenLen; i+=1){
-    parseElement(children[i], stack);
+    if (support.svgRendering) {
+      svgDOMRender(document.documentElement, stack);
+    }
+
+    Array.prototype.slice.call(element.children, 0).forEach(function(childElement) {
+      parseElement(childElement, stack);
+    });
+
+    stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
+
+    return stack;
   }
 
-  stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
-
-  return stack;
+  return init();
 };
 
 function h2czContext(zindex) {
