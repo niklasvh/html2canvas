@@ -266,7 +266,7 @@
 
     html += "</tbody></table>";
 
-    fs.writeFileSync("tests/results.md", html);
+    fs.writeFileSync("tests/readme.md", html);
   };
 
 })();
