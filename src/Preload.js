@@ -133,7 +133,7 @@ _html2canvas.Preload = function( options ) {
             img = _html2canvas.Generate.Gradient( background_image.value, _html2canvas.Util.Bounds( el ) );
 
             if ( img !== undefined ){
-              images[background_image] = {
+              images[background_image.value] = {
                 img: img,
                 succeeded: true
               };

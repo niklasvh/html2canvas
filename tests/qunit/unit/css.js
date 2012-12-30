@@ -146,15 +146,34 @@ $(function() {
     }); 
     
     test('background-image', function () {
+        
+        test_parse_background_image(
+            'url("te)st")', 
+            { prefix: '', method: 'url', value: 'url("te)st")', args: ['te)st'] }, 
+            'test quoted'
+        );
+        
+        test_parse_background_image(
+            'url("te,st")', 
+            { prefix: '', method: 'url', value: 'url("te,st")', args: ['te,st'] }, 
+            'test quoted'
+        );
+        
+        test_parse_background_image(
+            'url(te,st)', 
+            { prefix: '', method: 'url', value: 'url(te,st)', args: ['te,st'] }, 
+            'test quoted'
+        );
+
         test_parse_background_image(
             'url(test)', 
-            { prefix: '', method: 'url', definition: 'test', value: 'url(test)' }, 
+            { prefix: '', method: 'url', value: 'url(test)', args: ['test'] }, 
             'basic url'
         );
 
         test_parse_background_image(
             'url("test")', 
-            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' }, 
+            { prefix: '', method: 'url', value: 'url("test")', args: ['test'] }, 
             'quoted url'
         );
 
@@ -162,36 +181,44 @@ $(function() {
             'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)', 
             { 
                 prefix: '', method: 'url', 
-                definition: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 
-                value: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)' 
+                value: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)',
+                args: ['data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7']
             }, 
             'data url'
         );
 
         test_parse_background_image(
             'linear-gradient(red,black)', 
-            { prefix: '', method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' }, 
+            { prefix: '', method: 'linear-gradient', value: 'linear-gradient(red,black)', args: ['red','black'] }, 
             'linear-gradient'
         );
 
         test_parse_background_image(
             'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))', 
-            { prefix: '', method: 'linear-gradient', definition: 'top,rgb(255,0,0),rgb(0,0,0)', value: 'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))' }, 
+            { 
+                prefix: '', method: 'linear-gradient', 
+                value: 'linear-gradient(top,rgb(255,0,0),rgb(0,0,0))',
+                args: ['top', 'rgb(255,0,0)', 'rgb(0,0,0)']
+            }, 
             'linear-gradient'
         );
 
         test_parse_background_image(
             '-webkit-linear-gradient(red,black)', 
-            { prefix: '-webkit-', method: 'linear-gradient', definition: 'red,black', value: '-webkit-linear-gradient(red,black)' }, 
+            { 
+                prefix: '-webkit-', method: 'linear-gradient', 
+                value: '-webkit-linear-gradient(red,black)',
+                args: ['red','black']
+            }, 
             'linear-gradient'
         );
 
         test_parse_background_image(
             'linear-gradient(red,black), url(test), url("test"),\n none, ', [
-            { prefix: '', method: 'linear-gradient', definition: 'red,black', value: 'linear-gradient(red,black)' },
-            { prefix: '', method: 'url', definition: 'test', value: 'url(test)' },
-            { prefix: '', method: 'url', definition: 'test', value: 'url("test")' },
-            { prefix: '', method: 'none', definition: '', value: 'none' }
+            { prefix: '', method: 'linear-gradient', value: 'linear-gradient(red,black)', args: ['red','black'] },
+            { prefix: '', method: 'url', value: 'url(test)', args: ['test']  },
+            { prefix: '', method: 'url', value: 'url("test")', args: ['test']  },
+            { prefix: '', method: 'none', value: 'none', args: [] }
             ],
             'multiple backgrounds'
         );
