@@ -637,24 +637,28 @@ _html2canvas.Parse = function (images, options) {
       );
   }
 
-  function renderBackgroundRepeating(el, bounds, ctx, image) {
-    var backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",")[0];
+  function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
+    var backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex),
+    backgroundRepeat = getCSS(el, "backgroundRepeat").split(","),
+    backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex);
+
+    backgroundRepeat = backgroundRepeat[imageIndex] || backgroundRepeat[0];
+
     switch (backgroundRepeat) {
       case "repeat-x":
-        renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
         break;
 
       case "repeat-y":
-        renderBackgroundRepeatY(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        renderBackgroundRepeatY(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
         break;
 
       case "no-repeat":
-        renderBackgroundNoRepeat(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        renderBackgroundNoRepeat(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
         break;
 
       default:
-        renderBackgroundRepeat(ctx, image, backgroundPosition, bounds);
+        renderBackgroundRepeat(ctx, image, backgroundPosition, { width: backgroundSize.width, height: backgroundSize.height });
         break;
     }
   }
@@ -662,22 +666,24 @@ _html2canvas.Parse = function (images, options) {
   function renderBackgroundImage(element, bounds, ctx) {
     // TODO add support for multi background-images
     var backgroundImage = getCSS(element, "backgroundImage"),
+    backgroundImages = _html2canvas.Util.parseBackgroundImage(backgroundImage),
     image;
 
-    if (!/data:image\/.*;base64,/i.test(backgroundImage) && !/^(-webkit|-moz|linear-gradient|-o-)/.test(backgroundImage)) {
-      backgroundImage = backgroundImage.split(",")[0];
-    }
+    for(var imageIndex = backgroundImages.length; imageIndex-- > 0;) {
+      backgroundImage = backgroundImages[imageIndex];
+      
+      if (!backgroundImage.args || backgroundImage.args.length === 0) {
+        continue;
+      }
 
-    if (typeof backgroundImage !== "undefined" && /^(1|none)$/.test(backgroundImage) === false) {
-      image = loadImage(_html2canvas.Util.backgroundImage(backgroundImage));
+      image = loadImage(backgroundImage.method === 'url' ? backgroundImage.args[0] : backgroundImage.value);
 
       // TODO add support for background-origin
       if (image) {
-        renderBackgroundRepeating(element, bounds, ctx, image);
+        renderBackgroundRepeating(element, bounds, ctx, image, imageIndex);
       } else {
         h2clog("html2canvas: Error loading background:" + backgroundImage);
       }
-
     }
   }
 
