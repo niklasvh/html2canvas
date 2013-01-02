@@ -90,6 +90,7 @@ _html2canvas.Preload = function( options ) {
   }
 
   function getImages (el) {
+    el.__html2canvas__id = uid++;
 
     var contents = _html2canvas.Util.Children(el),
     i,
@@ -97,6 +98,7 @@ _html2canvas.Preload = function( options ) {
     background_images,
     src,
     img,
+    bounds,
     elNodeType = false;
 
     // Firefox fails with permission denied on pages with iframes
@@ -125,7 +127,9 @@ _html2canvas.Preload = function( options ) {
       }
 
       background_images = _html2canvas.Util.parseBackgroundImage(background_image);
-      while(!!(background_image = background_images.shift())) {
+      for(var imageIndex = background_images.length; imageIndex-- > 0;) {
+        background_image = background_images[imageIndex];
+
         if(!background_image || 
             !background_image.method || 
             !background_image.args || 
@@ -138,17 +142,21 @@ _html2canvas.Preload = function( options ) {
           methods.loadImage(src);
 
         } else if( background_image.method.match( /\-gradient$/ ) ) {
-          img = _html2canvas.Generate.Gradient( background_image.value, _html2canvas.Util.Bounds( el ) );
+          if(bounds === undefined) {
+            bounds = _html2canvas.Util.Bounds( el );
+          }
+
+          var key = background_image.value + '/' + el.__html2canvas__id + '/' + imageIndex;
+          img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
 
           if ( img !== undefined ){
-            images[background_image.value] = {
+            images[ key ] = {
               img: img,
               succeeded: true
             };
             images.numTotal++;
             images.numLoaded++;
             start();
-
           }
         }
       }
@@ -216,7 +224,7 @@ _html2canvas.Preload = function( options ) {
       return;
     }
     if(!el.id) { 
-      el.id = '__html2cavas__' + (uid++);
+      el.id = '__html2canvas__' + (uid++);
     }
     if(!injectStyle) {
       injectStyle = document.createElement('style');
@@ -382,7 +390,7 @@ _html2canvas.Preload = function( options ) {
           .forEach(removePseudoElements);
       }
     },
-    
+
     renderingDone: function() {
       if (timeoutTimer) {
         window.clearTimeout(timeoutTimer);

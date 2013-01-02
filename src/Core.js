@@ -204,7 +204,16 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
 
       } else {
         val[ 0 ] = ( val[ 0 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
-        val[ 1 ] = ( val[ 1 ] === undefined ) ? val[ 0 ] : val[ 1 ]; // IE 9 doesn't return double digit always
+        if(val[ 1 ] === undefined) {
+          if(attribute === 'backgroundSize') { 
+            val[ 1 ] = 'auto'; 
+            return val;
+          }
+          else {
+            // IE 9 doesn't return double digit always
+            val[ 1 ] = val[ 0 ];
+          }
+        }
         val[ 1 ] = ( val[ 1 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
       }
     } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
@@ -292,10 +301,10 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
 
     } else {
       if(prop === 'backgroundSize') {
-        if(bgposition[0] === 'auto') { left = image.width; }
-        if(bgposition[1] === 'auto') { topPos = image.height; }
+        if(bgposition[0] === 'auto') { 
+          left = image.width; 
 
-        if(left === undefined) {
+        } else {
           if(bgposition[0].match(/contain|cover/)) {
             var resized = _html2canvas.Util.resizeBounds( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
             left = resized.width;
@@ -310,17 +319,18 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
       }
     }
 
-    if(topPos === undefined) {
-      if (bgposition[1].toString().indexOf("%") !== -1){
-        percentage = (parseFloat(bgposition[1])/100);
-        topPos =  bounds.height * percentage;
-        if(prop !== 'backgroundSize') {
-          topPos -= (backgroundSize || image).height * percentage;
-        }
-
-      } else {
-        topPos = parseInt(bgposition[1],10);
+    
+    if(bgposition[1] === 'auto') { 
+      topPos = left / image.width * image.height; 
+    } else if (bgposition[1].toString().indexOf("%") !== -1){
+      percentage = (parseFloat(bgposition[1])/100);
+      topPos =  bounds.height * percentage;
+      if(prop !== 'backgroundSize') {
+        topPos -= (backgroundSize || image).height * percentage;
       }
+
+    } else {
+      topPos = parseInt(bgposition[1],10);
     }
 
     return [left, topPos];

@@ -666,12 +666,16 @@ _html2canvas.Parse = function (images, options) {
 
     for(var imageIndex = backgroundImages.length; imageIndex-- > 0;) {
       backgroundImage = backgroundImages[imageIndex];
-      
+     
       if (!backgroundImage.args || backgroundImage.args.length === 0) {
         continue;
       }
 
-      image = loadImage(backgroundImage.method === 'url' ? backgroundImage.args[0] : backgroundImage.value);
+      var key = backgroundImage.method === 'url' ?
+        backgroundImage.args[0] :
+        backgroundImage.value + '/' + element.__html2canvas__id + '/' + imageIndex;
+
+      image = loadImage(key);
 
       // TODO add support for background-origin
       if (image) {
