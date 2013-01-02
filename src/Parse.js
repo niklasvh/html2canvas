@@ -493,7 +493,11 @@ _html2canvas.Parse = function (images, options) {
     valueWrap.style.top = bounds.top + "px";
     valueWrap.style.left = bounds.left + "px";
 
-    textValue = (el.nodeName === "SELECT") ? el.options[el.selectedIndex].text : el.value;
+    textValue = (el.nodeName === "SELECT") ? (el.options[el.selectedIndex] || 0).text : el.value;
+    if(!textValue) {
+      textValue = el.placeholder;
+    }
+
     textNode = doc.createTextNode(textValue);
 
     valueWrap.appendChild(textNode);
@@ -754,17 +758,17 @@ _html2canvas.Parse = function (images, options) {
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && element.value.length > 0){
+        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && (element.value || element.placeholder).length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
       case "TEXTAREA":
-        if (element.value.length > 0){
+        if ((element.value || element.placeholder).length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
       case "SELECT":
-        if (element.options.length > 0){
+        if ((element.options||element.placeholder).length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
