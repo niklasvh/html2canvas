@@ -34,6 +34,12 @@ function h2cRenderContext(width, height) {
             'arguments': arguments
           });
         },
+        arcTo: function() {
+          shape.push({
+            name: "arcTo",
+            'arguments': arguments
+          });
+        },
         bezierCurveTo: function() {
           shape.push({
             name: "bezierCurveTo",
