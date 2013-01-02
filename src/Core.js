@@ -14,23 +14,6 @@ function h2clog(a) {
 
 _html2canvas.Util = {};
 
-_html2canvas.Util.backgroundImage = function (src) {
-
-  if (/data:image\/.*;base64,/i.test( src ) || /^(-webkit|-moz|linear-gradient|-o-)/.test( src )) {
-    return src;
-  }
-
-  if (src.toLowerCase().substr( 0, 5 ) === 'url("') {
-    src = src.substr( 5 );
-    src = src.substr( 0, src.length - 2 );
-  } else {
-    src = src.substr( 4 );
-    src = src.substr( 0, src.length - 1 );
-  }
-
-  return src;
-};
-
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [], 
@@ -305,12 +288,14 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
         if(bgposition[0] === 'auto') { left = image.width; }
         if(bgposition[1] === 'auto') { topPos = image.height; }
 
-        if(bgposition[0].match(/contain|cover/)) {
-          var resized = resize( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
-          left = resized.width;
-          topPos = resized.height;
-        } else {
-          bgposition[0] = parseInt (bgposition[0], 10 );
+        if(left === undefined) {
+          if(bgposition[0].match(/contain|cover/)) {
+            var resized = resize( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
+            left = resized.width;
+            topPos = resized.height;
+          } else {
+            left = parseInt (bgposition[0], 10 );
+          }
         }
 
       } else {
