@@ -61,12 +61,8 @@ _html2canvas.Parse = function (images, options) {
     return (/^(normal|none|0px)$/.test(letter_spacing));
   }
 
-  function trimText (text) {
-    return text.replace(/^\s*/g, "").replace(/\s*$/g, "");
-  }
-
   function drawText(currentText, x, y, ctx){
-    if (currentText !== null && trimText(currentText).length > 0) {
+    if (currentText !== null && _html2canvas.Util.trimText(currentText).length > 0) {
       ctx.fillText(currentText, x, y);
       numDraws+=1;
     }
@@ -116,7 +112,7 @@ _html2canvas.Parse = function (images, options) {
   function getTextBounds(state, text, textDecoration, isLast) {
     var bounds;
     if (support.rangeBounds) {
-      if (textDecoration !== "none" || trimText(text).length !== 0) {
+      if (textDecoration !== "none" || _html2canvas.Util.trimText(text).length !== 0) {
         bounds = textRangeBounds(text, state.node, state.textOffset);
       }
       state.textOffset += text.length;
@@ -160,7 +156,7 @@ _html2canvas.Parse = function (images, options) {
       textOffset: 0
     };
 
-    if (trimText(textNode.nodeValue).length > 0) {
+    if (_html2canvas.Util.trimText(textNode.nodeValue).length > 0) {
       textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
       textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
 
