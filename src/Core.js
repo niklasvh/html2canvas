@@ -17,7 +17,7 @@ _html2canvas.Util = {};
 _html2canvas.Util.trimText = (function(native){ 
   return function(input){
     if(native) { return native.apply( input ); }
-    else { return ((input || '') + '').replace( /^\s+|\s+$/ , '' ); }
+    else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
   };
 })( String.prototype.trim );
 
