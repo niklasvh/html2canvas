@@ -207,6 +207,79 @@ _html2canvas.Preload = function( options ) {
   }
 
 
+
+  var uid = 0, injectStyle;
+  function injectPseudoElements(el) {
+    var before = getPseudoElement(el, ':before'),
+    after = getPseudoElement(el, ':after');
+    if(!before && !after) {
+      return;
+    }
+    if(!el.id) { 
+      el.id = '__html2cavas__' + (uid++);
+    }
+    if(!injectStyle) {
+      injectStyle = document.createElement('style');
+    }
+
+    if(before) {
+      el.__html2canvas_before = before;
+      injectStyle.innerHTML += '#' + el.id + ':before { content: "" !important; display: none !important; }\n';
+      if(el.childNodes.length > 0) {
+        el.insertBefore(before, el.childNodes[0]);
+      } else {
+        el.appendChild(before);
+      }
+    }
+
+    if (after) {
+      el.__html2canvas_after = after;
+      injectStyle.innerHTML += '#' + el.id + ':after { content: "" !important; display: none !important; }\n';
+      el.appendChild(after);
+    }
+  }
+
+  function removePseudoElements(el) {
+    var before = el.__html2canvas_before,
+    after = el.__html2canvas_after;
+    if(before) {
+      el.__html2canvas_before = undefined;
+      el.removeChild(before);
+    }
+    if(after) {
+      el.__html2canvas_after = undefined;
+      el.removeChild(after);
+    }
+  }
+
+  function getPseudoElement(el, which) {
+    var elStyle = window.getComputedStyle(el, which);
+    if(!elStyle || !elStyle.content) { return; }
+
+    var content = elStyle.content + '', 
+    first = content.substr( 0, 1 );
+    //strips quotes
+    if(first === content.substr( content.length - 1 ) && first.match(/'|"/)) {
+      content = content.substr( 1, content.length - 2 );
+    }
+
+    var isImage = content.substr( 0, 3 ) === 'url',
+    elps = document.createElement( isImage ? 'img' : 'span' );
+
+    elps.className = '__html2canvas__' + which.substr(1);
+    Object.keys(elStyle).forEach(function(prop) {
+      //skip indexed properties
+      if(!isNaN(parseInt(prop, 10))) { return; }
+      elps.style[prop] = elStyle[prop];
+    });
+    if(isImage) {
+      elps.src = _html2canvas.Util.parseBackgroundImage(content)[0].args[0];
+    } else {
+      elps.innerHTML = content;
+    }
+    return elps;
+  }
+
   methods = {
     loadImage: function( src ) {
       var img, imageObj;
@@ -300,18 +373,34 @@ _html2canvas.Preload = function( options ) {
           start();
         }
       }
+
+      if(injectStyle) {
+        injectStyle.parentNode.removeChild(injectStyle);
+        injectStyle = undefined;
+
+        [].slice.apply(element.all || element.getElementsByTagName('*'))
+          .forEach(removePseudoElements);
+      }
     },
+    
     renderingDone: function() {
       if (timeoutTimer) {
         window.clearTimeout(timeoutTimer);
       }
     }
-
   };
 
   if (options.timeout > 0) {
     timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
   }
+
+  [].slice.apply(element.all || element.getElementsByTagName('*'))
+      .forEach(injectPseudoElements);
+  if(injectStyle) {
+    element.appendChild(injectStyle);
+  }
+
+
   h2clog('html2canvas: Preload starts: finding background-images');
   images.firstRun = true;
 
