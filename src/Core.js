@@ -267,7 +267,7 @@ _html2canvas.Util.resizeBounds = function( current_width, current_height, target
   return { width: output_width, height: output_height };
 };
 
-function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
+function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroundSize ) {
     var bgposition =  _html2canvas.Util.getCSS( el, prop, imageIndex ) ,
     topPos,
     left,
@@ -287,7 +287,7 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
       percentage = (parseFloat(bgposition[0])/100);
       left = bounds.width * percentage;
       if(prop !== 'backgroundSize') {
-        left -= image.width*percentage;
+        left -= (backgroundSize || image).width*percentage;
       }
 
     } else {
@@ -315,7 +315,7 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
         percentage = (parseFloat(bgposition[1])/100);
         topPos =  bounds.height * percentage;
         if(prop !== 'backgroundSize') {
-          topPos -= image.height * percentage;
+          topPos -= (backgroundSize || image).height * percentage;
         }
 
       } else {
@@ -326,8 +326,8 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
     return [left, topPos];
 }
 
-_html2canvas.Util.BackgroundPosition = function( el, bounds, image, imageIndex ) {
-    var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image, imageIndex );
+_html2canvas.Util.BackgroundPosition = function( el, bounds, image, imageIndex, backgroundSize ) {
+    var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image, imageIndex, backgroundSize );
     return { left: result[0], top: result[1] };
 };
 _html2canvas.Util.BackgroundSize = function( el, bounds, image, imageIndex ) {

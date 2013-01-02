@@ -555,28 +555,28 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderBackgroundNoRepeat(ctx, image, backgroundPosition, x, y, w, h) {
-    var bgdw = w, // - backgroundPosition.left,
-    bgdh = h, // - backgroundPosition.top,
+    var bgdw = w - backgroundPosition.left,
+    bgdh = h - backgroundPosition.top,
     bgsx = backgroundPosition.left,
     bgsy = backgroundPosition.top,
     bgdx = backgroundPosition.left + x,
     bgdy = backgroundPosition.top + y;
 
     if (bgsx<0){
-      bgsx = Math.abs(bgsx);
+      bgsx = Math.abs( bgsx );
       bgdx += bgsx;
-      bgdw = Math.min(w,image.width-bgsx);
+      bgdw = Math.min( w, image.width - bgsx );
     } else {
-      bgdw = Math.min(bgdw,image.width);
+      bgdw = Math.min( bgdw, image.width );
       bgsx = 0;
     }
 
     if (bgsy < 0){
-      bgsy = Math.abs(bgsy);
+      bgsy = Math.abs( bgsy );
       bgdy += bgsy;
-      bgdh = Math.min(h, image.height - bgsy);
+      bgdh = Math.min( h, image.height - bgsy );
     } else {
-      bgdh = Math.min(bgdh, image.height);
+      bgdh = Math.min( bgdh, image.height );
       bgsy = 0;
     }
 
@@ -590,8 +590,8 @@ _html2canvas.Parse = function (images, options) {
         image.height,
         bgdx,
         bgdy,
-        bgdw,
-        bgdh
+        bgdw + backgroundPosition.left,
+        bgdh + backgroundPosition.top
         );
     }
   }
@@ -634,9 +634,9 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
-    var backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(","),
-    backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex);
+    var backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex),
+    backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
+    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",");
 
     backgroundRepeat = backgroundRepeat[imageIndex] || backgroundRepeat[0];
 
