@@ -14,6 +14,13 @@ function h2clog(a) {
 
 _html2canvas.Util = {};
 
+_html2canvas.Util.trimText = (function(native){ 
+  return function(input){
+    if(native) { return native.apply( input ); }
+    else { return ((input || '') + '').replace( /^\s+|\s+$/ , '' ); }
+  };
+})( String.prototype.trim );
+
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [], 
@@ -188,15 +195,17 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
     val = computedCSS[ attribute ];
 
     if ( isBackgroundSizePosition ) {
-      val = (val || '').split(',');
+      val = (val || '').split( ',' );
       val = val[index || 0] || val[0] || 'auto';
-      val = val.split(' ');
-      if(attribute === 'backgroundSize' && (!val[0] || val[0].match(/cover|contain|auto/))) {
+      val = _html2canvas.Util.trimText( val ).split( ' ' );
+      
+      if(attribute === 'backgroundSize' && (!val[ 0 ] || val[ 0 ].match( /cover|contain|auto/ ))) {
+        //these values will be handled in the parent function
 
       } else {
-        val[ 0 ] = ( val[0].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
-        val[ 1 ] = ( val[1] === undefined ) ? val[0] : val[1]; // IE 9 doesn't return double digit always
-        val[ 1 ] = ( val[1].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
+        val[ 0 ] = ( val[ 0 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
+        val[ 1 ] = ( val[ 1 ] === undefined ) ? val[ 0 ] : val[ 1 ]; // IE 9 doesn't return double digit always
+        val[ 1 ] = ( val[ 1 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
       }
     } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
       var arr = val.split(" ");
