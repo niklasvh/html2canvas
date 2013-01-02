@@ -268,8 +268,6 @@ _html2canvas.Util.resizeBounds = function( current_width, current_height, target
 };
 
 function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
-    // TODO add support for multi image backgrounds
-
     var bgposition =  _html2canvas.Util.getCSS( el, prop, imageIndex ) ,
     topPos,
     left,
