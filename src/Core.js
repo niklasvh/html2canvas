@@ -245,7 +245,7 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
   return val;
 };
 
-function resize(current_width, current_height, target_width, target_height, stretch_mode){
+_html2canvas.Util.resizeBounds = function( current_width, current_height, target_width, target_height, stretch_mode ){
   var target_ratio = target_width / target_height,
     current_ratio = current_width / current_height,
     output_width, output_height;
@@ -265,7 +265,7 @@ function resize(current_width, current_height, target_width, target_height, stre
   }
 
   return { width: output_width, height: output_height };
-}
+};
 
 function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
     // TODO add support for multi image backgrounds
@@ -299,7 +299,7 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex ) {
 
         if(left === undefined) {
           if(bgposition[0].match(/contain|cover/)) {
-            var resized = resize( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
+            var resized = _html2canvas.Util.resizeBounds( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
             left = resized.width;
             topPos = resized.height;
           } else {
@@ -336,7 +336,6 @@ _html2canvas.Util.BackgroundSize = function( el, bounds, image, imageIndex ) {
     var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image, imageIndex );
     return { width: result[0], height: result[1] };
 };
-window._html2canvas = _html2canvas;
 
 _html2canvas.Util.Extend = function (options, defaults) {
   for (var key in options) {
