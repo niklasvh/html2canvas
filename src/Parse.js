@@ -521,8 +521,8 @@ _html2canvas.Parse = function (images, options) {
       image,
       Math.floor(sourceX), // source X
       Math.floor(sourceY), // source Y
-      Math.ceil(width-sourceX), // source Width
-      Math.ceil(height-sourceY), // source Height
+      Math.ceil(image.width-sourceX), // source Width
+      Math.ceil(image.height-sourceY), // source Height
       Math.ceil(x+sourceX), // destination X
       Math.ceil(y+sourceY), // destination Y
       Math.ceil(width-sourceX), // destination width
@@ -559,8 +559,8 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderBackgroundNoRepeat(ctx, image, backgroundPosition, x, y, w, h) {
-    var bgdw = w - backgroundPosition.left,
-    bgdh = h - backgroundPosition.top,
+    var bgdw = w, // - backgroundPosition.left,
+    bgdh = h, // - backgroundPosition.top,
     bgsx = backgroundPosition.left,
     bgsy = backgroundPosition.top,
     bgdx = backgroundPosition.left + x,
@@ -590,8 +590,8 @@ _html2canvas.Parse = function (images, options) {
         image,
         bgsx,
         bgsy,
-        bgdw,
-        bgdh,
+        image.width,
+        image.height,
         bgdx,
         bgdy,
         bgdw,
@@ -658,13 +658,12 @@ _html2canvas.Parse = function (images, options) {
         break;
 
       default:
-        renderBackgroundRepeat(ctx, image, backgroundPosition, { width: backgroundSize.width, height: backgroundSize.height });
+        renderBackgroundRepeat(ctx, image, backgroundPosition, { top: bounds.top, left: bounds.left, width: backgroundSize.width, height: backgroundSize.height });
         break;
     }
   }
 
   function renderBackgroundImage(element, bounds, ctx) {
-    // TODO add support for multi background-images
     var backgroundImage = getCSS(element, "backgroundImage"),
     backgroundImages = _html2canvas.Util.parseBackgroundImage(backgroundImage),
     image;
