@@ -22,7 +22,7 @@ _html2canvas.Renderer = function(parseQueue, options){
 
       stackValues.forEach(function(zValue) {
         var index;
-        
+
         subStacks.some(function(stack, i){
           index = i;
           return (stack.zindex === zValue);
@@ -48,11 +48,11 @@ _html2canvas.Renderer = function(parseQueue, options){
       throw new Error("Unknown renderer");
     }
 
-    if ( typeof renderer._create !== "function" ) {
+    if ( typeof renderer !== "function" ) {
       throw new Error("Invalid renderer defined");
     }
     return renderer;
   }
 
-  return getRenderer(options.renderer)._create(parseQueue, options, document, createRenderQueue(parseQueue), _html2canvas);
+  return getRenderer(options.renderer)(parseQueue, options, document, createRenderQueue(parseQueue), _html2canvas);
 };
