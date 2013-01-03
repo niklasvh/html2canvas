@@ -833,8 +833,9 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function resizeImage(image, bounds) {
-    if(image.width === bounds.width && image.height === bounds.height)
+    if(image.width === bounds.width && image.height === bounds.height) {
       return image;
+    }
 
     var ctx, canvas = doc.createElement('canvas');
     canvas.width = bounds.width;
