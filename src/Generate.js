@@ -327,18 +327,16 @@
     
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
-    gradient, grad, i, len, img;
+    gradient, grad, i, len;
 
     canvas.width = bounds.width;
     canvas.height = bounds.height;
 
-    // TODO: add support for multi defined background gradients (like radial gradient example in background.html)
+    // TODO: add support for multi defined background gradients
     gradient = _html2canvas.Generate.parseGradient(src, bounds);
 
-    img = new Image();
-
-    if(gradient){
-      if(gradient.type === 'linear'){
+    if(gradient) {
+      if(gradient.type === 'linear') {
         grad = ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1);
 
         for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
@@ -353,8 +351,7 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, bounds.width, bounds.height);
 
-        img.src = canvas.toDataURL();
-      } else if(gradient.type === 'circle'){
+      } else if(gradient.type === 'circle') {
 
         grad = ctx.createRadialGradient(gradient.cx, gradient.cy, 0, gradient.cx, gradient.cy, gradient.rx);
 
@@ -370,8 +367,7 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, bounds.width, bounds.height);
 
-        img.src = canvas.toDataURL();
-      } else if(gradient.type === 'ellipse'){
+      } else if(gradient.type === 'ellipse') {
 
         // draw circle
         var canvasRadial = document.createElement('canvas'),
@@ -382,7 +378,7 @@
         canvasRadial.width = canvasRadial.height = di;
 
         grad = ctxRadial.createRadialGradient(gradient.rx, gradient.ry, 0, gradient.rx, gradient.ry, ri);
-
+        
         for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
           try {
             grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);
@@ -397,21 +393,12 @@
 
         ctx.fillStyle = gradient.colorStops[i - 1].color;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(canvasRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
 
-        imgRadial = new Image();
-        imgRadial.onload = function() { // wait until the image is filled
-
-          // transform circle to ellipse
-          ctx.drawImage(imgRadial, gradient.cx - gradient.rx, gradient.cy - gradient.ry, 2 * gradient.rx, 2 * gradient.ry);
-
-          img.src = canvas.toDataURL();
-
-        };
-        imgRadial.src = canvasRadial.toDataURL();
       }
     }
 
-    return img;
+    return canvas;
   };
 
   _html2canvas.Generate.ListAlpha = function(number) {
