@@ -345,10 +345,6 @@ _html2canvas.Parse = function (images, options) {
     });
   }
 
-  function pathArc(x, y, cornerX, cornerY, radius) {
-    return ["arc", cornerX, cornerY, x, y, radius];
-  }
-
   var getCurvePoints = (function(kappa) {
 
     return function(x, y, r1, r2) {
@@ -445,6 +441,20 @@ _html2canvas.Parse = function (images, options) {
     };
   }
 
+  function parseCorner(borderArgs, radius1, radius2, corner1, corner2, x, y) {
+    if (radius1[0] > 0 || radius1[1] > 0) {
+      borderArgs.push(["line", corner1[0].start.x, corner1[0].start.y]);
+      corner1[0].curveTo(borderArgs);
+      corner1[1].curveTo(borderArgs);
+    } else {
+      borderArgs.push(["line", x, y]);
+    }
+
+    if (radius2[0] > 0 || radius2[1] > 0) {
+      borderArgs.push(["line", corner2[0].start.x, corner2[0].start.y]);
+    }
+  }
+
   function drawSide(borderData, radius1, radius2, outer1, inner1, outer2, inner2) {
     var borderArgs = [];
 
@@ -473,10 +483,6 @@ _html2canvas.Parse = function (images, options) {
     }
 
     return borderArgs;
-  }
-
-  function getBorderBounds(element) {
-    var backgroundClip = getCSS(element, 'backgroundClip');
   }
 
   function calculateCurvePoints(bounds, borderRadius, borders) {
@@ -556,36 +562,61 @@ _html2canvas.Parse = function (images, options) {
         Math.max(0, blh - borders[3].width),
         Math.max(0, blv - borders[2].width)
         ).bottomLeft.subdivide(0.5)
-    }
+    };
   }
 
-  function parseBorders(element, ctx, bounds, clip, borders){
+  function getBorderClip(element, borderPoints, borders, radius, bounds) {
+    var backgroundClip = getCSS(element, 'backgroundClip'),
+    borderArgs = [];
+
+    switch(backgroundClip) {
+      case "content-box":
+      case "padding-box":
+        parseCorner(borderArgs, radius[0], radius[1], borderPoints.topLeftInner, borderPoints.topRightInner, bounds.left + borders[3].width, bounds.top + borders[0].width);
+        parseCorner(borderArgs, radius[1], radius[2], borderPoints.topRightInner, borderPoints.bottomRightInner, bounds.left + bounds.width - borders[1].width, bounds.top + borders[0].width);
+        parseCorner(borderArgs, radius[2], radius[3], borderPoints.bottomRightInner, borderPoints.bottomLeftInner, bounds.left + bounds.width - borders[1].width, bounds.top + bounds.height - borders[2].width);
+        parseCorner(borderArgs, radius[3], radius[0], borderPoints.bottomLeftInner, borderPoints.topLeftInner, bounds.left + borders[3].width, bounds.top + bounds.height - borders[2].width);
+        break;
+
+      default:
+        parseCorner(borderArgs, radius[0], radius[1], borderPoints.topLeftOuter, borderPoints.topRightOuter, bounds.left, bounds.top);
+        parseCorner(borderArgs, radius[1], radius[2], borderPoints.topRightOuter, borderPoints.bottomRightOuter, bounds.left + bounds.width, bounds.top);
+        parseCorner(borderArgs, radius[2], radius[3], borderPoints.bottomRightOuter, borderPoints.bottomLeftOuter, bounds.left + bounds.width, bounds.top + bounds.height);
+        parseCorner(borderArgs, radius[3], radius[0], borderPoints.bottomLeftOuter, borderPoints.topLeftOuter, bounds.left, bounds.top + bounds.height);
+        break;
+    }
+
+    return borderArgs;
+  }
+
+  function parseBorders(element, bounds, borders){
     var x = bounds.left,
     y = bounds.top,
     width = bounds.width,
     height = bounds.height,
     borderSide,
-    borderData,
     bx,
     by,
     bw,
     bh,
     borderArgs,
-    borderBounds,
     // http://www.w3.org/TR/css3-background/#the-border-radius
     borderRadius = getBorderRadiusData(element),
-    borderPoints = calculateCurvePoints(bounds, borderRadius, borders);
+    borderPoints = calculateCurvePoints(bounds, borderRadius, borders),
+    borderData = {
+      clip: getBorderClip(element, borderPoints, borders, borderRadius, bounds),
+      borders: []
+    };
 
     for (borderSide = 0; borderSide < 4; borderSide++) {
-      borderData = borders[borderSide];
-      borderArgs = [];
-      if (borderData.width>0){
+
+      if (borders[borderSide].width > 0) {
         bx = x;
         by = y;
         bw = width;
         bh = height - (borders[2].width);
 
-        switch(borderSide){
+        switch(borderSide) {
           case 0:
             // top border
             bh = borders[0].width;
@@ -638,33 +669,31 @@ _html2canvas.Parse = function (images, options) {
             break;
         }
 
-        borderBounds = {
-          left:bx,
-          top:by,
-          width: bw,
-          height:bh
-        };
+        borderData.borders.push({
+          args: borderArgs,
+          color: borders[borderSide].color
+        });
 
-        if (clip){
-          borderBounds = clipBounds(borderBounds, clip);
-        }
-        renderBorders(ctx, borderArgs, borderBounds, borderData.color);
       }
     }
 
-    return borders;
+    return borderData;
   }
 
-  function renderBorders(ctx, borderArgs, borderBounds, color) {
-    if (borderBounds.width > 0 && borderBounds.height > 0) {
-      if (color !== "transparent") {
-        ctx.setVariable( "fillStyle", color);
-        var shape = ctx.drawShape();
-        borderArgs.forEach(function(border, index) {
-          shape[(index === 0) ? "moveTo" : border[0] + "To" ].apply(null, border.slice(1));
-        });
-        numDraws+=1;
-      }
+  function createShape(ctx, args) {
+    var shape = ctx.drawShape();
+    args.forEach(function(border, index) {
+      shape[(index === 0) ? "moveTo" : border[0] + "To" ].apply(null, border.slice(1));
+    });
+    return shape;
+  }
+
+  function renderBorders(ctx, borderArgs, color) {
+    if (color !== "transparent") {
+      ctx.setVariable( "fillStyle", color);
+      createShape(ctx, borderArgs);
+      ctx.fill();
+      numDraws+=1;
     }
   }
 
@@ -930,14 +959,23 @@ _html2canvas.Parse = function (images, options) {
     stack = createStack(element, parentStack, bounds),
     borders = stack.borders,
     ctx = stack.ctx,
-    backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip);
+    backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
+    borderData = parseBorders(element, bounds, borders),
+    clipPath = createShape(ctx, borderData.clip);
+
+    ctx.save();
+    ctx.clip();
 
     if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
-      renderBackgroundColor(ctx, backgroundBounds, bgcolor);
+      renderBackgroundColor(ctx, bounds, bgcolor);
       renderBackgroundImage(element, backgroundBounds, ctx);
     }
 
-    parseBorders(element, ctx, bounds, stack.clip, borders);
+    ctx.restore();
+
+    borderData.borders.forEach(function(border) {
+      renderBorders(ctx, border.args, border.color);
+    });
 
     switch(element.nodeName){
       case "IMG":

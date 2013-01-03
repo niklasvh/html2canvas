@@ -98,16 +98,12 @@ _html2canvas.Renderer.Canvas = function( options ) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = fstyle;
 
-      var drawShape = function(args) {
-
-        var i, len = args.length;
+      var createShape = function(args) {
         ctx.beginPath();
-        for ( i = 0; i < len; i++ ) {
-          ctx[ args[ i ].name ].apply( ctx, args[ i ]['arguments'] );
-        }
+        args.forEach(function(arg) {
+          ctx[arg.name].apply(ctx, arg['arguments']);
+        });
         ctx.closePath();
-        ctx.fill();
-
       };
 
       if ( options.svgRendering && zStack.svgRender !== undefined ) {
@@ -150,7 +146,7 @@ _html2canvas.Renderer.Canvas = function( options ) {
                       ctx.fillRect.apply( ctx, renderItem['arguments'] );
                     }
                   } else if (renderItem.name === "drawShape") {
-                    drawShape(renderItem['arguments']);
+                    createShape(renderItem['arguments']);
                   } else if (renderItem.name === "fillText") {
                     if (!usingFlashcanvas || renderItem['arguments'][1] < flashMaxSize  && renderItem['arguments'][2] < flashMaxSize) {
                       ctx.fillText.apply( ctx, renderItem['arguments'] );
@@ -175,6 +171,8 @@ _html2canvas.Renderer.Canvas = function( options ) {
                       }
                       ctx.drawImage.apply( ctx, renderItem['arguments'] );
                     }
+                  } else {
+                    ctx[renderItem.name].apply(ctx, renderItem['arguments']);
                   }
 
 
