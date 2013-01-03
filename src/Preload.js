@@ -119,16 +119,14 @@ _html2canvas.Preload = function( options ) {
       // opera throws exception on external-content.html
       try {
         background_image = _html2canvas.Util.getCSS(el, 'backgroundImage');
-      }catch(e) {
+      } catch(e) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
-      if ( background_image && background_image !== "1" && background_image !== "none" ) {
-
+      if (background_image && background_image !== "1" && background_image !== "none") {
         // TODO add multi image background support
 
         if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image )) {
-
-          img = _html2canvas.Generate.Gradient( background_image, _html2canvas.Util.Bounds( el ) );
+          img = _html2canvas.Generate.Gradient(background_image, _html2canvas.Util.Bounds( el ) );
 
           if ( img !== undefined ){
             images[background_image] = {

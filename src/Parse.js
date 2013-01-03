@@ -740,118 +740,27 @@ _html2canvas.Parse = function (images, options) {
     numDraws+=1;
   }
 
-  function renderBackgroundSlice (ctx, image, x, y, width, height, elx, ely){
-    var sourceX = (elx - x > 0) ? elx-x :0,
-    sourceY= (ely - y > 0) ? ely-y : 0;
-
-    drawImage(
-      ctx,
-      image,
-      Math.floor(sourceX), // source X
-      Math.floor(sourceY), // source Y
-      Math.ceil(width-sourceX), // source Width
-      Math.ceil(height-sourceY), // source Height
-      Math.ceil(x+sourceX), // destination X
-      Math.ceil(y+sourceY), // destination Y
-      Math.ceil(width-sourceX), // destination width
-      Math.ceil(height-sourceY) // destination height
-      );
-  }
-
   function renderBackgroundRepeat(ctx, image, backgroundPosition, bounds) {
-    var bgy,
-    height,
-    add,
-    h;
+    var offsetX = Math.round(bounds.left + backgroundPosition.left),
+    offsetY = Math.round(bounds.top + backgroundPosition.top);
 
-    backgroundPosition.top -= Math.ceil(backgroundPosition.top / image.height) * image.height;
-
-    for(bgy = (bounds.top + backgroundPosition.top); bgy < (bounds.height + bounds.top); bgy = Math.floor(bgy+image.height) - add) {
-      h = Math.min(image.height,(bounds.height + bounds.top) - bgy);
-
-      height = (Math.floor(bgy + image.height) > h + bgy) ? (h + bgy) - bgy : image.height;
-
-      if (bgy < bounds.top){
-        add = bounds.top - bgy;
-        bgy = bounds.top;
-      } else {
-        add = 0;
-      }
-
-      renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bgy, bounds.width, height);
-
-      if (add > 0){
-        backgroundPosition.top += add;
-      }
-    }
+    ctx.createPattern(image);
+    ctx.translate(offsetX, offsetY);
+    ctx.fill();
+    ctx.translate(-offsetX, -offsetY);
   }
 
-  function renderBackgroundNoRepeat(ctx, image, backgroundPosition, x, y, w, h) {
-    var bgdw = w - backgroundPosition.left,
-    bgdh = h - backgroundPosition.top,
-    bgsx = backgroundPosition.left,
-    bgsy = backgroundPosition.top,
-    bgdx = backgroundPosition.left + x,
-    bgdy = backgroundPosition.top + y;
-
-    if (bgsx<0){
-      bgsx = Math.abs(bgsx);
-      bgdx += bgsx;
-      bgdw = Math.min(w,image.width-bgsx);
-    } else {
-      bgdw = Math.min(bgdw,image.width);
-      bgsx = 0;
-    }
-
-    if (bgsy < 0){
-      bgsy = Math.abs(bgsy);
-      bgdy += bgsy;
-      bgdh = Math.min(h, image.height - bgsy);
-    } else {
-      bgdh = Math.min(bgdh, image.height);
-      bgsy = 0;
-    }
-
-    if (bgdh > 0 && bgdw > 0){
-      drawImage(
-        ctx,
-        image,
-        bgsx,
-        bgsy,
-        bgdw,
-        bgdh,
-        bgdx,
-        bgdy,
-        bgdw,
-        bgdh
-        );
-    }
-  }
-
-  function renderBackgroundRepeatY (ctx, image, backgroundPosition, x, y, w, h){
-    var height,
-    width = Math.min(image.width, w),
-    bgy;
-
-    backgroundPosition.top -= Math.ceil(backgroundPosition.top / image.height) * image.height;
-
-    for (bgy = y + backgroundPosition.top; bgy < h + y; bgy = Math.round(bgy + image.height)){
-      height = (Math.floor(bgy + image.height) > h + y) ? (h+y) - bgy : image.height;
-      renderBackgroundSlice(ctx, image, x + backgroundPosition.left, bgy,width, height, x, y);
-    }
-  }
-
-  function renderBackgroundRepeatX(ctx, image, backgroundPosition, x, y, w, h){
-    var height = Math.min(image.height, h),
-    width,
-    bgx;
-
-    backgroundPosition.left -= Math.ceil(backgroundPosition.left / image.width) * image.width;
-
-    for (bgx = x + backgroundPosition.left; bgx < w + x; bgx = Math.round(bgx + image.width)) {
-      width = (Math.floor(bgx + image.width) > w + x) ? (w + x) - bgx : image.width;
-      renderBackgroundSlice(ctx, image, bgx,(y + backgroundPosition.top), width, height, x, y);
-    }
+  function backgroundRepeatShape(ctx, image, backgroundPosition, bounds, left, top, width, height) {
+    var args = [];
+    args.push(["line", Math.round(left), Math.round(top)]);
+    args.push(["line", Math.round(left + width), Math.round(top)]);
+    args.push(["line", Math.round(left + width), Math.round(height + top)]);
+    args.push(["line", Math.round(left), Math.round(height + top)]);
+    createShape(ctx, args);
+    ctx.save();
+    ctx.clip();
+    renderBackgroundRepeat(ctx, image, backgroundPosition, bounds);
+    ctx.restore();
   }
 
   function renderBackgroundColor(ctx, backgroundBounds, bgcolor) {
@@ -870,15 +779,18 @@ _html2canvas.Parse = function (images, options) {
     backgroundRepeat = getCSS(el, "backgroundRepeat").split(",")[0];
     switch (backgroundRepeat) {
       case "repeat-x":
-        renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left, bounds.top + backgroundPosition.top, 99999, image.height);
         break;
 
       case "repeat-y":
-        renderBackgroundRepeatY(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left + backgroundPosition.left, bounds.top, image.width, 99999);
         break;
 
       case "no-repeat":
-        renderBackgroundNoRepeat(ctx, image, backgroundPosition, bounds.left, bounds.top, bounds.width, bounds.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, image.width, image.height);
         break;
 
       default:
@@ -960,8 +872,9 @@ _html2canvas.Parse = function (images, options) {
     borders = stack.borders,
     ctx = stack.ctx,
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
-    borderData = parseBorders(element, bounds, borders),
-    clipPath = createShape(ctx, borderData.clip);
+    borderData = parseBorders(element, bounds, borders);
+
+    createShape(ctx, borderData.clip);
 
     ctx.save();
     ctx.clip();

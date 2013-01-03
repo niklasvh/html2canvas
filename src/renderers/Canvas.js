@@ -145,6 +145,8 @@ _html2canvas.Renderer.Canvas = function( options ) {
                     if (!usingFlashcanvas || renderItem['arguments'][0] + renderItem['arguments'][2] < flashMaxSize  && renderItem['arguments'][1] + renderItem['arguments'][3] < flashMaxSize) {
                       ctx.fillRect.apply( ctx, renderItem['arguments'] );
                     }
+                  } else if (renderItem.name === "createPattern") {
+                    ctx.fillStyle = ctx.createPattern(renderItem['arguments'][0], "repeat");
                   } else if (renderItem.name === "drawShape") {
                     createShape(renderItem['arguments']);
                   } else if (renderItem.name === "fillText") {

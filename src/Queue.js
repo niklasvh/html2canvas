@@ -11,6 +11,13 @@ function h2cRenderContext(width, height) {
         'arguments': arguments
       });
     },
+    translate: function() {
+      storage.push({
+        type: "function",
+        name: "translate",
+        'arguments': arguments
+      });
+    },
     fill: function() {
       storage.push({
         type: "function",
@@ -36,6 +43,13 @@ function h2cRenderContext(width, height) {
       storage.push({
         type: "function",
         name: "fillRect",
+        'arguments': arguments
+      });
+    },
+    createPattern: function() {
+      storage.push({
+        type: "function",
+        name: "createPattern",
         'arguments': arguments
       });
     },
