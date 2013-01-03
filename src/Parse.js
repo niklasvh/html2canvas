@@ -475,6 +475,90 @@ _html2canvas.Parse = function (images, options) {
     return borderArgs;
   }
 
+  function getBorderBounds(element) {
+    var backgroundClip = getCSS(element, 'backgroundClip');
+  }
+
+  function calculateCurvePoints(bounds, borderRadius, borders) {
+
+    var x = bounds.left,
+    y = bounds.top,
+    width = bounds.width,
+    height = bounds.height,
+
+    tlh = borderRadius[0][0],
+    tlv = borderRadius[0][1],
+    trh = borderRadius[1][0],
+    trv = borderRadius[1][1],
+    brv = borderRadius[2][0],
+    brh = borderRadius[2][1],
+    blh = borderRadius[3][0],
+    blv = borderRadius[3][1],
+
+    topWidth = width - trh,
+    rightHeight = height - brv,
+    bottomWidth = width - brh,
+    leftHeight = height - blv;
+
+    return {
+      topLeftOuter: getCurvePoints(
+        x,
+        y,
+        tlh,
+        tlv
+        ).topLeft.subdivide(0.5),
+
+      topLeftInner: getCurvePoints(
+        x + borders[3].width,
+        y + borders[0].width,
+        Math.max(0, tlh - borders[3].width),
+        Math.max(0, tlv - borders[0].width)
+        ).topLeft.subdivide(0.5),
+
+      topRightOuter: getCurvePoints(
+        x + topWidth,
+        y,
+        trh,
+        trv
+        ).topRight.subdivide(0.5),
+
+      topRightInner: getCurvePoints(
+        x + Math.min(topWidth, width + borders[3].width),
+        y + borders[0].width,
+        (topWidth > width + borders[3].width) ? 0 :trh - borders[3].width,
+        trv - borders[0].width
+        ).topRight.subdivide(0.5),
+
+      bottomRightOuter: getCurvePoints(
+        x + bottomWidth,
+        y + rightHeight,
+        brh,
+        brv
+        ).bottomRight.subdivide(0.5),
+
+      bottomRightInner: getCurvePoints(
+        x + Math.min(bottomWidth, width + borders[3].width),
+        y + Math.min(rightHeight, height + borders[0].width),
+        Math.max(0, brh - borders[1].width),
+        Math.max(0, brv - borders[2].width)
+        ).bottomRight.subdivide(0.5),
+
+      bottomLeftOuter: getCurvePoints(
+        x,
+        y + leftHeight,
+        blh,
+        blv
+        ).bottomLeft.subdivide(0.5),
+
+      bottomLeftInner: getCurvePoints(
+        x + borders[3].width,
+        y + leftHeight,
+        Math.max(0, blh - borders[3].width),
+        Math.max(0, blv - borders[2].width)
+        ).bottomLeft.subdivide(0.5)
+    }
+  }
+
   function parseBorders(element, ctx, bounds, clip, borders){
     var x = bounds.left,
     y = bounds.top,
@@ -489,78 +573,8 @@ _html2canvas.Parse = function (images, options) {
     borderArgs,
     borderBounds,
     // http://www.w3.org/TR/css3-background/#the-border-radius
-    borderRadius = getBorderRadiusData(element);
-
-
-    var tlh = borderRadius[0][0];
-    var tlv = borderRadius[0][1];
-    var trh = borderRadius[1][0];
-    var trv = borderRadius[1][1];
-    var brv = borderRadius[2][0];
-    var brh = borderRadius[2][1];
-    var blh = borderRadius[3][0];
-    var blv = borderRadius[3][1];
-
-
-    var topWidth = width - trh;
-    var rightHeight = height - brv;
-    var bottomWidth = width - brh;
-    var leftHeight = height - blv;
-
-    var topLeftOuter = getCurvePoints(
-      x,
-      y,
-      tlh,
-      tlv
-      ).topLeft.subdivide(0.5);
-
-    var topLeftInner = getCurvePoints(
-      x + borders[3].width,
-      y + borders[0].width,
-      Math.max(0, tlh - borders[3].width),
-      Math.max(0, tlv - borders[0].width)
-      ).topLeft.subdivide(0.5);
-
-    var topRightOuter = getCurvePoints(
-      x + topWidth,
-      y,
-      trh,
-      trv
-      ).topRight.subdivide(0.5);
-
-    var topRightInner = getCurvePoints(
-      x + Math.min(topWidth, width + borders[3].width),
-      y + borders[0].width,
-      (topWidth > width + borders[3].width) ? 0 :trh - borders[3].width,
-      trv - borders[0].width
-      ).topRight.subdivide(0.5);
-
-    var bottomRightOuter = getCurvePoints(
-      x + bottomWidth,
-      y + rightHeight,
-      brh,
-      brv
-      ).bottomRight.subdivide(0.5);
-    var bottomRightInner = getCurvePoints(
-      x + Math.min(bottomWidth, width + borders[3].width),
-      y + Math.min(rightHeight, height + borders[0].width),
-      Math.max(0, brh - borders[1].width),
-      Math.max(0, brv - borders[2].width)
-      ).bottomRight.subdivide(0.5);
-
-    var bottomLeftOuter = getCurvePoints(
-      x,
-      y + leftHeight,
-      blh,
-      blv
-      ).bottomLeft.subdivide(0.5);
-
-    var bottomLeftInner = getCurvePoints(
-      x + borders[3].width,
-      y + leftHeight,
-      Math.max(0, blh - borders[3].width),
-      Math.max(0, blv - borders[2].width)
-      ).bottomLeft.subdivide(0.5);
+    borderRadius = getBorderRadiusData(element),
+    borderPoints = calculateCurvePoints(bounds, borderRadius, borders);
 
     for (borderSide = 0; borderSide < 4; borderSide++) {
       borderData = borders[borderSide];
@@ -581,7 +595,8 @@ _html2canvas.Parse = function (images, options) {
               c2: [bx + bw, by],
               c3: [bx + bw - borders[1].width, by + bh],
               c4: [bx + borders[3].width, by + bh]
-            }, borderRadius[0], borderRadius[1], topLeftOuter, topLeftInner, topRightOuter, topRightInner);
+            }, borderRadius[0], borderRadius[1],
+            borderPoints.topLeftOuter, borderPoints.topLeftInner, borderPoints.topRightOuter, borderPoints.topRightInner);
             break;
           case 1:
             // right border
@@ -593,7 +608,8 @@ _html2canvas.Parse = function (images, options) {
               c2: [bx + bw, by + bh + borders[2].width],
               c3: [bx, by + bh],
               c4: [bx, by + borders[0].width]
-            }, borderRadius[1], borderRadius[2], topRightOuter, topRightInner, bottomRightOuter, bottomRightInner);
+            }, borderRadius[1], borderRadius[2],
+            borderPoints.topRightOuter, borderPoints.topRightInner, borderPoints.bottomRightOuter, borderPoints.bottomRightInner);
             break;
           case 2:
             // bottom border
@@ -605,7 +621,8 @@ _html2canvas.Parse = function (images, options) {
               c2: [bx, by + bh],
               c3: [bx + borders[3].width, by],
               c4: [bx + bw - borders[2].width, by]
-            }, borderRadius[2], borderRadius[3], bottomRightOuter, bottomRightInner, bottomLeftOuter, bottomLeftInner);
+            }, borderRadius[2], borderRadius[3],
+            borderPoints.bottomRightOuter, borderPoints.bottomRightInner, borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner);
             break;
           case 3:
             // left border
@@ -616,7 +633,8 @@ _html2canvas.Parse = function (images, options) {
               c2: [bx, by],
               c3: [bx + bw, by + borders[0].width],
               c4: [bx + bw, by + bh]
-            }, borderRadius[3], borderRadius[0], bottomLeftOuter, bottomLeftInner, topLeftOuter, topLeftInner);
+            }, borderRadius[3], borderRadius[0],
+            borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner, borderPoints.topLeftOuter, borderPoints.topLeftInner);
             break;
         }
 
