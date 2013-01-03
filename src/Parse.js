@@ -779,26 +779,28 @@ _html2canvas.Parse = function (images, options) {
     backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
     backgroundRepeat = getCSS(el, "backgroundRepeat").split(",");
 
+    image = resizeImage(image, backgroundSize);
+
     backgroundRepeat = backgroundRepeat[imageIndex] || backgroundRepeat[0];
 
     switch (backgroundRepeat) {
       case "repeat-x":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
-          bounds.left, bounds.top + backgroundPosition.top, 99999, backgroundSize.height);
+          bounds.left, bounds.top + backgroundPosition.top, 99999, image.height);
         break;
 
       case "repeat-y":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
-          bounds.left + backgroundPosition.left, bounds.top, backgroundSize.width, 99999);
+          bounds.left + backgroundPosition.left, bounds.top, image.width, 99999);
         break;
 
       case "no-repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
-          bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, backgroundSize.width, backgroundSize.height);
+          bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, image.width, image.height);
         break;
 
       default:
-        renderBackgroundRepeat(ctx, image, backgroundPosition, { top: bounds.top, left: bounds.left, width: backgroundSize.width, height: backgroundSize.height });
+        renderBackgroundRepeat(ctx, image, backgroundPosition, { top: bounds.top, left: bounds.left, width: image.width, height: image.height });
         break;
     }
   }
@@ -828,6 +830,18 @@ _html2canvas.Parse = function (images, options) {
         h2clog("html2canvas: Error loading background:" + backgroundImage);
       }
     }
+  }
+
+  function resizeImage(image, bounds) {
+    if(image.width === bounds.width && image.height === bounds.height)
+      return image;
+
+    var ctx, canvas = doc.createElement('canvas');
+    canvas.width = bounds.width;
+    canvas.height = bounds.height;
+    ctx = canvas.getContext("2d");
+    drawImage(ctx, image, 0, 0, image.width, image.height, 0, 0, bounds.width, bounds.height );
+    return canvas;
   }
 
   function setOpacity(ctx, element, parentStack) {
