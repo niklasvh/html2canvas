@@ -4,10 +4,52 @@ function h2cRenderContext(width, height) {
     storage: storage,
     width: width,
     height: height,
+    clip: function() {
+      storage.push({
+        type: "function",
+        name: "clip",
+        'arguments': arguments
+      });
+    },
+    translate: function() {
+      storage.push({
+        type: "function",
+        name: "translate",
+        'arguments': arguments
+      });
+    },
+    fill: function() {
+      storage.push({
+        type: "function",
+        name: "fill",
+        'arguments': arguments
+      });
+    },
+    save: function() {
+      storage.push({
+        type: "function",
+        name: "save",
+        'arguments': arguments
+      });
+    },
+    restore: function() {
+      storage.push({
+        type: "function",
+        name: "restore",
+        'arguments': arguments
+      });
+    },
     fillRect: function () {
       storage.push({
         type: "function",
         name: "fillRect",
+        'arguments': arguments
+      });
+    },
+    createPattern: function() {
+      storage.push({
+        type: "function",
+        name: "createPattern",
         'arguments': arguments
       });
     },
@@ -31,6 +73,12 @@ function h2cRenderContext(width, height) {
         lineTo: function() {
           shape.push({
             name: "lineTo",
+            'arguments': arguments
+          });
+        },
+        arcTo: function() {
+          shape.push({
+            name: "arcTo",
             'arguments': arguments
           });
         },

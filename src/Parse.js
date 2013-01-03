@@ -326,144 +326,372 @@ _html2canvas.Parse = function (images, options) {
       );
   }
 
-  function renderBorders(el, ctx, bounds, clip){
+  function getBorderData(element) {
+    return ["Top", "Right", "Bottom", "Left"].map(function(side) {
+      return {
+        width: getCSSInt(element, 'border' + side + 'Width'),
+        color: getCSS(element, 'border' + side + 'Color')
+      };
+    });
+  }
+
+  function getBorderRadiusData(element) {
+    return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function(side) {
+      return getCSS(element, 'border' + side + 'Radius');
+    });
+  }
+
+  var getCurvePoints = (function(kappa) {
+
+    return function(x, y, r1, r2) {
+      var ox = (r1) * kappa, // control point offset horizontal
+      oy = (r2) * kappa, // control point offset vertical
+      xm = x + r1, // x-middle
+      ym = y + r2; // y-middle
+      return {
+        topLeft: bezierCurve({
+          x:x,
+          y:ym
+        }, {
+          x:x,
+          y:ym - oy
+        }, {
+          x:xm - ox,
+          y:y
+        }, {
+          x:xm,
+          y:y
+        }),
+        topRight: bezierCurve({
+          x:x,
+          y:y
+        }, {
+          x:x + ox,
+          y:y
+        }, {
+          x:xm,
+          y:ym - oy
+        }, {
+          x:xm,
+          y:ym
+        }),
+        bottomRight: bezierCurve({
+          x:xm,
+          y:y
+        }, {
+          x:xm,
+          y:y + oy
+        }, {
+          x:x + ox,
+          y:ym
+        }, {
+          x:x,
+          y:ym
+        }),
+        bottomLeft: bezierCurve({
+          x:xm,
+          y:ym
+        }, {
+          x:xm - ox,
+          y:ym
+        }, {
+          x:x,
+          y:y + oy
+        }, {
+          x:x,
+          y:y
+        })
+      };
+    };
+  })(4 * ((Math.sqrt(2) - 1) / 3));
+
+  function bezierCurve(start, startControl, endControl, end) {
+
+    var lerp = function (a, b, t) {
+      return {
+        x:a.x + (b.x - a.x) * t,
+        y:a.y + (b.y - a.y) * t
+      };
+    };
+
+    return {
+      start: start,
+      startControl: startControl,
+      endControl: endControl,
+      end: end,
+      subdivide: function(t) {
+        var ab = lerp(start, startControl, t),
+        bc = lerp(startControl, endControl, t),
+        cd = lerp(endControl, end, t),
+        abbc = lerp(ab, bc, t),
+        bccd = lerp(bc, cd, t),
+        dest = lerp(abbc, bccd, t);
+        return [bezierCurve(start, ab, abbc, dest), bezierCurve(dest, bccd, cd, end)];
+      },
+      curveTo: function(borderArgs) {
+        borderArgs.push(["bezierCurve", startControl.x, startControl.y, endControl.x, endControl.y, end.x, end.y]);
+      },
+      curveToReversed: function(borderArgs) {
+        borderArgs.push(["bezierCurve", endControl.x, endControl.y, startControl.x, startControl.y, start.x, start.y]);
+      }
+    };
+  }
+
+  function parseCorner(borderArgs, radius1, radius2, corner1, corner2, x, y) {
+    if (radius1[0] > 0 || radius1[1] > 0) {
+      borderArgs.push(["line", corner1[0].start.x, corner1[0].start.y]);
+      corner1[0].curveTo(borderArgs);
+      corner1[1].curveTo(borderArgs);
+    } else {
+      borderArgs.push(["line", x, y]);
+    }
+
+    if (radius2[0] > 0 || radius2[1] > 0) {
+      borderArgs.push(["line", corner2[0].start.x, corner2[0].start.y]);
+    }
+  }
+
+  function drawSide(borderData, radius1, radius2, outer1, inner1, outer2, inner2) {
+    var borderArgs = [];
+
+    if (radius1[0] > 0 || radius1[1] > 0) {
+      borderArgs.push(["line", outer1[1].start.x, outer1[1].start.y]);
+      outer1[1].curveTo(borderArgs);
+    } else {
+      borderArgs.push([ "line", borderData.c1[0], borderData.c1[1]]);
+    }
+
+    if (radius2[0] > 0 || radius2[1] > 0) {
+      borderArgs.push(["line", outer2[0].start.x, outer2[0].start.y]);
+      outer2[0].curveTo(borderArgs);
+      borderArgs.push(["line", inner2[0].end.x, inner2[0].end.y]);
+      inner2[0].curveToReversed(borderArgs);
+    } else {
+      borderArgs.push([ "line", borderData.c2[0], borderData.c2[1]]);
+      borderArgs.push([ "line", borderData.c3[0], borderData.c3[1]]);
+    }
+
+    if (radius1[0] > 0 || radius1[1] > 0) {
+      borderArgs.push(["line", inner1[1].end.x, inner1[1].end.y]);
+      inner1[1].curveToReversed(borderArgs);
+    } else {
+      borderArgs.push([ "line", borderData.c4[0], borderData.c4[1]]);
+    }
+
+    return borderArgs;
+  }
+
+  function calculateCurvePoints(bounds, borderRadius, borders) {
+
     var x = bounds.left,
     y = bounds.top,
-    w = bounds.width,
-    h = bounds.height,
+    width = bounds.width,
+    height = bounds.height,
+
+    tlh = borderRadius[0][0],
+    tlv = borderRadius[0][1],
+    trh = borderRadius[1][0],
+    trv = borderRadius[1][1],
+    brv = borderRadius[2][0],
+    brh = borderRadius[2][1],
+    blh = borderRadius[3][0],
+    blv = borderRadius[3][1],
+
+    topWidth = width - trh,
+    rightHeight = height - brv,
+    bottomWidth = width - brh,
+    leftHeight = height - blv;
+
+    return {
+      topLeftOuter: getCurvePoints(
+        x,
+        y,
+        tlh,
+        tlv
+        ).topLeft.subdivide(0.5),
+
+      topLeftInner: getCurvePoints(
+        x + borders[3].width,
+        y + borders[0].width,
+        Math.max(0, tlh - borders[3].width),
+        Math.max(0, tlv - borders[0].width)
+        ).topLeft.subdivide(0.5),
+
+      topRightOuter: getCurvePoints(
+        x + topWidth,
+        y,
+        trh,
+        trv
+        ).topRight.subdivide(0.5),
+
+      topRightInner: getCurvePoints(
+        x + Math.min(topWidth, width + borders[3].width),
+        y + borders[0].width,
+        (topWidth > width + borders[3].width) ? 0 :trh - borders[3].width,
+        trv - borders[0].width
+        ).topRight.subdivide(0.5),
+
+      bottomRightOuter: getCurvePoints(
+        x + bottomWidth,
+        y + rightHeight,
+        brh,
+        brv
+        ).bottomRight.subdivide(0.5),
+
+      bottomRightInner: getCurvePoints(
+        x + Math.min(bottomWidth, width + borders[3].width),
+        y + Math.min(rightHeight, height + borders[0].width),
+        Math.max(0, brh - borders[1].width),
+        Math.max(0, brv - borders[2].width)
+        ).bottomRight.subdivide(0.5),
+
+      bottomLeftOuter: getCurvePoints(
+        x,
+        y + leftHeight,
+        blh,
+        blv
+        ).bottomLeft.subdivide(0.5),
+
+      bottomLeftInner: getCurvePoints(
+        x + borders[3].width,
+        y + leftHeight,
+        Math.max(0, blh - borders[3].width),
+        Math.max(0, blv - borders[2].width)
+        ).bottomLeft.subdivide(0.5)
+    };
+  }
+
+  function getBorderClip(element, borderPoints, borders, radius, bounds) {
+    var backgroundClip = getCSS(element, 'backgroundClip'),
+    borderArgs = [];
+
+    switch(backgroundClip) {
+      case "content-box":
+      case "padding-box":
+        parseCorner(borderArgs, radius[0], radius[1], borderPoints.topLeftInner, borderPoints.topRightInner, bounds.left + borders[3].width, bounds.top + borders[0].width);
+        parseCorner(borderArgs, radius[1], radius[2], borderPoints.topRightInner, borderPoints.bottomRightInner, bounds.left + bounds.width - borders[1].width, bounds.top + borders[0].width);
+        parseCorner(borderArgs, radius[2], radius[3], borderPoints.bottomRightInner, borderPoints.bottomLeftInner, bounds.left + bounds.width - borders[1].width, bounds.top + bounds.height - borders[2].width);
+        parseCorner(borderArgs, radius[3], radius[0], borderPoints.bottomLeftInner, borderPoints.topLeftInner, bounds.left + borders[3].width, bounds.top + bounds.height - borders[2].width);
+        break;
+
+      default:
+        parseCorner(borderArgs, radius[0], radius[1], borderPoints.topLeftOuter, borderPoints.topRightOuter, bounds.left, bounds.top);
+        parseCorner(borderArgs, radius[1], radius[2], borderPoints.topRightOuter, borderPoints.bottomRightOuter, bounds.left + bounds.width, bounds.top);
+        parseCorner(borderArgs, radius[2], radius[3], borderPoints.bottomRightOuter, borderPoints.bottomLeftOuter, bounds.left + bounds.width, bounds.top + bounds.height);
+        parseCorner(borderArgs, radius[3], radius[0], borderPoints.bottomLeftOuter, borderPoints.topLeftOuter, bounds.left, bounds.top + bounds.height);
+        break;
+    }
+
+    return borderArgs;
+  }
+
+  function parseBorders(element, bounds, borders){
+    var x = bounds.left,
+    y = bounds.top,
+    width = bounds.width,
+    height = bounds.height,
     borderSide,
-    borderData,
     bx,
     by,
     bw,
     bh,
-    i,
     borderArgs,
-    borderBounds,
-    borders = (function(el){
-      var borders = [],
-      sides = ["Top","Right","Bottom","Left"],
-      s;
-
-      for (s = 0; s < 4; s+=1){
-        borders.push({
-          width: getCSSInt(el, 'border' + sides[s] + 'Width'),
-          color: getCSS(el, 'border' + sides[s] + 'Color')
-        });
-      }
-
-      return borders;
-
-    }(el)),
     // http://www.w3.org/TR/css3-background/#the-border-radius
-    borderRadius = (function( el ) {
-      var borders = [],
-      sides = ["TopLeft","TopRight","BottomRight","BottomLeft"],
-      s;
+    borderRadius = getBorderRadiusData(element),
+    borderPoints = calculateCurvePoints(bounds, borderRadius, borders),
+    borderData = {
+      clip: getBorderClip(element, borderPoints, borders, borderRadius, bounds),
+      borders: []
+    };
 
-      for (s = 0; s < 4; s+=1){
-        borders.push( getCSS(el, 'border' + sides[s] + 'Radius') );
-      }
+    for (borderSide = 0; borderSide < 4; borderSide++) {
 
-      return borders;
-    })( el );
-
-
-
-    for ( borderSide = 0; borderSide < 4; borderSide+=1 ) {
-      borderData = borders[ borderSide ];
-      borderArgs = [];
-      if (borderData.width>0){
+      if (borders[borderSide].width > 0) {
         bx = x;
         by = y;
-        bw = w;
-        bh = h - (borders[2].width);
+        bw = width;
+        bh = height - (borders[2].width);
 
-        switch(borderSide){
+        switch(borderSide) {
           case 0:
             // top border
             bh = borders[0].width;
 
-            i = 0;
-            borderArgs[ i++ ] = [ "line", bx, by ];  // top left
-            borderArgs[ i++ ] = [ "line", bx + bw, by ]; // top right
-            borderArgs[ i++ ] = [ "line", bx + bw - borders[ 1 ].width, by + bh  ]; // bottom right
-            borderArgs[ i++ ] = [ "line", bx + borders[ 3 ].width, by + bh ]; // bottom left
-
+            borderArgs = drawSide({
+              c1: [bx, by],
+              c2: [bx + bw, by],
+              c3: [bx + bw - borders[1].width, by + bh],
+              c4: [bx + borders[3].width, by + bh]
+            }, borderRadius[0], borderRadius[1],
+            borderPoints.topLeftOuter, borderPoints.topLeftInner, borderPoints.topRightOuter, borderPoints.topRightInner);
             break;
           case 1:
             // right border
-            bx = x + w - (borders[1].width);
+            bx = x + width - (borders[1].width);
             bw = borders[1].width;
 
-            i = 0;
-            borderArgs[ i++ ] = [ "line", bx, by + borders[ 0 ].width];  // top left
-            borderArgs[ i++ ] = [ "line", bx + bw, by ]; // top right
-            borderArgs[ i++ ] = [ "line", bx + bw, by + bh + borders[ 2 ].width ]; // bottom right
-            borderArgs[ i++ ] = [ "line", bx, by + bh ]; // bottom left
-
+            borderArgs = drawSide({
+              c1: [bx + bw, by],
+              c2: [bx + bw, by + bh + borders[2].width],
+              c3: [bx, by + bh],
+              c4: [bx, by + borders[0].width]
+            }, borderRadius[1], borderRadius[2],
+            borderPoints.topRightOuter, borderPoints.topRightInner, borderPoints.bottomRightOuter, borderPoints.bottomRightInner);
             break;
           case 2:
             // bottom border
-            by = (by + h) - (borders[2].width);
+            by = (by + height) - (borders[2].width);
             bh = borders[2].width;
 
-            i = 0;
-            borderArgs[ i++ ] = [ "line", bx + borders[ 3 ].width, by ];  // top left
-            borderArgs[ i++ ] = [ "line", bx + bw - borders[ 2 ].width, by ]; // top right
-            borderArgs[ i++ ] = [ "line", bx + bw, by + bh ]; // bottom right
-            borderArgs[ i++ ] = [ "line", bx, by + bh ]; // bottom left
-
+            borderArgs = drawSide({
+              c1: [bx + bw, by + bh],
+              c2: [bx, by + bh],
+              c3: [bx + borders[3].width, by],
+              c4: [bx + bw - borders[2].width, by]
+            }, borderRadius[2], borderRadius[3],
+            borderPoints.bottomRightOuter, borderPoints.bottomRightInner, borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner);
             break;
           case 3:
             // left border
             bw = borders[3].width;
 
-            i = 0;
-            borderArgs[ i++ ] = [ "line", bx, by ];  // top left
-            borderArgs[ i++ ] = [ "line", bx + bw, by + borders[ 0 ].width ]; // top right
-            borderArgs[ i++ ] = [ "line", bx + bw, by + bh ]; // bottom right
-            borderArgs[ i++ ] = [ "line", bx, by + bh + borders[ 2 ].width ]; // bottom left
-
+            borderArgs = drawSide({
+              c1: [bx, by + bh + borders[2].width],
+              c2: [bx, by],
+              c3: [bx + bw, by + borders[0].width],
+              c4: [bx + bw, by + bh]
+            }, borderRadius[3], borderRadius[0],
+            borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner, borderPoints.topLeftOuter, borderPoints.topLeftInner);
             break;
         }
 
-        borderBounds = {
-          left:bx,
-          top:by,
-          width: bw,
-          height:bh
-        };
-
-        if (clip){
-          borderBounds = clipBounds(borderBounds, clip);
-        }
-
-
-        if ( borderBounds.width > 0 && borderBounds.height > 0 ) {
-
-          if ( borderData.color !== "transparent" ){
-            ctx.setVariable( "fillStyle", borderData.color );
-
-            var shape = ctx.drawShape(),
-            numBorderArgs = borderArgs.length;
-
-            for ( i = 0; i < numBorderArgs; i++ ) {
-              shape[( i === 0) ? "moveTo" : borderArgs[ i ][ 0 ] + "To" ].apply( null, borderArgs[ i ].slice(1) );
-            }
-
-            numDraws+=1;
-          }
-
-        }
-
+        borderData.borders.push({
+          args: borderArgs,
+          color: borders[borderSide].color
+        });
 
       }
     }
 
-    return borders;
+    return borderData;
   }
 
+  function createShape(ctx, args) {
+    var shape = ctx.drawShape();
+    args.forEach(function(border, index) {
+      shape[(index === 0) ? "moveTo" : border[0] + "To" ].apply(null, border.slice(1));
+    });
+    return shape;
+  }
+
+  function renderBorders(ctx, borderArgs, color) {
+    if (color !== "transparent") {
+      ctx.setVariable( "fillStyle", color);
+      createShape(ctx, borderArgs);
+      ctx.fill();
+      numDraws+=1;
+    }
+  }
 
   function renderFormValue (el, bounds, stack){
 
@@ -512,118 +740,27 @@ _html2canvas.Parse = function (images, options) {
     numDraws+=1;
   }
 
-  function renderBackgroundSlice (ctx, image, x, y, width, height, elx, ely){
-    var sourceX = (elx - x > 0) ? elx-x :0,
-    sourceY= (ely - y > 0) ? ely-y : 0;
-
-    drawImage(
-      ctx,
-      image,
-      Math.floor(sourceX), // source X
-      Math.floor(sourceY), // source Y
-      Math.ceil(image.width-sourceX), // source Width
-      Math.ceil(image.height-sourceY), // source Height
-      Math.ceil(x+sourceX), // destination X
-      Math.ceil(y+sourceY), // destination Y
-      Math.ceil(width-sourceX), // destination width
-      Math.ceil(height-sourceY) // destination height
-      );
-  }
-
   function renderBackgroundRepeat(ctx, image, backgroundPosition, bounds) {
-    var bgy,
-    height,
-    add,
-    h;
+    var offsetX = Math.round(bounds.left + backgroundPosition.left),
+    offsetY = Math.round(bounds.top + backgroundPosition.top);
 
-    backgroundPosition.top -= Math.ceil(backgroundPosition.top / image.height) * image.height;
-
-    for(bgy = (bounds.top + backgroundPosition.top); bgy < (bounds.height + bounds.top); bgy = Math.floor(bgy+image.height) - add) {
-      h = Math.min(image.height,(bounds.height + bounds.top) - bgy);
-
-      height = (Math.floor(bgy + image.height) > h + bgy) ? (h + bgy) - bgy : image.height;
-
-      if (bgy < bounds.top){
-        add = bounds.top - bgy;
-        bgy = bounds.top;
-      } else {
-        add = 0;
-      }
-
-      renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bgy, bounds.width, height);
-
-      if (add > 0){
-        backgroundPosition.top += add;
-      }
-    }
+    ctx.createPattern(image);
+    ctx.translate(offsetX, offsetY);
+    ctx.fill();
+    ctx.translate(-offsetX, -offsetY);
   }
 
-  function renderBackgroundNoRepeat(ctx, image, backgroundPosition, x, y, w, h) {
-    var bgdw = w - backgroundPosition.left,
-    bgdh = h - backgroundPosition.top,
-    bgsx = backgroundPosition.left,
-    bgsy = backgroundPosition.top,
-    bgdx = backgroundPosition.left + x,
-    bgdy = backgroundPosition.top + y;
-
-    if (bgsx<0){
-      bgsx = Math.abs( bgsx );
-      bgdx += bgsx;
-      bgdw = Math.min( w, image.width - bgsx );
-    } else {
-      bgdw = Math.min( bgdw, image.width );
-      bgsx = 0;
-    }
-
-    if (bgsy < 0){
-      bgsy = Math.abs( bgsy );
-      bgdy += bgsy;
-      bgdh = Math.min( h, image.height - bgsy );
-    } else {
-      bgdh = Math.min( bgdh, image.height );
-      bgsy = 0;
-    }
-
-    if (bgdh > 0 && bgdw > 0){
-      drawImage(
-        ctx,
-        image,
-        bgsx,
-        bgsy,
-        image.width,
-        image.height,
-        bgdx,
-        bgdy,
-        bgdw + backgroundPosition.left,
-        bgdh + backgroundPosition.top
-        );
-    }
-  }
-
-  function renderBackgroundRepeatY (ctx, image, backgroundPosition, x, y, w, h){
-    var height,
-    width = Math.min(image.width, w),
-    bgy;
-
-    backgroundPosition.top -= Math.ceil(backgroundPosition.top / image.height) * image.height;
-
-    for (bgy = y + backgroundPosition.top; bgy < h + y; bgy = Math.round(bgy + image.height)){
-      height = (Math.floor(bgy + image.height) > h + y) ? (h+y) - bgy : image.height;
-      renderBackgroundSlice(ctx, image, x + backgroundPosition.left, bgy,width, height, x, y);
-    }
-  }
-
-  function renderBackgroundRepeatX(ctx, image, backgroundPosition, x, y, w, h){
-    var height = Math.min(image.height, h),
-    width,
-    bgx;
-
-    backgroundPosition.left -= Math.ceil(backgroundPosition.left / image.width) * image.width;
-
-    for (bgx = x + backgroundPosition.left; bgx < w + x; bgx = Math.round(bgx + image.width)) {
-      width = (Math.floor(bgx + image.width) > w + x) ? (w + x) - bgx : image.width;
-      renderBackgroundSlice(ctx, image, bgx,(y + backgroundPosition.top), width, height, x, y);
-    }
+  function backgroundRepeatShape(ctx, image, backgroundPosition, bounds, left, top, width, height) {
+    var args = [];
+    args.push(["line", Math.round(left), Math.round(top)]);
+    args.push(["line", Math.round(left + width), Math.round(top)]);
+    args.push(["line", Math.round(left + width), Math.round(height + top)]);
+    args.push(["line", Math.round(left), Math.round(height + top)]);
+    createShape(ctx, args);
+    ctx.save();
+    ctx.clip();
+    renderBackgroundRepeat(ctx, image, backgroundPosition, bounds);
+    ctx.restore();
   }
 
   function renderBackgroundColor(ctx, backgroundBounds, bgcolor) {
@@ -646,15 +783,18 @@ _html2canvas.Parse = function (images, options) {
 
     switch (backgroundRepeat) {
       case "repeat-x":
-        renderBackgroundRepeatX(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left, bounds.top + backgroundPosition.top, 99999, backgroundSize.height);
         break;
 
       case "repeat-y":
-        renderBackgroundRepeatY(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left + backgroundPosition.left, bounds.top, backgroundSize.width, 99999);
         break;
 
       case "no-repeat":
-        renderBackgroundNoRepeat(ctx, image, backgroundPosition, bounds.left, bounds.top, backgroundSize.width, backgroundSize.height);
+        backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
+          bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, backgroundSize.width, backgroundSize.height);
         break;
 
       default:
@@ -704,7 +844,7 @@ _html2canvas.Parse = function (images, options) {
       zIndex: setZ(getCSS(element, "zIndex"), (parentStack) ? parentStack.zIndex : null),
       opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
-      borders: renderBorders(element, ctx, bounds, false),
+      borders: getBorderData(element),
       clip: (parentStack && parentStack.clip) ? _html2canvas.Util.Extend( {}, parentStack.clip ) : null
     };
 
@@ -740,12 +880,24 @@ _html2canvas.Parse = function (images, options) {
     stack = createStack(element, parentStack, bounds),
     borders = stack.borders,
     ctx = stack.ctx,
-    backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip);
+    backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
+    borderData = parseBorders(element, bounds, borders);
+
+    createShape(ctx, borderData.clip);
+
+    ctx.save();
+    ctx.clip();
 
     if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
-      renderBackgroundColor(ctx, backgroundBounds, bgcolor);
+      renderBackgroundColor(ctx, bounds, bgcolor);
       renderBackgroundImage(element, backgroundBounds, ctx);
     }
+
+    ctx.restore();
+
+    borderData.borders.forEach(function(border) {
+      renderBorders(ctx, border.args, border.color);
+    });
 
     switch(element.nodeName){
       case "IMG":

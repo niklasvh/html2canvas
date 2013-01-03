@@ -122,10 +122,9 @@ _html2canvas.Preload = function( options ) {
       // opera throws exception on external-content.html
       try {
         background_image = _html2canvas.Util.getCSS(el, 'backgroundImage');
-      }catch(e) {
+      } catch(e) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
-
       background_images = _html2canvas.Util.parseBackgroundImage(background_image);
       for(var imageIndex = background_images.length; imageIndex-- > 0;) {
         background_image = background_images[imageIndex];
@@ -136,7 +135,6 @@ _html2canvas.Preload = function( options ) {
             background_image.args.length === 0 ) {
           continue;
         }
-
         if (background_image.method === 'url') {
           src = background_image.args[0];
           methods.loadImage(src);
