@@ -18,10 +18,10 @@ window.html2canvas = function(elements, opts) {
     ignoreElements: "IFRAME|OBJECT|PARAM",
     useOverflow: true,
     letterRendering: false,
+    chinese: false, 
 
     // render options
 
-    flashcanvas: undefined, // path to flashcanvas
     width: null,
     height: null,
     taintTest: true, // do a taint test with all images before applying to canvas
