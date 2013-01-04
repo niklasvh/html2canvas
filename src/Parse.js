@@ -288,6 +288,22 @@ _html2canvas.Parse = function ( images, options ) {
             if (options.letterRendering === false && /^(left|right|justify|auto)$/.test(text_align) && /^(normal|none|0px)$/.test(letter_spacing)){
                 // this.setContextVariable(ctx,"textAlign",text_align);
                 renderList = textNode.nodeValue.split(/(\b| )/);
+                for (r in renderList) {
+                  if (/.*[\u4E00-\u9FA5].*$/.test(renderList[r])) {
+                    renderList[r] = renderList[r].split("");
+                  }
+                }
+                var newList = [];
+                for (r in renderList) {
+                  if (typeof renderList[r] == "object") {
+                    newList = newList.concat(renderList[r]);
+                  } else {
+                    if (renderList[r]) {
+                      newList.push(renderList[r]);
+                    }
+                  }
+                }
+                renderList = newList;
 
             }else{
                 //  this.setContextVariable(ctx,"textAlign","left");
