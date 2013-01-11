@@ -129,9 +129,9 @@ _html2canvas.Preload = function( options ) {
       for(var imageIndex = background_images.length; imageIndex-- > 0;) {
         background_image = background_images[imageIndex];
 
-        if(!background_image || 
-            !background_image.method || 
-            !background_image.args || 
+        if(!background_image ||
+            !background_image.method ||
+            !background_image.args ||
             background_image.args.length === 0 ) {
           continue;
         }
@@ -223,7 +223,7 @@ _html2canvas.Preload = function( options ) {
     if(!before && !after) {
       return;
     }
-    if(!el.id) { 
+    if(!el.id) {
       el.id = '__html2canvas__' + (uid++);
     }
     if(!injectStyle) {
@@ -261,8 +261,8 @@ _html2canvas.Preload = function( options ) {
   }
 
   function cleanupPseudoElements(){
-    if(!injectStyle) { 
-      return; 
+    if(!injectStyle) {
+      return;
     }
     injectStyle.parentNode.removeChild(injectStyle);
     injectStyle = undefined;
@@ -271,11 +271,14 @@ _html2canvas.Preload = function( options ) {
       .forEach(removePseudoElements);
   }
 
+  function indexedProperty(property) {
+    return (!isNaN(window.parseInt(property, 10)));
+  }
+
   function getPseudoElement(el, which) {
     var elStyle = window.getComputedStyle(el, which);
-    if(!elStyle || !elStyle.content) { return; }
-
-    var content = elStyle.content + '', 
+    if(!elStyle || !elStyle.content || elStyle.content === "none") { return; }
+    var content = elStyle.content + '',
     first = content.substr( 0, 1 );
     //strips quotes
     if(first === content.substr( content.length - 1 ) && first.match(/'|"/)) {
@@ -286,9 +289,7 @@ _html2canvas.Preload = function( options ) {
     elps = document.createElement( isImage ? 'img' : 'span' );
 
     elps.className = '__html2canvas__' + which.substr(1);
-    Object.keys(elStyle).forEach(function(prop) {
-      //skip indexed properties
-      if(!isNaN(parseInt(prop, 10))) { return; }
+    Object.keys(elStyle).filter(indexedProperty).forEach(function(prop) {
       elps.style[prop] = elStyle[prop];
     });
     if(isImage) {
