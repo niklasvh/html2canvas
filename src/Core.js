@@ -16,13 +16,13 @@ _html2canvas.Util = {};
 
 _html2canvas.Util.isElementVisible = function (element) {
   return (
-      _html2canvas.Util.getCSS( element, 'display' ) !== "none" && 
-      _html2canvas.Util.getCSS( element, 'visibility' ) !== "hidden" && 
+      _html2canvas.Util.getCSS( element, 'display' ) !== "none" &&
+      _html2canvas.Util.getCSS( element, 'visibility' ) !== "hidden" &&
       !element.hasAttribute( "data-html2canvas-ignore" )
     );
 };
 
-_html2canvas.Util.trimText = (function(native){ 
+_html2canvas.Util.trimText = (function(native){
   return function(input){
     if(native) { return native.apply( input ); }
     else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
@@ -31,7 +31,7 @@ _html2canvas.Util.trimText = (function(native){
 
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
-        method, definition, prefix, prefix_i, block, results = [], 
+        method, definition, prefix, prefix_i, block, results = [],
         c, mode = 0, numParen = 0, quote, args;
 
     var appendResult = function(){
@@ -42,7 +42,7 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
             if(definition) {
                 args.push(definition);
             }
-            if(method.substr( 0, 1 ) === '-' && 
+            if(method.substr( 0, 1 ) === '-' &&
                     (prefix_i = method.indexOf( '-', 1 ) + 1) > 0) {
                 prefix = method.substr( 0, prefix_i);
                 method = method.substr( prefix_i );
@@ -55,7 +55,7 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
             });
         }
         args = []; //for some odd reason, setting .length = 0 didn't work in safari
-        method = 
+        method =
             prefix =
             definition =
             block = '';
@@ -69,9 +69,9 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
         }
         switch(c) {
             case '"':
-                if(!quote) { 
+                if(!quote) {
                     quote = c;
-                } 
+                }
                 else if(quote === c) {
                     quote = null;
                 }
@@ -96,8 +96,8 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
                         block += c;
                         appendResult();
                         continue;
-                    } else { 
-                        numParen--; 
+                    } else {
+                        numParen--;
                     }
                 }
                 break;
@@ -196,25 +196,24 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
     return val;
   }
 
-  if ( window.getComputedStyle ) {
-    if ( previousElement !== el ) {
+    if (previousElement !== el) {
       computedCSS = document.defaultView.getComputedStyle(el, null);
     }
-    val = computedCSS[ attribute ];
+    val = computedCSS[attribute];
 
-    if ( isBackgroundSizePosition ) {
+    if (isBackgroundSizePosition) {
       val = (val || '').split( ',' );
       val = val[index || 0] || val[0] || 'auto';
-      val = _html2canvas.Util.trimText( val ).split( ' ' );
-      
+      val = _html2canvas.Util.trimText(val).split(' ');
+
       if(attribute === 'backgroundSize' && (!val[ 0 ] || val[ 0 ].match( /cover|contain|auto/ ))) {
         //these values will be handled in the parent function
 
       } else {
         val[ 0 ] = ( val[ 0 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
         if(val[ 1 ] === undefined) {
-          if(attribute === 'backgroundSize') { 
-            val[ 1 ] = 'auto'; 
+          if(attribute === 'backgroundSize') {
+            val[ 1 ] = 'auto';
             return val;
           }
           else {
@@ -233,31 +232,6 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
       arr[ 1 ] = parseInt( arr[ 1 ], 10 );
       val = arr;
     }
-
-  } else if ( el.currentStyle ) {
-    // IE 9>
-    if ( isBackgroundSizePosition ) {
-      // Older IE uses -x and -y
-      val = [ toPX(  attribute + "X", el.currentStyle[ attribute + "X" ]  ), toPX(  attribute + "Y", el.currentStyle[ attribute + "Y" ]  ) ];
-    } else {
-
-      val = toPX(  attribute, el.currentStyle[ attribute ]  );
-
-      if (/^(border)/i.test( attribute ) && /^(medium|thin|thick)$/i.test( val )) {
-        switch (val) {
-          case "thin":
-            val = "1px";
-            break;
-          case "medium":
-            val = "0px"; // this is wrong, it should be 3px but IE uses medium for no border as well.. TODO find a work around
-            break;
-          case "thick":
-            val = "5px";
-            break;
-        }
-      }
-    }
-  }
 
   return val;
 };
@@ -309,8 +283,8 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
 
     } else {
       if(prop === 'backgroundSize') {
-        if(bgposition[0] === 'auto') { 
-          left = image.width; 
+        if(bgposition[0] === 'auto') {
+          left = image.width;
 
         } else {
           if(bgposition[0].match(/contain|cover/)) {
@@ -327,9 +301,9 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
       }
     }
 
-    
-    if(bgposition[1] === 'auto') { 
-      topPos = left / image.width * image.height; 
+
+    if(bgposition[1] === 'auto') {
+      topPos = left / image.width * image.height;
     } else if (bgposition[1].toString().indexOf("%") !== -1){
       percentage = (parseFloat(bgposition[1])/100);
       topPos =  bounds.height * percentage;
