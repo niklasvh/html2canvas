@@ -5,7 +5,6 @@ previousElement,
 computedCSS,
 html2canvas;
 
-
 function h2clog(a) {
   if (_html2canvas.logging && window.console && window.console.log) {
     window.console.log(a);
@@ -14,17 +13,9 @@ function h2clog(a) {
 
 _html2canvas.Util = {};
 
-_html2canvas.Util.isElementVisible = function (element) {
-  return (
-      _html2canvas.Util.getCSS( element, 'display' ) !== "none" &&
-      _html2canvas.Util.getCSS( element, 'visibility' ) !== "hidden" &&
-      !element.hasAttribute( "data-html2canvas-ignore" )
-    );
-};
-
-_html2canvas.Util.trimText = (function(native){
+_html2canvas.Util.trimText = (function(isNative){
   return function(input){
-    if(native) { return native.apply( input ); }
+    if(isNative) { return isNative.apply( input ); }
     else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
   };
 })( String.prototype.trim );

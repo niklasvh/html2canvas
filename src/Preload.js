@@ -103,12 +103,22 @@ _html2canvas.Preload = function( options ) {
     loadPseudoElement(element, ":after");
   }
 
+  function loadGradientImage(backgroundImage, bounds) {
+    var img = _html2canvas.Generate.Gradient(backgroundImage, bounds);
+
+    if (img !== undefined){
+      images[backgroundImage] = {
+        img: img,
+        succeeded: true
+      };
+      images.numTotal++;
+      images.numLoaded++;
+      start();
+    }
+  }
+
   function loadBackgroundImages(background_image, el) {
-    var background_images,
-    src,
-    img,
-    bounds;
-    // opera throws exception on external-content.html
+    var background_images, bounds;
 
     background_images = _html2canvas.Util.parseBackgroundImage(background_image);
     for(var imageIndex = background_images.length; imageIndex-- > 0;) {
@@ -121,25 +131,12 @@ _html2canvas.Preload = function( options ) {
         continue;
       }
       if (background_image.method === 'url') {
-        src = background_image.args[0];
-        methods.loadImage(src);
-
-      } else if( background_image.method.match( /\-?gradient$/ ) ) {
+        methods.loadImage(background_image.args[0]);
+      } else if(background_image.method.match(/\-?gradient$/)) {
         if(bounds === undefined) {
           bounds = _html2canvas.Util.Bounds(el);
         }
-
-        img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
-
-        if ( img !== undefined ){
-          images[background_image.value] = {
-            img: img,
-            succeeded: true
-          };
-          images.numTotal++;
-          images.numLoaded++;
-          start();
-        }
+        loadGradientImage(background_image.value, bounds);
       }
     }
   }
