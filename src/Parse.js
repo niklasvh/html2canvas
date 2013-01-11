@@ -166,6 +166,16 @@ _html2canvas.Parse = function (images, options) {
 
       metrics = setTextVariables(ctx, el, textDecoration, color);
 
+      if (options.chinese) {
+        textList.forEach(function(word, index) {
+          if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
+            word = word.split("");
+            word.unshift(index, 1)
+            textList.splice.apply(textList, word);
+          }
+        });
+      }
+
       textList.forEach(function(text, index) {
         var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
         if (bounds) {
