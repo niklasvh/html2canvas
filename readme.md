@@ -66,7 +66,7 @@ The other set of tests run Firefox, Chrome and Internet Explorer with <a href="h
 
 If you didn't download `html2canvas` from `npm`, start by downloading the dependencies:
 
-    $ npm update
+    $ npm install
 
 Run qunit tests:
 
@@ -88,9 +88,14 @@ For more information and examples, please visit the <a href="http://html2canvas.
 ### Changelog ###
 
 v0.40 -
- * Switched to using grunt for building
- * Reformatted all tests to small units to test specific features
  * Added rendering tests with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>
+ * Switched to using grunt for building
+ * Removed support for IE<9, including any FlashCanvas bits
+ * Support for border-radius
+ * Support for multiple background images, size, and clipping
+ * Support for :before and :after pseudo elements
+ * Support for placeholder rendering
+ * Reformatted all tests to small units to test specific features
 
 v0.34 - 26.6.2012
 
