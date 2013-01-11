@@ -787,7 +787,7 @@ _html2canvas.Parse = function (images, options) {
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
     var backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex),
     backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",");
+    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(function(value) { return value.trim(); });
 
     image = resizeImage(image, backgroundSize);
 
