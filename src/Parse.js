@@ -822,7 +822,7 @@ _html2canvas.Parse = function (images, options) {
 
     for(var imageIndex = backgroundImages.length; imageIndex-- > 0;) {
       backgroundImage = backgroundImages[imageIndex];
-     
+
       if (!backgroundImage.args || backgroundImage.args.length === 0) {
         continue;
       }
@@ -940,12 +940,12 @@ _html2canvas.Parse = function (images, options) {
         }
         break;
       case "TEXTAREA":
-        if ((element.value || element.placeholder).length > 0){
+        if ((element.value || element.placeholder || "").length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
       case "SELECT":
-        if ((element.options||element.placeholder).length > 0){
+        if ((element.options||element.placeholder || "").length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
