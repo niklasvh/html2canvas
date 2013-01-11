@@ -2,7 +2,7 @@
 <tr><td>background/clip.html</td><td>100%</td><td>100%</td><td>99.89%</td></tr>
 <tr><td>background/encoded.html</td><td>100%</td><td>100%</td><td>100%</td></tr>
 <tr><td>background/linear-gradient.html</td><td>89.87%</td><td>90.73%</td><td>100%</td></tr>
-<tr><td>background/multi.html</td><td>96.6%</td><td>96.45%</td><td>96.85%</td></tr>
+<tr><td>background/multi.html</td><td>100%</td><td>100%</td><td>99.93%</td></tr>
 <tr><td>background/position.html</td><td>100%</td><td>100%</td><td>99.87%</td></tr>
 <tr><td>background/radial-gradient.html</td><td>73.23%</td><td>70.32%</td><td>94.02%</td></tr>
 <tr><td>background/repeat.html</td><td>100%</td><td>100%</td><td>99.92%</td></tr>
@@ -22,11 +22,13 @@
 <tr><td>list/lower-alpha.html</td><td>99.65%</td><td>99.73%</td><td>35.89%</td></tr>
 <tr><td>list/upper-roman.html</td><td>99.45%</td><td>99.61%</td><td>35.94%</td></tr>
 <tr><td>overflow.html</td><td>96.85%</td><td>97.49%</td><td>96.5%</td></tr>
+<tr><td>pseudoelements.html</td><td>97.36%</td><td>97.94%</td><td>99.37%</td></tr>
+<tr><td>text/chinese.html</td><td>99.75%</td><td>99.74%</td><td>65.76%</td></tr>
 <tr><td>text/linethrough.html</td><td>97.14%</td><td>94.12%</td><td>47.08%</td></tr>
 <tr><td>text/text.html</td><td>95.71%</td><td>94.67%</td><td>85.01%</td></tr>
 <tr><td>text/underline-lineheight.html</td><td>97.06%</td><td>92.35%</td><td>53%</td></tr>
 <tr><td>text/underline.html</td><td>97.65%</td><td>93.5%</td><td>47.02%</td></tr>
-<tr><td>visibility.html</td><td>99.19%</td><td>98.81%</td><td>99.39%</td></tr>
+<tr><td>visibility.html</td><td>99.19%</td><td>98.92%</td><td>99.39%</td></tr>
 <tr><td>zindex/z-index1.html</td><td>96.99%</td><td>99.27%</td><td>99.44%</td></tr>
 <tr><td>zindex/z-index2.html</td><td>95.85%</td><td>98.06%</td><td>97.72%</td></tr>
 <tr><td>zindex/z-index3.html</td><td>98.6%</td><td>98.29%</td><td>98.56%</td></tr>

@@ -8,7 +8,7 @@ window.html2canvas = function(elements, opts) {
     background: "#fff",
 
     // preload options
-    proxy: "",
+    proxy: null,
     timeout: 0,    // no timeout
     useCORS: false, // try to load images as CORS (where available), before falling back to proxy
     allowTaint: false, // whether to allow images to taint the canvas, won't need proxy if set to true
@@ -18,7 +18,7 @@ window.html2canvas = function(elements, opts) {
     ignoreElements: "IFRAME|OBJECT|PARAM",
     useOverflow: true,
     letterRendering: false,
-    chinese: false, 
+    chinese: false,
 
     // render options
 
