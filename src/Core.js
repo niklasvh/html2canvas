@@ -14,6 +14,14 @@ function h2clog(a) {
 
 _html2canvas.Util = {};
 
+_html2canvas.Util.isElementVisible = function (element) {
+  return (
+      _html2canvas.Util.getCSS( element, 'display' ) !== "none" && 
+      _html2canvas.Util.getCSS( element, 'visibility' ) !== "hidden" && 
+      !element.hasAttribute( "data-html2canvas-ignore" )
+    );
+};
+
 _html2canvas.Util.trimText = (function(native){ 
   return function(input){
     if(native) { return native.apply( input ); }

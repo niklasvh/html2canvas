@@ -212,10 +212,12 @@ _html2canvas.Preload = function( options ) {
          */
   }
 
-
-
   var uid = 0, injectStyle;
   function injectPseudoElements(el) {
+    if(!_html2canvas.Util.isElementVisible(el)) {
+      return;
+    }
+
     var before = getPseudoElement(el, ':before'),
     after = getPseudoElement(el, ':after');
     if(!before && !after) {
@@ -256,6 +258,17 @@ _html2canvas.Preload = function( options ) {
       el.__html2canvas_after = undefined;
       el.removeChild(after);
     }
+  }
+
+  function cleanupPseudoElements(){
+    if(!injectStyle) { 
+      return; 
+    }
+    injectStyle.parentNode.removeChild(injectStyle);
+    injectStyle = undefined;
+
+    [].slice.apply(element.all || element.getElementsByTagName('*'))
+      .forEach(removePseudoElements);
   }
 
   function getPseudoElement(el, which) {
@@ -380,19 +393,14 @@ _html2canvas.Preload = function( options ) {
         }
       }
 
-      if(injectStyle) {
-        injectStyle.parentNode.removeChild(injectStyle);
-        injectStyle = undefined;
-
-        [].slice.apply(element.all || element.getElementsByTagName('*'))
-          .forEach(removePseudoElements);
-      }
+      cleanupPseudoElements();
     },
 
     renderingDone: function() {
       if (timeoutTimer) {
         window.clearTimeout(timeoutTimer);
       }
+      cleanupPseudoElements();
     }
   };
 
