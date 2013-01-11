@@ -170,7 +170,7 @@ _html2canvas.Parse = function (images, options) {
         textList.forEach(function(word, index) {
           if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
             word = word.split("");
-            word.unshift(index, 1)
+            word.unshift(index, 1);
             textList.splice.apply(textList, word);
           }
         });
