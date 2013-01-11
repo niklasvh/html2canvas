@@ -117,19 +117,14 @@ _html2canvas.Preload = function( options ) {
     }
   }
 
+  function invalidBackgrounds(background_image) {
+    return (background_image && background_image.method && background_image.args && background_image.args.length > 0 );
+  }
+
   function loadBackgroundImages(background_image, el) {
-    var background_images, bounds;
+    var bounds;
 
-    background_images = _html2canvas.Util.parseBackgroundImage(background_image);
-    for(var imageIndex = background_images.length; imageIndex-- > 0;) {
-      background_image = background_images[imageIndex];
-
-      if(!background_image ||
-        !background_image.method ||
-        !background_image.args ||
-        background_image.args.length === 0 ) {
-        continue;
-      }
+    _html2canvas.Util.parseBackgroundImage(background_image).filter(invalidBackgrounds).forEach(function(background_image) {
       if (background_image.method === 'url') {
         methods.loadImage(background_image.args[0]);
       } else if(background_image.method.match(/\-?gradient$/)) {
@@ -138,20 +133,17 @@ _html2canvas.Preload = function( options ) {
         }
         loadGradientImage(background_image.value, bounds);
       }
-    }
+    });
   }
 
   function getImages (el) {
-    var contents = _html2canvas.Util.Children(el),
-    i,
-    elNodeType = false;
+    var elNodeType = false;
 
     // Firefox fails with permission denied on pages with iframes
     try {
-      var contentsLen = contents.length;
-      for (i = 0;  i < contentsLen; i+=1 ){
-        getImages(contents[i]);
-      }
+      _html2canvas.Util.Children(el).forEach(function(img) {
+        getImages(img);
+      });
     }
     catch( e ) {}
 
@@ -186,7 +178,6 @@ _html2canvas.Preload = function( options ) {
       start();
     };
     img.onerror = function() {
-
       if (img.crossOrigin === "anonymous") {
         // CORS failed
         window.clearTimeout( imageObj.timer );
@@ -203,25 +194,12 @@ _html2canvas.Preload = function( options ) {
         }
       }
 
-
       images.numLoaded++;
       images.numFailed++;
       imageObj.succeeded = false;
       img.onerror = img.onload = null;
       start();
-
     };
-
-  // TODO Opera has no load/error event for SVG images
-
-  // Opera ninja onload's cached images
-  /*
-        window.setTimeout(function(){
-            if ( img.width !== 0 && imageObj.succeeded === undefined ) {
-                img.onload();
-            }
-        }, 100); // needs a reflow for base64 encoded images? interestingly timeout of 0 doesn't work but 1 does.
-         */
   }
 
   methods = {
