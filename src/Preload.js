@@ -139,16 +139,15 @@ _html2canvas.Preload = function( options ) {
           src = background_image.args[0];
           methods.loadImage(src);
 
-        } else if( background_image.method.match( /\-gradient$/ ) ) {
+        } else if( background_image.method.match( /\-?gradient$/ ) ) {
           if(bounds === undefined) {
             bounds = _html2canvas.Util.Bounds( el );
           }
 
-          var key = background_image.value + '/' + el.__html2canvas__id + '/' + imageIndex;
           img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
 
           if ( img !== undefined ){
-            images[ key ] = {
+            images[background_image.value] = {
               img: img,
               succeeded: true
             };

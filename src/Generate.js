@@ -324,7 +324,7 @@
     if(bounds.width === 0 || bounds.height === 0) {
       return;
     }
-    
+
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
     gradient, grad, i, len;
@@ -378,7 +378,7 @@
         canvasRadial.width = canvasRadial.height = di;
 
         grad = ctxRadial.createRadialGradient(gradient.rx, gradient.ry, 0, gradient.rx, gradient.ry, ri);
-        
+
         for (i = 0, len = gradient.colorStops.length; i < len; i+=1) {
           try {
             grad.addColorStop(gradient.colorStops[i].stop, gradient.colorStops[i].color);

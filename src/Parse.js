@@ -818,9 +818,10 @@ _html2canvas.Parse = function (images, options) {
   function renderBackgroundImage(element, bounds, ctx) {
     var backgroundImage = getCSS(element, "backgroundImage"),
     backgroundImages = _html2canvas.Util.parseBackgroundImage(backgroundImage),
-    image;
+    image,
+    imageIndex = backgroundImages.length;
 
-    for(var imageIndex = backgroundImages.length; imageIndex-- > 0;) {
+    while(imageIndex--) {
       backgroundImage = backgroundImages[imageIndex];
 
       if (!backgroundImage.args || backgroundImage.args.length === 0) {
@@ -829,7 +830,7 @@ _html2canvas.Parse = function (images, options) {
 
       var key = backgroundImage.method === 'url' ?
         backgroundImage.args[0] :
-        backgroundImage.value + '/' + element.__html2canvas__id + '/' + imageIndex;
+        backgroundImage.value;
 
       image = loadImage(key);
 
@@ -837,7 +838,7 @@ _html2canvas.Parse = function (images, options) {
       if (image) {
         renderBackgroundRepeating(element, bounds, ctx, image, imageIndex);
       } else {
-        h2clog("html2canvas: Error loading background:" + backgroundImage);
+        h2clog("html2canvas: Error loading background:", backgroundImage);
       }
     }
   }
