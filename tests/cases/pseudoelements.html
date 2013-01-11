@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pseudoelement tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../test.js"></script>
+    <style>
+      .text *::before {
+        content:" before!";
+      }
+
+      .text *::after {
+        content:" after!";
+      }
+
+      .img *::before{
+        content: url(../assets/image.jpg);
+      }
+
+      .img *::after{
+        content: url(../assets/image2.jpg);
+      }
+
+      .background *::before{
+        background: url(../assets/image_1.jpg);
+      }
+
+      .background *::after{
+        background: url(../assets/image2_1.jpg);
+      }
+
+      .none *::before {
+        display:none;
+      }
+
+      .none *::after {
+        display:none;
+      }
+
+    </style>
+
+  </head>
+  <body>
+    <div class="text">
+      <span>Content 1</span>
+      <span>Content 2</span>
+    </div>
+
+    <div class="text none">
+      <span>Content 1</span>
+      <span>Content 2</span>
+    </div>
+
+    <div class="text img">
+      <span>Content 1</span>
+      <span>Content 2</span>
+    </div>
+
+    <div class="text background">
+      <span>Content 1</span>
+      <span>Content 2</span>
+    </div>
+
+  </body>
+</html>
