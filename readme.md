@@ -23,12 +23,7 @@ The script should work fine on the following browsers:
 * Opera 12+
 * IE9+
 
-Note that the compatibility will most likely be increased in future builds, as many of the current restrictions have at least partial work arounds, which can be used with older browser versions.
-
-###So what isn't included yet?###
-
-There are still a lot of CSS properties missing, including most CSS3 properties such as <code>text-shadow</code>, <code>box-radius</code> etc. as well as all elements created by the browser, such as radio and checkbox buttons and list icons. I will compile a full list of supported elements and CSS properties soon.
- There is no support for <code>frame</code> and <code>object</code> content such as Flash.
+As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
 ### Usage ###
 To render an `element` with html2canvas, simply call:
@@ -37,7 +32,7 @@ To render an `element` with html2canvas, simply call:
 To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
 
     html2canvas( [ document.body ], {
-        onrendered: function( canvas ) {
+        onrendered: function(canvas) {
             /* canvas is the actual canvas element,
                to append it to the page call for example
                document.body.appendChild( canvas );
@@ -84,6 +79,10 @@ Commiting improvements in baseline values:
 ### Examples ###
 
 For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.
+
+### Contributing ###
+
+If you wish to contribute to the project, please send the pull requests to the develop branch. Before making any changes, make sure to run the webdriver tests to create the baseline results. If some CSS property isn't supported or is incomplete, please create appropriate tests for it as well before submitting any code changes.
 
 ### Changelog ###
 
