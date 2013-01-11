@@ -276,7 +276,7 @@ _html2canvas.Preload = function( options ) {
 
   function getPseudoElement(el, which) {
     var elStyle = window.getComputedStyle(el, which);
-    if(!elStyle || !elStyle.content || elStyle.content === "none") { return; }
+    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content") { return; }
     var content = elStyle.content + '',
     first = content.substr( 0, 1 );
     //strips quotes
