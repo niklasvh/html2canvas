@@ -7,7 +7,14 @@ _html2canvas.Parse = function (images, options) {
   support = _html2canvas.Util.Support(options, doc),
   ignoreElementsRegExp = new RegExp("(" + options.ignoreElements + ")"),
   body = doc.body,
-  getCSS = _html2canvas.Util.getCSS;
+  getCSS = _html2canvas.Util.getCSS,
+  pseudoHide = "___html2canvas___pseudoelement",
+  hidePseudoElements = doc.createElement('style');
+
+  hidePseudoElements.innerHTML = '.' + pseudoHide + '-before:before { content: "" !important; display: none !important; }' +
+  '.' + pseudoHide + '-after:after { content: "" !important; display: none !important; }';
+
+  body.appendChild(hidePseudoElements);
 
   images = images || {};
 
@@ -750,6 +757,64 @@ _html2canvas.Parse = function (images, options) {
     numDraws+=1;
   }
 
+  function getPseudoElement(el, which) {
+    var elStyle = window.getComputedStyle(el, which);
+    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content") {
+      return;
+    }
+    var content = elStyle.content + '',
+    first = content.substr( 0, 1 );
+    //strips quotes
+    if(first === content.substr( content.length - 1 ) && first.match(/'|"/)) {
+      content = content.substr( 1, content.length - 2 );
+    }
+
+    var isImage = content.substr( 0, 3 ) === 'url',
+    elps = document.createElement( isImage ? 'img' : 'span' );
+
+    elps.className = pseudoHide + "-before " + pseudoHide + "-after";
+
+    Object.keys(elStyle).filter(indexedProperty).forEach(function(prop) {
+      elps.style[prop] = elStyle[prop];
+    });
+
+    if(isImage) {
+      elps.src = _html2canvas.Util.parseBackgroundImage(content)[0].args[0];
+    } else {
+      elps.innerHTML = content;
+    }
+    return elps;
+  }
+
+  function indexedProperty(property) {
+    return (isNaN(window.parseInt(property, 10)));
+  }
+
+  function injectPseudoElements(el, stack) {
+    var before = getPseudoElement(el, ':before'),
+    after = getPseudoElement(el, ':after');
+    if(!before && !after) {
+      return;
+    }
+
+    if(before) {
+      el.className += " " + pseudoHide + "-before";
+      el.parentNode.insertBefore(before, el);
+      parseElement(before, stack, true);
+      el.parentNode.removeChild(before);
+      el.className = el.className.replace(pseudoHide + "-before", "").trim();
+    }
+
+    if (after) {
+      el.className += " " + pseudoHide + "-after";
+      el.appendChild(after);
+      parseElement(after, stack, true);
+      el.removeChild(after);
+      el.className = el.className.replace(pseudoHide + "-after", "").trim();
+    }
+
+  }
+
   function renderBackgroundRepeat(ctx, image, backgroundPosition, bounds) {
     var offsetX = Math.round(bounds.left + backgroundPosition.left),
     offsetY = Math.round(bounds.top + backgroundPosition.top);
@@ -787,7 +852,9 @@ _html2canvas.Parse = function (images, options) {
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
     var backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex),
     backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(function(value) { return value.trim(); });
+    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(function(value) {
+      return value.trim();
+    });
 
     image = resizeImage(image, backgroundSize);
 
@@ -810,7 +877,12 @@ _html2canvas.Parse = function (images, options) {
         break;
 
       default:
-        renderBackgroundRepeat(ctx, image, backgroundPosition, { top: bounds.top, left: bounds.left, width: image.width, height: image.height });
+        renderBackgroundRepeat(ctx, image, backgroundPosition, {
+          top: bounds.top,
+          left: bounds.left,
+          width: image.width,
+          height: image.height
+        });
         break;
     }
   }
@@ -829,8 +901,8 @@ _html2canvas.Parse = function (images, options) {
       }
 
       var key = backgroundImage.method === 'url' ?
-        backgroundImage.args[0] :
-        backgroundImage.value;
+      backgroundImage.args[0] :
+      backgroundImage.value;
 
       image = loadImage(key);
 
@@ -899,7 +971,7 @@ _html2canvas.Parse = function (images, options) {
     return backgroundBounds;
   }
 
-  function renderElement(element, parentStack){
+  function renderElement(element, parentStack, pseudoElement){
     var bounds = _html2canvas.Util.Bounds(element),
     image,
     bgcolor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor"),
@@ -924,6 +996,10 @@ _html2canvas.Parse = function (images, options) {
     borderData.borders.forEach(function(border) {
       renderBorders(ctx, border.args, border.color);
     });
+
+    if (!pseudoElement) {
+      injectPseudoElements(element, stack);
+    }
 
     switch(element.nodeName){
       case "IMG":
@@ -965,14 +1041,14 @@ _html2canvas.Parse = function (images, options) {
     return (getCSS(element, 'display') !== "none" && getCSS(element, 'visibility') !== "hidden" && !element.hasAttribute("data-html2canvas-ignore"));
   }
 
-  function parseElement (el, stack) {
+  function parseElement (el, stack, pseudoElement) {
 
     if (isElementVisible(el)) {
-      stack = renderElement(el, stack) || stack;
+      stack = renderElement(el, stack, pseudoElement) || stack;
       if (!ignoreElementsRegExp.test(el.nodeName)) {
         _html2canvas.Util.Children(el).forEach(function(node) {
           if (node.nodeType === 1) {
-            parseElement(node, stack);
+            parseElement(node, stack, pseudoElement);
           } else if (node.nodeType === 3) {
             renderText(el, node, stack);
           }
@@ -1059,7 +1135,7 @@ _html2canvas.Parse = function (images, options) {
     });
 
     stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
-
+    body.removeChild(hidePseudoElements);
     return stack;
   }
 

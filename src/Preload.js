@@ -89,16 +89,64 @@ _html2canvas.Preload = function( options ) {
 
   }
 
-  function getImages (el) {
-    el.__html2canvas__id = uid++;
+  function loadPseudoElement(element, type) {
+    var style = window.getComputedStyle(element, type),
+    content = style.content;
+    if (content.substr(0, 3) === 'url') {
+      methods.loadImage(_html2canvas.Util.parseBackgroundImage(content)[0].args[0]);
+    }
+    loadBackgroundImages(style.backgroundImage, element);
+  }
 
-    var contents = _html2canvas.Util.Children(el),
-    i,
-    background_image,
-    background_images,
+  function loadPseudoElementImages(element) {
+    loadPseudoElement(element, ":before");
+    loadPseudoElement(element, ":after");
+  }
+
+  function loadBackgroundImages(background_image, el) {
+    var background_images,
     src,
     img,
-    bounds,
+    bounds;
+    // opera throws exception on external-content.html
+
+    background_images = _html2canvas.Util.parseBackgroundImage(background_image);
+    for(var imageIndex = background_images.length; imageIndex-- > 0;) {
+      background_image = background_images[imageIndex];
+
+      if(!background_image ||
+        !background_image.method ||
+        !background_image.args ||
+        background_image.args.length === 0 ) {
+        continue;
+      }
+      if (background_image.method === 'url') {
+        src = background_image.args[0];
+        methods.loadImage(src);
+
+      } else if( background_image.method.match( /\-?gradient$/ ) ) {
+        if(bounds === undefined) {
+          bounds = _html2canvas.Util.Bounds(el);
+        }
+
+        img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
+
+        if ( img !== undefined ){
+          images[background_image.value] = {
+            img: img,
+            succeeded: true
+          };
+          images.numTotal++;
+          images.numLoaded++;
+          start();
+        }
+      }
+    }
+  }
+
+  function getImages (el) {
+    var contents = _html2canvas.Util.Children(el),
+    i,
     elNodeType = false;
 
     // Firefox fails with permission denied on pages with iframes
@@ -117,46 +165,14 @@ _html2canvas.Preload = function( options ) {
       h2clog("html2canvas: failed to access some element's nodeType - Exception: " + ex.message);
     }
 
-    if (elNodeType === 1 || elNodeType === undefined){
-
-      // opera throws exception on external-content.html
+    if (elNodeType === 1 || elNodeType === undefined) {
+      loadPseudoElementImages(el);
       try {
-        background_image = _html2canvas.Util.getCSS(el, 'backgroundImage');
+        loadBackgroundImages(_html2canvas.Util.getCSS(el, 'backgroundImage'), el);
       } catch(e) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
-      background_images = _html2canvas.Util.parseBackgroundImage(background_image);
-      for(var imageIndex = background_images.length; imageIndex-- > 0;) {
-        background_image = background_images[imageIndex];
-
-        if(!background_image ||
-            !background_image.method ||
-            !background_image.args ||
-            background_image.args.length === 0 ) {
-          continue;
-        }
-        if (background_image.method === 'url') {
-          src = background_image.args[0];
-          methods.loadImage(src);
-
-        } else if( background_image.method.match( /\-?gradient$/ ) ) {
-          if(bounds === undefined) {
-            bounds = _html2canvas.Util.Bounds( el );
-          }
-
-          img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
-
-          if ( img !== undefined ){
-            images[background_image.value] = {
-              img: img,
-              succeeded: true
-            };
-            images.numTotal++;
-            images.numLoaded++;
-            start();
-          }
-        }
-      }
+      loadBackgroundImages(el);
     }
   }
 
@@ -209,94 +225,6 @@ _html2canvas.Preload = function( options ) {
             }
         }, 100); // needs a reflow for base64 encoded images? interestingly timeout of 0 doesn't work but 1 does.
          */
-  }
-
-  var uid = 0, injectStyle;
-  function injectPseudoElements(el) {
-    if(!_html2canvas.Util.isElementVisible(el)) {
-      return;
-    }
-
-    var before = getPseudoElement(el, ':before'),
-    after = getPseudoElement(el, ':after');
-    if(!before && !after) {
-      return;
-    }
-    if(!el.id) {
-      el.id = '__html2canvas__' + (uid++);
-    }
-    if(!injectStyle) {
-      injectStyle = document.createElement('style');
-    }
-
-    if(before) {
-      el.__html2canvas_before = before;
-      injectStyle.innerHTML += '#' + el.id + ':before { content: "" !important; display: none !important; }\n';
-      if(el.childNodes.length > 0) {
-        el.insertBefore(before, el.childNodes[0]);
-      } else {
-        el.appendChild(before);
-      }
-    }
-
-    if (after) {
-      el.__html2canvas_after = after;
-      injectStyle.innerHTML += '#' + el.id + ':after { content: "" !important; display: none !important; }\n';
-      el.appendChild(after);
-    }
-  }
-
-  function removePseudoElements(el) {
-    var before = el.__html2canvas_before,
-    after = el.__html2canvas_after;
-    if(before) {
-      el.__html2canvas_before = undefined;
-      el.removeChild(before);
-    }
-    if(after) {
-      el.__html2canvas_after = undefined;
-      el.removeChild(after);
-    }
-  }
-
-  function cleanupPseudoElements(){
-    if(!injectStyle) {
-      return;
-    }
-    injectStyle.parentNode.removeChild(injectStyle);
-    injectStyle = undefined;
-
-    [].slice.apply(element.all || element.getElementsByTagName('*'))
-      .forEach(removePseudoElements);
-  }
-
-  function indexedProperty(property) {
-    return (!isNaN(window.parseInt(property, 10)));
-  }
-
-  function getPseudoElement(el, which) {
-    var elStyle = window.getComputedStyle(el, which);
-    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content") { return; }
-    var content = elStyle.content + '',
-    first = content.substr( 0, 1 );
-    //strips quotes
-    if(first === content.substr( content.length - 1 ) && first.match(/'|"/)) {
-      content = content.substr( 1, content.length - 2 );
-    }
-
-    var isImage = content.substr( 0, 3 ) === 'url',
-    elps = document.createElement( isImage ? 'img' : 'span' );
-
-    elps.className = '__html2canvas__' + which.substr(1);
-    Object.keys(elStyle).filter(indexedProperty).forEach(function(prop) {
-      elps.style[prop] = elStyle[prop];
-    });
-    if(isImage) {
-      elps.src = _html2canvas.Util.parseBackgroundImage(content)[0].args[0];
-    } else {
-      elps.innerHTML = content;
-    }
-    return elps;
   }
 
   methods = {
@@ -392,15 +320,12 @@ _html2canvas.Preload = function( options ) {
           start();
         }
       }
-
-      cleanupPseudoElements();
     },
 
     renderingDone: function() {
       if (timeoutTimer) {
         window.clearTimeout(timeoutTimer);
       }
-      cleanupPseudoElements();
     }
   };
 
@@ -408,17 +333,10 @@ _html2canvas.Preload = function( options ) {
     timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
   }
 
-  [].slice.apply(element.all || element.getElementsByTagName('*'))
-      .forEach(injectPseudoElements);
-  if(injectStyle) {
-    element.appendChild(injectStyle);
-  }
-
-
   h2clog('html2canvas: Preload starts: finding background-images');
   images.firstRun = true;
 
-  getImages( element );
+  getImages(element);
 
   h2clog('html2canvas: Preload: Finding images');
   // load <img> images
