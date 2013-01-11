@@ -90,12 +90,15 @@ _html2canvas.Preload = function( options ) {
   }
 
   function getImages (el) {
+    el.__html2canvas__id = uid++;
 
     var contents = _html2canvas.Util.Children(el),
     i,
     background_image,
+    background_images,
     src,
     img,
+    bounds,
     elNodeType = false;
 
     // Firefox fails with permission denied on pages with iframes
@@ -122,28 +125,38 @@ _html2canvas.Preload = function( options ) {
       } catch(e) {
         h2clog("html2canvas: failed to get background-image - Exception: " + e.message);
       }
-      if (background_image && background_image !== "1" && background_image !== "none") {
-        // TODO add multi image background support
+      background_images = _html2canvas.Util.parseBackgroundImage(background_image);
+      for(var imageIndex = background_images.length; imageIndex-- > 0;) {
+        background_image = background_images[imageIndex];
 
-        if (/^(-webkit|-o|-moz|-ms|linear)-/.test( background_image )) {
-          img = _html2canvas.Generate.Gradient(background_image, _html2canvas.Util.Bounds( el ) );
+        if(!background_image || 
+            !background_image.method || 
+            !background_image.args || 
+            background_image.args.length === 0 ) {
+          continue;
+        }
+        if (background_image.method === 'url') {
+          src = background_image.args[0];
+          methods.loadImage(src);
+
+        } else if( background_image.method.match( /\-gradient$/ ) ) {
+          if(bounds === undefined) {
+            bounds = _html2canvas.Util.Bounds( el );
+          }
+
+          var key = background_image.value + '/' + el.__html2canvas__id + '/' + imageIndex;
+          img = _html2canvas.Generate.Gradient( background_image.value,  bounds);
 
           if ( img !== undefined ){
-            images[background_image] = {
+            images[ key ] = {
               img: img,
               succeeded: true
             };
             images.numTotal++;
             images.numLoaded++;
             start();
-
           }
-
-        } else {
-          src = _html2canvas.Util.backgroundImage(background_image.match(/data:image\/.*;base64,/i) ? background_image : background_image.split(",")[0]);
-          methods.loadImage(src);
         }
-
       }
     }
   }
@@ -199,6 +212,92 @@ _html2canvas.Preload = function( options ) {
          */
   }
 
+  var uid = 0, injectStyle;
+  function injectPseudoElements(el) {
+    if(!_html2canvas.Util.isElementVisible(el)) {
+      return;
+    }
+
+    var before = getPseudoElement(el, ':before'),
+    after = getPseudoElement(el, ':after');
+    if(!before && !after) {
+      return;
+    }
+    if(!el.id) { 
+      el.id = '__html2canvas__' + (uid++);
+    }
+    if(!injectStyle) {
+      injectStyle = document.createElement('style');
+    }
+
+    if(before) {
+      el.__html2canvas_before = before;
+      injectStyle.innerHTML += '#' + el.id + ':before { content: "" !important; display: none !important; }\n';
+      if(el.childNodes.length > 0) {
+        el.insertBefore(before, el.childNodes[0]);
+      } else {
+        el.appendChild(before);
+      }
+    }
+
+    if (after) {
+      el.__html2canvas_after = after;
+      injectStyle.innerHTML += '#' + el.id + ':after { content: "" !important; display: none !important; }\n';
+      el.appendChild(after);
+    }
+  }
+
+  function removePseudoElements(el) {
+    var before = el.__html2canvas_before,
+    after = el.__html2canvas_after;
+    if(before) {
+      el.__html2canvas_before = undefined;
+      el.removeChild(before);
+    }
+    if(after) {
+      el.__html2canvas_after = undefined;
+      el.removeChild(after);
+    }
+  }
+
+  function cleanupPseudoElements(){
+    if(!injectStyle) { 
+      return; 
+    }
+    injectStyle.parentNode.removeChild(injectStyle);
+    injectStyle = undefined;
+
+    [].slice.apply(element.all || element.getElementsByTagName('*'))
+      .forEach(removePseudoElements);
+  }
+
+  function getPseudoElement(el, which) {
+    var elStyle = window.getComputedStyle(el, which);
+    if(!elStyle || !elStyle.content) { return; }
+
+    var content = elStyle.content + '', 
+    first = content.substr( 0, 1 );
+    //strips quotes
+    if(first === content.substr( content.length - 1 ) && first.match(/'|"/)) {
+      content = content.substr( 1, content.length - 2 );
+    }
+
+    var isImage = content.substr( 0, 3 ) === 'url',
+    elps = document.createElement( isImage ? 'img' : 'span' );
+
+    elps.className = '__html2canvas__' + which.substr(1);
+    Object.keys(elStyle).forEach(function(prop) {
+      //skip indexed properties
+      if(!isNaN(parseInt(prop, 10))) { return; }
+      elps.style[prop] = elStyle[prop];
+    });
+    if(isImage) {
+      elps.src = _html2canvas.Util.parseBackgroundImage(content)[0].args[0];
+    } else {
+      elps.innerHTML = content;
+    }
+    return elps;
+  }
 
   methods = {
     loadImage: function( src ) {
@@ -293,18 +392,29 @@ _html2canvas.Preload = function( options ) {
           start();
         }
       }
+
+      cleanupPseudoElements();
     },
+
     renderingDone: function() {
       if (timeoutTimer) {
         window.clearTimeout(timeoutTimer);
       }
+      cleanupPseudoElements();
     }
-
   };
 
   if (options.timeout > 0) {
     timeoutTimer = window.setTimeout(methods.cleanupDOM, options.timeout);
   }
+
+  [].slice.apply(element.all || element.getElementsByTagName('*'))
+      .forEach(injectPseudoElements);
+  if(injectStyle) {
+    element.appendChild(injectStyle);
+  }
+
+
   h2clog('html2canvas: Preload starts: finding background-images');
   images.firstRun = true;
 

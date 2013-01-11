@@ -321,6 +321,10 @@
   };
 
   _html2canvas.Generate.Gradient = function(src, bounds) {
+    if(bounds.width === 0 || bounds.height === 0) {
+      return;
+    }
+    
     var canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
     gradient, grad, i, len;
