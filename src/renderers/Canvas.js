@@ -55,7 +55,7 @@ _html2canvas.Renderer.Canvas = function(options) {
           createShape(ctx, item['arguments']);
         } else if (item.name === "drawImage") {
           if (item['arguments'][8] > 0 && item['arguments'][7] > 0) {
-            if (options.taintTest || (options.taintTest && safeImage(item))) {
+            if (!options.taintTest || (options.taintTest && safeImage(item))) {
               ctx.drawImage.apply( ctx, item['arguments'] );
             }
           }
