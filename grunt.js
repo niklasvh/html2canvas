@@ -68,6 +68,6 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', 'concat lint qunit webdriver min');
+  grunt.registerTask('default', 'concat lint qunit min webdriver');
 
 };
