@@ -1,0 +1,46 @@
+<style>
+  header {
+    height: 50px;
+  }
+  footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+  }
+  .share {
+    padding-top:5px;
+    margin-bottom:-5px;
+    margin-right: -50px;
+  }
+</style>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="index.html">html2canvas</a>
+      <div class="nav-collapse">
+        <ul class="nav" ng-controller="Navigation">
+          <li ng-class="active('/')"><a href="/">Home</a></li>
+          <li ng-class="active('/about.html')"><a href="/about.html">About</a></li>
+          <li ng-class="active('/documentation.html')"><a href="/documentation.html">Documentation</a></li>
+          <li ng-class="active('/examples.html')"><a href="/examples.html">Examples</a></li>
+          <li><a href="https://github.com/niklasvh/html2canvas/downloads">Download</a></li>
+        </ul>
+
+        <p class="navbar-text pull-right share">
+
+          <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://html2canvas.hertzen.com/" data-text="html2canvas - screenshots with #JavaScript" data-count="horizontal" data-via="niklasvh">Tweet</a>
+          <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+        <g:plusone size="medium" annotation="inline" href="http://html2canvas.hertzen.com" width="250"></g:plusone>
+
+        </p>
+
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+<a href="http://github.com/niklasvh/html2canvas"><img style="position: fixed; top: 0; right: 0; border: 0;z-index:9999;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>

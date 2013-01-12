@@ -1,0 +1,21 @@
+<!doctype html>
+<html ng-app="site">
+  <head>
+    <title>html2canvas</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
+    <script src="/site/site.js"></script>
+
+    <base href="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Screenshot creation with JavaScript">
+    <meta name="author" content="Niklas von Hertzen">
+
+    <link href="/site/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <header ng-include="'site/header.html'"></header>
+    <div class="container" ng-view></div>
+    <footer ng-include="'site/footer.html'"></footer>
+  </body>
+</html>
