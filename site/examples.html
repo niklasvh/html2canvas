@@ -13,8 +13,23 @@ html2canvas(document.body, {
     document.body.appendChild(canvas);
   }
 });</pre>
-  <button class="btn example1">Test on this page</button>
-  <p></p>
+  <p><button class="btn example1">Test on this page</button></p>
+
+  <p class="lead">
+    Rendering the body element and restrict canvas size to 300x300px
+  </p>
+
+  <pre class="prettyprint linenums">
+html2canvas(document.body, {
+  onrendered: function(canvas) {
+    document.body.appendChild(canvas);
+  },
+  width: 300,
+  height: 300
+});</pre>
+  <p><button class="btn example2">Test on this page</button></p>
+
+
   <script src="/build/html2canvas.js"></script>
   <script src="/site/js/prettify.js"></script>
   <script>
@@ -29,6 +44,20 @@ html2canvas(document.body, {
         }
       });
     });
+
+    $(".example2").on("click", function(event) {
+      event.preventDefault();
+      html2canvas(document.body, {
+        allowTaint: true,
+        taintTest: false,
+        onrendered: function(canvas) {
+          document.body.appendChild(canvas);
+        },
+        width: 300,
+        height: 300
+      });
+    });
+
   </script>
 
 </div>
