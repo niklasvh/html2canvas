@@ -1,4 +1,5 @@
 window.html2canvas = function(elements, opts) {
+  elements = (elements.length) ? elements : [elements];
   var queue,
   canvas,
   options = {
