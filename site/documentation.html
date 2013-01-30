@@ -1,124 +1,159 @@
 <div class="row-fluid">
-    <div class="span3">
-        <div class="well sidebar-nav">
-            <ul class="nav nav-list" id="doc-nav"></ul>
-        </div>
+  <div class="span3">
+    <ul class="nav nav-tabs nav-stacked" id="doc-nav"></ul>
+  </div>
+  <div class="span9">
+    <div class="row-fluid" id="docs">
+      <div class="page-header">
+        <h1>Introduction</h1>
+      </div>
+      <p class="lead">
+        Before you get started with the script, there are a few things that are good to know regarding the script and some of its limitations.
+      </p>
+
+      <h3>How it works</h3>
+      <p>
+        The script traverses through the DOM of the page it is loaded on. It gathers information on all the elements there, which it then uses to build a representation of the page.
+        In other words, it does not actually take a screenshot of the page, but builds a representation of it based on the properties it reads from the DOM.
+      </p>
+      <p>As a result, it is only able to render correctly properties that it understands, meaning there are many CSS properties which do not work.</p>
+
+
+      <h3>Limitations</h3>
+      <p>
+        All the images that the script uses need to reside under the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin</a> for it to be able to read them without the assistance of a <a href="#">proxy</a>.
+        Similarly, if you have other <code>canvas</code> elements on the page, which have been tainted with cross-origin content, they will become dirty and no longer readable by html2canvas.
+      </p>
+
+      <p>
+        The script doesn't render plugin content such as Flash or Java applets. It doesn't render <code>iframe</code> content either, unless the content resides under the same origin.
+      </p>
+
+      <div class="page-header">
+        <h1>Getting started</h1>
+      </div>
+
+      <p>To run html2canvas on an <code>element</code> with some <code>options</code> simply call:</p>
+
+      <pre class="prettyprint linenums">html2canvas(element, options);</pre>
+
+      <p>The rendered <code>canvas</code> is provided in the callback event <code>onrendered</code>, as such:</p>
+
+      <pre class="prettyprint linenums">html2canvas(element, {
+    onrendered: function(canvas) {
+        // canvas is the final rendered &lt;canvas&gt; element
+    }
+});</pre>
+
+      <h3>Available options</h3>
+
+      <p>The options variable is an <code>object</code> which accepts the following parameters:</p>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td>allowTaint</td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Whether to allow cross-origin images to taint the canvas</td>
+          </tr>
+
+          <tr>
+            <td>background</td>
+            <td>string</td>
+            <td>#fff</td>
+            <td>Canvas background color, if none is specified in DOM. Set undefined for transparent</td>
+          </tr>
+
+          <tr>
+            <td>height</td>
+            <td>number</td>
+            <td>null</td>
+            <td>Define the heigt of the canvas in pixels. If null, renders with full height of the window.</td>
+          </tr>
+
+          <tr>
+            <td>letterRendering</td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Whether to render each letter seperately. Necessary if <code>letter-spacing</code> is used.</td>
+          </tr>
+
+          <tr>
+            <td>logging</td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Whether to log events in the console.</td>
+          </tr>
+
+          <tr>
+            <td>proxy</td>
+            <td>string</td>
+            <td>undefined</td>
+            <td>Url to the proxy which is to be used for loading cross-origin images. If left empty, cross-origin images won't be loaded.</td>
+          </tr>
+
+          <tr>
+            <td>taintTest</td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Whether to test each image if it taints the canvas before drawing them</td>
+          </tr>
+
+          <tr>
+            <td>timeout</td>
+            <td>number</td>
+            <td>0</td>
+            <td>Timeout for loading images, in milliseconds. Setting it to 0 will result in no timeout. </td>
+          </tr>
+
+          <tr>
+            <td>width</td>
+            <td>number</td>
+            <td>null</td>
+            <td>Define the width of the canvas in pixels. If null, renders with full width of the window.</td>
+          </tr>
+
+          <tr>
+            <td>useCORS</td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Whether to attempt to load cross-origin images as CORS served, before reverting back to proxy</td>
+          </tr>
+
+        </tbody>
+      </table>
+
     </div>
-    <div class="span9">
-        <div class="hero-unit">
-            <h1>Documentation</h1>
-        </div>
-        <div class="row-fluid" id="docs">
 
-            <h2>Introduction</h2>
-            <p>
-                Before you get started with the script, there are a few things that are good to know regarding the script and some of its limitations.
-            </p>
-
-            <h3>How it works</h3>
-            <p>
-                The script traverses through the DOM of the page it is loaded on. It gathers information on all the elements there, which it then uses to build a representation of the page.
-                In other words, it does not actually take a screenshot of the page, but builds a representation of it based on the properties it reads from the DOM.
-            </p>
-            <p>As a result, it is only able to render correctly properties that it understands, meaning there are many CSS properties which do not work.</p>
-
-
-            <h3>Limitations</h3>
-            <p>
-                All the images that the script uses need to reside under the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin</a> for it to be able to read them without the assistance of a <a href="#">proxy</a>.
-                Similarly, if you have other <code>canvas</code> elements on the page, which you have drawed cross-origin images on, they will become dirty and no longer readable by html2canvas.
-            </p>
-
-            <p>
-                Rendering external content through <code>frames</code> does not work either and will just result in a gray box.
-            </p>
-
-            <p>
-                The script uses the <code>canvas</code> element to draw the screenshot on. Most notably, Internet Explorer 8 and older do not support the <code>canvas</code> element, but with the use of <a href="http://flashcanvas.net/">FlashCanvas</a>, the script is able to create screenshots for browsers that do not natively support the <code>canvas</code> element.
-            </p>
-
-            <p>The FlashCanvas requires the user to have Flash installed and enabled and limits the size of the screenshot to 2880x2880px. </p>
-
-
-            <h2>Getting Started</h2>
-
-            <h3>Preload content</h3>
-            <p>Before the script can actually parse the DOM, it needs to gather all the images on the page as well as generate any dynamically created graphics such as gradients.</p>
-
-            <p>To run the preload, call <code>Preload</code> function like this.</p>
-            <pre class="prettyprint linenums">html2canvas.Preload( element,  options );</pre>
-
-            <h4>element</h4>
-            <p>The <code>element</code> variable defines what element you will be rendering, defaults to <code>document.body</code>.</p>
-
-            <h4>options</h4>
-            <p>The options variable is an <code>object</code> which accepts the following parameters:</p>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>option</th>
-                        <th>description</th>
-                        <th>default</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>complete</code></td>
-                        <td><i>function</i> - Callback function which is called when Preloading is complete.</td>
-                        <td><code>undefined</code></td>
-                    </tr>
-                    <!--
-                    <tr>
-                        <td><code>flashcanvas</code></td>
-                        <td><i>string</i> - Path to the <code>flashcanvas.js</code> file. The <code>flashcanvas.swf</code> file must reside in the same folder. If left undefined, it will not use flashcanvas when necessary.</td>
-                        <td><code>undefined</code></td>
-                    </tr>-->
-                    <tr>
-                        <td><code>logging</code></td>
-                        <td><i>boolean</i> - Whether to log events in the console.</td>
-                        <td><code>false</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>proxy</code></td>
-                        <td><i>string</i> - Url to the proxy which is to be used for loading cross-origin images. If left empty, cross-origin images won't be loaded.</td>
-                        <td><code>undefined</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>timeout</code></td>
-                        <td><i>integer</i> - Timeout for loading images, in milliseconds. Setting it to 0 will result in no timeout. </td>
-                        <td><code>0</code></td>
-                    </tr>
-
-
-                </tbody>
-            </table>
-
-            <h4 style="font-style:italic;">returns</h4>
-            <p>
-                The preload function returns an object containing a few helper methods which can be used load more images or clean the DOM.
-            </p>
-
-            <h3>Parse</h3>
-            <p>To be continued...</p>
-
-        </div><!--/row-->
-
-    </div><!--/span-->
-</div><!--/row-->
-
-
+  </div>
+</div>
+<script src="/site/js/prettify.js"></script>
 <script>
+  (function(){
     var docNav = $("#doc-nav");
-    $("#docs h2, #docs h3").each(function(i,e){
-        var el = $(e);
-        if (e.nodeName === "H2") {
-            docNav.append($('<li />').addClass('nav-header').text(el.text()));
-        } else {
-            $("<a />").attr('name','doc-' + i).insertBefore(e);
-            docNav.append($('<li />').append(
-            $('<a />').text(el.text()).attr('href','#' + 'doc-' + i)
-        ));
-        }
-    });
+    $("#docs h1, #docs h2, #docs h3").each(function(i,element){
+      var $element = $(element);
+      var id = $element.text().replace(/ /g, "-").toLowerCase();
 
+      $element.attr('id', id);
+      docNav.append($('<li />').append($('<a />').text($element.text()).attr('href','#' + id)));
+
+    });
+    $(window).scrollspy({
+      target: ".span3"
+    });
+    docNav.affix()
+    window.prettyPrint();
+
+  })();
 </script>

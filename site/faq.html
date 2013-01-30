@@ -1,0 +1,42 @@
+<div class="row-fluid" id="docs">
+  <div class="page-header">
+    <h1>Frequently asked questions</h1>
+  </div>
+
+  <p class="lead">
+    Why aren't my images rendered?
+  </p>
+  <p>
+    html2canvas does not get around content policy restrictions set by your browser. Drawing images that reside outside of the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">origin</a> of the current page taint the <code>canvas</code> that they are drawn upon.
+    If the <code>canvas</code> gets tainted, it cannot be read anymore. As such, html2canvas implements methods to check whether an image would taint the <code>canvas</code> before applying it. If you have set the <code>allowTaint</code> option to <code>false</code>, it will not draw the image.
+  </p>
+  <p>
+    If you wish to load images that reside outside of your pages origin, you can use a <a href="https://github.com/niklasvh/html2canvas/wiki/Proxies">proxy</a> to load the images.
+  </p>
+
+  <p class="lead">
+    How do I get html2canvas to work in a browser extension?
+  </p>
+  <p>
+    You shouldn't use html2canvas in a browser extension. Most browsers have native support for capturing screenshots from tabs within extensions.
+    Relevant information for <a href="http://developer.chrome.com/extensions/tabs.html#method-captureVisibleTab">Chrome</a>, <a href="https://developer.mozilla.org/en-US/docs/DOM/CanvasRenderingContext2D#drawWindow()">Firefox</a> and <a href="http://dev.opera.com/articles/view/extensions-api-screenshot/">Opera</a>.
+  </p>
+
+  <p class="lead">
+    Why isn't SVG images getting rendered?
+  </p>
+  <p>
+    As with the previous question, SVG images taint the canvas with many browsers regardless of where they are hosted, or even if they are inline.
+  </p>
+
+  <p class="lead">
+    Why doesn't CSS property X render correctly or only partially?
+  </p>
+  <p>
+    As each CSS property needs to be manually coded to render correctly, html2canvas will <b>never</b> have full CSS support.
+    The library tries to support the most commonly used CSS properties to the extent that it can. If some CSS property is missing or incomplete and you feel
+    that it should be part of the library, create <a href="https://github.com/niklasvh/html2canvas/tree/master/tests">test cases</a> for it and a <a href="https://github.com/niklasvh/html2canvas/issues">new issue</a> for it.
+  </p>
+
+
+</div>

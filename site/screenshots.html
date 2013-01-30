@@ -1,7 +1,20 @@
 <script src="/build/html2canvas.js"></script>
 <script src="/site/console.js"></script>
 
-<h1>JavaScript screenshot creator</h1>
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+  <li><a href="/examples.html">Examples</a> <span class="divider">/</span></li>
+  <li class="active">Test console</li>
+</ul>
+
+<div class="page-header">
+  <h1>JavaScript webpage renderer</h1>
+</div>
+
+<p>
+  The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
+  There are a lot of problemii s of loading external pages, even with a proxy, and as such many pages will not render at all. If you wish to try the script properly, I recommend you get a copy of the source from <a href="https://github.com/niklasvh/html2canvas">here</a> instead.
+</p>
 <form class="well form-search">
   <label for="url">Website URL:</label>
   <input type="url" id="url" value="http://www.yahoo.com" class="input-medium search-query" /><button class="btn" id="getscreenshot">Get screenshot!</button>
@@ -13,7 +26,6 @@
 <h3>Recommended (tested) pages:</h3>
 
 <ul id="recommended">
-
   <li><a href="http://www.twitter.com/niklasvh">twitter.com</a></li>
   <li><a href="http://www.yahoo.com">yahoo.com</a></li>
   <li><a href="http://www.jquery.com">jquery.com</a></li>
@@ -24,16 +36,8 @@
   <li><a href="http://www.facebook.com/google">facebook.com/google</a></li>
   <li><a href="http://www.youtube.com/">youtube.com</a></li>
   <li><a href="http://www.cnn.com/">cnn.com</a></li>
-
   <li><a href="http://www.engadget.com/">engadget.com (lot of elements, very slow)</a></li>
   <li><a href="http://eu.battle.net/en/">battle.net</a></li>
-
-
 </ul>
 
-<h4> About</h4>
-<p>
-  The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
-  There are a lot of problems of loading external pages, even with a proxy, and as such many pages will not render at all. If you wish to try the script properly, I recommend you get a copy of the source from <a href="https://github.com/niklasvh/html2canvas">here</a> instead.
-</p>
 <div id="content"></div>

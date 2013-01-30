@@ -1,7 +1,7 @@
 <div class="container">
   <p>
-    Created by <a href="http://hertzen.com">Niklas von Hertzen</a><br />
-    Licensed under the <a href="LICENSE">MIT License</a>.
+    Created by <a href="http://hertzen.com">Niklas von Hertzen</a> <br />
+    Licensed under the <a href="LICENSE">MIT License</a>. <br />
     <a href="https://twitter.com/Niklasvh" class="twitter-follow-button" data-show-count="false">Follow @Niklasvh</a>
   </p>
 
@@ -11,9 +11,15 @@
     (function(d, s, id) {
       var po = d.createElement(s); po.type = 'text/javascript'; po.async = true;
       po.src = 'https://apis.google.com/js/plusone.js';
-      var s = d.getElementsByTagName(s)[0]; s.parentNode.insertBefore(po, s);
+      var e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(po, e);
 
-      var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}
+      var js;
+      if(!d.getElementById(id)){
+        js=d.createElement(s);
+        js.id=id;
+        js.src="//platform.twitter.com/widgets.js";
+        e.parentNode.insertBefore(js,e);
+      }
 
     })(document, "script", "twitter-wjs");
   </script>

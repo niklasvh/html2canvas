@@ -4,8 +4,6 @@ var message,
 timeoutTimer,
 timer;
 
-var proxyUrl = "http://html2canvas.appspot.com/query";
-
 function addRow(table,field,val){
   var tr = $('<tr />').appendTo( $(table));
   tr.append($('<td />').css('font-weight','bold').text(field)).append($('<td />').text(val));
@@ -82,11 +80,9 @@ $(function(){
         url:urlParts.href
 
       },
-      url: proxyUrl,
+      url: "http://html2canvas.appspot.com/query",
       dataType: "jsonp",
       success: function(html){
-
-
         iframe = document.createElement('iframe');
         $(iframe).css({
           'visibility':'hidden'
@@ -106,9 +102,7 @@ $(function(){
         }
 
         d.write(html);
-
         d.close();
-
       }
 
 
