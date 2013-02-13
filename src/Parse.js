@@ -1026,7 +1026,7 @@ _html2canvas.Parse = function (images, options) {
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset|checkbox|radio)$/.test(element.type) && (element.value || element.placeholder).length > 0){
+        if (/^(text|url|email|submit|button|reset|checkbox|radio)$/.test(element.type) && (element.value || element.placeholder || "").length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
