@@ -12,9 +12,6 @@ module.exports = function(grunt) {
       pre: '(function(window, document, undefined){',
       post: '})(window,document);'
     },
-    lint: {
-      files: ['build/<%= pkg.name %>.js']
-    },
     qunit: {
       files: ['tests/qunit/index.html']
     },
@@ -24,7 +21,7 @@ module.exports = function(grunt) {
         dest: 'build/<%= pkg.name %>.js'
       }
     },
-    min: {
+    uglify: {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
         dest: 'build/<%= pkg.name %>.min.js'
@@ -35,6 +32,7 @@ module.exports = function(grunt) {
       tasks: 'lint qunit'
     },
     jshint: {
+      all: ['build/<%= pkg.name %>.js'],
       options: {
         curly: true,
         eqeqeq: true,
@@ -51,8 +49,7 @@ module.exports = function(grunt) {
       globals: {
         jQuery: true
       }
-    },
-    uglify: {}
+    }
   });
 
   var selenium = require("./tests/selenium.js");
@@ -67,7 +64,13 @@ module.exports = function(grunt) {
     }
   });
 
+  // Load tasks
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+
   // Default task.
-  grunt.registerTask('default', 'concat lint qunit min webdriver');
+  grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify', 'webdriver']);
 
 };
