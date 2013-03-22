@@ -1,38 +1,59 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
-  // Project configuration.
-  grunt.initConfig({
-    pkg: '<json:package.json>',
-    meta: {
-      banner: '/*\n  <%= pkg.title || pkg.name %> <%= pkg.version %>' +
-      '<%= pkg.homepage ? " <" + pkg.homepage + ">\n" : "" %>' +
+  var meta = {
+    banner: '/*\n  <%= pkg.title || pkg.name %> <%= pkg.version %>' +
+      '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
       '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
       '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/',
-      pre: '(function(window, document, undefined){',
-      post: '})(window,document);'
-    },
+    pre: '\n(function(window, document, undefined){\n\n',
+    post: '\n})(window,document);'
+  };
+
+  // Project configuration.
+  grunt.initConfig({
+
+    pkg: grunt.file.readJSON('package.json'),
+
     qunit: {
       files: ['tests/qunit/index.html']
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', '<banner:meta.pre>','src/*.js', 'src/renderers/Canvas.js', '<banner:meta.post>'],
+        src: [
+          'src/Core.js',
+          'src/Font.js',
+          'src/Generate.js',
+          'src/Queue.js',
+          'src/Parse.js',
+          'src/Preload.js',
+          'src/Renderer.js',
+          'src/Support.js',
+          'src/Util.js',
+          'src/renderers/Canvas.js'
+        ],
         dest: 'build/<%= pkg.name %>.js'
+      },
+      options:{
+        banner: meta.banner + meta.pre,
+        footer: meta.post
       }
     },
     uglify: {
       dist: {
-        src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
+        src: ['<%= concat.dist.dest %>'],
         dest: 'build/<%= pkg.name %>.min.js'
+      },
+      options: {
+        banner: meta.banner
       }
     },
     watch: {
-      files: '<config:lint.files>',
-      tasks: 'lint qunit'
+      files: '<%= lint.files %>',
+      tasks: 'jshint qunit'
     },
     jshint: {
-      all: ['build/<%= pkg.name %>.js'],
+      all: ['<%= concat.dist.dest %>'],
       options: {
         curly: true,
         eqeqeq: true,
@@ -44,10 +65,10 @@ module.exports = function(grunt) {
         undef: true,
         boss: true,
         eqnull: true,
-        browser: true
-      },
-      globals: {
-        jQuery: true
+        browser: true,
+        globals: {
+          jQuery: true
+        }
       }
     }
   });
@@ -71,6 +92,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
 
   // Default task.
-  grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify', 'webdriver']);
+  grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify', 'webdriver']);
 
 };
