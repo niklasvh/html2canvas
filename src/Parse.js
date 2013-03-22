@@ -775,7 +775,12 @@ _html2canvas.Parse = function (images, options) {
     elps.className = pseudoHide + "-before " + pseudoHide + "-after";
 
     Object.keys(elStyle).filter(indexedProperty).forEach(function(prop) {
-      elps.style[prop] = elStyle[prop];
+      // Prevent assigning of read only CSS Rules, ex. length, parentRule
+      try {
+        elps.style[prop] = elStyle[prop];
+      } catch (e) {
+        h2clog(['Tried to assign readonly property ', prop, 'Error:', e]);
+      }
     });
 
     if(isImage) {
