@@ -15,3 +15,5 @@ server.js
 *.sublime-workspace
 chromedriver.log
 *.baseline
+*.iml
+.idea/
