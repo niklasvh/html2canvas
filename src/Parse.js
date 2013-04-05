@@ -759,7 +759,7 @@ _html2canvas.Parse = function (images, options) {
 
   function getPseudoElement(el, which) {
     var elStyle = window.getComputedStyle(el, which);
-    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content") {
+    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content" || elStyle.display === "none") {
       return;
     }
     var content = elStyle.content + '',
