@@ -302,7 +302,7 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
         topPos -= (backgroundSize || image).height * percentage;
       }
 
-    } else {
+    } else if(typeof topPos == "undefined") {
       topPos = parseInt(bgposition[1],10);
     }
 
