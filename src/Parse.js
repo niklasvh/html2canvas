@@ -731,7 +731,7 @@ _html2canvas.Parse = function (images, options) {
     valueWrap.style.display = "block";
     valueWrap.style.position = "absolute";
 
-    if (/^(submit|reset|button|text|password)$/.test(el.type) || el.nodeName === "SELECT"){
+    if (/^(submit|reset|button|text|password/number)$/.test(el.type) || el.nodeName === "SELECT"){
       valueWrap.style.lineHeight = getCSS(el, "height");
     }
 
@@ -1012,7 +1012,7 @@ _html2canvas.Parse = function (images, options) {
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && (element.value || element.placeholder).length > 0){
+        if (/^(text|url|email|submit|button|reset|number)$/.test(element.type) && (element.value || element.placeholder).length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
