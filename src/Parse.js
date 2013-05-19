@@ -509,8 +509,8 @@ _html2canvas.Parse = function (images, options) {
     tlv = borderRadius[0][1],
     trh = borderRadius[1][0],
     trv = borderRadius[1][1],
-    brv = borderRadius[2][0],
-    brh = borderRadius[2][1],
+    brh = borderRadius[2][0],
+    brv = borderRadius[2][1],
     blh = borderRadius[3][0],
     blv = borderRadius[3][1],
 
