@@ -42,7 +42,7 @@ To access the created canvas, provide the `onrendered` event in the options whic
 
 ### Building ###
 
-The library uses <a href="http://gruntjs.com/">grunt</a> for building. Alternatively, you can download ready builds from the <a href="https://github.com/niklasvh/html2canvas/downloads">downloads page</a>.
+The library uses <a href="http://gruntjs.com/">grunt</a> for building. Alternatively, you can download the latest build from the <a href="http://html2canvas.hertzen.com/build/html2canvas.js">here</a>.
 
 Run the full build process (including lint, qunit and webdriver tests):
 
