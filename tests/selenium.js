@@ -141,7 +141,7 @@
 
     function httpget(options) {
         return Bacon.fromCallback(function(callback) {
-            http.get(options, function(res){
+            https.get(options, function(res){
                 var data = '';
 
                 res.on('data', function (chunk){
