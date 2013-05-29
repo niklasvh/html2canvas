@@ -80,6 +80,7 @@ _html2canvas.Renderer.Canvas = function(options) {
     canvas.height = canvas.style.height = options.height || zStack.ctx.height;
 
     fstyle = ctx.fillStyle;
+    ctx.webkitImageSmoothingEnabled = ctx.mozImageSmoothingEnabled = ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = (isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : zStack.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
