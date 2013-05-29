@@ -246,12 +246,18 @@
 
     var tests = [],
         outputImages = false,
-        results = {},
-        testStream = getTests("tests/cases");
+        results = {};
 
-    testStream.onValue(function(test) {
-        tests.push(test);
-    });
+    exports.tests = function() {
+        var testStream = getTests("tests/cases");
+
+        testStream.onValue(function(test) {
+            tests.push(test);
+        });
+
+        testStream.onEnd(runWebDriver);
+    };
+
 
     /*
     if (outputImages) {
@@ -261,5 +267,4 @@
     }
     */
 
-    testStream.onEnd(runWebDriver);
 })();
