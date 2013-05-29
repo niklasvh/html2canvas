@@ -147,7 +147,33 @@
             } catch(e) {}
 
             console.log(colors.violet, "Writing", browser + ".json");
-            fs.writeFile(filename, JSON.stringify(results[browser]));
+            var date = new Date();
+            var result = JSON.stringify({
+                browser: browser,
+                results: results[browser],
+                timestamp: date.toISOString()
+            });
+
+            if (process.env.MONGOLAB_URL) {
+                var options = {
+                    host: "api.mongolab.com",
+                    port: 443,
+                    path: process.env.MONGOLAB_URL,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': result.length
+                    }
+                };
+
+                var post_req = http.request(options, function(res) {
+                });
+
+                post_req.write(result);
+                post_req.end();
+            }
+
+            fs.writeFile(filename, result);
         });
     }
 
