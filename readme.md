@@ -25,6 +25,7 @@ The script should work fine on the following browsers:
 * Google Chrome
 * Opera 12+
 * IE9+
+* Safari 6+
 
 As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
