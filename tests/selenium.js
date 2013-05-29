@@ -139,6 +139,26 @@
         }
     }
 
+    function httpget(options) {
+        return Bacon.fromCallback(function(callback) {
+            http.get(options, function(res){
+                var data = '';
+
+                res.on('data', function (chunk){
+                    data += chunk;
+                });
+
+                res.on('end',function(){
+                    callback(data);
+                });
+            });
+        });
+    }
+
+    function parseJSON(str) {
+        return JSON.parse(str);
+    }
+
     function writeResults() {
         Object.keys(results).forEach(function(browser) {
             var filename = "tests/results/" + browser + ".json";
@@ -158,22 +178,28 @@
                 var options = {
                     host: "api.mongolab.com",
                     port: 443,
-                    path: "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY,
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Content-Length': result.length
-                    }
+                    path: "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY + '&q={"browser":"' + browser + '"}&fo=true&s={"timestamp":-1}'
                 };
 
-                console.log("Sending results for", browser);
-                var request = https.request(options, function(res) {
-                    console.log(colors.green, "Results sent for", browser);
-                });
+                httpget(options).map(parseJSON).onValue(function(data) {
+                    compareResults(data.results, results[browser], browser);
 
-                console.log(result);
-                request.write(result);
-                request.end();
+                    options.method =  'POST';
+                    options.path = "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY;
+                    options.headers = {
+                        'Content-Type': 'application/json',
+                        'Content-Length': result.length
+                    };
+
+                    console.log("Sending results for", browser);
+                    var request = https.request(options, function(res) {
+                        console.log(colors.green, "Results sent for", browser);
+                    });
+
+                    console.log(result);
+                    request.write(result);
+                    request.end();
+                });
             }
 
             console.log(colors.violet, "Writing", browser + ".json");
