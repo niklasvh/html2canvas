@@ -146,7 +146,6 @@
                 compareResults(oldResults, results[browser], browser);
             } catch(e) {}
 
-            console.log(colors.violet, "Writing", browser + ".json");
             var date = new Date();
             var result = JSON.stringify({
                 browser: browser,
@@ -154,11 +153,11 @@
                 timestamp: date.toISOString()
             });
 
-            if (process.env.MONGOLAB_URL) {
+            if (process.env.MONGOLAB_APIKEY) {
                 var options = {
                     host: "api.mongolab.com",
                     port: 443,
-                    path: process.env.MONGOLAB_URL,
+                    path: "/api/1/databases/html2canvas/collections?" + process.env.MONGOLAB_APIKEY,
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -171,10 +170,12 @@
                     console.log(colors.green, "Results sent for", browser);
                 });
 
+                console.log(result);
                 request.write(result);
                 request.end();
             }
 
+            console.log(colors.violet, "Writing", browser + ".json");
             fs.writeFile(filename, result);
         });
     }
