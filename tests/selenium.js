@@ -4,6 +4,7 @@
         Bacon = require('baconjs').Bacon,
         express = require('express'),
         http = require("http"),
+        https = require("https"),
         url = require("url"),
         path = require("path"),
         base64_arraybuffer = require('base64-arraybuffer'),
@@ -157,7 +158,7 @@
                 var options = {
                     host: "api.mongolab.com",
                     port: 443,
-                    path: "/api/1/databases/html2canvas/collections?" + process.env.MONGOLAB_APIKEY,
+                    path: "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY,
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -166,7 +167,7 @@
                 };
 
                 console.log("Sending results for", browser);
-                var request = http.request(options, function(res) {
+                var request = https.request(options, function(res) {
                     console.log(colors.green, "Results sent for", browser);
                 });
 
