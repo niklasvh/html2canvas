@@ -166,11 +166,13 @@
                     }
                 };
 
-                var post_req = http.request(options, function(res) {
+                console.log("Sending results for", browser);
+                var request = http.request(options, function(res) {
+                    console.log(colors.green, "Results sent for", browser);
                 });
 
-                post_req.write(result);
-                post_req.end();
+                request.write(result);
+                request.end();
             }
 
             fs.writeFile(filename, result);
