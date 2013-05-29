@@ -196,7 +196,6 @@
                         console.log(colors.green, "Results sent for", browser);
                     });
 
-                    console.log(result);
                     request.write(result);
                     request.end();
                 });
