@@ -193,6 +193,9 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
     val = computedCSS[attribute];
 
     if (isBackgroundSizePosition) {
+        if(attribute.match( /^backgroundPosition$/ ) && el && el.currentStyle){
+            val = el.currentStyle[attribute] ? el.currentStyle[attribute] : val;
+        }
       val = (val || '').split( ',' );
       val = val[index || 0] || val[0] || 'auto';
       val = _html2canvas.Util.trimText(val).split(' ');
