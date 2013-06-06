@@ -18,6 +18,13 @@ function h2cRenderContext(width, height) {
         'arguments': arguments
       });
     },
+	transform: function() {
+      storage.push({
+        type: "function",
+        name: "transform",
+        'arguments': arguments
+      });
+    },
     fill: function() {
       storage.push({
         type: "function",

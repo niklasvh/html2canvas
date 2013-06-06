@@ -327,6 +327,13 @@ _html2canvas.Util.Extend = function (options, defaults) {
   return defaults;
 };
 
+_html2canvas.Util.RoughlyEqual = function (first, second, decimalPlaces) {
+	if ((typeof decimalPlaces) === "undefined")
+		decimalPlaces = 5;
+	var multiplier = Math.pow(10, decimalPlaces); //100000 by default
+	return Math.round(first * multiplier) === Math.round(second * multiplier);
+};
+
 
 /*
  * Derived from jQuery.contents()

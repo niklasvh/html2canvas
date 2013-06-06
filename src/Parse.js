@@ -328,19 +328,116 @@ _html2canvas.Parse = function (images, options) {
     paddingTop = getCSSInt(element, 'paddingTop'),
     paddingRight = getCSSInt(element, 'paddingRight'),
     paddingBottom = getCSSInt(element, 'paddingBottom');
+	
+	var transforms = new Array();
+	var el = element;
+	while (el && el !== document.body)
+	{
+		var transform = getCSS(el, 'transform') ||
+						getCSS(el, '-ms-transform') ||
+						getCSS(el, '-o-transform') ||
+						getCSS(el, '-moz-transform') ||
+						getCSS(el, '-webkit-transform');
+		if (transform && transform !== "none")
+			transforms.push(transform);
+		el = el.parentNode;
+	}
+	
+	
+	var tempImage = image;
+	var tempContext;
 
+	if (transforms.length && image.nodeName !== "CANVAS")
+	{
+		var totalRotation = 0;
+		for (var i = 0; i < transforms.length; i++)
+		{
+			var transform = transforms[i];
+			if (transform.indexOf("matrix(") === 0)
+			{
+				transform = transform.substring(7, transform.length - 1);
+				transform = transform.split(",");
+				h2clog(transform);
+				if (!_html2canvas.Util.RoughlyEqual(transform[4], 0) || !_html2canvas.Util.RoughlyEqual(transform[5], 0))
+				{
+					h2clog("Transformation matrix has a translation, ignoring.");
+					continue;
+				}
+				if (_html2canvas.Util.RoughlyEqual(transform[1], 0) && _html2canvas.Util.RoughlyEqual(transform[2], 0) && transform[0] >= 0 && transform[3] >= 0)
+				{
+					h2clog("Transformation matrix is a scale, ignoring.");
+					continue;
+				}
+				if (!_html2canvas.Util.RoughlyEqual(transform[0], transform[3]))
+				{
+					h2clog("Transformation matrix has a != d so this is not a simple rotation, we only support rotation, ignoring.");
+					continue;
+				}
+				var rotation = Math.acos(transform[0]);
+				if (!_html2canvas.Util.RoughlyEqual(transform[1], -transform[2]))
+				{
+					h2clog("Transformation matrix has b != -c so this is not a simple rotation, we only support rotation, ignoring.");
+					continue;
+				}
+				if (!_html2canvas.Util.RoughlyEqual(transform[1], Math.sin(rotation)))
+				{
+					h2clog("Transformation matrix has acos(a) != asin(b) (" + rotation + " != " + Math.asin(transform[1]) + ") so this is not a simple rotation, we only support rotation, ignoring.");
+					continue;
+				}
+				//tempContext.rotate(rotation);
+				totalRotation += rotation;
+			}
+			else
+				h2clog("Non-matrix transformation: " + transform); //TODO: Do all browsers only produce matrix transformations?
+		}
+		if (!_html2canvas.Util.RoughlyEqual(totalRotation, Math.PI / 2) &&
+			!_html2canvas.Util.RoughlyEqual(totalRotation, Math.PI) &&
+			!_html2canvas.Util.RoughlyEqual(totalRotation, 0) &&
+			!_html2canvas.Util.RoughlyEqual(totalRotation, 3 * Math.PI / 2))
+		{
+			h2clog("Warning: Unsupported rotation - by " + totalRotation + " radians (" + (totalRotation * 180 / Math.PI) + " degrees).");
+			//Continue anyway.
+		}
+		var x1 = image.width * Math.cos(totalRotation) - 0;
+		var x2 = 0 - image.height * Math.sin(totalRotation);
+		var x3 = image.width * Math.cos(totalRotation) - image.height * Math.sin(totalRotation);
+		var y1 = image.width * Math.sin(totalRotation) + 0;
+		var y2 = 0 + image.height * Math.cos(totalRotation);
+		var y3 = image.width * Math.sin(totalRotation) + image.height * Math.cos(totalRotation);
+		var maxX = Math.max(x1, Math.max(x2, Math.max(x3, 0)));
+		var minX = Math.min(x1, Math.min(x2, Math.min(x3, 0)));
+		var maxY = Math.max(y1, Math.max(y2, Math.max(y3, 0)));
+		var minY = Math.min(y1, Math.min(y2, Math.min(y3, 0)));
+		var newWidth = maxX - minX;
+		var newHeight = maxY - minY;
+		tempImage = document.createElement("CANVAS");
+		tempImage.width = newWidth;
+		tempImage.height = newHeight;
+		tempContext = tempImage.getContext("2d");
+		tempContext.translate(newWidth / 2, newHeight / 2); //translate context to centre
+		tempContext.rotate(totalRotation);
+		tempContext.translate(-image.width / 2, -image.height / 2); //translate context back
+		tempContext.drawImage(image, 0, 0);
+		//window.open(tempImage.toDataURL());
+	}
+	
     drawImage(
       ctx,
-      image,
+      tempImage,
       0, //sx
       0, //sy
-      image.width, //sw
-      image.height, //sh
+      tempImage.width, //sw
+      tempImage.height, //sh
       bounds.left + paddingLeft + borders[3].width, //dx
       bounds.top + paddingTop + borders[0].width, // dy
       bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
       bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
       );
+	
+	if (transforms.length && image.nodeName === "CANVAS")
+	{
+		tempContext.restore();
+	}
   }
 
   function getBorderData(element) {
