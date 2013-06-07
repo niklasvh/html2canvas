@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Image rotation tests</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript" src="../../test.js"></script>
+	</head>
+	<body>
+		<div style="margin: 100px; width: 100px; height: 100px;">
+			<div style="-webkit-transform: scale(2);">
+				<img src="../../assets/image.jpg" style="-webkit-transform: rotate(90deg);" />
+			</div>
+		</div>
+		<div style="margin: 100px; width: 100px; height: 100px;">
+			<div style="-webkit-transform: scale(0.5);">
+				<img src="../../assets/image.jpg" style="-webkit-transform: rotate(180deg);" />
+			</div>
+		</div>
+		<div style="margin: 100px; width: 100px; height: 100px;">
+			<div style="-webkit-transform: translate(50, 50);">
+				<img src="../../assets/image.jpg" style="-webkit-transform: rotate(270deg);" />
+			</div>
+		</div>
+	</body>
+</html>
