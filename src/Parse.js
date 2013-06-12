@@ -75,6 +75,8 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  // reuse the regex
+  var PARSE_TEXT_SHADOW = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
   function setTextVariables(ctx, el, text_decoration, color) {
     var align = false,
     bold = getCSS(el, "fontWeight"),
@@ -96,14 +98,11 @@ _html2canvas.Parse = function (images, options) {
     ctx.setVariable("textAlign", (align) ? "right" : "left");
 
     if (shadow !== "none") {
-
-      // TODO: better text-shadow parsing
-      var parseShadow = /(rgba\([^)]*\))\s([^\s]*)\s([^\s]*)\s([^\s]*)/;
-      var bits = parseShadow.exec(shadow);
-      var color = bits[1],
-        sX = bits[2].replace('px', ''),
-        sY = bits[3].replace('px', ''),
-        blur = bits[4].replace('px', '');
+      var s = shadow.match(PARSE_TEXT_SHADOW),
+        color = s[0],
+        sX = s[1] ? s[1].replace('px', '') : 0,
+        sY = s[2] ? s[2].replace('px', '') : 0,
+        blur = s[3] ? s[3].replace('px', '') : 0;
 
       // apply the text shadow
       ctx.setVariable("shadowColor", color);
