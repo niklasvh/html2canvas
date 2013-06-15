@@ -1062,78 +1062,8 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
-  function svgDOMRender(body, stack) {
-    var img = new Image(),
-    docWidth = documentWidth(),
-    docHeight = documentHeight(),
-    html = "";
-
-    function parseDOM(el) {
-      var children = _html2canvas.Util.Children( el ),
-      len = children.length,
-      attr,
-      a,
-      alen,
-      elm,
-      i;
-      for ( i = 0; i < len; i+=1 ) {
-        elm = children[ i ];
-        if ( elm.nodeType === 3 ) {
-          // Text node
-          html += elm.nodeValue.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-        } else if ( elm.nodeType === 1 ) {
-          // Element
-          if ( !/^(script|meta|title)$/.test(elm.nodeName.toLowerCase()) ) {
-
-            html += "<" + elm.nodeName.toLowerCase();
-
-            // add attributes
-            if ( elm.hasAttributes() ) {
-              attr = elm.attributes;
-              alen = attr.length;
-              for ( a = 0; a < alen; a+=1 ) {
-                html += " " + attr[ a ].name + '="' + attr[ a ].value + '"';
-              }
-            }
-
-
-            html += '>';
-
-            parseDOM( elm );
-
-
-            html += "</" + elm.nodeName.toLowerCase() + ">";
-          }
-        }
-
-      }
-
-    }
-
-    parseDOM(body);
-    img.src = [
-    "data:image/svg+xml,",
-    "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" + docWidth + "' height='" + docHeight + "'>",
-    "<foreignObject width='" + docWidth + "' height='" + docHeight + "'>",
-    "<html xmlns='http://www.w3.org/1999/xhtml' style='margin:0;'>",
-    html.replace(/\#/g,"%23"),
-    "</html>",
-    "</foreignObject>",
-    "</svg>"
-    ].join("");
-
-    img.onload = function() {
-      stack.svgRender = img;
-    };
-
-  }
-
   function init() {
     var stack = renderElement(element, null);
-
-    if (support.svgRendering) {
-      svgDOMRender(document.documentElement, stack);
-    }
 
     Array.prototype.slice.call(element.children, 0).forEach(function(childElement) {
       parseElement(childElement, stack);
