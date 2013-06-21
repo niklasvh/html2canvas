@@ -428,7 +428,7 @@ _html2canvas.Parse = function (images, options) {
       bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
       );
 	
-	if (transforms.length && image.nodeName === "CANVAS") {
+	if (transforms.length && image.nodeName !== "CANVAS") {
 		tempContext.restore();
 	}
   }
