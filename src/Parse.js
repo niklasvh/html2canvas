@@ -135,7 +135,7 @@ _html2canvas.Parse = function (images, options) {
     var range = doc.createRange();
     range.setStart(textNode, textOffset);
     range.setEnd(textNode, textOffset + text.length);
-    return range.getBoundingClientRect();
+    return range.getBoundingClientRect ? range.getBoundingClientRect() : null;
   }
 
   function textWrapperBounds(oldTextNode) {
