@@ -20,6 +20,33 @@ _html2canvas.Util.trimText = (function(isNative){
   };
 })( String.prototype.trim );
 
+(function() {
+
+  // TODO: support all possible length values
+  var TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
+  var TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+  _html2canvas.Util.parseTextShadows = function (value) {
+    if (value === 'none') {
+      return [];
+    }
+
+    // find multiple shadow declarations
+    var shadows = value.match(TEXT_SHADOW_PROPERTY),
+      results = [];
+    for (var i = 0; i < shadows.length; i++) {
+      var s = shadows[i].match(TEXT_SHADOW_VALUES);
+      results.push({
+        color: s[0],
+        offsetX: s[1] ? s[1].replace('px', '') : 0,
+        offsetY: s[2] ? s[2].replace('px', '') : 0,
+        blur: s[3] ? s[3].replace('px', '') : 0
+      });
+    }
+    return results;
+  };
+})();
+
+
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [],
