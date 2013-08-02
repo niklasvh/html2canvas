@@ -1135,8 +1135,12 @@ _html2canvas.Parse = function (images, options) {
       svgDOMRender(document.documentElement, stack);
     }
 
-    Array.prototype.slice.call(element.children, 0).forEach(function(childElement) {
-      parseElement(childElement, stack);
+    _html2canvas.Util.Children(element).forEach(function(node) {
+      if (node.nodeType === 1) {
+        parseElement(node, stack);
+      } else if (node.nodeType === 3) {
+        renderText(element, node, stack);
+      }
     });
 
     stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
