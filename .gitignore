@@ -17,3 +17,4 @@ chromedriver.log
 *.baseline
 *.iml
 .idea/
+.DS_Store
