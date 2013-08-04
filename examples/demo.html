@@ -1,17 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html>
   <head>
-    <script type="text/javascript" src="../tests/assets/jquery-1.6.2.js"></script>
-    <script type="text/javascript" src="../build/html2canvas.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        html2canvas( [ document.body ], {
-          onrendered: function(canvas) {
-            document.body.appendChild(canvas);
-          }
-        });
-      });
-    </script>
     <title>
       display/box/float/clear test
     </title>
@@ -182,5 +171,13 @@
     <p style="color: black; font-size: 1em; line-height: 1.3em; clear: both">
       This is a nonsensical document, but syntactically valid HTML 4.0. All 100% conformant CSS1 agents should be able to render the document elements above this paragraph <b>indistinguishably</b> (to the pixel) from this reference rendering, (except font rasterization and form widgets). All discrepancies should be traceable to CSS1 implementation shortcomings. Once you have finished evaluating this test, you can return to the <A HREF="sec5526c.htm" style="text-decoration:none">parent page</A>.
     </p>
+    <script type="text/javascript" src="../build/html2canvas.js"></script>
+    <script type="text/javascript">
+        html2canvas( [ document.body ], {
+            onrendered: function(canvas) {
+                document.body.appendChild(canvas);
+            }
+        });
+    </script>
   </body>
 </html>
