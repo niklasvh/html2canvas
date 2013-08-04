@@ -49,8 +49,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: '<%= lint.files %>',
-      tasks: 'jshint qunit'
+      files: 'src/*',
+      tasks: ['jshint', 'build']
     },
     jshint: {
       all: ['<%= concat.dist.dest %>'],
@@ -73,19 +73,19 @@ module.exports = function(grunt) {
     }
   });
 
-  var selenium = require("./tests/selenium.js");
   grunt.registerTask('webdriver', 'Browser render tests', function(arg1) {
-
+    var selenium = require("./tests/selenium.js");
     var done = this.async();
 
-    if (arguments.length === 0) {
-      selenium.tests();
-    } else {
+    if (arguments.length) {
       selenium[arg1].apply(null, arguments);
+    } else {
+      selenium.tests();
     }
   });
 
   // Load tasks
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
