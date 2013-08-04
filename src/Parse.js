@@ -80,7 +80,7 @@ _html2canvas.Parse = function (images, options) {
     bold = getCSS(el, "fontWeight"),
     family = getCSS(el, "fontFamily"),
     size = getCSS(el, "fontSize"),
-    shadow = getCSS(el, "textShadow");
+    shadows =  _html2canvas.Util.parseTextShadows(getCSS(el, "textShadow"));
 
     switch(parseInt(bold, 10)){
       case 401:
@@ -95,9 +95,7 @@ _html2canvas.Parse = function (images, options) {
     ctx.setVariable("font", [getCSS(el, "fontStyle"), getCSS(el, "fontVariant"), bold, size, family].join(" "));
     ctx.setVariable("textAlign", (align) ? "right" : "left");
 
-    if (shadow !== "none") {
-      var shadows = _html2canvas.Util.parseTextShadows(shadow);
-
+    if (shadows.length) {
       // TODO: support multiple text shadows
       // apply the first text shadow
       ctx.setVariable("shadowColor", shadows[0].color);
