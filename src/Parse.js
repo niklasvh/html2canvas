@@ -674,7 +674,7 @@ _html2canvas.Parse = function (images, options) {
               c1: [bx + bw, by + bh],
               c2: [bx, by + bh],
               c3: [bx + borders[3].width, by],
-              c4: [bx + bw - borders[2].width, by]
+              c4: [bx + bw - borders[3].width, by]
             }, borderRadius[2], borderRadius[3],
             borderPoints.bottomRightOuter, borderPoints.bottomRightInner, borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner);
             break;
