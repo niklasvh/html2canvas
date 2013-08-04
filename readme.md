@@ -12,8 +12,8 @@ html2canvas
 ###How does it work?###
 The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements.
 
-It does <b>not require any rendering from the server</b>, as the whole image is created on the <b>clients browser</b>. However, as it is heavily dependent on the browser, this library is *not suitable* to be used in nodejs.
-It doesn't magically circumvent any browser content policy restrictions either, so rendering cross-origin content will require a <a href="https://github.com/niklasvh/html2canvas/wiki/Proxies">proxy</a> to get the content to the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin</a>.
+It does **not require any rendering from the server**, as the whole image is created on the **clients browser**. However, as it is heavily dependent on the browser, this library is *not suitable* to be used in nodejs.
+It doesn't magically circumvent any browser content policy restrictions either, so rendering cross-origin content will require a [proxy](https://github.com/niklasvh/html2canvas/wiki/Proxies) to get the content to the [same origin](http://en.wikipedia.org/wiki/Same_origin_policy).
 
 The script is still in a **very experimental state**, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made.
 
@@ -31,11 +31,11 @@ As each CSS property needs to be manually built to be supported, there are a num
 
 ### Usage ###
 To render an `element` with html2canvas, simply call:
-` html2canvas( [ element ], options);`
+` html2canvas(element, options);`
 
 To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
 
-    html2canvas( [ document.body ], {
+    html2canvas(document.body, {
         onrendered: function(canvas) {
             /* canvas is the actual canvas element,
                to append it to the page call for example
@@ -46,7 +46,7 @@ To access the created canvas, provide the `onrendered` event in the options whic
 
 ### Building ###
 
-The library uses <a href="http://gruntjs.com/">grunt</a> for building. Alternatively, you can download the latest build from <a href="http://html2canvas.hertzen.com/build/html2canvas.js">here</a>.
+The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](http://html2canvas.hertzen.com/build/html2canvas.js).
 
 Run the full build process (including lint, qunit and webdriver tests):
 
@@ -58,9 +58,9 @@ Skip lint and tests and simply build from source:
 
 ### Running tests ###
 
-The library has two sets of tests. The first set is a number of qunit tests that check that different values parsed by browsers are correctly converted in html2canvas. To run these tests with grunt you'll need <a href="http://phantomjs.org/">phantomjs</a>.
+The library has two sets of tests. The first set is a number of qunit tests that check that different values parsed by browsers are correctly converted in html2canvas. To run these tests with grunt you'll need [phantomjs](http://phantomjs.org/).
 
-The other set of tests run Firefox, Chrome and Internet Explorer with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>. The selenium standalone server (runs on Java) is required for these tests and can be downloaded from <a href="http://code.google.com/p/selenium/downloads/list">here</a>. They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while commiting changes, these should generally not go decrease from the baseline values.
+The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver](https://github.com/niklasvh/webdriver.js). The selenium standalone server (runs on Java) is required for these tests and can be downloaded from [here](http://code.google.com/p/selenium/downloads/list). They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while commiting changes, these should generally not go decrease from the baseline values.
 
 Start by downloading the dependencies:
 
@@ -70,18 +70,9 @@ Run qunit tests:
 
     $ grunt test
 
-Run webdriver tests:
-
-    $ java -jar /path/to/selenium-server-standalone-2.xx.x.jar
-    $ grunt webdriver
-
-Commiting improvements in baseline values:
-
-    $ grunt webdriver:baseline
-
 ### Examples ###
 
-For more information and examples, please visit the <a href="http://html2canvas.hertzen.com">homepage</a> or try the <a href="http://html2canvas.hertzen.com/screenshots.html">test console</a>.
+For more information and examples, please visit the [homepage](http://html2canvas.hertzen.com) or try the [test console](http://html2canvas.hertzen.com/screenshots.html).
 
 ### Contributing ###
 
