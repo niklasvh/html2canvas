@@ -21,12 +21,11 @@ _html2canvas.Util.trimText = (function(isNative){
 })( String.prototype.trim );
 
 (function() {
-
   // TODO: support all possible length values
   var TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
   var TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
   _html2canvas.Util.parseTextShadows = function (value) {
-    if (value === 'none') {
+    if (!value || value === 'none') {
       return [];
     }
 
