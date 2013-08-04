@@ -32,7 +32,7 @@ _html2canvas.Util.trimText = (function(isNative){
     // find multiple shadow declarations
     var shadows = value.match(TEXT_SHADOW_PROPERTY),
       results = [];
-    for (var i = 0; i < shadows.length; i++) {
+    for (var i = 0; shadows && (i < shadows.length); i++) {
       var s = shadows[i].match(TEXT_SHADOW_VALUES);
       results.push({
         color: s[0],
@@ -145,38 +145,28 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
     return results;
 };
 
-_html2canvas.Util.Bounds = function getBounds (el) {
-  var clientRect,
-  bounds = {};
+_html2canvas.Util.Bounds = function (element) {
+  var clientRect, bounds = {};
 
-  if (el.getBoundingClientRect){
-    clientRect = el.getBoundingClientRect();
-
+  if (element.getBoundingClientRect){
+    clientRect = element.getBoundingClientRect();
 
     // TODO add scroll position to bounds, so no scrolling of window necessary
     bounds.top = clientRect.top;
     bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
     bounds.left = clientRect.left;
 
-    // older IE doesn't have width/height, but top/bottom instead
-    bounds.width = clientRect.width || (clientRect.right - clientRect.left);
-    bounds.height = clientRect.height || (clientRect.bottom - clientRect.top);
-
-    return bounds;
-
+    bounds.width = element.offsetWidth;
+    bounds.height = element.offsetHeight;
   }
+
+  return bounds;
 };
 
-_html2canvas.Util.getCSS = function (el, attribute, index) {
-  // return $(el).css(attribute);
-
-    var val,
-    isBackgroundSizePosition = attribute.match( /^background(Size|Position)$/ );
-
-  function toPX( attribute, val ) {
-    var rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
-    left,
-    style = el.style;
+function toPX(element, attribute, value ) {
+    var rsLeft = element.runtimeStyle && element.runtimeStyle[attribute],
+        left,
+        style = element.style;
 
     // Check if we are not dealing with pixels, (Opera has issues with this)
     // Ported from jQuery css.js
@@ -186,71 +176,76 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
     // If we're not dealing with a regular pixel number
     // but a number that has a weird ending, we need to convert it to pixels
 
-    if ( !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+    if ( !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test( value ) && /^-?\d/.test(value) ) {
+        // Remember the original values
+        left = style.left;
 
-      // Remember the original values
-      left = style.left;
-
-      // Put in the new values to get a computed value out
-      if ( rsLeft ) {
-        el.runtimeStyle.left = el.currentStyle.left;
-      }
-      style.left = attribute === "fontSize" ? "1em" : (val || 0);
-      val = style.pixelLeft + "px";
-
-      // Revert the changed values
-      style.left = left;
-      if ( rsLeft ) {
-        el.runtimeStyle.left = rsLeft;
-      }
-
-    }
-
-    if (!/^(thin|medium|thick)$/i.test( val )) {
-      return Math.round(parseFloat( val )) + "px";
-    }
-
-    return val;
-  }
-
-    if (previousElement !== el) {
-      computedCSS = document.defaultView.getComputedStyle(el, null);
-    }
-    val = computedCSS[attribute];
-
-    if (isBackgroundSizePosition) {
-      val = (val || '').split( ',' );
-      val = val[index || 0] || val[0] || 'auto';
-      val = _html2canvas.Util.trimText(val).split(' ');
-
-      if(attribute === 'backgroundSize' && (!val[ 0 ] || val[ 0 ].match( /cover|contain|auto/ ))) {
-        //these values will be handled in the parent function
-
-      } else {
-        val[ 0 ] = ( val[ 0 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
-        if(val[ 1 ] === undefined) {
-          if(attribute === 'backgroundSize') {
-            val[ 1 ] = 'auto';
-            return val;
-          }
-          else {
-            // IE 9 doesn't return double digit always
-            val[ 1 ] = val[ 0 ];
-          }
+        // Put in the new values to get a computed value out
+        if (rsLeft) {
+            element.runtimeStyle.left = element.currentStyle.left;
         }
-        val[ 1 ] = ( val[ 1 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
-      }
-    } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
-      var arr = val.split(" ");
-      if ( arr.length <= 1 ) {
-              arr[ 1 ] = arr[ 0 ];
-      }
-      arr[ 0 ] = parseInt( arr[ 0 ], 10 );
-      arr[ 1 ] = parseInt( arr[ 1 ], 10 );
-      val = arr;
+        style.left = attribute === "fontSize" ? "1em" : (value || 0);
+        value = style.pixelLeft + "px";
+
+        // Revert the changed values
+        style.left = left;
+        if (rsLeft) {
+            element.runtimeStyle.left = rsLeft;
+        }
     }
 
-  return val;
+    if (!/^(thin|medium|thick)$/i.test(value)) {
+        return Math.round(parseFloat(value)) + "px";
+    }
+
+    return value;
+}
+
+function asInt(val) {
+    return parseInt(val, 10);
+}
+
+function parseBackgroundSizePosition(value, element, attribute, index) {
+    value = (value || '').split(',');
+    value = value[index || 0] || value[0] || 'auto';
+    value = _html2canvas.Util.trimText(value).split(' ');
+
+    if(attribute === 'backgroundSize' && (!value[0] || value[0].match(/cover|contain|auto/))) {
+        //these values will be handled in the parent function
+    } else {
+        value[0] = (value[0].indexOf( "%" ) === -1) ? toPX(element, attribute + "X", value[0]) : value[0];
+        if(value[1] === undefined) {
+            if(attribute === 'backgroundSize') {
+                value[1] = 'auto';
+                return value;
+            } else {
+                // IE 9 doesn't return double digit always
+                value[1] = value[0];
+            }
+        }
+        value[1] = (value[1].indexOf("%") === -1) ? toPX(element, attribute + "Y", value[1]) : value[1];
+    }
+    return value;
+}
+
+_html2canvas.Util.getCSS = function (element, attribute, index) {
+    if (previousElement !== element) {
+      computedCSS = document.defaultView.getComputedStyle(element, null);
+    }
+
+    var value = computedCSS[attribute];
+
+    if (/^background(Size|Position)$/.test(attribute)) {
+        return parseBackgroundSizePosition(value, element, attribute, index);
+    } else if (/border(Top|Bottom)(Left|Right)Radius/.test(attribute)) {
+      var arr = value.split(" ");
+      if (arr.length <= 1) {
+          arr[1] = arr[0];
+      }
+      return arr.map(asInt);
+    }
+
+  return value;
 };
 
 _html2canvas.Util.resizeBounds = function( current_width, current_height, target_width, target_height, stretch_mode ){
@@ -302,19 +297,17 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
       if(prop === 'backgroundSize') {
         if(bgposition[0] === 'auto') {
           left = image.width;
-
         } else {
-          if(bgposition[0].match(/contain|cover/)) {
+          if (/contain|cover/.test(bgposition[0])) {
             var resized = _html2canvas.Util.resizeBounds( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
             left = resized.width;
             topPos = resized.height;
           } else {
-            left = parseInt (bgposition[0], 10 );
+            left = parseInt(bgposition[0], 10);
           }
         }
-
       } else {
-        left = parseInt( bgposition[0], 10 );
+        left = parseInt( bgposition[0], 10);
       }
     }
 
@@ -361,8 +354,6 @@ _html2canvas.Util.Extend = function (options, defaults) {
  * http://jquery.org/license
  */
 _html2canvas.Util.Children = function( elem ) {
-
-
   var children;
   try {
 
@@ -376,14 +367,14 @@ _html2canvas.Util.Children = function( elem ) {
           var i = first.length,
           j = 0;
 
-          if ( typeof second.length === "number" ) {
+          if (typeof second.length === "number") {
             for ( var l = second.length; j < l; j++ ) {
               first[ i++ ] = second[ j ];
             }
 
           } else {
-            while ( second[j] !== undefined ) {
-              first[ i++ ] = second[ j++ ];
+            while (second[j] !== undefined) {
+              first[i++] = second[j++];
             }
           }
 
