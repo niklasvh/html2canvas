@@ -55,7 +55,7 @@
     </div>
     <script type="text/javascript" src="../build/html2canvas.js"></script>
     <script type="text/javascript">
-        html2canvas( [ document.body ], {
+        html2canvas(document.body, {
             onrendered: function(canvas) {
                 document.body.appendChild(canvas);
             }
