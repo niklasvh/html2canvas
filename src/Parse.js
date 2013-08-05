@@ -314,22 +314,36 @@ _html2canvas.Parse = function (images, options) {
     };
   }
 
-  function setZ(zIndex, parentZ){
-    // TODO fix static elements overlapping relative/absolute elements under same stack, if they are defined after them
-    var newContext;
-    if (!parentZ){
-      newContext = h2czContext(0);
-      return newContext;
+  function setZ(element, stack, parentStack){
+    var newContext,
+    position = stack.cssPosition,
+    zIndex = getCSS(element, 'zIndex'),
+    opacity = getCSS(element, 'opacity'),  // can't use stack.opacity because it's blended
+    isPositioned = position !== 'static',
+    isFloated = getCSS(element, 'cssFloat') !== 'none';
+
+    // https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
+    // When a new stacking context should be created:
+    // the root element (HTML),
+    // positioned (absolutely or relatively) with a z-index value other than "auto",
+    // elements with an opacity value less than 1. (See the specification for opacity),
+    // on mobile WebKit and Chrome 22+, position: fixed always creates a new stacking context, even when z-index is "auto" (See this post)
+
+    // z-index only applies to positioned elements.
+    // however, firefox may return the value set in CSS even if it's not positioned
+    if (!isPositioned) { zIndex = 0 ;}
+    stack.zIndex = newContext = h2czContext(zIndex);
+    newContext.isPositioned = isPositioned;
+    newContext.isFloated = isFloated;
+
+    if (!parentStack || (zIndex !== 'auto' && isPositioned) || 
+      (opacity && Number(opacity) < 1)) {
+      newContext.ownStacking = true;
     }
 
-    if (zIndex !== "auto"){
-      newContext = h2czContext(zIndex);
-      parentZ.children.push(newContext);
-      return newContext;
-
+    if (parentStack) {
+      parentStack.zIndex.children.push(stack);
     }
-
-    return parentZ;
   }
 
   function renderImage(ctx, element, image, bounds, borders) {
@@ -953,20 +967,20 @@ _html2canvas.Parse = function (images, options) {
 
     var ctx = h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
     stack = {
+      el: element, // very useful when debugging
       ctx: ctx,
-      zIndex: setZ(getCSS(element, "zIndex"), (parentStack) ? parentStack.zIndex : null),
       opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
       borders: getBorderData(element),
       clip: (parentStack && parentStack.clip) ? _html2canvas.Util.Extend( {}, parentStack.clip ) : null
     };
 
+    setZ(element, stack, parentStack);
+
     // TODO correct overflow for absolute content residing under a static position
     if (options.useOverflow === true && /(hidden|scroll|auto)/.test(getCSS(element, "overflow")) === true && /(BODY)/i.test(element.nodeName) === false){
       stack.clip = (stack.clip) ? clipBounds(stack.clip, bounds) : bounds;
     }
-
-    stack.zIndex.children.push(stack);
 
     return stack;
   }
