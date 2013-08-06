@@ -151,7 +151,7 @@ _html2canvas.Util.Bounds = function (element) {
   if (element.getBoundingClientRect){
     clientRect = element.getBoundingClientRect();
 
-    clientRect = _html2canvas.Util.srollClientRect(clientRect);
+    clientRect = _html2canvas.Util.scrollClientRect(clientRect);
 
     bounds.top = clientRect.top;
     bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
@@ -166,7 +166,7 @@ _html2canvas.Util.Bounds = function (element) {
 
 // getBoundingClientRect() returns offsets relative to the view port
 // get the absolute offsets by adding window.scrollX/scrollY
-_html2canvas.Util.srollClientRect = function (clientRect) {
+_html2canvas.Util.scrollClientRect = function (clientRect) {
     var scrollX = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft,
     scrollY = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop,
     tmp = {},
