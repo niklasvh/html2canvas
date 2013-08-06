@@ -316,10 +316,9 @@ _html2canvas.Parse = function (images, options) {
 
   function setZ(element, stack, parentStack){
     var newContext,
-    position = stack.cssPosition,
-    zIndex = getCSS(element, 'zIndex'),
+    isPositioned = stack.cssPosition !== 'static',
+    zIndex = isPositioned ? getCSS(element, 'zIndex') : 'auto', // z-index only applies to positioned elements.
     opacity = getCSS(element, 'opacity'),  // can't use stack.opacity because it's blended
-    isPositioned = position !== 'static',
     isFloated = getCSS(element, 'cssFloat') !== 'none';
 
     // https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
@@ -329,15 +328,11 @@ _html2canvas.Parse = function (images, options) {
     // elements with an opacity value less than 1. (See the specification for opacity),
     // on mobile WebKit and Chrome 22+, position: fixed always creates a new stacking context, even when z-index is "auto" (See this post)
 
-    // z-index only applies to positioned elements.
-    // however, firefox may return the value set in CSS even if it's not positioned
-    if (!isPositioned) { zIndex = 0 ;}
     stack.zIndex = newContext = h2czContext(zIndex);
     newContext.isPositioned = isPositioned;
     newContext.isFloated = isFloated;
 
-    if (!parentStack || (zIndex !== 'auto' && isPositioned) || 
-      (opacity && Number(opacity) < 1)) {
+    if (zIndex !== 'auto' || opacity < 1) {
       newContext.ownStacking = true;
     }
 
@@ -967,7 +962,6 @@ _html2canvas.Parse = function (images, options) {
 
     var ctx = h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
     stack = {
-      el: element, // very useful when debugging
       ctx: ctx,
       opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
