@@ -108,8 +108,8 @@ _html2canvas.Renderer.Canvas = function(options) {
         // crop image to the bounds of selected (single) element
         bounds = _html2canvas.Util.Bounds(options.elements[0]);
         newCanvas = document.createElement('canvas');
-        newCanvas.width = bounds.width;
-        newCanvas.height = bounds.height;
+        newCanvas.width = Math.ceil(bounds.width);
+        newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
         ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
