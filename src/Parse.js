@@ -48,16 +48,18 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function capitalize(m, p1, p2) {
+    if (m.length > 0) {
+      return p1 + p2.toUpperCase();
+    }
+  }
+
   function textTransform (text, transform) {
     switch(transform){
       case "lowercase":
         return text.toLowerCase();
       case "capitalize":
-        return text.replace( /(^|\s|:|-|\(|\))([a-z])/g , function (m, p1, p2) {
-          if (m.length > 0) {
-            return p1 + p2.toUpperCase();
-          }
-        } );
+        return text.replace( /(^|\s|:|-|\(|\))([a-z])/g, capitalize);
       case "uppercase":
         return text.toUpperCase();
       default:
@@ -127,16 +129,16 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
-  function getTextBounds(state, text, textDecoration, isLast) {
+  function getTextBounds(state, text, textDecoration, isLast, transform) {
     var bounds;
-    if (support.rangeBounds) {
+    if (support.rangeBounds && !transform) {
       if (textDecoration !== "none" || Util.trimText(text).length !== 0) {
         bounds = textRangeBounds(text, state.node, state.textOffset);
       }
       state.textOffset += text.length;
     } else if (state.node && typeof state.node.nodeValue === "string" ){
       var newTextNode = (isLast) ? state.node.splitText(text.length) : null;
-      bounds = textWrapperBounds(state.node);
+      bounds = textWrapperBounds(state.node, transform);
       state.node = newTextNode;
     }
     return bounds;
@@ -149,7 +151,7 @@ _html2canvas.Parse = function (images, options) {
     return range.getBoundingClientRect();
   }
 
-  function textWrapperBounds(oldTextNode) {
+  function textWrapperBounds(oldTextNode, transform) {
     var parent = oldTextNode.parentNode,
     wrapElement = doc.createElement('wrapper'),
     backupText = oldTextNode.cloneNode(true);
@@ -157,7 +159,7 @@ _html2canvas.Parse = function (images, options) {
     wrapElement.appendChild(oldTextNode.cloneNode(true));
     parent.replaceChild(wrapElement, oldTextNode);
 
-    var bounds = Util.Bounds(wrapElement);
+    var bounds = transform ? Util.OffsetBounds(wrapElement) : Util.Bounds(wrapElement);
     parent.replaceChild(backupText, wrapElement);
     return bounds;
   }
@@ -195,7 +197,7 @@ _html2canvas.Parse = function (images, options) {
       }
 
       textList.forEach(function(text, index) {
-        var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
+        var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1), stack.transform.matrix);
         if (bounds) {
           drawText(text, bounds.left, bounds.bottom, ctx);
           renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
@@ -947,14 +949,21 @@ _html2canvas.Parse = function (images, options) {
     return ctx.setVariable("globalAlpha", getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1));
   }
 
-  function setTransform(ctx, element, parentStack) {
+  function removePx(str) {
+    return str.replace("px", "");
+  }
+
+  var transformRegExp = /(matrix)\((.+)\)/;
+
+  function getTransform(element, parentStack) {
     var transform = getCSS(element, "transform") || getCSS(element, "-webkit-transform") || getCSS(element, "-moz-transform") || getCSS(element, "-ms-transform") || getCSS(element, "-o-transform");
-    var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin");
+    var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin") || "0px 0px";
+
+    transformOrigin = transformOrigin.split(" ").map(removePx).map(Util.asFloat);
 
     var matrix;
-    var TRANSFORM_REGEXP = /(matrix)\((.+)\)/;
     if (transform && transform !== "none") {
-      var match = transform.match(TRANSFORM_REGEXP);
+      var match = transform.match(transformRegExp);
       if (match) {
         switch(match[1]) {
           case "matrix":
@@ -970,14 +979,14 @@ _html2canvas.Parse = function (images, options) {
     };
   }
 
-  function createStack(element, parentStack, bounds) {
+  function createStack(element, parentStack, bounds, transform) {
     var ctx = h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
     stack = {
       ctx: ctx,
       opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
       borders: getBorderData(element),
-      transform: setTransform(ctx, element, parentStack),
+      transform: transform,
       clip: (parentStack && parentStack.clip) ? Util.Extend( {}, parentStack.clip ) : null
     };
 
@@ -1006,15 +1015,25 @@ _html2canvas.Parse = function (images, options) {
     return backgroundBounds;
   }
 
-  function renderElement(element, parentStack, pseudoElement){
-    var bounds = Util.Bounds(element),
+  function getBounds(element, transform) {
+    var bounds = (transform.matrix) ? Util.OffsetBounds(element) : Util.Bounds(element);
+    transform.origin[0] += bounds.left;
+    transform.origin[1] += bounds.top;
+    return bounds;
+  }
+
+  function renderElement(element, parentStack, pseudoElement) {
+    var transform = getTransform(element, parentStack),
+    bounds = getBounds(element, transform),
     image,
     bgcolor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor"),
-    stack = createStack(element, parentStack, bounds),
+    stack = createStack(element, parentStack, bounds, transform),
     borders = stack.borders,
     ctx = stack.ctx,
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
     borderData = parseBorders(element, bounds, borders);
+
+
 
     createShape(ctx, borderData.clip);
 

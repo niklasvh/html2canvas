@@ -166,6 +166,20 @@ _html2canvas.Util.Bounds = function (element) {
   return bounds;
 };
 
+// TODO ideally, we'd want everything to go through this function instead of Util.Bounds,
+// but would require further work to calculate the correct positions for elements with offsetParents
+_html2canvas.Util.OffsetBounds = function (element) {
+  var parent = element.offsetParent ? _html2canvas.Util.OffsetBounds(element.offsetParent) : {top: 0, left: 0};
+
+  return {
+    top: element.offsetTop + parent.top,
+    bottom: element.offsetTop + element.offsetHeight + parent.top,
+    left: element.offsetLeft + parent.left,
+    width: element.offsetWidth,
+    height: element.offsetHeight
+  };
+};
+
 function toPX(element, attribute, value ) {
     var rsLeft = element.runtimeStyle && element.runtimeStyle[attribute],
         left,
@@ -295,14 +309,13 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
       if(prop !== 'backgroundSize') {
         left -= (backgroundSize || image).width*percentage;
       }
-
     } else {
       if(prop === 'backgroundSize') {
         if(bgposition[0] === 'auto') {
           left = image.width;
         } else {
           if (/contain|cover/.test(bgposition[0])) {
-            var resized = _html2canvas.Util.resizeBounds( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
+            var resized = _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, bgposition[0]);
             left = resized.width;
             topPos = resized.height;
           } else {
@@ -335,6 +348,7 @@ _html2canvas.Util.BackgroundPosition = function( el, bounds, image, imageIndex, 
     var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image, imageIndex, backgroundSize );
     return { left: result[0], top: result[1] };
 };
+
 _html2canvas.Util.BackgroundSize = function( el, bounds, image, imageIndex ) {
     var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image, imageIndex );
     return { width: result[0], height: result[1] };
