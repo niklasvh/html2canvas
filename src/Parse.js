@@ -331,6 +331,7 @@ _html2canvas.Parse = function (images, options) {
     stack.zIndex = newContext = h2czContext(zIndex);
     newContext.isPositioned = isPositioned;
     newContext.isFloated = isFloated;
+    newContext.opacity = opacity;
 
     if (zIndex !== 'auto' || opacity < 1) {
       newContext.ownStacking = true;
