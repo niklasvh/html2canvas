@@ -955,10 +955,12 @@ _html2canvas.Parse = function (images, options) {
     var TRANSFORM_REGEXP = /(matrix)\((.+)\)/;
     if (transform && transform !== "none") {
       var match = transform.match(TRANSFORM_REGEXP);
-      switch(match[1]) {
-        case "matrix":
-          matrix = match[2].split(",").map(Util.trimText).map(Util.asFloat);
-          break;
+      if (match) {
+        switch(match[1]) {
+          case "matrix":
+            matrix = match[2].split(",").map(Util.trimText).map(Util.asFloat);
+            break;
+        }
       }
     }
 
