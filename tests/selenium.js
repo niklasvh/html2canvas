@@ -22,6 +22,13 @@
         };
 
     var server = app.listen(port);
+
+    app.use('/index.html', function(req, res){
+      res.send("<ul>" + tests.map(function(test) {
+        return "<li><a href='" + test + "'>" + test + "</a></li>";
+      }).join("") + "</ul>");
+    });
+
     app.use('/', express.static(__dirname + "/../"));
 
     function mapStat(item) {
@@ -301,25 +308,14 @@
 
     var tests = [],
         outputImages = false,
-        results = {};
+        results = {},
+        testStream = getTests("tests/cases");
 
-    exports.tests = function() {
-        var testStream = getTests("tests/cases");
+  testStream.onValue(function(test) {
+    tests.push(test);
+  });
 
-        testStream.onValue(function(test) {
-            tests.push(test);
-        });
-
-        testStream.onEnd(runWebDriver);
-    };
-
-
-    /*
-    if (outputImages) {
-        resultStream.flatMap(createImages).onValue(function(test){
-            console.log(test.data.testCase, "screenshots created");
-        });
-    }
-    */
-
+  exports.tests = function() {
+    testStream.onEnd(runWebDriver);
+  };
 })();
