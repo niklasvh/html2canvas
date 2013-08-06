@@ -117,6 +117,7 @@ function h2cRenderContext(width, height) {
         name: variable,
         'arguments': value
       });
+      return value;
     }
   };
 }

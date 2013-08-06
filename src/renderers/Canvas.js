@@ -1,5 +1,4 @@
 _html2canvas.Renderer.Canvas = function(options) {
-
   options = options || {};
 
   var doc = document,
@@ -7,7 +6,6 @@ _html2canvas.Renderer.Canvas = function(options) {
   testCanvas = document.createElement("canvas"),
   testctx = testCanvas.getContext("2d"),
   canvas = options.canvas || doc.createElement('canvas');
-
 
   function createShape(ctx, args) {
     ctx.beginPath();
@@ -66,12 +64,9 @@ _html2canvas.Renderer.Canvas = function(options) {
     }
   }
 
-  return function(zStack, options, doc, queue, _html2canvas) {
-
+  return function(zStack, options, document, queue, _html2canvas) {
     var ctx = canvas.getContext("2d"),
-    storageContext,
-    i,
-    queueLen,
+    render = renderItem.bind(null, ctx),
     newCanvas,
     bounds,
     fstyle;
@@ -84,40 +79,35 @@ _html2canvas.Renderer.Canvas = function(options) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
 
+    queue.forEach(function(storageContext) {
+      // set common settings for canvas
+      ctx.textBaseline = "bottom";
+      ctx.save();
 
-      for ( i = 0, queueLen = queue.length; i < queueLen; i+=1 ) {
-        storageContext = queue.splice(0, 1)[0];
-        storageContext.canvasPosition = storageContext.canvasPosition || {};
-
-        // set common settings for canvas
-        ctx.textBaseline = "bottom";
-
-        if (storageContext.clip){
-          ctx.save();
-          ctx.beginPath();
-          // console.log(storageContext);
-          ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
-          ctx.clip();
-        }
-
-        if (storageContext.ctx.storage) {
-          storageContext.ctx.storage.forEach(renderItem.bind(null, ctx));
-        }
-
-        if (storageContext.clip){
-          ctx.restore();
-        }
+      if (storageContext.transform.matrix) {
+        ctx.transform.apply(ctx, storageContext.transform.matrix);
       }
+
+      if (storageContext.clip){
+        ctx.beginPath();
+        ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
+        ctx.clip();
+      }
+
+      if (storageContext.ctx.storage) {
+        storageContext.ctx.storage.forEach(render);
+      }
+
+      ctx.restore();
+    });
 
     h2clog("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
 
-    queueLen = options.elements.length;
-
-    if (queueLen === 1) {
+    if (options.elements.length === 1) {
       if (typeof options.elements[0] === "object" && options.elements[0].nodeName !== "BODY") {
         // crop image to the bounds of selected (single) element
         bounds = _html2canvas.Util.Bounds(options.elements[0]);
-        newCanvas = doc.createElement('canvas');
+        newCanvas = document.createElement('canvas');
         newCanvas.width = bounds.width;
         newCanvas.height = bounds.height;
         ctx = newCanvas.getContext("2d");
