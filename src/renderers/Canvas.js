@@ -46,7 +46,7 @@ _html2canvas.Renderer.Canvas = function(options) {
               ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
             }
             catch(e) {
-              h2clog("html2canvas: Renderer: Error creating pattern", e.message);
+              _html2canvas.Util.log("html2canvas: Renderer: Error creating pattern", e.message);
             }
           }
         } else if (item.name === "drawShape") {
@@ -101,7 +101,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       ctx.restore();
     });
 
-    h2clog("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+    _html2canvas.Util.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
 
     if (options.elements.length === 1) {
       if (typeof options.elements[0] === "object" && options.elements[0].nodeName !== "BODY") {

@@ -5,18 +5,17 @@ previousElement,
 computedCSS,
 html2canvas;
 
-function h2clog(a) {
+_html2canvas.Util = {};
+
+_html2canvas.Util.log = function(a) {
   if (_html2canvas.logging && window.console && window.console.log) {
     window.console.log(a);
   }
-}
-
-_html2canvas.Util = {};
+};
 
 _html2canvas.Util.trimText = (function(isNative){
-  return function(input){
-    if(isNative) { return isNative.apply( input ); }
-    else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
+  return function(input) {
+    return isNative ? isNative.apply(input) : ((input || '') + '').replace( /^\s+|\s+$/g , '' );
   };
 })(String.prototype.trim);
 
@@ -386,7 +385,7 @@ _html2canvas.Util.Children = function( elem ) {
     })(elem.childNodes);
 
   } catch (ex) {
-    h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
+    _html2canvas.Util.log("html2canvas.Util.Children failed with exception: " + ex.message);
     children = [];
   }
   return children;
