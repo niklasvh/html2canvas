@@ -4,10 +4,11 @@ _html2canvas.Parse = function (images, options) {
   var element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
   numDraws = 0,
   doc = element.ownerDocument,
-  support = _html2canvas.Util.Support(options, doc),
+  Util = _html2canvas.Util,
+  support = Util.Support(options, doc),
   ignoreElementsRegExp = new RegExp("(" + options.ignoreElements + ")"),
   body = doc.body,
-  getCSS = _html2canvas.Util.getCSS,
+  getCSS = Util.getCSS,
   pseudoHide = "___html2canvas___pseudoelement",
   hidePseudoElements = doc.createElement('style');
 
@@ -69,7 +70,7 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function drawText(currentText, x, y, ctx){
-    if (currentText !== null && _html2canvas.Util.trimText(currentText).length > 0) {
+    if (currentText !== null && Util.trimText(currentText).length > 0) {
       ctx.fillText(currentText, x, y);
       numDraws+=1;
     }
@@ -80,7 +81,7 @@ _html2canvas.Parse = function (images, options) {
     bold = getCSS(el, "fontWeight"),
     family = getCSS(el, "fontFamily"),
     size = getCSS(el, "fontSize"),
-    shadows =  _html2canvas.Util.parseTextShadows(getCSS(el, "textShadow"));
+    shadows = Util.parseTextShadows(getCSS(el, "textShadow"));
 
     switch(parseInt(bold, 10)){
       case 401:
@@ -105,7 +106,7 @@ _html2canvas.Parse = function (images, options) {
     }
 
     if (text_decoration !== "none"){
-      return _html2canvas.Util.Font(family, size, doc);
+      return Util.Font(family, size, doc);
     }
   }
 
@@ -129,7 +130,7 @@ _html2canvas.Parse = function (images, options) {
   function getTextBounds(state, text, textDecoration, isLast) {
     var bounds;
     if (support.rangeBounds) {
-      if (textDecoration !== "none" || _html2canvas.Util.trimText(text).length !== 0) {
+      if (textDecoration !== "none" || Util.trimText(text).length !== 0) {
         bounds = textRangeBounds(text, state.node, state.textOffset);
       }
       state.textOffset += text.length;
@@ -156,7 +157,7 @@ _html2canvas.Parse = function (images, options) {
     wrapElement.appendChild(oldTextNode.cloneNode(true));
     parent.replaceChild(wrapElement, oldTextNode);
 
-    var bounds = _html2canvas.Util.Bounds(wrapElement);
+    var bounds = Util.Bounds(wrapElement);
     parent.replaceChild(backupText, wrapElement);
     return bounds;
   }
@@ -173,7 +174,7 @@ _html2canvas.Parse = function (images, options) {
       textOffset: 0
     };
 
-    if (_html2canvas.Util.trimText(textNode.nodeValue).length > 0) {
+    if (Util.trimText(textNode.nodeValue).length > 0) {
       textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
       textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
 
@@ -217,7 +218,7 @@ _html2canvas.Parse = function (images, options) {
 
     element.insertBefore(boundElement, element.firstChild);
 
-    bounds = _html2canvas.Util.Bounds(boundElement);
+    bounds = Util.Bounds(boundElement);
     element.removeChild(boundElement);
     element.style.listStyleType = originalType;
     return bounds;
@@ -795,7 +796,7 @@ _html2canvas.Parse = function (images, options) {
     });
 
     if(isImage) {
-      elps.src = _html2canvas.Util.parseBackgroundImage(content)[0].args[0];
+      elps.src = Util.parseBackgroundImage(content)[0].args[0];
     } else {
       elps.innerHTML = content;
     }
@@ -866,11 +867,9 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
-    var backgroundSize = _html2canvas.Util.BackgroundSize(el, bounds, image, imageIndex),
-    backgroundPosition = _html2canvas.Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(function(value) {
-      return value.trim();
-    });
+    var backgroundSize = Util.BackgroundSize(el, bounds, image, imageIndex),
+    backgroundPosition = Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
+    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(Util.trimText);
 
     image = resizeImage(image, backgroundSize);
 
@@ -905,7 +904,7 @@ _html2canvas.Parse = function (images, options) {
 
   function renderBackgroundImage(element, bounds, ctx) {
     var backgroundImage = getCSS(element, "backgroundImage"),
-    backgroundImages = _html2canvas.Util.parseBackgroundImage(backgroundImage),
+    backgroundImages = Util.parseBackgroundImage(backgroundImage),
     image,
     imageIndex = backgroundImages.length;
 
@@ -945,20 +944,39 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function setOpacity(ctx, element, parentStack) {
-    var opacity = getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1);
-    ctx.setVariable("globalAlpha", opacity);
-    return opacity;
+    return ctx.setVariable("globalAlpha", getCSS(element, "opacity") * ((parentStack) ? parentStack.opacity : 1));
+  }
+
+  function setTransform(ctx, element, parentStack) {
+    var transform = getCSS(element, "transform") || getCSS(element, "-webkit-transform") || getCSS(element, "-moz-transform") || getCSS(element, "-ms-transform") || getCSS(element, "-o-transform");
+    var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin");
+
+    var matrix;
+    var TRANSFORM_REGEXP = /(matrix)\((.+)\)/;
+    if (transform && transform !== "none") {
+      var match = transform.match(TRANSFORM_REGEXP);
+      switch(match[1]) {
+        case "matrix":
+          matrix = match[2].split(",").map(Util.trimText).map(Util.asFloat);
+          break;
+      }
+    }
+
+    return {
+      origin: transformOrigin,
+      matrix: matrix
+    };
   }
 
   function createStack(element, parentStack, bounds) {
-
     var ctx = h2cRenderContext((!parentStack) ? documentWidth() : bounds.width , (!parentStack) ? documentHeight() : bounds.height),
     stack = {
       ctx: ctx,
       opacity: setOpacity(ctx, element, parentStack),
       cssPosition: getCSS(element, "position"),
       borders: getBorderData(element),
-      clip: (parentStack && parentStack.clip) ? _html2canvas.Util.Extend( {}, parentStack.clip ) : null
+      transform: setTransform(ctx, element, parentStack),
+      clip: (parentStack && parentStack.clip) ? Util.Extend( {}, parentStack.clip ) : null
     };
 
     setZ(element, stack, parentStack);
@@ -987,7 +1005,7 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function renderElement(element, parentStack, pseudoElement){
-    var bounds = _html2canvas.Util.Bounds(element),
+    var bounds = Util.Bounds(element),
     image,
     bgcolor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor"),
     stack = createStack(element, parentStack, bounds),
@@ -1056,33 +1074,28 @@ _html2canvas.Parse = function (images, options) {
     return (getCSS(element, 'display') !== "none" && getCSS(element, 'visibility') !== "hidden" && !element.hasAttribute("data-html2canvas-ignore"));
   }
 
-  function parseElement (el, stack, pseudoElement) {
-
-    if (isElementVisible(el)) {
-      stack = renderElement(el, stack, pseudoElement) || stack;
-      if (!ignoreElementsRegExp.test(el.nodeName)) {
-        _html2canvas.Util.Children(el).forEach(function(node) {
-          if (node.nodeType === 1) {
-            parseElement(node, stack, pseudoElement);
-          } else if (node.nodeType === 3) {
-            renderText(el, node, stack);
-          }
-        });
+  function parseElement (element, stack, pseudoElement) {
+    if (isElementVisible(element)) {
+      stack = renderElement(element, stack, pseudoElement) || stack;
+      if (!ignoreElementsRegExp.test(element.nodeName)) {
+        parseChildren(element, stack, pseudoElement);
       }
     }
   }
 
-  function init() {
-    var stack = renderElement(element, null);
-
-    _html2canvas.Util.Children(element).forEach(function(node) {
+  function parseChildren(element, stack, pseudoElement) {
+    Util.Children(element).forEach(function(node) {
       if (node.nodeType === 1) {
-        parseElement(node, stack);
+        parseElement(node, stack, pseudoElement);
       } else if (node.nodeType === 3) {
         renderText(element, node, stack);
       }
     });
+  }
 
+  function init() {
+    var stack = renderElement(element, null);
+    parseChildren(element, stack);
     stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
     body.removeChild(hidePseudoElements);
     return stack;
