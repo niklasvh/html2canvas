@@ -223,14 +223,14 @@ _html2canvas.Parse = function (images, options) {
     return bounds;
   }
 
-  function elementIndex( el ) {
+  function elementIndex(el) {
     var i = -1,
     count = 1,
     childs = el.parentNode.childNodes;
 
     if (el.parentNode) {
-      while( childs[ ++i ] !== el ) {
-        if ( childs[ i ].nodeType === 1 ) {
+      while(childs[++i] !== el) {
+        if (childs[i].nodeType === 1) {
           count++;
         }
       }
@@ -241,8 +241,7 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function listItemText(element, type) {
-    var currentIndex = elementIndex(element),
-    text;
+    var currentIndex = elementIndex(element), text;
     switch(type){
       case "decimal":
         text = currentIndex;
@@ -264,8 +263,7 @@ _html2canvas.Parse = function (images, options) {
         break;
     }
 
-    text += ". ";
-    return text;
+    return text + ". ";
   }
 
   function renderListItem(element, stack, elBounds) {
@@ -293,11 +291,7 @@ _html2canvas.Parse = function (images, options) {
 
   function loadImage (src){
     var img = images[src];
-    if (img && img.succeeded === true) {
-      return img.img;
-    } else {
-      return false;
-    }
+    return (img && img.succeeded === true) ? img.img : false;
   }
 
   function clipBounds(src, dst){
@@ -317,8 +311,8 @@ _html2canvas.Parse = function (images, options) {
   function setZ(element, stack, parentStack){
     var newContext,
     isPositioned = stack.cssPosition !== 'static',
-    zIndex = isPositioned ? getCSS(element, 'zIndex') : 'auto', // z-index only applies to positioned elements.
-    opacity = getCSS(element, 'opacity'),  // can't use stack.opacity because it's blended
+    zIndex = isPositioned ? getCSS(element, 'zIndex') : 'auto',
+    opacity = getCSS(element, 'opacity'),
     isFloated = getCSS(element, 'cssFloat') !== 'none';
 
     // https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
@@ -332,10 +326,7 @@ _html2canvas.Parse = function (images, options) {
     newContext.isPositioned = isPositioned;
     newContext.isFloated = isFloated;
     newContext.opacity = opacity;
-
-    if (zIndex !== 'auto' || opacity < 1) {
-      newContext.ownStacking = true;
-    }
+    newContext.ownStacking = (zIndex !== 'auto' || opacity < 1);
 
     if (parentStack) {
       parentStack.zIndex.children.push(stack);
