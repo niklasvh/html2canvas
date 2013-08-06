@@ -734,7 +734,7 @@ _html2canvas.Parse = function (images, options) {
         valueWrap.style[property] = getCSS(el, property);
       } catch(e) {
         // Older IE has issues with "border"
-        h2clog("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
+        Util.log("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
       }
     });
 
@@ -791,7 +791,7 @@ _html2canvas.Parse = function (images, options) {
       try {
         elps.style[prop] = elStyle[prop];
       } catch (e) {
-        h2clog(['Tried to assign readonly property ', prop, 'Error:', e]);
+        Util.log(['Tried to assign readonly property ', prop, 'Error:', e]);
       }
     });
 
@@ -925,7 +925,7 @@ _html2canvas.Parse = function (images, options) {
       if (image) {
         renderBackgroundRepeating(element, bounds, ctx, image, imageIndex);
       } else {
-        h2clog("html2canvas: Error loading background:", backgroundImage);
+        Util.log("html2canvas: Error loading background:", backgroundImage);
       }
     }
   }
@@ -1041,7 +1041,7 @@ _html2canvas.Parse = function (images, options) {
         if ((image = loadImage(element.getAttribute('src')))) {
           renderImage(ctx, element, image, bounds, borders);
         } else {
-          h2clog("html2canvas: Error loading <img>:" + element.getAttribute('src'));
+          Util.log("html2canvas: Error loading <img>:" + element.getAttribute('src'));
         }
         break;
       case "INPUT":

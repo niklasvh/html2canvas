@@ -24,7 +24,7 @@ _html2canvas.Util.Support = function (options, doc) {
     } catch(e) {
       return false;
     }
-    h2clog('html2canvas: Parse: SVG powered rendering available');
+    _html2canvas.Util.log('html2canvas: Parse: SVG powered rendering available');
     return true;
   }
 

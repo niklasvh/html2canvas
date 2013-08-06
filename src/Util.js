@@ -71,11 +71,11 @@ window.html2canvas = function(elements, opts) {
     preload: function( opts ) {
       return _html2canvas.Preload( _html2canvas.Util.Extend(opts, options) );
     },
-    log: h2clog
+    log: _html2canvas.Util.log
   };
 };
 
-window.html2canvas.log = h2clog; // for renderers
+window.html2canvas.log = _html2canvas.Util.log; // for renderers
 window.html2canvas.Renderer = {
   Canvas: undefined // We are assuming this will be used
 };
