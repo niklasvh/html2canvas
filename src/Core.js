@@ -154,7 +154,8 @@ _html2canvas.Util.Bounds = function (element) {
   if (element.getBoundingClientRect){
     clientRect = element.getBoundingClientRect();
 
-    // TODO add scroll position to bounds, so no scrolling of window necessary
+    clientRect = _html2canvas.Util.scrollClientRect(clientRect);
+
     bounds.top = clientRect.top;
     bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
     bounds.left = clientRect.left;
@@ -164,6 +165,23 @@ _html2canvas.Util.Bounds = function (element) {
   }
 
   return bounds;
+};
+
+// getBoundingClientRect() returns offsets relative to the view port
+// get the absolute offsets by adding window.scrollX/scrollY
+_html2canvas.Util.scrollClientRect = function (clientRect) {
+    var scrollX = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft,
+    scrollY = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop,
+    tmp = {},
+    k;
+
+    for (k in clientRect) {tmp[k] = clientRect[k];}
+    clientRect = tmp;
+    clientRect.top += scrollY;
+    if (clientRect.bottom !== undefined) clientRect.bottom += scrollY;
+    clientRect.left += scrollX;
+    if (clientRect.right !== undefined) clientRect.right += scrollX;
+    return clientRect;
 };
 
 function toPX(element, attribute, value ) {
