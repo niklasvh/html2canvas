@@ -85,7 +85,9 @@ _html2canvas.Renderer.Canvas = function(options) {
       ctx.save();
 
       if (storageContext.transform.matrix) {
+        ctx.translate(storageContext.transform.origin[0], storageContext.transform.origin[1]);
         ctx.transform.apply(ctx, storageContext.transform.matrix);
+        ctx.translate(-storageContext.transform.origin[0], -storageContext.transform.origin[1]);
       }
 
       if (storageContext.clip){
