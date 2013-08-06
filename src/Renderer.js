@@ -8,15 +8,13 @@ _html2canvas.Renderer = function(parseQueue, options){
     rootContext = (function buildStackingContext(rootNode) {
       var rootContext = {};
       function insert(context, node, specialParent) {
-        var zi = node.zIndex.zindex,
+        var zi = (node.zIndex.zindex === 'auto') ? 0 : Number(node.zIndex.zindex),
         contextForChildren = context, // the stacking context for children
         isPositioned = node.zIndex.isPositioned,
         isFloated = node.zIndex.isFloated,
         stub = {node: node},
         childrenDest; // where children without z-index should be pushed into
 
-        if (zi === 'auto') { zi = 0; }
-        zi = Number(zi);
         if (!context[zi]) { context[zi] = []; }
         if (node.zIndex.ownStacking) {
           contextForChildren = stub.context = { 0: [{node:node}]};
