@@ -18,7 +18,11 @@ _html2canvas.Util.trimText = (function(isNative){
     if(isNative) { return isNative.apply( input ); }
     else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
   };
-})( String.prototype.trim );
+})(String.prototype.trim);
+
+_html2canvas.Util.asFloat = function(v) {
+  return parseFloat(v);
+};
 
 (function() {
   // TODO: support all possible length values
@@ -256,18 +260,18 @@ _html2canvas.Util.resizeBounds = function( current_width, current_height, target
   if(!stretch_mode || stretch_mode === 'auto') {
     output_width = target_width;
     output_height = target_height;
-
+  } else if(target_ratio < current_ratio ^ stretch_mode === 'contain') {
+    output_height = target_height;
+    output_width = target_height * current_ratio;
   } else {
-    if(target_ratio < current_ratio ^ stretch_mode === 'contain') {
-      output_height = target_height;
-      output_width = target_height * current_ratio;
-    } else {
-      output_width = target_width;
-      output_height = target_width / current_ratio;
-    }
+    output_width = target_width;
+    output_height = target_width / current_ratio;
   }
 
-  return { width: output_width, height: output_height };
+  return {
+    width: output_width,
+    height: output_height
+  };
 };
 
 function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroundSize ) {
@@ -356,22 +360,17 @@ _html2canvas.Util.Extend = function (options, defaults) {
 _html2canvas.Util.Children = function( elem ) {
   var children;
   try {
-
-    children = (elem.nodeName && elem.nodeName.toUpperCase() === "IFRAME") ?
-    elem.contentDocument || elem.contentWindow.document : (function( array ){
+    children = (elem.nodeName && elem.nodeName.toUpperCase() === "IFRAME") ? elem.contentDocument || elem.contentWindow.document : (function(array) {
       var ret = [];
-
-      if ( array !== null ) {
-
-        (function( first, second ) {
+      if (array !== null) {
+        (function(first, second ) {
           var i = first.length,
           j = 0;
 
           if (typeof second.length === "number") {
-            for ( var l = second.length; j < l; j++ ) {
-              first[ i++ ] = second[ j ];
+            for (var l = second.length; j < l; j++) {
+              first[i++] = second[j];
             }
-
           } else {
             while (second[j] !== undefined) {
               first[i++] = second[j++];
@@ -381,12 +380,10 @@ _html2canvas.Util.Children = function( elem ) {
           first.length = i;
 
           return first;
-        })( ret, array );
-
+        })(ret, array);
       }
-
       return ret;
-    })( elem.childNodes );
+    })(elem.childNodes);
 
   } catch (ex) {
     h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
