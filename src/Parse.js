@@ -1071,6 +1071,9 @@ _html2canvas.Parse = function (images, options) {
   }
 
   function init() {
+    cachedPageXOffset = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+    cachedPageYOffset = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
     var stack = renderElement(element, null);
 
     _html2canvas.Util.Children(element).forEach(function(node) {

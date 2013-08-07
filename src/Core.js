@@ -3,7 +3,9 @@
 var _html2canvas = {},
 previousElement,
 computedCSS,
-html2canvas;
+html2canvas,
+cachedPageXOffset,
+cachedPageYOffset;
 
 function h2clog(a) {
   if (_html2canvas.logging && window.console && window.console.log) {
@@ -165,10 +167,10 @@ _html2canvas.Util.Bounds = function (element) {
 };
 
 // getBoundingClientRect() returns offsets relative to the view port
-// get the absolute offsets by adding window.scrollX/scrollY
-_html2canvas.Util.scrollClientRect = function (clientRect) {
-    var scrollX = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft,
-    scrollY = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop,
+// get the absolute offsets by adding window.pageXOffset/pageYOffset
+_html2canvas.Util.scrollClientRect = function scrollClientRect(clientRect) {
+    var scrollX = cachedPageXOffset,
+    scrollY = cachedPageYOffset,
     tmp = {},
     k;
 
