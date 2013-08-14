@@ -13,7 +13,7 @@ _html2canvas.Renderer = function(parseQueue, options){
         isPositioned = node.zIndex.isPositioned,
         isFloated = node.zIndex.isFloated,
         stub = {node: node},
-        childrenDest; // where children without z-index should be pushed into
+        childrenDest = specialParent; // where children without z-index should be pushed into
 
         if (!context[zi]) { context[zi] = []; }
         if (node.zIndex.ownStacking) {
