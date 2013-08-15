@@ -15,12 +15,10 @@ _html2canvas.Renderer = function(parseQueue, options){
         stub = {node: node},
         childrenDest = specialParent; // where children without z-index should be pushed into
 
-        if (!context[zi]) { context[zi] = []; }
         if (node.zIndex.ownStacking) {
-          contextForChildren = stub.context = { 0: [{node:node}]};
-          if (isPositioned || isFloated) {
-            childrenDest = contextForChildren[0][0].children = [];
-          }
+          // '!' comes before numbers in sorted array
+          contextForChildren = stub.context = { '!': [{node:node, children: []}]};
+          childrenDest = undefined;
         } else if (isPositioned || isFloated) {
           childrenDest = stub.children = [];
         }
@@ -28,6 +26,7 @@ _html2canvas.Renderer = function(parseQueue, options){
         if (zi === 0 && specialParent) {
           specialParent.push(stub);
         } else {
+          if (!context[zi]) { context[zi] = []; }
           context[zi].push(stub);
         }
 
