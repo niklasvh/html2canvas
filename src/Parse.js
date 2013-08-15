@@ -164,33 +164,98 @@ _html2canvas.Parse = function (images, options) {
     };
 
     if (_html2canvas.Util.trimText(textNode.nodeValue).length > 0) {
-      textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
-      textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
+				textNode.nodeValue = textTransform(textNode.nodeValue, getCSS(el, "textTransform"));
+				textAlign = textAlign.replace(["-webkit-auto"],["auto"]);
 
-      textList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(textAlign) && noLetterSpacing(getCSS(el, "letterSpacing"))) ?
-      textNode.nodeValue.split(/(\b| )/)
-      : textNode.nodeValue.split("");
+				textList = (!options.letterRendering && /^(left|right|justify|auto)$/.test(textAlign) && noLetterSpacing(getCSS(el, "letterSpacing"))) ?
+					textNode.nodeValue.match(/\S+|\s/g)
+					: textNode.nodeValue.split("");
 
-      metrics = setTextVariables(ctx, el, textDecoration, color);
+				metrics = setTextVariables(ctx, el, textDecoration, color);
 
-      if (options.chinese) {
-        textList.forEach(function(word, index) {
-          if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
-            word = word.split("");
-            word.unshift(index, 1);
-            textList.splice.apply(textList, word);
-          }
-        });
-      }
+				if (options.chinese) {
+					textList.forEach(function(word, index) {
+						if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
+							word = word.split("");
+							word.unshift(index, 1);
+							textList.splice.apply(textList, word);
+						}
+					});
+				}
 
-      textList.forEach(function(text, index) {
-        var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
-        if (bounds) {
-          drawText(text, bounds.left, bounds.bottom, ctx);
-          renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
-        }
-      });
-    }
+				if(el.nodeName == 'TEXTAREA') {
+					var elemLineHeight = +(window.getComputedStyle(el).getPropertyValue('line-height')||'').replace('px','');
+					// Multiline rendering support
+					var multilineData = {
+						lines: 			[],
+						offsetTop: 		0,
+						height: 		elemLineHeight
+					};
+
+					// group textList elements into lines
+					var currentLine = [];
+					textList.forEach(function(text,index){
+						if(text != "\n") currentLine.push(text);
+						if(text == "\n" || (index==textList.length-1)) {
+							multilineData.lines.push(currentLine);
+							currentLine = [];
+						}
+					});
+
+					// draw line by line
+					multilineData.lines.forEach(function(line){
+
+						state.textOffset = 0;
+						state.node.nodeValue = line.join('');
+
+						// line measurements. These numbers are to account for the height of a wrapped line
+						var top = null;  		// top of line
+						var bottom = null; 		// bottom of line
+						var charHeight = null;	// height of character (different from lineHeight)
+
+						// render wrapped text, draw chunk by chunk
+						line.forEach(function(text, index) {
+							var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
+							if (bounds) {
+								// since ClientRect bounds properties are readonly,
+								// we create a raw object to manipulate its properties
+								bounds = {
+									top: 	bounds.top 	  + multilineData.offsetTop,
+									bottom: bounds.bottom + multilineData.offsetTop,
+									height: bounds.height,
+									left: 	bounds.left,
+									right: 	bounds.right,
+									width: 	bounds.width
+								};
+
+								// set the line measurements
+								if(top === null) top = bounds.top;
+								if(charHeight === null) charHeight = bounds.height;
+								bottom = bounds.bottom;
+
+								drawText(text, bounds.left, bounds.bottom, ctx);
+								renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
+							}
+						});
+
+						// calculate offset between element's lineHeight value and character height
+						var charOffset = multilineData.height - +charHeight;
+						// calculate official line offset
+						var totalLineHeight  = +bottom - +top + charOffset;
+
+						// increase the line offset
+						multilineData.offsetTop += totalLineHeight;
+					});
+				} else {
+					textList.forEach(function(text, index) {
+						var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1));
+						if (bounds) {
+							drawText(text, bounds.left, bounds.bottom, ctx);
+							renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
+						}
+					});
+				}
+			}
   }
 
   function listPosition (element, val) {
