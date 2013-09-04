@@ -230,17 +230,6 @@ _html2canvas.Preload = function( options ) {
           images.numTotal++;
           setImageLoadHandlers(img, imageObj);
           img.src = src;
-
-          // work around for https://bugs.webkit.org/show_bug.cgi?id=80028
-          img.customComplete = function () {
-            if (!this.img.complete) {
-              this.timer = window.setTimeout(this.img.customComplete, 100);
-            } else {
-              this.img.onerror();
-            }
-          }.bind(imageObj);
-          img.customComplete();
-
         } else if ( options.proxy ) {
           imageObj = images[src] = {
             img: img
