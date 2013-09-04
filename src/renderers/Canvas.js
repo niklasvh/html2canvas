@@ -31,10 +31,6 @@ _html2canvas.Renderer.Canvas = function(options) {
     return true;
   }
 
-  function isTransparent(backgroundColor) {
-    return (backgroundColor === "transparent" || backgroundColor === "rgba(0, 0, 0, 0)");
-  }
-
   function renderItem(ctx, item) {
     switch(item.type){
       case "variable":
@@ -69,17 +65,18 @@ _html2canvas.Renderer.Canvas = function(options) {
     }
   }
 
-  return function(zStack, options, document, queue, _html2canvas) {
+  return function(parsedData, options, document, queue, _html2canvas) {
     var ctx = canvas.getContext("2d"),
     newCanvas,
     bounds,
-    fstyle;
+    fstyle,
+    zStack = parsedData.stack;
 
     canvas.width = canvas.style.width =  options.width || zStack.ctx.width;
     canvas.height = canvas.style.height = options.height || zStack.ctx.height;
 
     fstyle = ctx.fillStyle;
-    ctx.fillStyle = (isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : zStack.backgroundColor;
+    ctx.fillStyle = (Util.isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
 

@@ -97,5 +97,5 @@ _html2canvas.Renderer = function(parseQueue, options){
     return renderer;
   }
 
-  return getRenderer(options.renderer)(parseQueue, options, document, createRenderQueue(parseQueue), _html2canvas);
+  return getRenderer(options.renderer)(parseQueue, options, document, createRenderQueue(parseQueue.stack), _html2canvas);
 };
