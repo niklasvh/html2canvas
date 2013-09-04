@@ -5,6 +5,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   safeImages = [],
   testCanvas = document.createElement("canvas"),
   testctx = testCanvas.getContext("2d"),
+  Util = _html2canvas.Util,
   canvas = options.canvas || doc.createElement('canvas');
 
   function createShape(ctx, args) {
@@ -40,25 +41,29 @@ _html2canvas.Renderer.Canvas = function(options) {
         ctx[item.name] = item['arguments'];
         break;
       case "function":
-        if (item.name === "createPattern") {
-          if (item['arguments'][0].width > 0 && item['arguments'][0].height > 0) {
-            try {
-              ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
+        switch(item.name) {
+          case "createPattern":
+            if (item['arguments'][0].width > 0 && item['arguments'][0].height > 0) {
+              try {
+                ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
+              }
+              catch(e) {
+                Util.log("html2canvas: Renderer: Error creating pattern", e.message);
+              }
             }
-            catch(e) {
-              _html2canvas.Util.log("html2canvas: Renderer: Error creating pattern", e.message);
+            break;
+          case "drawShape":
+            createShape(ctx, item['arguments']);
+            break;
+          case "drawImage":
+            if (item['arguments'][8] > 0 && item['arguments'][7] > 0) {
+              if (!options.taintTest || (options.taintTest && safeImage(item))) {
+                ctx.drawImage.apply( ctx, item['arguments'] );
+              }
             }
-          }
-        } else if (item.name === "drawShape") {
-          createShape(ctx, item['arguments']);
-        } else if (item.name === "drawImage") {
-          if (item['arguments'][8] > 0 && item['arguments'][7] > 0) {
-            if (!options.taintTest || (options.taintTest && safeImage(item))) {
-              ctx.drawImage.apply( ctx, item['arguments'] );
-            }
-          }
-        } else {
-          ctx[item.name].apply(ctx, item['arguments']);
+            break;
+          default:
+            ctx[item.name].apply(ctx, item['arguments']);
         }
         break;
     }
@@ -66,7 +71,6 @@ _html2canvas.Renderer.Canvas = function(options) {
 
   return function(zStack, options, document, queue, _html2canvas) {
     var ctx = canvas.getContext("2d"),
-    render = renderItem.bind(null, ctx),
     newCanvas,
     bounds,
     fstyle;
@@ -97,13 +101,15 @@ _html2canvas.Renderer.Canvas = function(options) {
       }
 
       if (storageContext.ctx.storage) {
-        storageContext.ctx.storage.forEach(render);
+        storageContext.ctx.storage.forEach(function(item) {
+          renderItem(ctx, item);
+        });
       }
 
       ctx.restore();
     });
 
-    _html2canvas.Util.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+    Util.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
 
     if (options.elements.length === 1) {
       if (typeof options.elements[0] === "object" && options.elements[0].nodeName !== "BODY") {
