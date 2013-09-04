@@ -50,7 +50,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: 'src/*',
-      tasks: ['jshint', 'build']
+      tasks: ['build', 'jshint']
     },
     jshint: {
       all: ['<%= concat.dist.dest %>'],
