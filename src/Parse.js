@@ -1022,17 +1022,16 @@ _html2canvas.Parse = function (images, options) {
     return bounds;
   }
 
-  function renderElement(element, parentStack, pseudoElement) {
+  function renderElement(element, parentStack, pseudoElement, ignoreBackground) {
     var transform = getTransform(element, parentStack),
     bounds = getBounds(element, transform),
     image,
-    bgcolor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor"),
     stack = createStack(element, parentStack, bounds, transform),
     borders = stack.borders,
     ctx = stack.ctx,
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
-    borderData = parseBorders(element, bounds, borders);
-
+    borderData = parseBorders(element, bounds, borders),
+    backgroundColor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor");
 
 
     createShape(ctx, borderData.clip);
@@ -1040,9 +1039,11 @@ _html2canvas.Parse = function (images, options) {
     ctx.save();
     ctx.clip();
 
-    if (backgroundBounds.height > 0 && backgroundBounds.width > 0){
-      renderBackgroundColor(ctx, bounds, bgcolor);
+    if (backgroundBounds.height > 0 && backgroundBounds.width > 0 && !ignoreBackground) {
+      renderBackgroundColor(ctx, bounds, backgroundColor);
       renderBackgroundImage(element, backgroundBounds, ctx);
+    } else if (ignoreBackground) {
+      stack.backgroundColor =  backgroundColor;
     }
 
     ctx.restore();
@@ -1097,7 +1098,7 @@ _html2canvas.Parse = function (images, options) {
 
   function parseElement (element, stack, pseudoElement) {
     if (isElementVisible(element)) {
-      stack = renderElement(element, stack, pseudoElement) || stack;
+      stack = renderElement(element, stack, pseudoElement, false) || stack;
       if (!ignoreElementsRegExp.test(element.nodeName)) {
         parseChildren(element, stack, pseudoElement);
       }
@@ -1106,20 +1107,29 @@ _html2canvas.Parse = function (images, options) {
 
   function parseChildren(element, stack, pseudoElement) {
     Util.Children(element).forEach(function(node) {
-      if (node.nodeType === 1) {
+      if (node.nodeType === node.ELEMENT_NODE) {
         parseElement(node, stack, pseudoElement);
-      } else if (node.nodeType === 3) {
+      } else if (node.nodeType === node.TEXT_NODE) {
         renderText(element, node, stack);
       }
     });
   }
 
   function init() {
-    var stack = renderElement(element, null);
+    var background = getCSS(document.documentElement, "backgroundColor"),
+      transparentBackground = (Util.isTransparent(background) && element === document.body),
+      stack = renderElement(element, null, false, transparentBackground);
     parseChildren(element, stack);
-    stack.backgroundColor = getCSS(document.documentElement, "backgroundColor");
+
+    if (transparentBackground) {
+      background = stack.backgroundColor;
+    }
+
     body.removeChild(hidePseudoElements);
-    return stack;
+    return {
+      backgroundColor: background,
+      stack: stack
+    };
   }
 
   return init();
