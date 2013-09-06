@@ -9,7 +9,9 @@
         path = require("path"),
         base64_arraybuffer = require('base64-arraybuffer'),
         PNG = require('png-js'),
-        fs = require("fs");
+        fs = require("fs"),
+        googleapis = require('googleapis'),
+        jwt = require('jwt-sign');
 
     var port = 8080,
         app = express(),
@@ -81,14 +83,6 @@
 
     function canvasToDataUrl(canvas) {
         return canvas.toDataURL("image/png").substring(22);
-    }
-
-    function createImages(data) {
-        return Bacon.combineTemplate({
-            dataurl: Bacon.fromNodeCallback(fs.writeFile, "tests/results/captures/" + data.testCase.replace(/\//g, "-") + "-html2canvas.png", data.dataUrl, "base64"),
-            screenshot: Bacon.fromNodeCallback(fs.writeFile, "tests/results/captures/" + data.testCase.replace(/\//g, "-") + "-screencapture.png", data.screenshot, "base64"),
-            data: Bacon.constant(data)
-        });
     }
 
     function closeServer() {
@@ -219,6 +213,7 @@
             options = {
                 port: 4445,
                 hostname: "localhost",
+                name: process.env.TRAVIS_JOB_ID || "Manual run",
                 username: process.env.SAUCE_USERNAME,
                 password: process.env.SAUCE_ACCESS_KEY,
                 desiredCapabilities: {
@@ -248,6 +243,9 @@
     }
 
     function webdriverStream(navigator) {
+        var drive = Bacon.fromCallback(discover, "drive", "v2").toProperty();
+        var auth = Bacon.fromCallback(createToken, "95492219822.apps.googleusercontent.com").toProperty();
+
         return Bacon.fromCallback(function(callback) {
             new WebDriver.Session(webdriverOptions(navigator.browser, navigator.version, navigator.platform), function() {
                 var browser = this;
@@ -268,10 +266,117 @@
                         screenshot: screenshot
                     });
                 });
-                resultStream.onValue(mapResults);
+
+                Bacon.combineWith(permissionRequest, drive, auth, Bacon.combineWith(uploadRequest, drive, auth, resultStream.doAction(mapResults).flatMap(createImages)).flatMap(executeRequest)).flatMap(executeRequestOriginal).onValue(uploadImages);
                 resultStream.onEnd(callback);
             });
         });
+    }
+
+    function permissionRequest(client, authClient, images) {
+        var body = {
+            value: 'me',
+            type: 'anyone',
+            role: 'reader'
+        };
+
+        return images.map(function(data) {
+            var request = client.drive.permissions.insert({fileId: data.id}).withAuthClient(authClient);
+            request.body = body;
+            request.fileData = data;
+            return request;
+        });
+    }
+
+    function executeRequest(requests) {
+        return Bacon.combineAsArray(requests.map(function(request) {
+            return Bacon.fromCallback(function(callback) {
+                request.execute(function(err, result) {
+                    if (!err) {
+                        callback(result);
+                    } else {
+                        console.log("Google drive error", err);
+                    }
+                });
+            });
+        }));
+    }
+
+    function executeRequestOriginal(requests) {
+        return Bacon.combineAsArray(requests.map(function(request) {
+            return Bacon.fromCallback(function(callback) {
+                request.execute(function(err, result) {
+                    if (!err) {
+                        callback(request.fileData);
+                    } else {
+                        console.log("Google drive error", err);
+                    }
+                });
+            });
+        }));
+    }
+
+    function createImages(data) {
+      var dataurlFileName = "tests/results/" + data.browser + "-" +  data.testCase.replace(/\//g, "-") + "-html2canvas.png";
+      var screenshotFileName = "tests/results/" + data.browser + "-" + data.testCase.replace(/\//g, "-") + "-screencapture.png";
+      return Bacon.combineTemplate({
+        name: data.testCase,
+        dataurl: Bacon.fromNodeCallback(fs.writeFile, dataurlFileName, data.dataUrl, "base64").map(function() {
+          return dataurlFileName;
+        }),
+        screenshot: Bacon.fromNodeCallback(fs.writeFile, screenshotFileName, data.screenshot, "base64").map(function() {
+          return screenshotFileName;
+        })
+      });
+    }
+
+    function uploadImages(results) {
+        results.forEach(function(result) {
+            console.log(result.webContentLink);
+        });
+    }
+
+    function discover(api, version, callback) {
+        googleapis.discover(api, version).execute(function(err, client) {
+            if (!err) {
+                callback(client);
+            }
+        });
+    }
+
+    function createToken(account, callback) {
+        var payload = {
+                "iss": '95492219822@developer.gserviceaccount.com',
+                "scope": 'https://www.googleapis.com/auth/drive',
+                "aud":"https://accounts.google.com/o/oauth2/token",
+                "exp": ~~(new Date().getTime() / 1000) + (30 * 60),
+                "iat": ~~(new Date().getTime() / 1000 - 60)
+            },
+            key = new Buffer(process.env.SERVICE_ACCOUNT, 'base64').toString('ascii'),
+            transporterTokenRequest = {
+                method: 'POST',
+                uri: 'https://accounts.google.com/o/oauth2/token',
+                form: {
+                    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    assertion: jwt.sign(payload, key)
+                },
+                json: true
+            },
+            oauth2Client = new googleapis.OAuth2Client(account, "", "");
+
+        oauth2Client.transporter.request(transporterTokenRequest, function(err, result) {
+            if (!err) {
+                oauth2Client.credentials = result;
+                callback(oauth2Client);
+            }
+        });
+    }
+
+    function uploadRequest(client, authClient, data) {
+        return [
+            client.drive.files.insert({title: data.dataurl, mimeType: 'image/png', description: process.env.TRAVIS_JOB_ID}).withMedia('image/png', fs.readFileSync(data.dataurl)).withAuthClient(authClient),
+            client.drive.files.insert({title: data.screenshot, mimeType: 'image/png', description: process.env.TRAVIS_JOB_ID}).withMedia('image/png', fs.readFileSync(data.screenshot)).withAuthClient(authClient)
+        ];
     }
 
     function runWebDriver() {
@@ -300,14 +405,12 @@
                 platform: "OS X 10.8"
             }
         ];
-
         var testRunnerStream = Bacon.sequentially(1000, browsers).flatMap(webdriverStream);
         testRunnerStream.onEnd(writeResults);
         testRunnerStream.onEnd(closeServer);
     }
 
     var tests = [],
-        outputImages = false,
         results = {},
         testStream = getTests("tests/cases");
 

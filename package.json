@@ -31,7 +31,9 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-qunit": "*",
-    "grunt-contrib-watch": "~0.5.1"
+    "grunt-contrib-watch": "~0.5.1",
+    "googleapis": "~0.4.3",
+    "jwt-sign": "~0.1.0"
   },
   "scripts": {
     "test": "grunt travis --verbose"
