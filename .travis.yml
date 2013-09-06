@@ -9,6 +9,6 @@ env:
   - secure: "YI+YbTOGf2x4fPMKW+KhJiZWswoXT6xOKGwLfsQsVwmFX1LerJouil5D5iYOQuL4FE3pNaoJSNakIsokJQuGKJMmnPc8rdhMZuBJBk6MRghurE2Xe9qBHfuUBPlfD61nARESm4WDcyMwM0QVYaOKeY6aIpZ91qbUbyc60EEx3C4="
   - secure: "TQK2gHh6M3UgVPXgkZvHTBwYwyK6pkBBgNewFY3C5RqAsevkiLiOweTbM5ozHq8qcGalHdQYm4cszX3E8LQrzcDZbBWUXaVrtBtv9DoYIgFAcrf1t/Uy1l9xVUI9lqpdVvFor6Xuw+Uh3gwoqqZFoVxKUxczqddxOS60iLuWOmE="
 before_script:
-- openssl aes-256-cbc -k "$SERVICE_SECRET" -in tests/certificate.pem.enc -d -a -out tests/certificate.pem
+- openssl aes-256-cbc -pass env:SERVICE_SECRET -in tests/certificate.pem.enc -d -a -out tests/certificate.pem
 - npm install -g grunt-cli
 - curl https://gist.github.com/niklasvh/6150144/raw/sauce_connect_setup.sh | bash
