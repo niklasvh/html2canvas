@@ -9,6 +9,7 @@
 image.jpg
 /.project
 /.settings/
+/tests/certificate.pem
 node_modules/
 .envrc
 server.js

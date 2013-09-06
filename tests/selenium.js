@@ -352,7 +352,7 @@
                 "exp": ~~(new Date().getTime() / 1000) + (30 * 60),
                 "iat": ~~(new Date().getTime() / 1000 - 60)
             },
-            key = new Buffer(process.env.SERVICE_ACCOUNT, 'base64').toString('ascii'),
+            key = require('fs').readFileSync('tests/certificate.pem', 'utf8'),
             transporterTokenRequest = {
                 method: 'POST',
                 uri: 'https://accounts.google.com/o/oauth2/token',
