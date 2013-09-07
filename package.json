@@ -11,13 +11,7 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "dependencies": {
-    "base64-arraybuffer": ">= 0.1.0",
-    "png-js": ">= 0.1.1",
-    "sync-webdriver": ">=0.1.1",
-    "express": "~3.2.3",
-    "baconjs": "~0.3.15"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:niklasvh/html2canvas.git"
@@ -33,7 +27,12 @@
     "grunt-contrib-qunit": "*",
     "grunt-contrib-watch": "~0.5.1",
     "googleapis": "~0.4.3",
-    "jwt-sign": "~0.1.0"
+    "jwt-sign": "~0.1.0",
+    "base64-arraybuffer": ">= 0.1.0",
+    "png-js": ">= 0.1.1",
+    "sync-webdriver": ">=0.1.1",
+    "express": "~3.2.3",
+    "baconjs": "~0.3.15"
   },
   "scripts": {
     "test": "grunt travis --verbose"
