@@ -1,0 +1,10 @@
+{
+    "name": "html2canvas",
+    "version": "0.4.1",
+    "description": "Screenshots with JavaScript",
+    "main": "build/html2canvas.js",
+    "ignore": [
+        "tests",
+        ".travis.yml"
+    ]
+}

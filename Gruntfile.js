@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     banner: '/*\n  <%= pkg.title || pkg.name %> <%= pkg.version %>' +
       '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
       '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
-      '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/',
+      '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
     pre: '\n(function(window, document, undefined){\n\n',
     post: '\n})(window,document);'
   };
