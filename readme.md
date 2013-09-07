@@ -41,7 +41,7 @@ To access the created canvas, provide the `onrendered` event in the options whic
                to append it to the page call for example
                document.body.appendChild( canvas );
             */
-            }
+        }
     });
 
 ### Building ###
@@ -80,7 +80,10 @@ If you wish to contribute to the project, please send the pull requests to the d
 
 ### Changelog ###
 
-v0.4.1 -
+v0.4.1 - 7.9.2013
+ * Added support for bower
+ * Improved z-index ordering
+ * Basic implementation for CSS transformations
  * Fixed inline text in top element
  * Basic implementation for text-shadow
 
