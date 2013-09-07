@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>z-index tests #4</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style type="text/css">
+      div.lev1 {
+        width: 250px;
+        height: 70px;
+        position: relative;
+        border: 2px solid #669966;
+        background-color: #ccffcc;
+        padding-left: 5px;
+      }
+      div.background {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 250px;
+        background-color: #ffdddd;
+        z-index: -1;
+      }
+    </style></head>
+
+  <body>
+    <div class="lev1">
+      <span>LEVEL #1</span>
+    </div>
+    <div class="background"></div>
+    <div class="lev1">
+      <span>LEVEL #1</span>
+    </div>
+  </body>
+</html>

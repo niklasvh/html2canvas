@@ -5,20 +5,49 @@ previousElement,
 computedCSS,
 html2canvas;
 
-function h2clog(a) {
+_html2canvas.Util = {};
+
+_html2canvas.Util.log = function(a) {
   if (_html2canvas.logging && window.console && window.console.log) {
     window.console.log(a);
   }
-}
-
-_html2canvas.Util = {};
+};
 
 _html2canvas.Util.trimText = (function(isNative){
-  return function(input){
-    if(isNative) { return isNative.apply( input ); }
-    else { return ((input || '') + '').replace( /^\s+|\s+$/g , '' ); }
+  return function(input) {
+    return isNative ? isNative.apply(input) : ((input || '') + '').replace( /^\s+|\s+$/g , '' );
   };
-})( String.prototype.trim );
+})(String.prototype.trim);
+
+_html2canvas.Util.asFloat = function(v) {
+  return parseFloat(v);
+};
+
+(function() {
+  // TODO: support all possible length values
+  var TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
+  var TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+  _html2canvas.Util.parseTextShadows = function (value) {
+    if (!value || value === 'none') {
+      return [];
+    }
+
+    // find multiple shadow declarations
+    var shadows = value.match(TEXT_SHADOW_PROPERTY),
+      results = [];
+    for (var i = 0; shadows && (i < shadows.length); i++) {
+      var s = shadows[i].match(TEXT_SHADOW_VALUES);
+      results.push({
+        color: s[0],
+        offsetX: s[1] ? s[1].replace('px', '') : 0,
+        offsetY: s[2] ? s[2].replace('px', '') : 0,
+        blur: s[3] ? s[3].replace('px', '') : 0
+      });
+    }
+    return results;
+  };
+})();
+
 
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
@@ -119,38 +148,42 @@ _html2canvas.Util.parseBackgroundImage = function (value) {
     return results;
 };
 
-_html2canvas.Util.Bounds = function getBounds (el) {
-  var clientRect,
-  bounds = {};
+_html2canvas.Util.Bounds = function (element) {
+  var clientRect, bounds = {};
 
-  if (el.getBoundingClientRect){
-    clientRect = el.getBoundingClientRect();
-
+  if (element.getBoundingClientRect){
+    clientRect = element.getBoundingClientRect();
 
     // TODO add scroll position to bounds, so no scrolling of window necessary
     bounds.top = clientRect.top;
     bounds.bottom = clientRect.bottom || (clientRect.top + clientRect.height);
     bounds.left = clientRect.left;
 
-    // older IE doesn't have width/height, but top/bottom instead
-    bounds.width = clientRect.width || (clientRect.right - clientRect.left);
-    bounds.height = clientRect.height || (clientRect.bottom - clientRect.top);
-
-    return bounds;
-
+    bounds.width = element.offsetWidth;
+    bounds.height = element.offsetHeight;
   }
+
+  return bounds;
 };
 
-_html2canvas.Util.getCSS = function (el, attribute, index) {
-  // return $(el).css(attribute);
+// TODO ideally, we'd want everything to go through this function instead of Util.Bounds,
+// but would require further work to calculate the correct positions for elements with offsetParents
+_html2canvas.Util.OffsetBounds = function (element) {
+  var parent = element.offsetParent ? _html2canvas.Util.OffsetBounds(element.offsetParent) : {top: 0, left: 0};
 
-    var val,
-    isBackgroundSizePosition = attribute.match( /^background(Size|Position)$/ );
+  return {
+    top: element.offsetTop + parent.top,
+    bottom: element.offsetTop + element.offsetHeight + parent.top,
+    left: element.offsetLeft + parent.left,
+    width: element.offsetWidth,
+    height: element.offsetHeight
+  };
+};
 
-  function toPX( attribute, val ) {
-    var rsLeft = el.runtimeStyle && el.runtimeStyle[ attribute ],
-    left,
-    style = el.style;
+function toPX(element, attribute, value ) {
+    var rsLeft = element.runtimeStyle && element.runtimeStyle[attribute],
+        left,
+        style = element.style;
 
     // Check if we are not dealing with pixels, (Opera has issues with this)
     // Ported from jQuery css.js
@@ -160,71 +193,76 @@ _html2canvas.Util.getCSS = function (el, attribute, index) {
     // If we're not dealing with a regular pixel number
     // but a number that has a weird ending, we need to convert it to pixels
 
-    if ( !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test( val ) && /^-?\d/.test( val ) ) {
+    if ( !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test( value ) && /^-?\d/.test(value) ) {
+        // Remember the original values
+        left = style.left;
 
-      // Remember the original values
-      left = style.left;
-
-      // Put in the new values to get a computed value out
-      if ( rsLeft ) {
-        el.runtimeStyle.left = el.currentStyle.left;
-      }
-      style.left = attribute === "fontSize" ? "1em" : (val || 0);
-      val = style.pixelLeft + "px";
-
-      // Revert the changed values
-      style.left = left;
-      if ( rsLeft ) {
-        el.runtimeStyle.left = rsLeft;
-      }
-
-    }
-
-    if (!/^(thin|medium|thick)$/i.test( val )) {
-      return Math.round(parseFloat( val )) + "px";
-    }
-
-    return val;
-  }
-
-    if (previousElement !== el) {
-      computedCSS = document.defaultView.getComputedStyle(el, null);
-    }
-    val = computedCSS[attribute];
-
-    if (isBackgroundSizePosition) {
-      val = (val || '').split( ',' );
-      val = val[index || 0] || val[0] || 'auto';
-      val = _html2canvas.Util.trimText(val).split(' ');
-
-      if(attribute === 'backgroundSize' && (!val[ 0 ] || val[ 0 ].match( /cover|contain|auto/ ))) {
-        //these values will be handled in the parent function
-
-      } else {
-        val[ 0 ] = ( val[ 0 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "X", val[ 0 ] ) : val[ 0 ];
-        if(val[ 1 ] === undefined) {
-          if(attribute === 'backgroundSize') {
-            val[ 1 ] = 'auto';
-            return val;
-          }
-          else {
-            // IE 9 doesn't return double digit always
-            val[ 1 ] = val[ 0 ];
-          }
+        // Put in the new values to get a computed value out
+        if (rsLeft) {
+            element.runtimeStyle.left = element.currentStyle.left;
         }
-        val[ 1 ] = ( val[ 1 ].indexOf( "%" ) === -1 ) ? toPX(  attribute + "Y", val[ 1 ] ) : val[ 1 ];
-      }
-    } else if ( /border(Top|Bottom)(Left|Right)Radius/.test( attribute) ) {
-      var arr = val.split(" ");
-      if ( arr.length <= 1 ) {
-              arr[ 1 ] = arr[ 0 ];
-      }
-      arr[ 0 ] = parseInt( arr[ 0 ], 10 );
-      arr[ 1 ] = parseInt( arr[ 1 ], 10 );
-      val = arr;
+        style.left = attribute === "fontSize" ? "1em" : (value || 0);
+        value = style.pixelLeft + "px";
+
+        // Revert the changed values
+        style.left = left;
+        if (rsLeft) {
+            element.runtimeStyle.left = rsLeft;
+        }
     }
 
-  return val;
+    if (!/^(thin|medium|thick)$/i.test(value)) {
+        return Math.round(parseFloat(value)) + "px";
+    }
+
+    return value;
+}
+
+function asInt(val) {
+    return parseInt(val, 10);
+}
+
+function parseBackgroundSizePosition(value, element, attribute, index) {
+    value = (value || '').split(',');
+    value = value[index || 0] || value[0] || 'auto';
+    value = _html2canvas.Util.trimText(value).split(' ');
+
+    if(attribute === 'backgroundSize' && (!value[0] || value[0].match(/cover|contain|auto/))) {
+        //these values will be handled in the parent function
+    } else {
+        value[0] = (value[0].indexOf( "%" ) === -1) ? toPX(element, attribute + "X", value[0]) : value[0];
+        if(value[1] === undefined) {
+            if(attribute === 'backgroundSize') {
+                value[1] = 'auto';
+                return value;
+            } else {
+                // IE 9 doesn't return double digit always
+                value[1] = value[0];
+            }
+        }
+        value[1] = (value[1].indexOf("%") === -1) ? toPX(element, attribute + "Y", value[1]) : value[1];
+    }
+    return value;
+}
+
+_html2canvas.Util.getCSS = function (element, attribute, index) {
+    if (previousElement !== element) {
+      computedCSS = document.defaultView.getComputedStyle(element, null);
+    }
+
+    var value = computedCSS[attribute];
+
+    if (/^background(Size|Position)$/.test(attribute)) {
+        return parseBackgroundSizePosition(value, element, attribute, index);
+    } else if (/border(Top|Bottom)(Left|Right)Radius/.test(attribute)) {
+      var arr = value.split(" ");
+      if (arr.length <= 1) {
+          arr[1] = arr[0];
+      }
+      return arr.map(asInt);
+    }
+
+  return value;
 };
 
 _html2canvas.Util.resizeBounds = function( current_width, current_height, target_width, target_height, stretch_mode ){
@@ -235,18 +273,18 @@ _html2canvas.Util.resizeBounds = function( current_width, current_height, target
   if(!stretch_mode || stretch_mode === 'auto') {
     output_width = target_width;
     output_height = target_height;
-
+  } else if(target_ratio < current_ratio ^ stretch_mode === 'contain') {
+    output_height = target_height;
+    output_width = target_height * current_ratio;
   } else {
-    if(target_ratio < current_ratio ^ stretch_mode === 'contain') {
-      output_height = target_height;
-      output_width = target_height * current_ratio;
-    } else {
-      output_width = target_width;
-      output_height = target_width / current_ratio;
-    }
+    output_width = target_width;
+    output_height = target_width / current_ratio;
   }
 
-  return { width: output_width, height: output_height };
+  return {
+    width: output_width,
+    height: output_height
+  };
 };
 
 function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroundSize ) {
@@ -271,24 +309,21 @@ function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroun
       if(prop !== 'backgroundSize') {
         left -= (backgroundSize || image).width*percentage;
       }
-
     } else {
       if(prop === 'backgroundSize') {
         if(bgposition[0] === 'auto') {
           left = image.width;
-
         } else {
-          if(bgposition[0].match(/contain|cover/)) {
-            var resized = _html2canvas.Util.resizeBounds( image.width, image.height, bounds.width, bounds.height, bgposition[0] );
+          if (/contain|cover/.test(bgposition[0])) {
+            var resized = _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, bgposition[0]);
             left = resized.width;
             topPos = resized.height;
           } else {
-            left = parseInt (bgposition[0], 10 );
+            left = parseInt(bgposition[0], 10);
           }
         }
-
       } else {
-        left = parseInt( bgposition[0], 10 );
+        left = parseInt( bgposition[0], 10);
       }
     }
 
@@ -313,6 +348,7 @@ _html2canvas.Util.BackgroundPosition = function( el, bounds, image, imageIndex, 
     var result = backgroundBoundsFactory( 'backgroundPosition', el, bounds, image, imageIndex, backgroundSize );
     return { left: result[0], top: result[1] };
 };
+
 _html2canvas.Util.BackgroundSize = function( el, bounds, image, imageIndex ) {
     var result = backgroundBoundsFactory( 'backgroundSize', el, bounds, image, imageIndex );
     return { width: result[0], height: result[1] };
@@ -335,45 +371,40 @@ _html2canvas.Util.Extend = function (options, defaults) {
  * http://jquery.org/license
  */
 _html2canvas.Util.Children = function( elem ) {
-
-
   var children;
   try {
-
-    children = (elem.nodeName && elem.nodeName.toUpperCase() === "IFRAME") ?
-    elem.contentDocument || elem.contentWindow.document : (function( array ){
+    children = (elem.nodeName && elem.nodeName.toUpperCase() === "IFRAME") ? elem.contentDocument || elem.contentWindow.document : (function(array) {
       var ret = [];
-
-      if ( array !== null ) {
-
-        (function( first, second ) {
+      if (array !== null) {
+        (function(first, second ) {
           var i = first.length,
           j = 0;
 
-          if ( typeof second.length === "number" ) {
-            for ( var l = second.length; j < l; j++ ) {
-              first[ i++ ] = second[ j ];
+          if (typeof second.length === "number") {
+            for (var l = second.length; j < l; j++) {
+              first[i++] = second[j];
             }
-
           } else {
-            while ( second[j] !== undefined ) {
-              first[ i++ ] = second[ j++ ];
+            while (second[j] !== undefined) {
+              first[i++] = second[j++];
             }
           }
 
           first.length = i;
 
           return first;
-        })( ret, array );
-
+        })(ret, array);
       }
-
       return ret;
-    })( elem.childNodes );
+    })(elem.childNodes);
 
   } catch (ex) {
-    h2clog("html2canvas.Util.Children failed with exception: " + ex.message);
+    _html2canvas.Util.log("html2canvas.Util.Children failed with exception: " + ex.message);
     children = [];
   }
   return children;
+};
+
+_html2canvas.Util.isTransparent = function(backgroundColor) {
+  return (backgroundColor === "transparent" || backgroundColor === "rgba(0, 0, 0, 0)");
 };

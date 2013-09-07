@@ -8,6 +8,7 @@
 image.jpg
 /.project
 /.settings/
+/tests/certificate.pem
 node_modules/
 .envrc
 server.js
@@ -16,3 +17,4 @@ chromedriver.log
 *.baseline
 *.iml
 .idea/
+.DS_Store

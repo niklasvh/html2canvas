@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     banner: '/*\n  <%= pkg.title || pkg.name %> <%= pkg.version %>' +
       '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
       '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
-      '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/',
+      '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
     pre: '\n(function(window, document, undefined){\n\n',
     post: '\n})(window,document);'
   };
@@ -49,8 +49,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: '<%= lint.files %>',
-      tasks: 'jshint qunit'
+      files: 'src/*',
+      tasks: ['build', 'jshint']
     },
     jshint: {
       all: ['<%= concat.dist.dest %>'],
@@ -73,19 +73,19 @@ module.exports = function(grunt) {
     }
   });
 
-  var selenium = require("./tests/selenium.js");
   grunt.registerTask('webdriver', 'Browser render tests', function(arg1) {
-
+    var selenium = require("./tests/selenium.js");
     var done = this.async();
 
-    if (arguments.length === 0) {
-      selenium.tests();
-    } else {
+    if (arguments.length) {
       selenium[arg1].apply(null, arguments);
+    } else {
+      selenium.tests();
     }
   });
 
   // Load tasks
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -93,6 +93,7 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('build', ['concat', 'uglify']);
-  grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify', 'webdriver']);
+  grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify']);
+  grunt.registerTask('travis', ['concat', 'jshint', 'qunit', 'uglify', 'webdriver']);
 
 };

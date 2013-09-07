@@ -194,7 +194,7 @@ _html2canvas.Renderer.SVG = function( options ) {
 
 
 
-            h2clog("html2canvas: Renderer: SVG Renderer done - returning SVG DOM obj");
+          _html2canvas.Util.log("html2canvas: Renderer: SVG Renderer done - returning SVG DOM obj");
 
             return svg;
         }

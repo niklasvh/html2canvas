@@ -3,17 +3,6 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../tests/assets/jquery-1.6.2.js"></script>
-    <script type="text/javascript" src="../build/html2canvas.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        html2canvas( [ document.body ], {
-          onrendered: function(canvas) {
-            document.body.appendChild(canvas);
-          }
-        });
-      });
-    </script>
     <style>
       .feedback-overlay-black{
         background-color:#000;
@@ -64,5 +53,13 @@
 
       </div>
     </div>
+    <script type="text/javascript" src="../build/html2canvas.js"></script>
+    <script type="text/javascript">
+        html2canvas(document.body, {
+            onrendered: function(canvas) {
+                document.body.appendChild(canvas);
+            }
+        });
+    </script>
   </body>
 </html>

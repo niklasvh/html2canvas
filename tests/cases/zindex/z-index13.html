@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>text above children with negative z-index; z-index tests #13</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style type="text/css">
+    .outer {
+        background-color:cyan;
+        width:200px;
+        height:200px;
+        z-index:0;
+        position:relative;
+    }
+
+    .inner {
+        background-color:green;
+        width:100px;
+        height:100px;
+        z-index:-1;
+        position:absolute;
+        top:0;left:0;
+    }
+    </style></head>
+
+  <body>
+    <div class="outer">outer
+      <div class="inner"></div>
+  </div>
+  </body>
+</html>

@@ -143,7 +143,36 @@ $(function() {
             });
             
         });
-    }); 
+    });
+
+    test('text-shadow', function() {
+
+      $('#textShadows div').each(function(i, el) {
+        var index = i+1;
+        var value = _html2canvas.Util.getCSS(el, 'textShadow'),
+          shadows = _html2canvas.Util.parseTextShadows(value);
+        if (i == 0) {
+          QUnit.equal(shadows.length, 0, 'div #' + index);
+        } else {
+          QUnit.equal(shadows.length, (i >= 6 ? 2 : 1), 'div #' + index);
+          QUnit.equal(shadows[0].offsetX, i, 'div #' + index + ' offsetX');
+          QUnit.equal(shadows[0].offsetY, i, 'div #' + index + ' offsetY');
+          if (i < 2) {
+            QUnit.equal(shadows[0].color, 'rgba(0, 0, 0, 0)', 'div #' + index + ' color');
+          } else if (i % 2 == 0) {
+            QUnit.equal(shadows[0].color, 'rgb(2, 2, 2)', 'div #' + index + ' color');
+          } else {
+            var opacity = '0.199219';
+            QUnit.equal(shadows[0].color, 'rgba(2, 2, 2, '+opacity+')', 'div #' + index + ' color');
+          }
+
+          // only testing blur once
+          if (i == 1) {
+            QUnit.equal(shadows[0].blur, '1', 'div #' + index + ' blur');
+          }
+        }
+      });
+    });
     
     test('background-image', function () {
         

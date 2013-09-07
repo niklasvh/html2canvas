@@ -1,13 +1,12 @@
 _html2canvas.Renderer.Canvas = function(options) {
-
   options = options || {};
 
   var doc = document,
   safeImages = [],
   testCanvas = document.createElement("canvas"),
   testctx = testCanvas.getContext("2d"),
+  Util = _html2canvas.Util,
   canvas = options.canvas || doc.createElement('canvas');
-
 
   function createShape(ctx, args) {
     ctx.beginPath();
@@ -32,99 +31,90 @@ _html2canvas.Renderer.Canvas = function(options) {
     return true;
   }
 
-  function isTransparent(backgroundColor) {
-    return (backgroundColor === "transparent" || backgroundColor === "rgba(0, 0, 0, 0)");
-  }
-
   function renderItem(ctx, item) {
     switch(item.type){
       case "variable":
         ctx[item.name] = item['arguments'];
         break;
       case "function":
-        if (item.name === "createPattern") {
-          if (item['arguments'][0].width > 0 && item['arguments'][0].height > 0) {
-            try {
-              ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
+        switch(item.name) {
+          case "createPattern":
+            if (item['arguments'][0].width > 0 && item['arguments'][0].height > 0) {
+              try {
+                ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
+              }
+              catch(e) {
+                Util.log("html2canvas: Renderer: Error creating pattern", e.message);
+              }
             }
-            catch(e) {
-              h2clog("html2canvas: Renderer: Error creating pattern", e.message);
+            break;
+          case "drawShape":
+            createShape(ctx, item['arguments']);
+            break;
+          case "drawImage":
+            if (item['arguments'][8] > 0 && item['arguments'][7] > 0) {
+              if (!options.taintTest || (options.taintTest && safeImage(item))) {
+                ctx.drawImage.apply( ctx, item['arguments'] );
+              }
             }
-          }
-        } else if (item.name === "drawShape") {
-          createShape(ctx, item['arguments']);
-        } else if (item.name === "drawImage") {
-          if (item['arguments'][8] > 0 && item['arguments'][7] > 0) {
-            if (!options.taintTest || (options.taintTest && safeImage(item))) {
-              ctx.drawImage.apply( ctx, item['arguments'] );
-            }
-          }
-        } else {
-          ctx[item.name].apply(ctx, item['arguments']);
+            break;
+          default:
+            ctx[item.name].apply(ctx, item['arguments']);
         }
         break;
     }
   }
 
-  return function(zStack, options, doc, queue, _html2canvas) {
-
+  return function(parsedData, options, document, queue, _html2canvas) {
     var ctx = canvas.getContext("2d"),
-    storageContext,
-    i,
-    queueLen,
     newCanvas,
     bounds,
-    fstyle;
+    fstyle,
+    zStack = parsedData.stack;
 
     canvas.width = canvas.style.width =  options.width || zStack.ctx.width;
     canvas.height = canvas.style.height = options.height || zStack.ctx.height;
 
     fstyle = ctx.fillStyle;
-    ctx.fillStyle = (isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : zStack.backgroundColor;
+    ctx.fillStyle = (Util.isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
 
+    queue.forEach(function(storageContext) {
+      // set common settings for canvas
+      ctx.textBaseline = "bottom";
+      ctx.save();
 
-    if ( options.svgRendering && zStack.svgRender !== undefined ) {
-      // TODO: enable async rendering to support this
-      ctx.drawImage( zStack.svgRender, 0, 0 );
-    } else {
-      for ( i = 0, queueLen = queue.length; i < queueLen; i+=1 ) {
-        storageContext = queue.splice(0, 1)[0];
-        storageContext.canvasPosition = storageContext.canvasPosition || {};
-
-        // set common settings for canvas
-        ctx.textBaseline = "bottom";
-
-        if (storageContext.clip){
-          ctx.save();
-          ctx.beginPath();
-          // console.log(storageContext);
-          ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
-          ctx.clip();
-        }
-
-        if (storageContext.ctx.storage) {
-          storageContext.ctx.storage.forEach(renderItem.bind(null, ctx));
-        }
-
-        if (storageContext.clip){
-          ctx.restore();
-        }
+      if (storageContext.transform.matrix) {
+        ctx.translate(storageContext.transform.origin[0], storageContext.transform.origin[1]);
+        ctx.transform.apply(ctx, storageContext.transform.matrix);
+        ctx.translate(-storageContext.transform.origin[0], -storageContext.transform.origin[1]);
       }
-    }
 
-    h2clog("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+      if (storageContext.clip){
+        ctx.beginPath();
+        ctx.rect(storageContext.clip.left, storageContext.clip.top, storageContext.clip.width, storageContext.clip.height);
+        ctx.clip();
+      }
 
-    queueLen = options.elements.length;
+      if (storageContext.ctx.storage) {
+        storageContext.ctx.storage.forEach(function(item) {
+          renderItem(ctx, item);
+        });
+      }
 
-    if (queueLen === 1) {
+      ctx.restore();
+    });
+
+    Util.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+
+    if (options.elements.length === 1) {
       if (typeof options.elements[0] === "object" && options.elements[0].nodeName !== "BODY") {
         // crop image to the bounds of selected (single) element
         bounds = _html2canvas.Util.Bounds(options.elements[0]);
-        newCanvas = doc.createElement('canvas');
-        newCanvas.width = bounds.width;
-        newCanvas.height = bounds.height;
+        newCanvas = document.createElement('canvas');
+        newCanvas.width = Math.ceil(bounds.width);
+        newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
         ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);

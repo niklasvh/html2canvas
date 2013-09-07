@@ -1,0 +1,12 @@
+---
+language: node_js
+node_js:
+- '0.10'
+env:
+  global:
+  - secure: "eW41gIqOizwO4pTgWnAAbW75AP7F+CK9qfSed/fSh4sJ9HWMIY1YRIaY8gjr+6jV/f7XVHcXuym6ZxgINYSkVKbF1JKxBJNLOXtSgNbVHSic58pYFvUjwxIBI9aPig9uux1+DbnpWqXFDTcACJSevQZE0xwmjdrSkDLgB0G34v8="
+  - secure: "Y2Av+Gd3z9uQEB36GwdOOuGka0hx0/HeitASEo59z934O8RxnmN9eNTXS7dDT3XtKtwxIyLTOEpS7qlRdWahH28hr/dS4xJj6ao58C+1xMcDs6NAPGmDxUlcJWpcGEsnjmXjQCc3fBioSTdpIBrK/gdvgpNh77UKG74Sk7Z+YGk="
+  - secure: "YI+YbTOGf2x4fPMKW+KhJiZWswoXT6xOKGwLfsQsVwmFX1LerJouil5D5iYOQuL4FE3pNaoJSNakIsokJQuGKJMmnPc8rdhMZuBJBk6MRghurE2Xe9qBHfuUBPlfD61nARESm4WDcyMwM0QVYaOKeY6aIpZ91qbUbyc60EEx3C4="
+before_script:
+- npm install -g grunt-cli
+- curl https://gist.github.com/niklasvh/6150144/raw/sauce_connect_setup.sh | bash

@@ -1,303 +1,427 @@
 (function(){
-  "use strict;"
-  var webdriver = require("webdriver.js").webdriver,
-  http = require("http"),
-  url = require("url"),
-  path = require("path"),
-  base64_arraybuffer = require('base64-arraybuffer'),
-  PNG = require('png-js'),
-  fs = require("fs");
+    "use strict;";
+    var WebDriver = require('sync-webdriver'),
+        Bacon = require('baconjs').Bacon,
+        express = require('express'),
+        http = require("http"),
+        https = require("https"),
+        url = require("url"),
+        path = require("path"),
+        base64_arraybuffer = require('base64-arraybuffer'),
+        PNG = require('png-js'),
+        fs = require("fs"),
+        googleapis = require('googleapis'),
+        jwt = require('jwt-sign');
 
-  function createServer(port) {
-    return http.createServer(function(request, response) {
-      var uri = url.parse(request.url).pathname,
-      filename = path.join(process.cwd(), uri);
+    var port = 8080,
+        app = express(),
+        colors = {
+            red: "\x1b[1;31m",
+            blue: "\x1b[1;36m",
+            violet: "\x1b[0;35m",
+            green: "\x1b[0;32m",
+            clear: "\x1b[0m"
+        };
 
-      fs.exists(filename, function(exists) {
-        if(!exists) {
-          response.writeHead(404, {
-            "Content-Type": "text/plain"
-          });
-          response.write("404 Not Found\n");
-          response.end();
-          return;
+    var server = app.listen(port);
+
+    app.use('/index.html', function(req, res){
+      res.send("<ul>" + tests.map(function(test) {
+        return "<li><a href='" + test + "'>" + test + "</a></li>";
+      }).join("") + "</ul>");
+    });
+
+    app.use('/', express.static(__dirname + "/../"));
+
+    function mapStat(item) {
+        return Bacon.combineTemplate({
+            stat: Bacon.fromNodeCallback(fs.stat, item),
+            item: item
+        });
+    }
+
+    function isDirectory(item) {
+        return item.stat.isDirectory();
+    }
+
+    function getItem(item) {
+        return item.item;
+    }
+
+    function isFile(item) {
+        return !isDirectory(item);
+    }
+
+    function arrayStream(arr) {
+        return Bacon.fromArray(arr);
+    }
+
+    function getTests(path) {
+        var items = Bacon.fromNodeCallback(fs.readdir, path).flatMap(arrayStream).map(function(name) {
+            return path + "/" + name;
+        }).flatMap(mapStat);
+        return items.filter(isFile).map(getItem).merge(items.filter(isDirectory).map(getItem).flatMap(getTests));
+    }
+
+
+    function getPixelArray(base64) {
+        return Bacon.fromCallback(function(callback) {
+            var arraybuffer = base64_arraybuffer.decode(base64);
+            (new PNG(arraybuffer)).decode(callback);
+        });
+    }
+
+    function calculateDifference(h2cPixels, screenPixels) {
+        var len = h2cPixels.length, index = 0, diff = 0;
+        for (; index < len; index++) {
+            if (screenPixels[index] - h2cPixels[index] !== 0) {
+                diff++;
+            }
+        }
+        return (100 - (Math.round((diff/h2cPixels.length) * 10000) / 100));
+    }
+
+    function canvasToDataUrl(canvas) {
+        return canvas.toDataURL("image/png").substring(22);
+    }
+
+    function closeServer() {
+        server.close();
+    }
+
+    function findResult(testName, tests) {
+        var item = null;
+        return tests.some(function(testCase) {
+            item = testCase;
+            return testCase.test === testName;
+        }) ? item : null;
+    }
+
+    function compareResults(oldResults, newResults, browser) {
+        var improved = [],
+            regressed = [],
+            newItems = [];
+
+        newResults.forEach(function(testCase){
+            var testResult = testCase.result,
+                oldResult = findResult(testCase.test, oldResults),
+                oldResultValue = oldResult ? oldResult.result : null,
+                dataObject = {
+                    amount: (Math.abs(testResult - oldResultValue) < 0.01) ? 0 : testResult - oldResultValue,
+                    test: testCase.test
+                };
+            if (oldResultValue === null) {
+                newItems.push(dataObject);
+            } else if (dataObject.amount > 0) {
+                improved.push(dataObject);
+            } else if (dataObject.amount < 0) {
+                regressed.push(dataObject);
+            }
+        });
+
+        reportChanges(browser, improved, regressed, newItems);
+    }
+
+    function reportChanges(browser, improved, regressed, newItems) {
+        if (newItems.length > 0 || improved.length > 0 || regressed.length > 0) {
+            console.log((regressed.length > 0) ? colors.red : colors.green, browser);
+
+            regressed.forEach(function(item) {
+                console.log(colors.red, item.amount + "%", item.test);
+            });
+
+            improved.forEach(function(item) {
+                console.log(colors.green, item.amount + "%", item.test);
+            });
+
+            newItems.forEach(function(item) {
+                console.log(colors.blue, "NEW", item.test);
+            });
+        }
+    }
+
+    function httpget(options) {
+        return Bacon.fromCallback(function(callback) {
+            https.get(options, function(res){
+                var data = '';
+
+                res.on('data', function (chunk){
+                    data += chunk;
+                });
+
+                res.on('end',function(){
+                    callback(data);
+                });
+            });
+        });
+    }
+
+    function parseJSON(str) {
+        return JSON.parse(str);
+    }
+
+    function writeResults() {
+        Object.keys(results).forEach(function(browser) {
+            var filename = "tests/results/" + browser + ".json";
+            try {
+                var oldResults = JSON.parse(fs.readFileSync(filename));
+                compareResults(oldResults, results[browser], browser);
+            } catch(e) {}
+
+            var date = new Date();
+            var result = JSON.stringify({
+                browser: browser,
+                results: results[browser],
+                timestamp: date.toISOString()
+            });
+
+            if (process.env.MONGOLAB_APIKEY) {
+                var options = {
+                    host: "api.mongolab.com",
+                    port: 443,
+                    path: "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY + '&q={"browser":"' + browser + '"}&fo=true&s={"timestamp":-1}'
+                };
+
+                httpget(options).map(parseJSON).onValue(function(data) {
+                    compareResults(data.results, results[browser], browser);
+
+                    options.method =  'POST';
+                    options.path = "/api/1/databases/html2canvas/collections/webdriver-results?apiKey=" + process.env.MONGOLAB_APIKEY;
+                    options.headers = {
+                        'Content-Type': 'application/json',
+                        'Content-Length': result.length
+                    };
+
+                    console.log("Sending results for", browser);
+                    var request = https.request(options, function(res) {
+                        console.log(colors.green, "Results sent for", browser);
+                    });
+
+                    request.write(result);
+                    request.end();
+                });
+            }
+
+            console.log(colors.violet, "Writing", browser + ".json");
+            fs.writeFile(filename, result);
+        });
+    }
+
+    function webdriverOptions(browserName, version, platform) {
+        var options = {};
+        if (process.env.SAUCE_USERNAME && process.env.SAUCE_ACCESS_KEY) {
+            options = {
+                port: 4445,
+                hostname: "localhost",
+                name: process.env.TRAVIS_JOB_ID || "Manual run",
+                username: process.env.SAUCE_USERNAME,
+                password: process.env.SAUCE_ACCESS_KEY,
+                desiredCapabilities: {
+                    browserName: browserName,
+                    version: version,
+                    platform: platform,
+                    "tunnel-identifier": process.env.TRAVIS_JOB_NUMBER
+                }
+            };
+        }
+        return options;
+    }
+
+    function mapResults(result) {
+        if (!results[result.browser]) {
+            results[result.browser] = [];
         }
 
-        if (fs.statSync(filename).isDirectory()) filename += '/index.html';
-
-        fs.readFile(filename, "binary", function(err, file) {
-          if(err) {
-            response.writeHead(500, {
-              "Content-Type": "text/plain"
-            });
-            response.write(err + "\n");
-            response.end();
-            return;
-          }
-
-          response.writeHead(200);
-          response.write(file, "binary");
-          response.end();
+        results[result.browser].push({
+            test: result.testCase,
+            result: result.accuracy
         });
-      });
+    }
 
-    }).listen(port);
-  }
+    function formatResultName(navigator) {
+        return (navigator.browser + "-" + ((navigator.version) ? navigator.version : "release") + "-" + navigator.platform).replace(/ /g, "").toLowerCase();
+    }
 
-  function walkDir(dir, done) {
-    var results = [];
-    fs.readdir(dir, function(err, list) {
-      if (err) return done(err);
-      var i = 0;
-      (function next() {
-        var file = list[i++];
-        if (!file) return done(null, results);
-        file = dir + '/' + file;
-        fs.stat(file, function(err, stat) {
-          if (stat && stat.isDirectory()) {
-            walkDir(file, function(err, res) {
-              results = results.concat(res);
-              next();
-            });
-          } else {
-            results.push(file);
-            next();
-          }
-        });
-      })();
-    });
-  };
+    function webdriverStream(navigator) {
+        var drive = Bacon.fromCallback(discover, "drive", "v2").toProperty();
+        var auth = Bacon.fromCallback(createToken, "95492219822.apps.googleusercontent.com").toProperty();
 
-  function getPixelArray(base64, func) {
-    var arraybuffer = base64_arraybuffer.decode(base64);
-    (new PNG(arraybuffer)).decode(func);
-  }
+        return Bacon.fromCallback(function(callback) {
+            new WebDriver.Session(webdriverOptions(navigator.browser, navigator.version, navigator.platform), function() {
+                var browser = this;
 
-  function getBaselineFiles() {
-    return fs.readdirSync("tests/results/").filter(function(name) {
-      return /\.baseline$/.test(name);
-    }).map(function(item) {
-      return "tests/results/" + item;
-    });
-  }
+                var resultStream = Bacon.fromArray(tests).flatMap(function(testCase) {
+                    console.log(colors.green, "STARTING",formatResultName(navigator), testCase, colors.clear);
+                    browser.url = "http://localhost:" + port + "/" + testCase + "?selenium";
+                    var canvas = browser.element(".html2canvas", 15000);
+                    var dataUrl = Bacon.constant(browser.execute(canvasToDataUrl, canvas));
+                    var screenshot = Bacon.constant(browser.screenshot());
+                    var result =  dataUrl.flatMap(getPixelArray).combine(screenshot.flatMap(getPixelArray), calculateDifference);
+                    console.log(colors.green, "COMPLETE", formatResultName(navigator), testCase, colors.clear);
+                    return Bacon.combineTemplate({
+                        browser: formatResultName(navigator),
+                        testCase: testCase,
+                        accuracy: result,
+                        dataUrl: dataUrl,
+                        screenshot: screenshot
+                    });
+                });
 
-  function testPage(browser, url, done) {
-    browser.url(url)
-    .$(".html2canvas", 5000, function(){
-      this.execute(function(){
-        var canvas = $('.html2canvas')[0];
-        return canvas.toDataURL("image/png").substring(22);
-      },[], function(dataurl) {
-        getPixelArray(dataurl, function(h2cPixels) {
-          browser.screenshot(function(base64){
-            getPixelArray(base64, function(screenPixels) {
-              var len = h2cPixels.length, index = 0, diff = 0;
-              for (; index < len; index++) {
-                if (screenPixels[index] - h2cPixels[index] !== 0) {
-                  diff++;
+                if (fs.existsSync('tests/certificate.pem')) {
+                    Bacon.combineWith(permissionRequest, drive, auth, Bacon.combineWith(uploadRequest, drive, auth, resultStream.doAction(mapResults).flatMap(createImages)).flatMap(executeRequest)).flatMap(executeRequestOriginal).onValue(uploadImages);
                 }
-              }
-              done(100 - (Math.round((diff/h2cPixels.length) * 10000) / 100));
+
+                resultStream.onEnd(callback);
             });
-          });
         });
-      });
-    });
-  }
+    }
 
-  var writeResultFile = function(filename, json, append) {
-    fs.writeFile(filename + (append || ""), json);
-  };
+    function permissionRequest(client, authClient, images) {
+        var body = {
+            value: 'me',
+            type: 'anyone',
+            role: 'reader'
+        };
 
-  var openResultFile = function(stats, browser) {
-    var tests = stats[browser].tests,
-    filename = "tests/results/" + browser + ".json",
-    write = writeResultFile.bind(null, filename, JSON.stringify(stats[browser]));
+        return images.map(function(data) {
+            var request = client.drive.permissions.insert({fileId: data.id}).withAuthClient(authClient);
+            request.body = body;
+            request.fileData = data;
+            return request;
+        });
+    }
 
-    fs.exists(filename, function(exists) {
-      if(exists) {
-        fs.readFile(filename, "binary", parseResultFile.bind(null, tests, browser, write));
-      } else {
-        write();
-      }
-    });
-  };
+    function executeRequest(requests) {
+        return Bacon.combineAsArray(requests.map(function(request) {
+            return Bacon.fromCallback(function(callback) {
+                request.execute(function(err, result) {
+                    if (!err) {
+                        callback(result);
+                    } else {
+                        console.log("Google drive error", err);
+                    }
+                });
+            });
+        }));
+    }
 
-  var setColor = function(color, text) {
-    return [color, "  * ", ((isNaN(text.amount)) ? "NEW" : text.amount + "%"), " ", text.test].join("");
-  };
+    function executeRequestOriginal(requests) {
+        return Bacon.combineAsArray(requests.map(function(request) {
+            return Bacon.fromCallback(function(callback) {
+                request.execute(function(err, result) {
+                    if (!err) {
+                        callback(request.fileData);
+                    } else {
+                        console.log("Google drive error", err);
+                    }
+                });
+            });
+        }));
+    }
 
-  var parseResultFile = function(tests, browser, createResultFile, err, file) {
-    if (err) throw err;
-    var data = JSON.parse(file),
-    improved = [],
-    regressed = [],
-    newItems = [],
-    colors = {
-      red: "\x1b[1;31m",
-      blue: "\x1b[1;36m",
-      violet: "\x1b[0;35m",
-      green: "\x1b[0;32m"
-    };
-
-    Object.keys(tests).forEach(function(test){
-      var testResult = tests[test],
-      dataResult = data.tests[test],
-      dataObject = {
-        amount: (Math.abs(testResult - dataResult) < 0.02) ? 0 : testResult - dataResult,
-        test: test
-      };
-
-      if (dataObject.amount > 0) {
-        improved.push(dataObject);
-      } else if (dataObject.amount < 0) {
-        regressed.push(dataObject);
-      } else if (dataResult === undefined) {
-        newItems.push(dataObject);
-      }
-
-    });
-
-    if (newItems.length > 0 || improved.length > 0 || regressed.length > 0) {
-      if (regressed.length === 0) {
-        createResultFile(".baseline");
-      }
-
-      console.log(colors.violet, "********************");
-      console.log((regressed.length > 0) ? colors.red : colors.green, browser);
-
-      improved.map(setColor.bind(null, colors.green))
-      .concat(regressed.map(setColor.bind(null, colors.red)))
-      .concat(newItems.map(setColor.bind(null, colors.blue)))
-      .forEach(function(item) {
-        console.log(item);
+    function createImages(data) {
+      var dataurlFileName = "tests/results/" + data.browser + "-" +  data.testCase.replace(/\//g, "-") + "-html2canvas.png";
+      var screenshotFileName = "tests/results/" + data.browser + "-" + data.testCase.replace(/\//g, "-") + "-screencapture.png";
+      return Bacon.combineTemplate({
+        name: data.testCase,
+        dataurl: Bacon.fromNodeCallback(fs.writeFile, dataurlFileName, data.dataUrl, "base64").map(function() {
+          return dataurlFileName;
+        }),
+        screenshot: Bacon.fromNodeCallback(fs.writeFile, screenshotFileName, data.screenshot, "base64").map(function() {
+          return screenshotFileName;
+        })
       });
     }
 
-  };
-
-  function handleResults(stats) {
-    Object.keys(stats).forEach(openResultFile.bind(null, stats));
-  }
-
-  function runBrowsers(pages){
-
-    var port = 5555,
-    stats = {},
-    browsers = ["chrome", "firefox", "internet explorer"],
-    browsersDone = 0,
-    server = createServer(port),
-    numPages = pages.length;
-
-    var browserDone = function() {
-      if (++browsersDone >= browsers.length) {
-        server.close();
-        handleResults(stats);
-      }
-    };
-
-    browsers.forEach(function(browserName){
-      var browser = new webdriver({
-        browser: browserName
-      }),
-      browserType;
-      browserName = browserName.replace("internet explorer", "iexplorer");
-      browser.status(function(browserInfo){
-        browserType = [browserName, browser.version, browserInfo.os.name.replace(/\s+/g, "-").toLowerCase()].join("-");
-        var date = new Date(),
-        obj = {
-          tests: {},
-          date: date.toISOString(),
-          version: browser.version
-        };
-        stats[browserType] = obj;
-        stats[browserName] = obj;
-        processPage(0);
-      });
-
-      function processPage(index) {
-        var page = pages[index++];
-        testPage(browser, "http://localhost:" + port + "/" + page + "?selenium", function(result) {
-          if (numPages > index) {
-            processPage(index);
-          } else {
-            browser.close(browserDone);
-          }
-          stats[browserType].tests[page] = result;
+    function uploadImages(results) {
+        results.forEach(function(result) {
+            console.log(result.webContentLink);
         });
-      }
+    }
 
-    });
-  }
+    function discover(api, version, callback) {
+        googleapis.discover(api, version).execute(function(err, client) {
+            if (!err) {
+                callback(client);
+            }
+        });
+    }
+
+    function createToken(account, callback) {
+        var payload = {
+                "iss": '95492219822@developer.gserviceaccount.com',
+                "scope": 'https://www.googleapis.com/auth/drive',
+                "aud":"https://accounts.google.com/o/oauth2/token",
+                "exp": ~~(new Date().getTime() / 1000) + (30 * 60),
+                "iat": ~~(new Date().getTime() / 1000 - 60)
+            },
+            key = fs.readFileSync('tests/certificate.pem', 'utf8'),
+            transporterTokenRequest = {
+                method: 'POST',
+                uri: 'https://accounts.google.com/o/oauth2/token',
+                form: {
+                    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    assertion: jwt.sign(payload, key)
+                },
+                json: true
+            },
+            oauth2Client = new googleapis.OAuth2Client(account, "", "");
+
+        oauth2Client.transporter.request(transporterTokenRequest, function(err, result) {
+            if (!err) {
+                oauth2Client.credentials = result;
+                callback(oauth2Client);
+            }
+        });
+    }
+
+    function uploadRequest(client, authClient, data) {
+        return [
+            client.drive.files.insert({title: data.dataurl, mimeType: 'image/png', description: process.env.TRAVIS_JOB_ID}).withMedia('image/png', fs.readFileSync(data.dataurl)).withAuthClient(authClient),
+            client.drive.files.insert({title: data.screenshot, mimeType: 'image/png', description: process.env.TRAVIS_JOB_ID}).withMedia('image/png', fs.readFileSync(data.screenshot)).withAuthClient(authClient)
+        ];
+    }
+
+    function runWebDriver() {
+        var browsers = [
+            {
+                browser: "chrome",
+                platform: "Windows 7"
+            },{
+                browser: "firefox",
+                version: "15",
+                platform: "Windows 7"
+            },{
+                browser: "internet explorer",
+                version: "9",
+                platform: "Windows 7"
+            },{
+                browser: "internet explorer",
+                version: "10",
+                platform: "Windows 8"
+            },{
+                browser: "safari",
+                version: "6",
+                platform: "OS X 10.8"
+            },{
+                browser: "chrome",
+                platform: "OS X 10.8"
+            }
+        ];
+        var testRunnerStream = Bacon.sequentially(1000, browsers).flatMap(webdriverStream);
+        testRunnerStream.onEnd(writeResults);
+        testRunnerStream.onEnd(closeServer);
+    }
+
+    var tests = [],
+        results = {},
+        testStream = getTests("tests/cases");
+
+  testStream.onValue(function(test) {
+    tests.push(test);
+  });
 
   exports.tests = function() {
-    getBaselineFiles().forEach(fs.unlinkSync.bind(fs));
-    walkDir("tests/cases", function(err, results) {
-      if (err) throw err;
-      runBrowsers(results);
-    });
+    testStream.onEnd(runWebDriver);
   };
-
-  exports.baseline = function() {
-    getBaselineFiles().forEach(function(file) {
-      var newName = file.substring(0, file.length - 9);
-      fs.renameSync(file, newName);
-      console.log(newName, "created");
-    });
-  };
-
-  exports.markdown = function() {
-    var data = {},
-        html = "<table><thead><tr><td></td>",
-        md = " | ",
-        browsers = ["chrome", "firefox", "iexplorer", "safari"],
-        activeBrowsers = [];
-
-    // Create row for browsers
-    browsers.forEach(function(browser) {
-
-       if (fs.existsSync("tests/results/" + browser + ".json")) {
-
-        var fileContents = fs.readFileSync("tests/results/" + browser + ".json");
-        data[browser] = JSON.parse(fileContents);
-
-        activeBrowsers.push(browser);
-            
-        html += "<th>" + browser + "<br />" + data[browser].version + "</th>";
-        md += browser + data[browser].version + " | ";
-      } else {
-        console.log("Browser report not found. ", browser + ".json");
-      }
-
-    });
-
-    html += "</tr></thead><tbody>\n";
-    md += "\n ----";
-    for (var i = activeBrowsers.length - 1; i >= 0; i--) {
-      md += "|---- ";
-    }
-    md += "\n";
-
-    Object.keys(data[activeBrowsers[0]].tests).forEach(function(testFile) {
-
-      html += "<tr><td>" + testFile.substring(12) + "</td>";
-      md += testFile.substring(12);
-      activeBrowsers.forEach(function(activeBrowsers) {
-        html += "<td>" + Math.round(data[activeBrowsers].tests[testFile] * 100) / 100 + "%</td>";
-        md += " | " + Math.round(data[activeBrowsers].tests[testFile] * 100) / 100 + "%";
-      });
-      html += "</tr>\n";
-      md += "\n";
-    });
-
-    html += "</tbody></table>";
-
-    // if (isMarkdown){
-    //   fs.writeFileSync("tests/readme.md", md);
-    // } else {
-      fs.writeFileSync("tests/readme.md", html);
-    // }
-    
-  };
-
 })();
