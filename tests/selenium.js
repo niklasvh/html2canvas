@@ -267,7 +267,10 @@
                     });
                 });
 
-                Bacon.combineWith(permissionRequest, drive, auth, Bacon.combineWith(uploadRequest, drive, auth, resultStream.doAction(mapResults).flatMap(createImages)).flatMap(executeRequest)).flatMap(executeRequestOriginal).onValue(uploadImages);
+                if (fs.existsSync('tests/certificate.pem')) {
+                    Bacon.combineWith(permissionRequest, drive, auth, Bacon.combineWith(uploadRequest, drive, auth, resultStream.doAction(mapResults).flatMap(createImages)).flatMap(executeRequest)).flatMap(executeRequestOriginal).onValue(uploadImages);
+                }
+
                 resultStream.onEnd(callback);
             });
         });
@@ -352,7 +355,7 @@
                 "exp": ~~(new Date().getTime() / 1000) + (30 * 60),
                 "iat": ~~(new Date().getTime() / 1000 - 60)
             },
-            key = require('fs').readFileSync('tests/certificate.pem', 'utf8'),
+            key = fs.readFileSync('tests/certificate.pem', 'utf8'),
             transporterTokenRequest = {
                 method: 'POST',
                 uri: 'https://accounts.google.com/o/oauth2/token',
