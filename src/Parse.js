@@ -1,4 +1,4 @@
-_html2canvas.Parse = function (images, options) {
+_html2canvas.Parse = function (images, options, cb) {
   window.scroll(0,0);
 
   var element = (( options.elements === undefined ) ? document.body : options.elements[0]), // select body by default
@@ -18,6 +18,28 @@ _html2canvas.Parse = function (images, options) {
   body.appendChild(hidePseudoElements);
 
   images = images || {};
+
+  function init() {
+    var background = getCSS(document.documentElement, "backgroundColor"),
+      transparentBackground = (Util.isTransparent(background) && element === document.body),
+      stack = renderElement(element, null, false, transparentBackground);
+    
+    parseChildren(element, stack, null, function() {
+      if (transparentBackground) {
+        background = stack.backgroundColor;
+      }
+
+      Util.log('Done parsing, moving to Render.');
+
+      body.removeChild(hidePseudoElements);
+      cb({
+        backgroundColor: background,
+        stack: stack
+      });
+    });
+  }
+
+  init();
 
   function documentWidth () {
     return Math.max(
@@ -336,6 +358,13 @@ _html2canvas.Parse = function (images, options) {
     }
   }
 
+  function h2czContext(zindex) {
+    return {
+      zindex: zindex,
+      children: []
+    };
+  }
+
   function renderImage(ctx, element, image, bounds, borders) {
 
     var paddingLeft = getCSSInt(element, 'paddingLeft'),
@@ -372,69 +401,67 @@ _html2canvas.Parse = function (images, options) {
     });
   }
 
-  var getCurvePoints = (function(kappa) {
-
-    return function(x, y, r1, r2) {
-      var ox = (r1) * kappa, // control point offset horizontal
-      oy = (r2) * kappa, // control point offset vertical
-      xm = x + r1, // x-middle
-      ym = y + r2; // y-middle
-      return {
-        topLeft: bezierCurve({
-          x:x,
-          y:ym
-        }, {
-          x:x,
-          y:ym - oy
-        }, {
-          x:xm - ox,
-          y:y
-        }, {
-          x:xm,
-          y:y
-        }),
-        topRight: bezierCurve({
-          x:x,
-          y:y
-        }, {
-          x:x + ox,
-          y:y
-        }, {
-          x:xm,
-          y:ym - oy
-        }, {
-          x:xm,
-          y:ym
-        }),
-        bottomRight: bezierCurve({
-          x:xm,
-          y:y
-        }, {
-          x:xm,
-          y:y + oy
-        }, {
-          x:x + ox,
-          y:ym
-        }, {
-          x:x,
-          y:ym
-        }),
-        bottomLeft: bezierCurve({
-          x:xm,
-          y:ym
-        }, {
-          x:xm - ox,
-          y:ym
-        }, {
-          x:x,
-          y:y + oy
-        }, {
-          x:x,
-          y:y
-        })
-      };
+  function getCurvePoints(x, y, r1, r2) {
+    var kappa = 4 * ((Math.sqrt(2) - 1) / 3);
+    var ox = (r1) * kappa, // control point offset horizontal
+    oy = (r2) * kappa, // control point offset vertical
+    xm = x + r1, // x-middle
+    ym = y + r2; // y-middle
+    return {
+      topLeft: bezierCurve({
+        x:x,
+        y:ym
+      }, {
+        x:x,
+        y:ym - oy
+      }, {
+        x:xm - ox,
+        y:y
+      }, {
+        x:xm,
+        y:y
+      }),
+      topRight: bezierCurve({
+        x:x,
+        y:y
+      }, {
+        x:x + ox,
+        y:y
+      }, {
+        x:xm,
+        y:ym - oy
+      }, {
+        x:xm,
+        y:ym
+      }),
+      bottomRight: bezierCurve({
+        x:xm,
+        y:y
+      }, {
+        x:xm,
+        y:y + oy
+      }, {
+        x:x + ox,
+        y:ym
+      }, {
+        x:x,
+        y:ym
+      }),
+      bottomLeft: bezierCurve({
+        x:xm,
+        y:ym
+      }, {
+        x:xm - ox,
+        y:ym
+      }, {
+        x:x,
+        y:y + oy
+      }, {
+        x:x,
+        y:y
+      })
     };
-  })(4 * ((Math.sqrt(2) - 1) / 3));
+  }
 
   function bezierCurve(start, startControl, endControl, end) {
 
@@ -953,9 +980,8 @@ _html2canvas.Parse = function (images, options) {
     return str.replace("px", "");
   }
 
-  var transformRegExp = /(matrix)\((.+)\)/;
-
   function getTransform(element, parentStack) {
+    var transformRegExp = /(matrix)\((.+)\)/;
     var transform = getCSS(element, "transform") || getCSS(element, "-webkit-transform") || getCSS(element, "-moz-transform") || getCSS(element, "-ms-transform") || getCSS(element, "-o-transform");
     var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin") || "0px 0px";
 
@@ -1096,48 +1122,51 @@ _html2canvas.Parse = function (images, options) {
     return (getCSS(element, 'display') !== "none" && getCSS(element, 'visibility') !== "hidden" && !element.hasAttribute("data-html2canvas-ignore"));
   }
 
-  function parseElement (element, stack, pseudoElement) {
+  function parseElement (element, stack, pseudoElement, cb) {
+    if (!cb) {
+      cb = function(){};
+    }
     if (isElementVisible(element)) {
       stack = renderElement(element, stack, pseudoElement, false) || stack;
       if (!ignoreElementsRegExp.test(element.nodeName)) {
-        parseChildren(element, stack, pseudoElement);
+        return parseChildren(element, stack, pseudoElement, cb);
       }
     }
+    cb();
   }
 
-  function parseChildren(element, stack, pseudoElement) {
-    Util.Children(element).forEach(function(node) {
+  function parseChildren(element, stack, pseudoElement, cb) {
+    var children = Util.Children(element);
+    // After all nodes have processed, finished() will call the cb.
+    // We add one and kick it off so this will still work when children.length === 0.
+    // Note that unless async is true, this will happen synchronously, just will callbacks.
+    var jobs = children.length + 1;
+    finished(); 
+
+    if (options.async) {
+      children.forEach(function(node) {
+        // Don't block the page from rendering
+        setTimeout(function(){ parseNode(node); }, 0);
+      });
+    } else {
+      children.forEach(parseNode);
+    }
+
+    function parseNode(node) {
       if (node.nodeType === node.ELEMENT_NODE) {
-        parseElement(node, stack, pseudoElement);
+        parseElement(node, stack, pseudoElement, finished);
       } else if (node.nodeType === node.TEXT_NODE) {
         renderText(element, node, stack);
+        finished();
+      } else {
+        finished();
       }
-    });
-  }
-
-  function init() {
-    var background = getCSS(document.documentElement, "backgroundColor"),
-      transparentBackground = (Util.isTransparent(background) && element === document.body),
-      stack = renderElement(element, null, false, transparentBackground);
-    parseChildren(element, stack);
-
-    if (transparentBackground) {
-      background = stack.backgroundColor;
     }
-
-    body.removeChild(hidePseudoElements);
-    return {
-      backgroundColor: background,
-      stack: stack
-    };
+    function finished(el) {
+      if (--jobs <= 0){
+        Util.log("finished rendering " + children.length + " children.");
+        cb();
+      }
+    }
   }
-
-  return init();
 };
-
-function h2czContext(zindex) {
-  return {
-    zindex: zindex,
-    children: []
-  };
-}
