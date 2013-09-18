@@ -20,9 +20,9 @@ window.html2canvas = function(elements, opts) {
     useOverflow: true,
     letterRendering: false,
     chinese: false,
+    async: false, // If true, parsing will not block, but if the user scrolls during parse the image can get weird
 
     // render options
-
     width: null,
     height: null,
     taintTest: true, // do a taint test with all images before applying to canvas
@@ -39,21 +39,19 @@ window.html2canvas = function(elements, opts) {
         return;
       }
     }
-    queue = _html2canvas.Parse( images, options );
-
-    if (typeof options.onparsed === "function") {
-      if ( options.onparsed( queue ) === false ) {
-        return;
+    _html2canvas.Parse( images, options, function(queue) {
+      if (typeof options.onparsed === "function") {
+        if ( options.onparsed( queue ) === false ) {
+          return;
+        }
       }
-    }
 
-    canvas = _html2canvas.Renderer( queue, options );
+      canvas = _html2canvas.Renderer( queue, options );
 
-    if (typeof options.onrendered === "function") {
-      options.onrendered( canvas );
-    }
-
-
+      if (typeof options.onrendered === "function") {
+        options.onrendered( canvas );
+      }
+    });
   };
 
   // for pages without images, we still want this to be async, i.e. return methods before executing
