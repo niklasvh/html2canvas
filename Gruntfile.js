@@ -54,22 +54,7 @@ module.exports = function(grunt) {
     },
     jshint: {
       all: ['<%= concat.dist.dest %>'],
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true
-        }
-      }
+      options: grunt.file.readJSON('./.jshintrc')
     }
   });
 
