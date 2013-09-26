@@ -343,6 +343,20 @@ _html2canvas.Parse = function (images, options, cb) {
           }
         });
       }
+      
+      // For Thai language
+      textList.forEach(function(word, index) {
+        if (/.*[\u0E30-\u0E3A\u0E47-\u0E4E].*$/.test(word)) {
+          if(textList[index-1] != ''){
+              //for vowel only 
+              textList[index-1] += word;
+          }else{
+              //for vowel and tone marks
+              textList[index-2] += word;
+          }
+          textList[index] = '';
+        }
+      });
 
       textList.forEach(function(text, index) {
         var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1), stack.transform.matrix);
