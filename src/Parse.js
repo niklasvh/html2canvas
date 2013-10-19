@@ -740,16 +740,16 @@ _html2canvas.Parse = function (images, options) {
     
     textValue = (el.nodeName === "SELECT") ? (el.options[el.selectedIndex] || 0).text : el.value;
     
-    if (el.type == 'checkbox' || el.type == 'radio'){
+    if (el.type === "checkbox" || el.type === "radio"){
       valueWrap.style.fontSize = '10px';
       valueWrap.style.lineHeight = '10px';
       renderRect(stack.ctx, bounds.left-2, bounds.top-1, 13, 13, "#888888");
       renderRect(stack.ctx, bounds.left-1, bounds.top, 11, 11, "#dddddd");
-      if(el.type == 'checkbox'){
-        textValue = (el.checked) ? "✔" : "";
+      if(el.type === "checkbox"){
+        textValue = el.checked ? "\u2714" : "";
       }
-      else if (el.type == 'radio'){
-        textValue = (el.checked) ? "●" : "";
+      else if (el.type === "radio"){
+        textValue = el.checked ? "\u25cf" : "";
       }
     }
     

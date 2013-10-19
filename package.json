@@ -6,10 +6,20 @@
   "author": {
     "name":"Niklas von Hertzen (@niklasvh)"
   },
+  "engines": {
+    "node": ">=0.8.0"
+  },
   "dependencies": {
     "base64-arraybuffer": ">= 0.1.0",
     "png-js": ">= 0.1.1",
     "webdriver.js": ">= 0.1.0"
+  },
+  "devDependencies":{
+    "grunt": ">=0.4.0",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-qunit": "*"
   },
   "homepage": "http://html2canvas.hertzen.com",
   "licenses": [{
