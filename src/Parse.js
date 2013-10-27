@@ -478,6 +478,7 @@ _html2canvas.Parse = function (images, options, cb) {
     newContext.isFloated = isFloated;
     newContext.opacity = opacity;
     newContext.ownStacking = (zIndex !== 'auto' || opacity < 1);
+    newContext.depth = parentStack ? (parentStack.zIndex.depth + 1) : 0;
 
     if (parentStack) {
       parentStack.zIndex.children.push(stack);
@@ -486,6 +487,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
   function h2czContext(zindex) {
     return {
+      depth: 0,
       zindex: zindex,
       children: []
     };
