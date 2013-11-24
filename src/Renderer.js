@@ -39,7 +39,7 @@ _html2canvas.Renderer = function(parseQueue, options){
     })(parseQueue);
 
     function sortZ(context) {
-      Object.keys(context).sort().forEach(function(zi) {
+      Object.keys(context).sort(function(a, b) { return a - b; }).forEach(function(zi) {
         var nonPositioned = [],
         floated = [],
         positioned = [],
