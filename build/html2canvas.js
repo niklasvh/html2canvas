@@ -256,9 +256,10 @@ function parseBackgroundSizePosition(value, element, attribute, index) {
 _html2canvas.Util.getCSS = function (element, attribute, index) {
     if (previousElement !== element) {
       computedCSS = document.defaultView.getComputedStyle(element, null);
+	  previousElement = element;
     }
 
-    var value = computedCSS[attribute];
+    var value = computedCSS[attribute] || computedCSS.getPropertyValue(attribute);
 
     if (/^background(Size|Position)$/.test(attribute)) {
         return parseBackgroundSizePosition(value, element, attribute, index);
