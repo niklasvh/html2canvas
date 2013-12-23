@@ -57,7 +57,6 @@ _html2canvas.Util.asFloat = function(v) {
   };
 })();
 
-
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [],
@@ -231,6 +230,10 @@ function asInt(val) {
     return parseInt(val, 10);
 }
 
+function isPercentage(value) {
+  return value.toString().indexOf("%") !== -1;
+}
+
 function parseBackgroundSizePosition(value, element, attribute, index) {
     value = (value || '').split(',');
     value = value[index || 0] || value[0] || 'auto';
@@ -303,7 +306,7 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
         backgroundPosition = [backgroundPosition[0], backgroundPosition[0]];
     }
 
-    if (backgroundPosition[0].toString().indexOf("%") !== -1){
+    if (isPercentage(backgroundPosition[0])){
         leftPosition = (bounds.width - (backgroundSize || image).width) * (parseFloat(backgroundPosition[0]) / 100);
     } else {
         leftPosition = parseInt(backgroundPosition[0], 10);
@@ -311,7 +314,7 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
 
     if (backgroundPosition[1] === 'auto') {
         topPosition = leftPosition / image.width * image.height;
-    } else if (backgroundPosition[1].toString().indexOf("%") !== -1){
+    } else if (isPercentage(backgroundPosition[1])){
         topPosition =  (bounds.height - (backgroundSize || image).height) * parseFloat(backgroundPosition[1]) / 100;
     } else {
         topPosition = parseInt(backgroundPosition[1], 10);
@@ -325,41 +328,40 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
 };
 
 _html2canvas.Util.BackgroundSize = function(element, bounds, image, imageIndex) {
-    var backgroundSize =  _html2canvas.Util.getCSS(element, 'backgroundSize', imageIndex),
-        width,
-        height;
+  var backgroundSize =  _html2canvas.Util.getCSS(element, 'backgroundSize', imageIndex), width, height;
 
-    if (backgroundSize.length === 1){
-        backgroundSize = [backgroundSize[0], backgroundSize[0]];
-    }
+  if (backgroundSize.length === 1) {
+    backgroundSize = [backgroundSize[0], backgroundSize[0]];
+  }
 
-    if (backgroundSize[0].toString().indexOf("%") !== -1){
-        width = bounds.width * parseFloat(backgroundSize[0]) / 100;
-    } else if(backgroundSize[0] === 'auto') {
-        width = image.width;
-    } else {
-        if (/contain|cover/.test(backgroundSize[0])) {
-            var resized = _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, backgroundSize[0]);
-            return {width: resized.width, height: resized.height};
-        } else {
-            width = parseInt(backgroundSize[0], 10);
-        }
-    }
+  if (isPercentage(backgroundSize[0])) {
+    width = bounds.width * parseFloat(backgroundSize[0]) / 100;
+  } else if (/contain|cover/.test(backgroundSize[0])) {
+    return _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, backgroundSize[0]);
+  } else {
+    width = parseInt(backgroundSize[0], 10);
+  }
 
-    if(backgroundSize[1] === 'auto') {
-        height = width / image.width * image.height;
-    } else if (backgroundSize[1].toString().indexOf("%") !== -1){
-        height =  bounds.height * parseFloat(backgroundSize[1]) / 100;
-    } else {
-        height = parseInt(backgroundSize[1],10);
-    }
+  if (backgroundSize[0] === 'auto' && backgroundSize[1] === 'auto') {
+    height = image.height;
+  } else if (backgroundSize[1] === 'auto') {
+    height = width / image.width * image.height;
+  } else if (isPercentage(backgroundSize[1])) {
+    height =  bounds.height * parseFloat(backgroundSize[1]) / 100;
+  } else {
+    height = parseInt(backgroundSize[1], 10);
+  }
 
+  if (backgroundSize[0] === 'auto') {
+    width = height / image.height * image.width;
+  }
 
-    if (backgroundSize[0] === 'auto') {
-        width = height / image.height * image.width;
-    }
+  return {width: width, height: height};
+};
 
-    return {width: width, height: height};
+_html2canvas.Util.BackgroundRepeat = function(element, imageIndex) {
+  var backgroundRepeat = _html2canvas.Util.getCSS(element, "backgroundRepeat").split(",").map(_html2canvas.Util.trimText);
+  return backgroundRepeat[imageIndex] || backgroundRepeat[0];
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {
@@ -416,6 +418,7 @@ _html2canvas.Util.Children = function( elem ) {
 _html2canvas.Util.isTransparent = function(backgroundColor) {
   return (!backgroundColor || backgroundColor === "transparent" || backgroundColor === "rgba(0, 0, 0, 0)");
 };
+
 _html2canvas.Util.Font = (function () {
 
   var fontData = {};
@@ -1042,7 +1045,7 @@ _html2canvas.Parse = function (images, options, cb) {
   pseudoHide = "___html2canvas___pseudoelement",
   hidePseudoElementsStyles = doc.createElement('style');
 
-  hidePseudoElementsStyles.innerHTML = '.' + pseudoHide + 
+  hidePseudoElementsStyles.innerHTML = '.' + pseudoHide +
   '-parent:before { content: "" !important; display: none !important; }' +
   '.' + pseudoHide + '-parent:after { content: "" !important; display: none !important; }';
 
@@ -1059,7 +1062,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
     // create pseudo elements in a single pass to prevent synchronous layouts
     addPseudoElements(element);
-    
+
     parseChildren(element, stack, function() {
       if (transparentBackground) {
         background = stack.backgroundColor;
@@ -1076,8 +1079,8 @@ _html2canvas.Parse = function (images, options, cb) {
     });
   }
 
-  // Given a root element, find all pseudo elements below, create elements mocking pseudo element styles 
-  // so we can process them as normal elements, and hide the original pseudo elements so they don't interfere 
+  // Given a root element, find all pseudo elements below, create elements mocking pseudo element styles
+  // so we can process them as normal elements, and hide the original pseudo elements so they don't interfere
   // with layout.
   function addPseudoElements(el) {
     // These are done in discrete steps to prevent a relayout loop caused by addClass() invalidating
@@ -1194,7 +1197,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
   // Note that this doesn't work in < IE8, but we don't support that anyhow
   function nodeListToArray (nodeList) {
-    return Array.prototype.slice.call(nodeList);  
+    return Array.prototype.slice.call(nodeList);
   }
 
   function documentWidth () {
@@ -1961,8 +1964,8 @@ _html2canvas.Parse = function (images, options, cb) {
     var parentStyle = window.getComputedStyle(el);
     // If no content attribute is present, the pseudo element is hidden,
     // or the parent has a content property equal to the content on the pseudo element,
-    // move along. 
-    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content" || 
+    // move along.
+    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content" ||
        elStyle.display === "none" || parentStyle.content === elStyle.content) {
       return;
     }
@@ -2036,28 +2039,25 @@ _html2canvas.Parse = function (images, options, cb) {
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
     var backgroundSize = Util.BackgroundSize(el, bounds, image, imageIndex),
     backgroundPosition = Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(Util.trimText);
+    backgroundRepeat = Util.BackgroundRepeat(el, imageIndex);
 
     image = resizeImage(image, backgroundSize);
 
-    backgroundRepeat = backgroundRepeat[imageIndex] || backgroundRepeat[0];
-
     switch (backgroundRepeat) {
       case "repeat-x":
+      case "repeat no-repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left, bounds.top + backgroundPosition.top, 99999, image.height);
         break;
-
       case "repeat-y":
+      case "no-repeat repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left + backgroundPosition.left, bounds.top, image.width, 99999);
         break;
-
       case "no-repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, image.width, image.height);
         break;
-
       default:
         renderBackgroundRepeat(ctx, image, backgroundPosition, {
           top: bounds.top,
@@ -2275,7 +2275,7 @@ _html2canvas.Parse = function (images, options, cb) {
     // We add one and kick it off so this will still work when children.length === 0.
     // Note that unless async is true, this will happen synchronously, just will callbacks.
     var jobs = children.length + 1;
-    finished(); 
+    finished();
 
     if (options.async) {
       children.forEach(function(node) {
@@ -2623,6 +2623,15 @@ _html2canvas.Preload = function( options ) {
 };
 
 _html2canvas.Renderer = function(parseQueue, options){
+  function sortZindex(a, b) {
+    if (a === 'children') {
+      return -1;
+    } else if (b === 'children') {
+      return 1;
+    } else {
+      return a - b;
+    }
+  }
 
   // http://www.w3.org/TR/CSS21/zindex.html
   function createRenderQueue(parseQueue) {
@@ -2640,8 +2649,9 @@ _html2canvas.Renderer = function(parseQueue, options){
         childrenDest = specialParent; // where children without z-index should be pushed into
 
         if (node.zIndex.ownStacking) {
-          // '!' comes before numbers in sorted array
-          contextForChildren = stub.context = { '!': [{node:node, children: []}]};
+          contextForChildren = stub.context = {
+              children: [{node:node, children: []}]
+          };
           childrenDest = undefined;
         } else if (isPositioned || isFloated) {
           childrenDest = stub.children = [];
@@ -2663,7 +2673,7 @@ _html2canvas.Renderer = function(parseQueue, options){
     })(parseQueue);
 
     function sortZ(context) {
-      Object.keys(context).sort().forEach(function(zi) {
+      Object.keys(context).sort(sortZindex).forEach(function(zi) {
         var nonPositioned = [],
         floated = [],
         positioned = [],
@@ -2885,7 +2895,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   }
 
   function safeImage(item) {
-    if (safeImages.indexOf(item['arguments'][0].src ) === -1) {
+    if (safeImages.indexOf(item['arguments'][0].src) === -1) {
       testctx.drawImage(item['arguments'][0], 0, 0);
       try {
         testctx.getImageData(0, 0, 1, 1);
@@ -2910,8 +2920,7 @@ _html2canvas.Renderer.Canvas = function(options) {
             if (item['arguments'][0].width > 0 && item['arguments'][0].height > 0) {
               try {
                 ctx.fillStyle = ctx.createPattern(item['arguments'][0], "repeat");
-              }
-              catch(e) {
+              } catch(e) {
                 Util.log("html2canvas: Renderer: Error creating pattern", e.message);
               }
             }
@@ -2947,7 +2956,6 @@ _html2canvas.Renderer.Canvas = function(options) {
     ctx.fillStyle = (Util.isTransparent(parsedData.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
-
     queue.forEach(function(storageContext) {
       // set common settings for canvas
       ctx.textBaseline = "bottom";

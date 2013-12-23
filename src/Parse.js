@@ -12,7 +12,7 @@ _html2canvas.Parse = function (images, options, cb) {
   pseudoHide = "___html2canvas___pseudoelement",
   hidePseudoElementsStyles = doc.createElement('style');
 
-  hidePseudoElementsStyles.innerHTML = '.' + pseudoHide + 
+  hidePseudoElementsStyles.innerHTML = '.' + pseudoHide +
   '-parent:before { content: "" !important; display: none !important; }' +
   '.' + pseudoHide + '-parent:after { content: "" !important; display: none !important; }';
 
@@ -29,7 +29,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
     // create pseudo elements in a single pass to prevent synchronous layouts
     addPseudoElements(element);
-    
+
     parseChildren(element, stack, function() {
       if (transparentBackground) {
         background = stack.backgroundColor;
@@ -46,8 +46,8 @@ _html2canvas.Parse = function (images, options, cb) {
     });
   }
 
-  // Given a root element, find all pseudo elements below, create elements mocking pseudo element styles 
-  // so we can process them as normal elements, and hide the original pseudo elements so they don't interfere 
+  // Given a root element, find all pseudo elements below, create elements mocking pseudo element styles
+  // so we can process them as normal elements, and hide the original pseudo elements so they don't interfere
   // with layout.
   function addPseudoElements(el) {
     // These are done in discrete steps to prevent a relayout loop caused by addClass() invalidating
@@ -164,7 +164,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
   // Note that this doesn't work in < IE8, but we don't support that anyhow
   function nodeListToArray (nodeList) {
-    return Array.prototype.slice.call(nodeList);  
+    return Array.prototype.slice.call(nodeList);
   }
 
   function documentWidth () {
@@ -931,8 +931,8 @@ _html2canvas.Parse = function (images, options, cb) {
     var parentStyle = window.getComputedStyle(el);
     // If no content attribute is present, the pseudo element is hidden,
     // or the parent has a content property equal to the content on the pseudo element,
-    // move along. 
-    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content" || 
+    // move along.
+    if(!elStyle || !elStyle.content || elStyle.content === "none" || elStyle.content === "-moz-alt-content" ||
        elStyle.display === "none" || parentStyle.content === elStyle.content) {
       return;
     }
@@ -1006,28 +1006,25 @@ _html2canvas.Parse = function (images, options, cb) {
   function renderBackgroundRepeating(el, bounds, ctx, image, imageIndex) {
     var backgroundSize = Util.BackgroundSize(el, bounds, image, imageIndex),
     backgroundPosition = Util.BackgroundPosition(el, bounds, image, imageIndex, backgroundSize),
-    backgroundRepeat = getCSS(el, "backgroundRepeat").split(",").map(Util.trimText);
+    backgroundRepeat = Util.BackgroundRepeat(el, imageIndex);
 
     image = resizeImage(image, backgroundSize);
 
-    backgroundRepeat = backgroundRepeat[imageIndex] || backgroundRepeat[0];
-
     switch (backgroundRepeat) {
       case "repeat-x":
+      case "repeat no-repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left, bounds.top + backgroundPosition.top, 99999, image.height);
         break;
-
       case "repeat-y":
+      case "no-repeat repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left + backgroundPosition.left, bounds.top, image.width, 99999);
         break;
-
       case "no-repeat":
         backgroundRepeatShape(ctx, image, backgroundPosition, bounds,
           bounds.left + backgroundPosition.left, bounds.top + backgroundPosition.top, image.width, image.height);
         break;
-
       default:
         renderBackgroundRepeat(ctx, image, backgroundPosition, {
           top: bounds.top,
@@ -1245,7 +1242,7 @@ _html2canvas.Parse = function (images, options, cb) {
     // We add one and kick it off so this will still work when children.length === 0.
     // Note that unless async is true, this will happen synchronously, just will callbacks.
     var jobs = children.length + 1;
-    finished(); 
+    finished();
 
     if (options.async) {
       children.forEach(function(node) {
