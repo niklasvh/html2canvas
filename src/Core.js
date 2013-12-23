@@ -48,7 +48,6 @@ _html2canvas.Util.asFloat = function(v) {
   };
 })();
 
-
 _html2canvas.Util.parseBackgroundImage = function (value) {
     var whitespace = ' \r\n\t',
         method, definition, prefix, prefix_i, block, results = [],
@@ -222,6 +221,10 @@ function asInt(val) {
     return parseInt(val, 10);
 }
 
+function isPercentage(value) {
+  return value.toString().indexOf("%") !== -1;
+}
+
 function parseBackgroundSizePosition(value, element, attribute, index) {
     value = (value || '').split(',');
     value = value[index || 0] || value[0] || 'auto';
@@ -250,13 +253,6 @@ _html2canvas.Util.getCSS = function (element, attribute, index) {
     }
 
     var value = computedCSS[attribute];
-    if(attribute==="backgroundRepeat" && value.indexOf(" ")!==-1){
-        value = (
-            "no-repeat repeat"===value ? "repeat-y" : (
-                "repeat no-repeat"===value ? "repeat-x" : value
-            )
-        );
-    }
 
     if (/^background(Size|Position)$/.test(attribute)) {
         return parseBackgroundSizePosition(value, element, attribute, index);
@@ -301,7 +297,7 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
         backgroundPosition = [backgroundPosition[0], backgroundPosition[0]];
     }
 
-    if (backgroundPosition[0].toString().indexOf("%") !== -1){
+    if (isPercentage(backgroundPosition[0])){
         leftPosition = (bounds.width - (backgroundSize || image).width) * (parseFloat(backgroundPosition[0]) / 100);
     } else {
         leftPosition = parseInt(backgroundPosition[0], 10);
@@ -309,7 +305,7 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
 
     if (backgroundPosition[1] === 'auto') {
         topPosition = leftPosition / image.width * image.height;
-    } else if (backgroundPosition[1].toString().indexOf("%") !== -1){
+    } else if (isPercentage(backgroundPosition[1])){
         topPosition =  (bounds.height - (backgroundSize || image).height) * parseFloat(backgroundPosition[1]) / 100;
     } else {
         topPosition = parseInt(backgroundPosition[1], 10);
@@ -323,41 +319,40 @@ _html2canvas.Util.BackgroundPosition = function(element, bounds, image, imageInd
 };
 
 _html2canvas.Util.BackgroundSize = function(element, bounds, image, imageIndex) {
-    var backgroundSize =  _html2canvas.Util.getCSS(element, 'backgroundSize', imageIndex),
-        width,
-        height;
+  var backgroundSize =  _html2canvas.Util.getCSS(element, 'backgroundSize', imageIndex), width, height;
 
-    if (backgroundSize.length === 1){
-        backgroundSize = [backgroundSize[0], backgroundSize[0]];
-    }
+  if (backgroundSize.length === 1) {
+    backgroundSize = [backgroundSize[0], backgroundSize[0]];
+  }
 
-    if (backgroundSize[0].toString().indexOf("%") !== -1){
-        width = bounds.width * parseFloat(backgroundSize[0]) / 100;
-    } else if(backgroundSize[0] === 'auto') {
-        width = image.width;
-    } else {
-        if (/contain|cover/.test(backgroundSize[0])) {
-            var resized = _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, backgroundSize[0]);
-            return {width: resized.width, height: resized.height};
-        } else {
-            width = parseInt(backgroundSize[0], 10);
-        }
-    }
+  if (isPercentage(backgroundSize[0])) {
+    width = bounds.width * parseFloat(backgroundSize[0]) / 100;
+  } else if (/contain|cover/.test(backgroundSize[0])) {
+    return _html2canvas.Util.resizeBounds(image.width, image.height, bounds.width, bounds.height, backgroundSize[0]);
+  } else {
+    width = parseInt(backgroundSize[0], 10);
+  }
 
-    if(backgroundSize[1] === 'auto') {
-        height = width / image.width * image.height;
-    } else if (backgroundSize[1].toString().indexOf("%") !== -1){
-        height =  bounds.height * parseFloat(backgroundSize[1]) / 100;
-    } else {
-        height = parseInt(backgroundSize[1],10);
-    }
+  if (backgroundSize[0] === 'auto' && backgroundSize[1] === 'auto') {
+    height = image.height;
+  } else if (backgroundSize[1] === 'auto') {
+    height = width / image.width * image.height;
+  } else if (isPercentage(backgroundSize[1])) {
+    height =  bounds.height * parseFloat(backgroundSize[1]) / 100;
+  } else {
+    height = parseInt(backgroundSize[1], 10);
+  }
 
+  if (backgroundSize[0] === 'auto') {
+    width = height / image.height * image.width;
+  }
 
-    if (backgroundSize[0] === 'auto') {
-        width = height / image.height * image.width;
-    }
+  return {width: width, height: height};
+};
 
-    return {width: width, height: height};
+_html2canvas.Util.BackgroundRepeat = function(element, imageIndex) {
+  var backgroundRepeat = _html2canvas.Util.getCSS(element, "backgroundRepeat").split(",").map(_html2canvas.Util.trimText);
+  return backgroundRepeat[imageIndex] || backgroundRepeat[0];
 };
 
 _html2canvas.Util.Extend = function (options, defaults) {
