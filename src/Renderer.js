@@ -1,4 +1,13 @@
 _html2canvas.Renderer = function(parseQueue, options){
+  function sortZindex(a, b) {
+    if (a === 'children') {
+      return -1;
+    } else if (b === 'children') {
+      return 1;
+    } else {
+      return a - b;
+    }
+  }
 
   // http://www.w3.org/TR/CSS21/zindex.html
   function createRenderQueue(parseQueue) {
@@ -16,8 +25,9 @@ _html2canvas.Renderer = function(parseQueue, options){
         childrenDest = specialParent; // where children without z-index should be pushed into
 
         if (node.zIndex.ownStacking) {
-          // '!' comes before numbers in sorted array
-          contextForChildren = stub.context = { '!': [{node:node, children: []}]};
+          contextForChildren = stub.context = {
+              children: [{node:node, children: []}]
+          };
           childrenDest = undefined;
         } else if (isPositioned || isFloated) {
           childrenDest = stub.children = [];
@@ -39,7 +49,7 @@ _html2canvas.Renderer = function(parseQueue, options){
     })(parseQueue);
 
     function sortZ(context) {
-      Object.keys(context).sort(function(a, b) { return a - b; }).forEach(function(zi) {
+      Object.keys(context).sort(sortZindex).forEach(function(zi) {
         var nonPositioned = [],
         floated = [],
         positioned = [],
