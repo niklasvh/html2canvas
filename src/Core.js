@@ -250,6 +250,13 @@ _html2canvas.Util.getCSS = function (element, attribute, index) {
     }
 
     var value = computedCSS[attribute];
+    if(attribute==="backgroundRepeat" && value.indexOf(" ")!==-1){
+        value = (
+            "no-repeat repeat"===value ? "repeat-y" : (
+                "repeat no-repeat"===value ? "repeat-x" : value
+            )
+        );
+    }
 
     if (/^background(Size|Position)$/.test(attribute)) {
         return parseBackgroundSizePosition(value, element, attribute, index);
