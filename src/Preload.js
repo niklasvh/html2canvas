@@ -47,7 +47,8 @@ _html2canvas.Preload = function( options ) {
   function proxyGetImage(url, img, imageObj){
     var callback_name,
     scriptUrl = options.proxy,
-    script;
+    xhr = new XMLHttpRequest(),
+    finished = false;
 
     link.href = url;
     url = link.href; // work around for pages with base href="" set - WARNING: this may change the url
@@ -61,7 +62,6 @@ _html2canvas.Preload = function( options ) {
       scriptUrl += "?";
     }
     scriptUrl += 'url=' + encodeURIComponent(url) + '&callback=' + callback_name;
-    script = doc.createElement("script");
 
     window[callback_name] = function(a){
       if (a.substring(0,6) === "error:"){
@@ -77,17 +77,34 @@ _html2canvas.Preload = function( options ) {
       try {
         delete window[callback_name];  // for all browser that support this
       } catch(ex) {}
-      script.parentNode.removeChild(script);
-      script = null;
       delete imageObj.script;
       delete imageObj.callbackname;
     };
 
-    script.setAttribute("type", "text/javascript");
-    script.setAttribute("src", scriptUrl);
-    imageObj.script = script;
-    window.document.body.appendChild(script);
-
+    xhr.open("GET", scriptUrl, true);
+    var ors = function(){//equivalent to onReadyStateChange
+      if(finished===true){ return; }
+      if(xhr.readyState==4){
+        finished = true;
+        if(xhr.status==200){
+          setTimeout(function(){
+            var r = xhr.responseText;
+            try {
+              eval(r);
+            } catch(e) {
+              window[callback_name]("error: fails to run, " + e.description);
+            }
+          },1);
+        } else {
+          setTimeout(function(){
+            window[callback_name]("error: server failure when loading the proxy HTTP " + xhr.status);
+          },1);
+        }
+      }
+      setTimeout(ors, 5);
+    };
+    xhr.send(null);
+    ors();
   }
 
   function loadPseudoElement(element, type) {
