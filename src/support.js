@@ -1,5 +1,6 @@
 function Support() {
     this.rangeBounds = this.testRangeBounds();
+    this.cors = this.testCORS();
 }
 
 Support.prototype.testRangeBounds = function() {
@@ -25,4 +26,8 @@ Support.prototype.testRangeBounds = function() {
     }
 
     return support;
+};
+
+Support.prototype.testCORS = function() {
+    return typeof((new Image()).crossOrigin) !== "undefined";
 };

@@ -13,5 +13,6 @@
     "globals": {
       "jQuery": true
     },
-    "predef": ["NodeContainer", "StackingContext", "TextContainer", "CanvasRenderer", "Renderer", "Support"]
+    "predef": ["NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise",
+        "ImageContainer", "ProxyImageContainer", "DummyImageContainer"]
 }

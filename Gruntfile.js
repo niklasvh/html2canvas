@@ -21,16 +21,7 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/Core.js',
-                    'src/Font.js',
-                    'src/Generate.js',
-                    'src/Queue.js',
-                    'src/Parse.js',
-                    'src/Preload.js',
-                    'src/Renderer.js',
-                    'src/Support.js',
-                    'src/Util.js',
-                    'src/renderers/Canvas.js'
+                    'src/**/*.js'
                 ],
                 dest: 'build/<%= pkg.name %>.js'
             },
