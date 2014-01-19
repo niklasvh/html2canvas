@@ -2,7 +2,7 @@
   "title": "html2canvas",
   "name": "html2canvas",
   "description": "Screenshots with JavaScript",
-  "version": "0.4.1",
+  "version": "0.5.0-rc1",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
@@ -32,7 +32,9 @@
     "png-js": ">= 0.1.1",
     "sync-webdriver": ">=0.1.1",
     "express": "~3.2.3",
-    "baconjs": "~0.3.15"
+    "baconjs": "~0.3.15",
+    "wd": "~0.2.7",
+    "grunt-contrib-connect": "~0.6.0"
   },
   "scripts": {
     "test": "grunt travis --verbose"
