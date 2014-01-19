@@ -34,13 +34,16 @@ function NodeParser(element, renderer, options) {
     this.range = null;
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
-    parent.blockFormattingContext = parent;
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    this.imageLoader = new ImageLoader(this.nodes.filter(isElement), options, this.support);
     this.createStackingContexts();
     this.sortStackingContexts(this.stack);
-    this.parse(this.stack);
+
+    this.imageLoader.ready.then(bind(function() {
+        this.parse(this.stack);
+    }, this));
 }
 
 NodeParser.prototype.getChildren = function(parentContainer) {
@@ -517,4 +520,10 @@ function zIndexSort(a, b) {
 
 function hasOpacity(container) {
 	return container.css("opacity") < 1;
+}
+
+function bind(callback, context) {
+    return function() {
+        return callback.apply(context, arguments);
+    };
 }
