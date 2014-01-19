@@ -12,5 +12,6 @@
     "browser": true,
     "globals": {
       "jQuery": true
-    }
+    },
+    "predef": ["NodeContainer", "StackingContext", "TextContainer", "CanvasRenderer", "Renderer", "Support"]
 }
