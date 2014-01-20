@@ -1,11 +1,10 @@
-function CanvasRenderer() {
-    Renderer.call(this);
+function CanvasRenderer(width, height) {
+    Renderer.apply(this, arguments);
     this.canvas = document.createElement("canvas");
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
-    document.body.appendChild(this.canvas);
 }
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
