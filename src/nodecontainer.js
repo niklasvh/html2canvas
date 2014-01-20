@@ -6,6 +6,7 @@ function NodeContainer(node, parent) {
     this.visible = null;
     this.computedStyles = null;
     this.styles = {};
+    this.backgroundImages = null;
 }
 
 NodeContainer.prototype.assignStack = function(stack) {
@@ -143,5 +144,5 @@ NodeContainer.prototype.parseBackgroundImages = function() {
 
     appendResult();
 
-    return results;
+    return this.backgroundImages || (this.backgroundImages = results);
 };
