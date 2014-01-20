@@ -2,13 +2,29 @@ window.html2canvas = function(nodeList, options) {
     var container = createWindowClone(document, window.innerWidth, window.innerHeight);
     var clonedWindow = container.contentWindow;
     var element = (nodeList === undefined) ? document.body : nodeList[0];
+    var node = clonedWindow.document.documentElement;
 
-    var canvas = new CanvasRenderer();
-    var parser = new NodeParser(clonedWindow.document.documentElement, canvas, options || {});
+    var renderer = new CanvasRenderer(documentWidth(), documentHeight());
+    var parser = new NodeParser(node, renderer, options || {});
 
     window.console.log(parser);
-    options.onrendered(canvas.canvas);
 };
+
+function documentWidth () {
+    return Math.max(
+        Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
+        Math.max(document.body.offsetWidth, document.documentElement.offsetWidth),
+        Math.max(document.body.clientWidth, document.documentElement.clientWidth)
+    );
+}
+
+function documentHeight () {
+    return Math.max(
+        Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
+        Math.max(document.body.offsetHeight, document.documentElement.offsetHeight),
+        Math.max(document.body.clientHeight, document.documentElement.clientHeight)
+    );
+}
 
 function createWindowClone(ownerDocument, width, height) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
@@ -34,27 +50,29 @@ function NodeParser(element, renderer, options) {
     this.range = null;
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
+    parent.visibile = parent.isElementVisible();
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
-    this.imageLoader = new ImageLoader(this.nodes.filter(isElement), options, this.support);
+    this.images = new ImageLoader(this.nodes.filter(isElement), options, this.support);
     this.createStackingContexts();
     this.sortStackingContexts(this.stack);
-
-    this.imageLoader.ready.then(bind(function() {
+    this.images.ready.then(bind(function() {
         this.parse(this.stack);
+        options.onrendered(renderer.canvas);
     }, this));
 }
 
 NodeParser.prototype.getChildren = function(parentContainer) {
     return flatten([].filter.call(parentContainer.node.childNodes, renderableNode).map(function(node) {
-        var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) :  new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
-        return node.nodeType === Node.ELEMENT_NODE && container.length ? container.concat(this.getChildren(container[0])) : container;
+        var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) : new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
+        return node.nodeType === Node.ELEMENT_NODE && container.length ? (container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
     }, this));
 };
 
 NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
     var stack = new StackingContext(hasOwnStacking, container.cssFloat('opacity'), container.node, container.parent);
+    stack.visible = container.visible;
     var parentStack = stack.getParentStack(this);
     parentStack.contexts.push(stack);
     container.stack = stack;
@@ -171,11 +189,12 @@ function noLetterSpacing(container) {
 NodeParser.prototype.parse = function(stack) {
     // http://www.w3.org/TR/CSS21/visuren.html#z-index
     var negativeZindex = stack.contexts.filter(negativeZIndex); // 2. the child stacking contexts with negative stack levels (most negative first).
-    var descendantElements = stack.children.filter(isElement).filter(not(isFloating));
-    var nonInlineNonPositionedDescendants = descendantElements.filter(not(isPositioned)).filter(not(inlineLevel)); // 3 the in-flow, non-inline-level, non-positioned descendants.
+    var descendantElements = stack.children.filter(isElement);
+    var descendantNonFloats = descendantElements.filter(not(isFloating));
+    var nonInlineNonPositionedDescendants = descendantNonFloats.filter(not(isPositioned)).filter(not(inlineLevel)); // 3 the in-flow, non-inline-level, non-positioned descendants.
     var nonPositionedFloats = descendantElements.filter(not(isPositioned)).filter(isFloating); // 4. the non-positioned floats.
-    var inFlow = descendantElements.filter(not(isPositioned)).filter(inlineLevel); // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
-    var stackLevel0 = stack.contexts.concat(descendantElements.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+    var inFlow = descendantNonFloats.filter(not(isPositioned)).filter(inlineLevel); // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+    var stackLevel0 = stack.contexts.concat(descendantNonFloats.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
     var text = stack.children.filter(isTextNode).filter(hasText);
     var positiveZindex = stack.contexts.filter(positiveZIndex); // 7. the child stacking contexts with positive stack levels (least positive first).
     var rendered = [];
