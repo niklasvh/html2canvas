@@ -11,13 +11,36 @@ window.html2canvas = function(nodeList, options) {
     var container = createWindowClone(document, window.innerWidth, window.innerHeight);
     var clonedWindow = container.contentWindow;
     var element = (nodeList === undefined) ? document.body : nodeList[0];
+    var node = clonedWindow.document.documentElement;
+    var support = new Support();
+    var imageLoader = new ImageLoader(options, support);
+    options = options || {};
+    if (options.logging) {
+        window.html2canvas.logging = true;
+        window.html2canvas.start = Date.now();
+    }
 
-    var canvas = new CanvasRenderer();
-    var parser = new NodeParser(clonedWindow.document.documentElement, canvas, options || {});
+    var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+    var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
     window.console.log(parser);
-    options.onrendered(canvas.canvas);
 };
+
+function documentWidth () {
+    return Math.max(
+        Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
+        Math.max(document.body.offsetWidth, document.documentElement.offsetWidth),
+        Math.max(document.body.clientWidth, document.documentElement.clientWidth)
+    );
+}
+
+function documentHeight () {
+    return Math.max(
+        Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
+        Math.max(document.body.offsetHeight, document.documentElement.offsetHeight),
+        Math.max(document.body.clientHeight, document.documentElement.clientHeight)
+    );
+}
 
 function createWindowClone(ownerDocument, width, height) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
@@ -36,31 +59,37 @@ function createWindowClone(ownerDocument, width, height) {
     return container;
 }
 
-function NodeParser(element, renderer, options) {
+function NodeParser(element, renderer, support, imageLoader, options) {
     this.renderer = renderer;
     this.options = options;
-    this.support = new Support();
     this.range = null;
+    this.support = support;
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
-    parent.blockFormattingContext = parent;
+    parent.visibile = parent.isElementVisible();
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    this.images = imageLoader.fetch(this.nodes.filter(isElement));
     this.createStackingContexts();
     this.sortStackingContexts(this.stack);
-    this.parse(this.stack);
+    this.images.ready.then(bind(function() {
+        log("Images loaded, starting parsing");
+        this.parse(this.stack);
+        options.onrendered(renderer.canvas);
+    }, this));
 }
 
 NodeParser.prototype.getChildren = function(parentContainer) {
     return flatten([].filter.call(parentContainer.node.childNodes, renderableNode).map(function(node) {
-        var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) :  new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
-        return node.nodeType === Node.ELEMENT_NODE && container.length ? container.concat(this.getChildren(container[0])) : container;
+        var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) : new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
+        return node.nodeType === Node.ELEMENT_NODE && container.length ? (container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
     }, this));
 };
 
 NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
     var stack = new StackingContext(hasOwnStacking, container.cssFloat('opacity'), container.node, container.parent);
+    stack.visible = container.visible;
     var parentStack = stack.getParentStack(this);
     parentStack.contexts.push(stack);
     container.stack = stack;
@@ -177,11 +206,12 @@ function noLetterSpacing(container) {
 NodeParser.prototype.parse = function(stack) {
     // http://www.w3.org/TR/CSS21/visuren.html#z-index
     var negativeZindex = stack.contexts.filter(negativeZIndex); // 2. the child stacking contexts with negative stack levels (most negative first).
-    var descendantElements = stack.children.filter(isElement).filter(not(isFloating));
-    var nonInlineNonPositionedDescendants = descendantElements.filter(not(isPositioned)).filter(not(inlineLevel)); // 3 the in-flow, non-inline-level, non-positioned descendants.
+    var descendantElements = stack.children.filter(isElement);
+    var descendantNonFloats = descendantElements.filter(not(isFloating));
+    var nonInlineNonPositionedDescendants = descendantNonFloats.filter(not(isPositioned)).filter(not(inlineLevel)); // 3 the in-flow, non-inline-level, non-positioned descendants.
     var nonPositionedFloats = descendantElements.filter(not(isPositioned)).filter(isFloating); // 4. the non-positioned floats.
-    var inFlow = descendantElements.filter(not(isPositioned)).filter(inlineLevel); // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
-    var stackLevel0 = stack.contexts.concat(descendantElements.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+    var inFlow = descendantNonFloats.filter(not(isPositioned)).filter(inlineLevel); // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+    var stackLevel0 = stack.contexts.concat(descendantNonFloats.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
     var text = stack.children.filter(isTextNode).filter(hasText);
     var positiveZindex = stack.contexts.filter(positiveZIndex); // 7. the child stacking contexts with positive stack levels (least positive first).
     var rendered = [];
@@ -528,11 +558,327 @@ function hasOpacity(container) {
 	return container.css("opacity") < 1;
 }
 
-function Renderer() {}
-function NYI() {
+function bind(callback, context) {
     return function() {
-        throw new Error("Render function not implemented");
+        return callback.apply(context, arguments);
     };
+}
+
+function ImageContainer(src, cors) {
+    this.src = src;
+    this.image = new Image();
+    var image = this.image;
+    this.promise = new Promise(function(resolve, reject) {
+        image.onload = resolve;
+        image.onerror = reject;
+        if (cors) {
+            image.crossOrigin = "anonymous";
+        }
+        image.src = src;
+    });
+}
+
+
+function ImageLoader(options, support) {
+    this.link = null;
+    this.options = options;
+    this.support = support;
+    this.origin = window.location.protocol + window.location.host;
+}
+
+ImageLoader.prototype.findImages = function(images, container) {
+    var backgrounds = container.parseBackgroundImages();
+    var backgroundImages = backgrounds.filter(this.isImageBackground).map(this.getBackgroundUrl).filter(this.imageExists(images)).map(this.loadImage, this);
+    return images.concat(backgroundImages);
+};
+
+ImageLoader.prototype.getBackgroundUrl = function(imageData) {
+    return imageData.args[0];
+};
+
+ImageLoader.prototype.isImageBackground = function(imageData) {
+    return imageData.method === "url";
+};
+
+ImageLoader.prototype.loadImage = function(src) {
+    if (src.match(/data:image\/.*;base64,/i)) {
+        return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
+    } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
+        return new ImageContainer(src, false);
+    } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
+        return new ImageContainer(src, true);
+    } else if (this.options.proxy) {
+        return new ProxyImageContainer(src);
+    } else {
+        return new DummyImageContainer(src);
+    }
+};
+
+ImageLoader.prototype.imageExists = function(images) {
+    return function(newImage) {
+        return !images.some(function(image) {
+            return image.src !== newImage.src;
+        });
+    };
+};
+
+ImageLoader.prototype.isSameOrigin = function(url) {
+    var link = this.link || (this.link = document.createElement("a"));
+    link.href = url;
+    link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
+    var origin = link.protocol + link.host;
+    return (origin === this.origin);
+};
+
+ImageLoader.prototype.getPromise = function(container) {
+    return container.promise;
+};
+
+ImageLoader.prototype.get = function(src) {
+    var found = null;
+    return this.images.some(function(img) {
+        return (found = img).src === src;
+    }) ? found : null;
+};
+
+ImageLoader.prototype.fetch = function(nodes) {
+    this.images = nodes.reduce(bind(this.findImages, this), []);
+    this.ready = Promise.all(this.images.map(this.getPromise));
+    return this;
+};
+
+function log() {
+    if (window.html2canvas.logging && window.console && window.console.log) {
+        window.console.log.apply(window.console, [(Date.now() - window.html2canvas.start) + "ms", "html2canvas:"].concat([].slice.call(arguments, 0)));
+    }
+}
+
+function NodeContainer(node, parent) {
+    this.node = node;
+    this.parent = parent;
+    this.stack = null;
+    this.bounds = null;
+    this.visible = null;
+    this.computedStyles = null;
+    this.styles = {};
+    this.backgroundImages = null;
+}
+
+NodeContainer.prototype.assignStack = function(stack) {
+    this.stack = stack;
+    stack.children.push(this);
+};
+
+NodeContainer.prototype.isElementVisible = function() {
+    return this.node.nodeType === Node.TEXT_NODE ? this.parent.visible : (this.css('display') !== "none" && this.css('visibility') !== "hidden" && !this.node.hasAttribute("data-html2canvas-ignore"));
+};
+
+NodeContainer.prototype.css = function(attribute) {
+    if (!this.computedStyles) {
+        this.computedStyles = this.node.ownerDocument.defaultView.getComputedStyle(this.node, null);
+    }
+
+    return this.styles[attribute] || (this.styles[attribute] = this.computedStyles[attribute]);
+};
+
+NodeContainer.prototype.cssInt = function(attribute) {
+    var value = parseInt(this.css(attribute), 10);
+    return (Number.isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
+};
+
+NodeContainer.prototype.cssFloat = function(attribute) {
+    var value = parseFloat(this.css(attribute));
+    return (Number.isNaN(value)) ? 0 : value;
+};
+
+NodeContainer.prototype.fontWeight = function() {
+    var weight = this.css("fontWeight");
+    switch(parseInt(weight, 10)){
+        case 401:
+            weight = "bold";
+            break;
+        case 400:
+            weight = "normal";
+            break;
+    }
+    return weight;
+};
+
+NodeContainer.prototype.parseBackgroundImages = function() {
+    var whitespace = ' \r\n\t',
+        method, definition, prefix, prefix_i, block, results = [],
+        mode = 0, numParen = 0, quote, args;
+    var appendResult = function() {
+        if(method) {
+            if (definition.substr(0, 1) === '"') {
+                definition = definition.substr(1, definition.length - 2);
+            }
+            if (definition) {
+                args.push(definition);
+            }
+            if (method.substr(0, 1) === '-' && (prefix_i = method.indexOf('-', 1 ) + 1) > 0) {
+                prefix = method.substr(0, prefix_i);
+                method = method.substr(prefix_i);
+            }
+            results.push({
+                prefix: prefix,
+                method: method.toLowerCase(),
+                value: block,
+                args: args,
+                image: null
+            });
+        }
+        args = [];
+        method = prefix = definition = block = '';
+    };
+    args = [];
+    method = prefix = definition = block = '';
+    this.css("backgroundImage").split("").forEach(function(c) {
+        if (mode === 0 && whitespace.indexOf(c) > -1) {
+            return;
+        }
+        switch(c) {
+            case '"':
+                if(!quote) {
+                    quote = c;
+                }
+                else if(quote === c) {
+                    quote = null;
+                }
+                break;
+            case '(':
+                if(quote) {
+                    break;
+                } else if(mode === 0) {
+                    mode = 1;
+                    block += c;
+                    return;
+                } else {
+                    numParen++;
+                }
+                break;
+            case ')':
+                if (quote) {
+                    break;
+                } else if(mode === 1) {
+                    if(numParen === 0) {
+                        mode = 0;
+                        block += c;
+                        appendResult();
+                        return;
+                    } else {
+                        numParen--;
+                    }
+                }
+                break;
+
+            case ',':
+                if (quote) {
+                    break;
+                } else if(mode === 0) {
+                    appendResult();
+                    return;
+                } else if (mode === 1) {
+                    if (numParen === 0 && !method.match(/^url$/i)) {
+                        args.push(definition);
+                        definition = '';
+                        block += c;
+                        return;
+                    }
+                }
+                break;
+        }
+
+        block += c;
+        if (mode === 0) {
+            method += c;
+        } else {
+            definition += c;
+        }
+    });
+
+    appendResult();
+
+    return this.backgroundImages || (this.backgroundImages = results);
+};
+
+NodeContainer.prototype.cssList = function(property, index) {
+    var value = (this.css(property) || '').split(',');
+    value = value[index || 0] || value[0] || 'auto';
+    value = value.trim().split(' ');
+    if (value.length === 1) {
+        value = [value[0], value[0]];
+    }
+    return value;
+};
+
+NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
+    var size = this.cssList("backgroundSize", index);
+    var width, height;
+
+    if (isPercentage(size[0])) {
+        width = bounds.width * parseFloat(size[0]) / 100;
+    } else if (/contain|cover/.test(size[0])) {
+        var targetRatio = bounds.width / bounds.height, currentRatio = image.width / image.height;
+        return (targetRatio < currentRatio ^ size[0] === 'contain') ?  {width: bounds.height * currentRatio, height: bounds.height} : {width: bounds.width, height: bounds.width / currentRatio};
+    } else {
+        width = parseInt(size[0], 10);
+    }
+
+    if (size[0] === 'auto' && size[1] === 'auto') {
+        height = image.height;
+    } else if (size[1] === 'auto') {
+        height = width / image.width * image.height;
+    } else if (isPercentage(size[1])) {
+        height =  bounds.height * parseFloat(size[1]) / 100;
+    } else {
+        height = parseInt(size[1], 10);
+    }
+
+    if (size[0] === 'auto') {
+        width = height / image.height * image.width;
+    }
+
+    return {width: width, height: height};
+};
+
+NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
+    var position = this.cssList('backgroundPosition', index);
+    var left, top;
+
+    if (isPercentage(position[0])){
+        left = (bounds.width - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
+    } else {
+        left = parseInt(position[0], 10);
+    }
+
+    if (position[1] === 'auto') {
+        top = left / image.width * image.height;
+    } else if (isPercentage(position[1])){
+        top =  (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
+    } else {
+        top = parseInt(position[1], 10);
+    }
+
+    if (position[0] === 'auto') {
+        left = top / image.height * image.width;
+    }
+
+    return {left: left, top: top};
+};
+
+NodeContainer.prototype.parseBackgroundRepeat = function(index) {
+    return this.cssList("backgroundRepeat", index)[0];
+};
+
+function isPercentage(value) {
+    return value.toString().indexOf("%") !== -1;
+}
+
+function Renderer(width, height, images) {
+    this.width = width;
+    this.height = height;
+    this.images = images;
 }
 
 Renderer.prototype.renderBackground = function(container, bounds) {
@@ -545,13 +891,7 @@ Renderer.prototype.renderBackground = function(container, bounds) {
 Renderer.prototype.renderBackgroundColor = function(container, bounds) {
     var color = container.css("backgroundColor");
     if (!this.isTransparent(color)) {
-        this.rectangle(
-            bounds.left,
-            bounds.top,
-            bounds.width,
-            bounds.height,
-            container.css("backgroundColor")
-        );
+        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, container.css("backgroundColor"));
     }
 };
 
@@ -566,54 +906,53 @@ Renderer.prototype.renderBorder = function(data) {
 };
 
 Renderer.prototype.renderBackgroundImage = function(container, bounds) {
+    var backgroundImages = container.parseBackgroundImages();
+    backgroundImages.reverse().forEach(function(backgroundImage, index) {
+        if (backgroundImage.method === "url") {
+            var image = this.images.get(backgroundImage.args[0]);
+            if (image) {
+                this.renderBackgroundRepeating(container, bounds, image, index);
+            } else {
+                log("Error loading background-image", backgroundImage.args[0]);
+            }
+        }
+    }, this);
+};
 
+Renderer.prototype.renderBackgroundRepeating = function(container, bounds, imageContainer, index) {
+    var size = container.parseBackgroundSize(bounds, imageContainer.image, index);
+    var position = container.parseBackgroundPosition(bounds, imageContainer.image, index, size);
+    var repeat = container.parseBackgroundRepeat(index);
+//    image = resizeImage(image, backgroundSize);
+    switch (repeat) {
+        case "repeat-x":
+        case "repeat no-repeat":
+            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
+            break;
+        case "repeat-y":
+        case "no-repeat repeat":
+            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
+            break;
+        case "no-repeat":
+            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
+            break;
+        default:
+            this.renderBackgroundRepeat(imageContainer, position, {top: bounds.top, left: bounds.left});
+            break;
+    }
 };
 
 Renderer.prototype.isTransparent = function(color) {
     return (!color || color === "transparent" || color === "rgba(0, 0, 0, 0)");
 };
 
-Renderer.prototype.clip = NYI();
-Renderer.prototype.rectangle = NYI();
-Renderer.prototype.shape = NYI();
-
-function Support() {
-    this.rangeBounds = this.testRangeBounds();
-}
-
-Support.prototype.testRangeBounds = function() {
-    var range, testElement, rangeBounds, rangeHeight, support = false;
-
-    if (document.createRange) {
-        range = document.createRange();
-        if (range.getBoundingClientRect) {
-            testElement = document.createElement('boundtest');
-            testElement.style.height = "123px";
-            testElement.style.display = "block";
-            document.body.appendChild(testElement);
-
-            range.selectNode(testElement);
-            rangeBounds = range.getBoundingClientRect();
-            rangeHeight = rangeBounds.height;
-
-            if (rangeHeight === 123) {
-                support = true;
-            }
-            document.body.removeChild(testElement);
-        }
-    }
-
-    return support;
-};
-
-function CanvasRenderer() {
-    Renderer.call(this);
+function CanvasRenderer(width, height) {
+    Renderer.apply(this, arguments);
     this.canvas = document.createElement("canvas");
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
-    document.body.appendChild(this.canvas);
 }
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
@@ -659,5 +998,105 @@ CanvasRenderer.prototype.setOpacity = function(opacity) {
 CanvasRenderer.prototype.text = function(text, left, bottom) {
     this.ctx.fillText(text, left, bottom);
 };
+
+CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, bounds, left, top, width, height) {
+    var shape = [
+        ["line", Math.round(left), Math.round(top)],
+        ["line", Math.round(left + width), Math.round(top)],
+        ["line", Math.round(left + width), Math.round(height + top)],
+        ["line", Math.round(left), Math.round(height + top)]
+    ];
+    console.log(shape);
+    this.clip(shape, function() {
+        this.renderBackgroundRepeat(imageContainer, backgroundPosition, bounds);
+    }, this);
+};
+
+CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, bounds) {
+    var offsetX = Math.round(bounds.left + backgroundPosition.left), offsetY = Math.round(bounds.top + backgroundPosition.top);
+    this.setFillStyle(this.ctx.createPattern(imageContainer.image, "repeat"));
+    this.ctx.translate(offsetX, offsetY);
+    this.ctx.fill();
+    this.ctx.translate(-offsetX, -offsetY);
+};
+
+function StackingContext(hasOwnStacking, opacity, element, parent) {
+    NodeContainer.call(this, element, parent);
+    this.ownStacking = hasOwnStacking;
+    this.contexts = [];
+    this.children = [];
+    this.opacity = (this.parent ? this.parent.stack.opacity : 1) * opacity;
+}
+
+StackingContext.prototype = Object.create(NodeContainer.prototype);
+
+StackingContext.prototype.getParentStack = function(context) {
+    var parentStack = (this.parent) ? this.parent.stack : null;
+    return parentStack ? (parentStack.ownStacking ? parentStack : parentStack.getParentStack(context)) : context.stack;
+};
+
+function Support() {
+    this.rangeBounds = this.testRangeBounds();
+    this.cors = this.testCORS();
+}
+
+Support.prototype.testRangeBounds = function() {
+    var range, testElement, rangeBounds, rangeHeight, support = false;
+
+    if (document.createRange) {
+        range = document.createRange();
+        if (range.getBoundingClientRect) {
+            testElement = document.createElement('boundtest');
+            testElement.style.height = "123px";
+            testElement.style.display = "block";
+            document.body.appendChild(testElement);
+
+            range.selectNode(testElement);
+            rangeBounds = range.getBoundingClientRect();
+            rangeHeight = rangeBounds.height;
+
+            if (rangeHeight === 123) {
+                support = true;
+            }
+            document.body.removeChild(testElement);
+        }
+    }
+
+    return support;
+};
+
+Support.prototype.testCORS = function() {
+    return typeof((new Image()).crossOrigin) !== "undefined";
+};
+
+function TextContainer(node, parent) {
+    NodeContainer.call(this, node, parent);
+}
+
+TextContainer.prototype = Object.create(NodeContainer.prototype);
+
+TextContainer.prototype.applyTextTransform = function() {
+    this.node.data = this.transform(this.parent.css("textTransform"));
+};
+
+TextContainer.prototype.transform = function(transform) {
+    var text = this.node.data;
+    switch(transform){
+        case "lowercase":
+            return text.toLowerCase();
+        case "capitalize":
+            return text.replace(/(^|\s|:|-|\(|\))([a-z])/g, capitalize);
+        case "uppercase":
+            return text.toUpperCase();
+        default:
+            return text;
+    }
+};
+
+function capitalize(m, p1, p2) {
+    if (m.length > 0) {
+        return p1 + p2.toUpperCase();
+    }
+}
 
 })(window,document);

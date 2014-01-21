@@ -3,9 +3,16 @@ window.html2canvas = function(nodeList, options) {
     var clonedWindow = container.contentWindow;
     var element = (nodeList === undefined) ? document.body : nodeList[0];
     var node = clonedWindow.document.documentElement;
+    var support = new Support();
+    var imageLoader = new ImageLoader(options, support);
+    options = options || {};
+    if (options.logging) {
+        window.html2canvas.logging = true;
+        window.html2canvas.start = Date.now();
+    }
 
-    var renderer = new CanvasRenderer(documentWidth(), documentHeight());
-    var parser = new NodeParser(node, renderer, options || {});
+    var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+    var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
     window.console.log(parser);
 };
@@ -43,21 +50,22 @@ function createWindowClone(ownerDocument, width, height) {
     return container;
 }
 
-function NodeParser(element, renderer, options) {
+function NodeParser(element, renderer, support, imageLoader, options) {
     this.renderer = renderer;
     this.options = options;
-    this.support = new Support();
     this.range = null;
+    this.support = support;
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
     parent.visibile = parent.isElementVisible();
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
-    this.images = new ImageLoader(this.nodes.filter(isElement), options, this.support);
+    this.images = imageLoader.fetch(this.nodes.filter(isElement));
     this.createStackingContexts();
     this.sortStackingContexts(this.stack);
     this.images.ready.then(bind(function() {
+        log("Images loaded, starting parsing");
         this.parse(this.stack);
         options.onrendered(renderer.canvas);
     }, this));
