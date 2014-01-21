@@ -1,10 +1,8 @@
-function ImageLoader(nodes, options, support) {
+function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
     this.support = support;
     this.origin = window.location.protocol + window.location.host;
-    this.images = nodes.reduce(bind(this.findImages, this), []);
-    this.ready = Promise.all(this.images.map(this.getPromise));
 }
 
 ImageLoader.prototype.findImages = function(images, container) {
@@ -53,4 +51,17 @@ ImageLoader.prototype.isSameOrigin = function(url) {
 
 ImageLoader.prototype.getPromise = function(container) {
     return container.promise;
+};
+
+ImageLoader.prototype.get = function(src) {
+    var found = null;
+    return this.images.some(function(img) {
+        return (found = img).src === src;
+    }) ? found : null;
+};
+
+ImageLoader.prototype.fetch = function(nodes) {
+    this.images = nodes.reduce(bind(this.findImages, this), []);
+    this.ready = Promise.all(this.images.map(this.getPromise));
+    return this;
 };

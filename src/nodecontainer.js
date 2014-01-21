@@ -146,3 +146,76 @@ NodeContainer.prototype.parseBackgroundImages = function() {
 
     return this.backgroundImages || (this.backgroundImages = results);
 };
+
+NodeContainer.prototype.cssList = function(property, index) {
+    var value = (this.css(property) || '').split(',');
+    value = value[index || 0] || value[0] || 'auto';
+    value = value.trim().split(' ');
+    if (value.length === 1) {
+        value = [value[0], value[0]];
+    }
+    return value;
+};
+
+NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
+    var size = this.cssList("backgroundSize", index);
+    var width, height;
+
+    if (isPercentage(size[0])) {
+        width = bounds.width * parseFloat(size[0]) / 100;
+    } else if (/contain|cover/.test(size[0])) {
+        var targetRatio = bounds.width / bounds.height, currentRatio = image.width / image.height;
+        return (targetRatio < currentRatio ^ size[0] === 'contain') ?  {width: bounds.height * currentRatio, height: bounds.height} : {width: bounds.width, height: bounds.width / currentRatio};
+    } else {
+        width = parseInt(size[0], 10);
+    }
+
+    if (size[0] === 'auto' && size[1] === 'auto') {
+        height = image.height;
+    } else if (size[1] === 'auto') {
+        height = width / image.width * image.height;
+    } else if (isPercentage(size[1])) {
+        height =  bounds.height * parseFloat(size[1]) / 100;
+    } else {
+        height = parseInt(size[1], 10);
+    }
+
+    if (size[0] === 'auto') {
+        width = height / image.height * image.width;
+    }
+
+    return {width: width, height: height};
+};
+
+NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
+    var position = this.cssList('backgroundPosition', index);
+    var left, top;
+
+    if (isPercentage(position[0])){
+        left = (bounds.width - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
+    } else {
+        left = parseInt(position[0], 10);
+    }
+
+    if (position[1] === 'auto') {
+        top = left / image.width * image.height;
+    } else if (isPercentage(position[1])){
+        top =  (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
+    } else {
+        top = parseInt(position[1], 10);
+    }
+
+    if (position[0] === 'auto') {
+        left = top / image.height * image.width;
+    }
+
+    return {left: left, top: top};
+};
+
+NodeContainer.prototype.parseBackgroundRepeat = function(index) {
+    return this.cssList("backgroundRepeat", index)[0];
+};
+
+function isPercentage(value) {
+    return value.toString().indexOf("%") !== -1;
+}
