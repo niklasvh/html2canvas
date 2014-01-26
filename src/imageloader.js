@@ -5,10 +5,23 @@ function ImageLoader(options, support) {
     this.origin = window.location.protocol + window.location.host;
 }
 
-ImageLoader.prototype.findImages = function(images, container) {
-    var backgrounds = container.parseBackgroundImages();
-    var backgroundImages = backgrounds.filter(this.isImageBackground).map(this.getBackgroundUrl).filter(this.imageExists(images)).map(this.loadImage, this);
-    return images.concat(backgroundImages);
+ImageLoader.prototype.findImages = function(nodes) {
+    var images = [];
+    nodes.filter(isImage).map(src).forEach(this.addImage(images, this.loadImage), this);
+    return images;
+};
+
+ImageLoader.prototype.findBackgroundImage = function(images, container) {
+    container.parseBackgroundImages().filter(this.isImageBackground).map(this.getBackgroundUrl).forEach(this.addImage(images, this.loadImage), this);
+    return images;
+};
+
+ImageLoader.prototype.addImage = function(images, callback) {
+    return function(newImage) {
+        if (!this.imageExists(images, newImage)) {
+            images.splice(0, 0, callback.apply(this, arguments));
+        }
+    };
 };
 
 ImageLoader.prototype.getBackgroundUrl = function(imageData) {
@@ -33,12 +46,10 @@ ImageLoader.prototype.loadImage = function(src) {
     }
 };
 
-ImageLoader.prototype.imageExists = function(images) {
-    return function(newImage) {
-        return !images.some(function(image) {
-            return image.src !== newImage.src;
-        });
-    };
+ImageLoader.prototype.imageExists = function(images, src) {
+    return images.some(function(image) {
+        return image.src === src;
+    });
 };
 
 ImageLoader.prototype.isSameOrigin = function(url) {
@@ -61,7 +72,15 @@ ImageLoader.prototype.get = function(src) {
 };
 
 ImageLoader.prototype.fetch = function(nodes) {
-    this.images = nodes.reduce(bind(this.findImages, this), []);
+    this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
     this.ready = Promise.all(this.images.map(this.getPromise));
     return this;
 };
+
+function isImage(container) {
+    return container.node.nodeName === "IMG";
+}
+
+function src(container) {
+    return container.node.src;
+}

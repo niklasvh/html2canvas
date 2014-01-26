@@ -25,7 +25,7 @@ window.html2canvas = function(nodeList, options) {
         var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
-        window.console.log(parser);  
+        window.console.log(parser);
     });
 };
 
@@ -77,6 +77,7 @@ function createWindowClone(ownerDocument, width, height) {
         documentClone.close();
 
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+        container.contentWindow.scrollTo(window.scrollX, window.scrollY);
         var div = documentClone.createElement("div");
         div.className = "html2canvas-ready-test";
         documentClone.body.appendChild(div);
@@ -259,10 +260,14 @@ NodeParser.prototype.parse = function(stack) {
 };
 
 NodeParser.prototype.paint = function(container) {
-    if (isTextNode(container)) {
-        this.paintText(container);
-    } else {
-        this.paintNode(container);
+    try {
+        if (isTextNode(container)) {
+            this.paintText(container);
+        } else {
+            this.paintNode(container);
+        }
+    } catch(e) {
+        log(e);
     }
 };
 
@@ -277,6 +282,17 @@ NodeParser.prototype.paintNode = function(container) {
         this.renderer.renderBackground(container, bounds);
     }, this);
     this.renderer.renderBorders(borderData.borders);
+
+    switch(container.node.nodeName) {
+        case "IMG":
+            var imageContainer = this.images.get(container.node.src);
+            if (imageContainer) {
+                this.renderer.renderImage(container, bounds, borderData, imageContainer.image);
+            } else {
+                log("Error loading <img>", container.node.src);
+            }
+            break;
+    }
 };
 
 NodeParser.prototype.paintText = function(container) {
@@ -613,10 +629,23 @@ function ImageLoader(options, support) {
     this.origin = window.location.protocol + window.location.host;
 }
 
-ImageLoader.prototype.findImages = function(images, container) {
-    var backgrounds = container.parseBackgroundImages();
-    var backgroundImages = backgrounds.filter(this.isImageBackground).map(this.getBackgroundUrl).filter(this.imageExists(images)).map(this.loadImage, this);
-    return images.concat(backgroundImages);
+ImageLoader.prototype.findImages = function(nodes) {
+    var images = [];
+    nodes.filter(isImage).map(src).forEach(this.addImage(images, this.loadImage), this);
+    return images;
+};
+
+ImageLoader.prototype.findBackgroundImage = function(images, container) {
+    container.parseBackgroundImages().filter(this.isImageBackground).map(this.getBackgroundUrl).forEach(this.addImage(images, this.loadImage), this);
+    return images;
+};
+
+ImageLoader.prototype.addImage = function(images, callback) {
+    return function(newImage) {
+        if (!this.imageExists(images, newImage)) {
+            images.splice(0, 0, callback.apply(this, arguments));
+        }
+    };
 };
 
 ImageLoader.prototype.getBackgroundUrl = function(imageData) {
@@ -641,12 +670,10 @@ ImageLoader.prototype.loadImage = function(src) {
     }
 };
 
-ImageLoader.prototype.imageExists = function(images) {
-    return function(newImage) {
-        return !images.some(function(image) {
-            return image.src !== newImage.src;
-        });
-    };
+ImageLoader.prototype.imageExists = function(images, src) {
+    return images.some(function(image) {
+        return image.src === src;
+    });
 };
 
 ImageLoader.prototype.isSameOrigin = function(url) {
@@ -669,10 +696,18 @@ ImageLoader.prototype.get = function(src) {
 };
 
 ImageLoader.prototype.fetch = function(nodes) {
-    this.images = nodes.reduce(bind(this.findImages, this), []);
+    this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
     this.ready = Promise.all(this.images.map(this.getPromise));
     return this;
 };
+
+function isImage(container) {
+    return container.node.nodeName === "IMG";
+}
+
+function src(container) {
+    return container.node.src;
+}
 
 function log() {
     if (window.html2canvas.logging && window.console && window.console.log) {
@@ -931,6 +966,26 @@ function Renderer(width, height, images) {
     this.images = images;
 }
 
+Renderer.prototype.renderImage = function(container, bounds, borderData, image) {
+    var paddingLeft = container.cssInt('paddingLeft'),
+        paddingTop = container.cssInt('paddingTop'),
+        paddingRight = container.cssInt('paddingRight'),
+        paddingBottom = container.cssInt('paddingBottom'),
+        borders = borderData.borders;
+
+    this.drawImage(
+        image,
+        0,
+        0,
+        image.width,
+        image.height,
+        bounds.left + paddingLeft + borders[3].width,
+        bounds.top + paddingTop + borders[0].width,
+        bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
+        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)
+    );
+};
+
 Renderer.prototype.renderBackground = function(container, bounds) {
     if (bounds.height > 0 && bounds.width > 0) {
         this.renderBackgroundColor(container, bounds);
@@ -965,7 +1020,7 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
             } else {
                 log("Error loading background-image", backgroundImage.args[0]);
             }
-        }  
+        }
     }, this);
 };
 
@@ -1021,6 +1076,10 @@ CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.setFillStyle(color).fill();
 };
 
+CanvasRenderer.prototype.drawImage = function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+    this.ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+};
+
 CanvasRenderer.prototype.clip = function(shape, callback, context) {
     this.ctx.save();
     this.shape(shape).clip();
@@ -1057,7 +1116,7 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
         ["line", Math.round(left), Math.round(height + top)]
     ];
     this.clip(shape, function() {
-        this.renderBackgroundRepeat(imageContainer, backgroundPosition, bounds);
+        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds);
     }, this);
 };
 
