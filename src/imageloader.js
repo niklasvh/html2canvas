@@ -20,6 +20,7 @@ ImageLoader.prototype.addImage = function(images, callback) {
     return function(newImage) {
         if (!this.imageExists(images, newImage)) {
             images.splice(0, 0, callback.apply(this, arguments));
+            log('Added image #' + (images.length), newImage.substring(0, 100));
         }
     };
 };
@@ -73,7 +74,15 @@ ImageLoader.prototype.get = function(src) {
 
 ImageLoader.prototype.fetch = function(nodes) {
     this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
+    this.images.forEach(function(image, index) {
+        image.promise.then(function() {
+            log("Succesfully loaded image #"+ (index+1));
+        }, function() {
+            log("Failed loading image #"+ (index+1));
+        });
+    });
     this.ready = Promise.all(this.images.map(this.getPromise));
+    log("Finished searching images");
     return this;
 };
 
