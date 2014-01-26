@@ -11,9 +11,10 @@ window.html2canvas = function(nodeList, options) {
         var node = clonedWindow.document.documentElement;
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
-
-
-        var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+        var bounds = NodeParser.prototype.getBounds(node);
+        var width = options.type === "view" ? bounds.width : documentWidth();
+        var height = options.type === "view" ? bounds.height : documentHeight();
+        var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
         window.console.log(parser);
@@ -75,11 +76,12 @@ function createWindowClone(ownerDocument, width, height) {
         var style = documentClone.createElement("style");
         style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
         documentClone.body.appendChild(style);
-        loadedTimer();
+        window.setTimeout(loadedTimer, 10);
     });
 }
 
 function NodeParser(element, renderer, support, imageLoader, options) {
+    log("Starting NodeParser");
     this.renderer = renderer;
     this.options = options;
     this.range = null;
@@ -90,12 +92,16 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    log("Fetched nodes");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
+    log("Creating stacking contexts");
     this.createStackingContexts();
+    log("Sorting stacking contexts");
     this.sortStackingContexts(this.stack);
     this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
+        log("Finished rendering");
         options.onrendered(renderer.canvas);
     }, this));
 }
@@ -147,12 +153,13 @@ NodeParser.prototype.parseBounds = function(nodeContainer) {
 NodeParser.prototype.getBounds = function(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
+        var isBody = node.nodeName === "BODY";
         return {
             top: clientRect.top,
             bottom: clientRect.bottom || (clientRect.top + clientRect.height),
             left: clientRect.left,
-            width: node.offsetWidth,
-            height: node.offsetHeight
+            width:  isBody ? node.scrollWidth : node.offsetWidth,
+            height: isBody ? node.scrollHeight : node.offsetHeight
         };
     }
     return {};

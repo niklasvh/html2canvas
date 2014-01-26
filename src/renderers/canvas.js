@@ -5,6 +5,7 @@ function CanvasRenderer(width, height) {
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
+    log("Initialized CanvasRenderer");
 }
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
