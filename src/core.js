@@ -1,20 +1,23 @@
 window.html2canvas = function(nodeList, options) {
-    var container = createWindowClone(document, window.innerWidth, window.innerHeight);
-    var clonedWindow = container.contentWindow;
-    var element = (nodeList === undefined) ? document.body : nodeList[0];
-    var node = clonedWindow.document.documentElement;
-    var support = new Support();
-    var imageLoader = new ImageLoader(options, support);
     options = options || {};
     if (options.logging) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
+    createWindowClone(document, window.innerWidth, window.innerHeight).then(function(container) {
+        log("Document cloned");
+        var clonedWindow = container.contentWindow;
+        var element = (nodeList === undefined) ? document.body : nodeList[0];
+        var node = clonedWindow.document.documentElement;
+        var support = new Support();
+        var imageLoader = new ImageLoader(options, support);
 
-    var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
-    var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
-    window.console.log(parser);
+        var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+        var parser = new NodeParser(node, renderer, support, imageLoader, options);
+
+        window.console.log(parser);
+    });
 };
 
 function documentWidth () {
@@ -41,13 +44,38 @@ function createWindowClone(ownerDocument, width, height) {
     container.style.position = "absolute";
     container.style.width = width + "px";
     container.style.height = height + "px";
-
     ownerDocument.body.appendChild(container);
 
-    var documentClone = container.contentWindow.document;
-    documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+    return new Promise(function(resolve) {
+        var loadedTimer = function() {
+            /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
+            before a certain time has  passed
+             */
+            if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
+                documentClone.body.removeChild(div);
+                documentClone.body.removeChild(style);
+                resolve(container);
+            } else {
+                window.setTimeout(loadedTimer, 10);
+            }
+        };
+        var documentClone = container.contentWindow.document;
+        /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
+        if window url is about:blank, we can assign the url to current by writing onto the document
+         */
+        documentClone.open();
+        documentClone.write("");
+        documentClone.close();
 
-    return container;
+        documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+        var div = documentClone.createElement("div");
+        div.className = "html2canvas-ready-test";
+        documentClone.body.appendChild(div);
+        var style = documentClone.createElement("style");
+        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
+        documentClone.body.appendChild(style);
+        loadedTimer();
+    });
 }
 
 function NodeParser(element, renderer, support, imageLoader, options) {
@@ -210,7 +238,7 @@ NodeParser.prototype.parse = function(stack) {
     .concat(inFlow).concat(stackLevel0).concat(text).concat(positiveZindex).forEach(function(container) {
         this.paint(container);
         if (rendered.indexOf(container.node) !== -1) {
-            window.console.log(container, container.node);
+            log(container, container.node);
             throw new Error("rendering twice");
         }
         rendered.push(container.node);
