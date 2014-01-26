@@ -51,23 +51,36 @@ CanvasRenderer.prototype.text = function(text, left, bottom) {
     this.ctx.fillText(text, left, bottom);
 };
 
-CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, bounds, left, top, width, height) {
+CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height) {
     var shape = [
         ["line", Math.round(left), Math.round(top)],
         ["line", Math.round(left + width), Math.round(top)],
         ["line", Math.round(left + width), Math.round(height + top)],
         ["line", Math.round(left), Math.round(height + top)]
     ];
-    console.log(shape);
     this.clip(shape, function() {
         this.renderBackgroundRepeat(imageContainer, backgroundPosition, bounds);
     }, this);
 };
 
-CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, bounds) {
+CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds) {
     var offsetX = Math.round(bounds.left + backgroundPosition.left), offsetY = Math.round(bounds.top + backgroundPosition.top);
-    this.setFillStyle(this.ctx.createPattern(imageContainer.image, "repeat"));
+    this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
     this.ctx.translate(offsetX, offsetY);
     this.ctx.fill();
     this.ctx.translate(-offsetX, -offsetY);
+};
+
+CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
+    var image = imageContainer.image;
+    if(image.width === size.width && image.height === size.height) {
+        return image;
+    }
+
+    var ctx, canvas = document.createElement('canvas');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, size.width, size.height );
+    return canvas;
 };
