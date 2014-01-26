@@ -23,6 +23,10 @@ CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.setFillStyle(color).fill();
 };
 
+CanvasRenderer.prototype.drawImage = function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+    this.ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+};
+
 CanvasRenderer.prototype.clip = function(shape, callback, context) {
     this.ctx.save();
     this.shape(shape).clip();
@@ -59,7 +63,7 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
         ["line", Math.round(left), Math.round(height + top)]
     ];
     this.clip(shape, function() {
-        this.renderBackgroundRepeat(imageContainer, backgroundPosition, bounds);
+        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds);
     }, this);
 };
 

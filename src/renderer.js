@@ -4,6 +4,26 @@ function Renderer(width, height, images) {
     this.images = images;
 }
 
+Renderer.prototype.renderImage = function(container, bounds, borderData, image) {
+    var paddingLeft = container.cssInt('paddingLeft'),
+        paddingTop = container.cssInt('paddingTop'),
+        paddingRight = container.cssInt('paddingRight'),
+        paddingBottom = container.cssInt('paddingBottom'),
+        borders = borderData.borders;
+
+    this.drawImage(
+        image,
+        0,
+        0,
+        image.width,
+        image.height,
+        bounds.left + paddingLeft + borders[3].width,
+        bounds.top + paddingTop + borders[0].width,
+        bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
+        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)
+    );
+};
+
 Renderer.prototype.renderBackground = function(container, bounds) {
     if (bounds.height > 0 && bounds.width > 0) {
         this.renderBackgroundColor(container, bounds);

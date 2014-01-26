@@ -50,10 +50,10 @@ module.exports = function(grunt) {
         },
         watch: {
             files: 'src/**/*',
-            tasks: ['build', 'jshint']
+            tasks: ['jshint', 'build']
         },
         jshint: {
-            all: ['<%= concat.dist.dest %>'],
+            all: ['src/**/*.js', '!src/promise.js'],
             options: grunt.file.readJSON('./.jshintrc')
         }
     });
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('server', ['connect']);
     grunt.registerTask('build', ['concat', 'uglify']);
-    grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify']);
-    grunt.registerTask('travis', ['concat', 'jshint', 'qunit', 'uglify', 'webdriver']);
+    grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
+    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'webdriver']);
 
 };

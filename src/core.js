@@ -68,6 +68,7 @@ function createWindowClone(ownerDocument, width, height) {
         documentClone.close();
 
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+        container.contentWindow.scrollTo(window.scrollX, window.scrollY);
         var div = documentClone.createElement("div");
         div.className = "html2canvas-ready-test";
         documentClone.body.appendChild(div);
@@ -250,10 +251,14 @@ NodeParser.prototype.parse = function(stack) {
 };
 
 NodeParser.prototype.paint = function(container) {
-    if (isTextNode(container)) {
-        this.paintText(container);
-    } else {
-        this.paintNode(container);
+    try {
+        if (isTextNode(container)) {
+            this.paintText(container);
+        } else {
+            this.paintNode(container);
+        }
+    } catch(e) {
+        log(e);
     }
 };
 
@@ -268,6 +273,17 @@ NodeParser.prototype.paintNode = function(container) {
         this.renderer.renderBackground(container, bounds);
     }, this);
     this.renderer.renderBorders(borderData.borders);
+
+    switch(container.node.nodeName) {
+        case "IMG":
+            var imageContainer = this.images.get(container.node.src);
+            if (imageContainer) {
+                this.renderer.renderImage(container, bounds, borderData, imageContainer.image);
+            } else {
+                log("Error loading <img>", container.node.src);
+            }
+            break;
+    }
 };
 
 NodeParser.prototype.paintText = function(container) {
