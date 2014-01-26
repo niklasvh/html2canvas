@@ -9,5 +9,8 @@ function ImageContainer(src, cors) {
             image.crossOrigin = "anonymous";
         }
         image.src = src;
+        if (image.complete === true) {
+            resolve(image);
+        }
     });
 }

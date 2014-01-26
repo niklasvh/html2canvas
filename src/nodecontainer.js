@@ -28,12 +28,12 @@ NodeContainer.prototype.css = function(attribute) {
 
 NodeContainer.prototype.cssInt = function(attribute) {
     var value = parseInt(this.css(attribute), 10);
-    return (Number.isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
+    return (isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
 };
 
 NodeContainer.prototype.cssFloat = function(attribute) {
     var value = parseFloat(this.css(attribute));
-    return (Number.isNaN(value)) ? 0 : value;
+    return (isNaN(value)) ? 0 : value;
 };
 
 NodeContainer.prototype.fontWeight = function() {
