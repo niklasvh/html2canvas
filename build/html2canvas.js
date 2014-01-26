@@ -8,22 +8,25 @@
 (function(window, document, undefined){
 
 window.html2canvas = function(nodeList, options) {
-    var container = createWindowClone(document, window.innerWidth, window.innerHeight);
-    var clonedWindow = container.contentWindow;
-    var element = (nodeList === undefined) ? document.body : nodeList[0];
-    var node = clonedWindow.document.documentElement;
-    var support = new Support();
-    var imageLoader = new ImageLoader(options, support);
     options = options || {};
     if (options.logging) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
+    createWindowClone(document, window.innerWidth, window.innerHeight).then(function(container) {
+        log("Document cloned");
+        var clonedWindow = container.contentWindow;
+        var element = (nodeList === undefined) ? document.body : nodeList[0];
+        var node = clonedWindow.document.documentElement;
+        var support = new Support();
+        var imageLoader = new ImageLoader(options, support);
 
-    var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
-    var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
-    window.console.log(parser);
+        var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+        var parser = new NodeParser(node, renderer, support, imageLoader, options);
+
+        window.console.log(parser);  
+    });
 };
 
 function documentWidth () {
@@ -50,13 +53,38 @@ function createWindowClone(ownerDocument, width, height) {
     container.style.position = "absolute";
     container.style.width = width + "px";
     container.style.height = height + "px";
-
     ownerDocument.body.appendChild(container);
 
-    var documentClone = container.contentWindow.document;
-    documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+    return new Promise(function(resolve) {
+        var loadedTimer = function() {
+            /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
+            before a certain time has  passed
+             */
+            if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
+                documentClone.body.removeChild(div);
+                documentClone.body.removeChild(style);
+                resolve(container);
+            } else {
+                window.setTimeout(loadedTimer, 10);
+            }
+        };
+        var documentClone = container.contentWindow.document;
+        /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
+        if window url is about:blank, we can assign the url to current by writing onto the document
+         */
+        documentClone.open();
+        documentClone.write("");
+        documentClone.close();
 
-    return container;
+        documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+        var div = documentClone.createElement("div");
+        div.className = "html2canvas-ready-test";
+        documentClone.body.appendChild(div);
+        var style = documentClone.createElement("style");
+        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
+        documentClone.body.appendChild(style);
+        loadedTimer();
+    });
 }
 
 function NodeParser(element, renderer, support, imageLoader, options) {
@@ -219,7 +247,7 @@ NodeParser.prototype.parse = function(stack) {
     .concat(inFlow).concat(stackLevel0).concat(text).concat(positiveZindex).forEach(function(container) {
         this.paint(container);
         if (rendered.indexOf(container.node) !== -1) {
-            window.console.log(container, container.node);
+            log(container, container.node);
             throw new Error("rendering twice");
         }
         rendered.push(container.node);
@@ -578,7 +606,6 @@ function ImageContainer(src, cors) {
     });
 }
 
-
 function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
@@ -875,6 +902,29 @@ function isPercentage(value) {
     return value.toString().indexOf("%") !== -1;
 }
 
+/*
+ Copyright (c) 2013 Yehuda Katz, Tom Dale, and contributors
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of
+ this software and associated documentation files (the "Software"), to deal in
+ the Software without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ of the Software, and to permit persons to whom the Software is furnished to do
+ so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
+!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();
+
 function Renderer(width, height, images) {
     this.width = width;
     this.height = height;
@@ -907,15 +957,15 @@ Renderer.prototype.renderBorder = function(data) {
 
 Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     var backgroundImages = container.parseBackgroundImages();
-    backgroundImages.reverse().forEach(function(backgroundImage, index) {
+    backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         if (backgroundImage.method === "url") {
             var image = this.images.get(backgroundImage.args[0]);
             if (image) {
-                this.renderBackgroundRepeating(container, bounds, image, index);
+                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
             } else {
                 log("Error loading background-image", backgroundImage.args[0]);
             }
-        }
+        }  
     }, this);
 };
 
@@ -927,17 +977,17 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
     switch (repeat) {
         case "repeat-x":
         case "repeat no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
             break;
         case "repeat-y":
         case "no-repeat repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
             break;
         case "no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
             break;
         default:
-            this.renderBackgroundRepeat(imageContainer, position, {top: bounds.top, left: bounds.left});
+            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left});
             break;
     }
 };
@@ -999,25 +1049,38 @@ CanvasRenderer.prototype.text = function(text, left, bottom) {
     this.ctx.fillText(text, left, bottom);
 };
 
-CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, bounds, left, top, width, height) {
+CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height) {
     var shape = [
         ["line", Math.round(left), Math.round(top)],
         ["line", Math.round(left + width), Math.round(top)],
         ["line", Math.round(left + width), Math.round(height + top)],
         ["line", Math.round(left), Math.round(height + top)]
     ];
-    console.log(shape);
     this.clip(shape, function() {
         this.renderBackgroundRepeat(imageContainer, backgroundPosition, bounds);
     }, this);
 };
 
-CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, bounds) {
+CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds) {
     var offsetX = Math.round(bounds.left + backgroundPosition.left), offsetY = Math.round(bounds.top + backgroundPosition.top);
-    this.setFillStyle(this.ctx.createPattern(imageContainer.image, "repeat"));
+    this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
     this.ctx.translate(offsetX, offsetY);
     this.ctx.fill();
     this.ctx.translate(-offsetX, -offsetY);
+};
+
+CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
+    var image = imageContainer.image;
+    if(image.width === size.width && image.height === size.height) {
+        return image;
+    }
+
+    var ctx, canvas = document.createElement('canvas');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, size.width, size.height );
+    return canvas;
 };
 
 function StackingContext(hasOwnStacking, opacity, element, parent) {

@@ -11,4 +11,3 @@ function ImageContainer(src, cors) {
         image.src = src;
     });
 }
-

@@ -30,11 +30,11 @@ Renderer.prototype.renderBorder = function(data) {
 
 Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     var backgroundImages = container.parseBackgroundImages();
-    backgroundImages.reverse().forEach(function(backgroundImage, index) {
+    backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         if (backgroundImage.method === "url") {
             var image = this.images.get(backgroundImage.args[0]);
             if (image) {
-                this.renderBackgroundRepeating(container, bounds, image, index);
+                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
             } else {
                 log("Error loading background-image", backgroundImage.args[0]);
             }
@@ -50,17 +50,17 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
     switch (repeat) {
         case "repeat-x":
         case "repeat no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
             break;
         case "repeat-y":
         case "no-repeat repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
             break;
         case "no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
             break;
         default:
-            this.renderBackgroundRepeat(imageContainer, position, {top: bounds.top, left: bounds.left});
+            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left});
             break;
     }
 };
