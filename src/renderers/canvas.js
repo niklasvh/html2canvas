@@ -96,6 +96,13 @@ CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backg
     this.ctx.translate(-offsetX, -offsetY);
 };
 
+CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
+    if (gradientImage instanceof LinearGradientContainer) {
+        var gradient = this.ctx.createLinearGradient(bounds.left, bounds.top, bounds.right, bounds.bottom);
+        //console.log(gradientImage, bounds, gradient);
+    }
+};
+
 CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
     var image = imageContainer.image;
     if(image.width === size.width && image.height === size.height) {

@@ -51,13 +51,26 @@ Renderer.prototype.renderBorder = function(data) {
 Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
-        if (backgroundImage.method === "url") {
-            var image = this.images.get(backgroundImage.args[0]);
-            if (image) {
-                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
-            } else {
-                log("Error loading background-image", backgroundImage.args[0]);
-            }
+        switch(backgroundImage.method) {
+            case "url":
+                var image = this.images.get(backgroundImage.args[0]);
+                if (image) {
+                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
+                } else {
+                    log("Error loading background-image", backgroundImage.args[0]);
+                }
+                break;
+            case "linear-gradient":
+            case "gradient":
+                var gradientImage = this.images.get(backgroundImage.value);
+                if (gradientImage) {
+                    this.renderBackgroundGradient(gradientImage, bounds);
+                } else {
+                    log("Error loading background-image", backgroundImage.args[0]);
+                }
+                break;
+            default:
+                log("Unknown background-image type", backgroundImage.args[0]);
         }
     }, this);
 };
