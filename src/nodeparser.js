@@ -192,7 +192,15 @@ NodeParser.prototype.paintText = function(container) {
     var weight = container.parent.fontWeight();
     var size = container.parent.css('fontSize');
     var family = container.parent.css('fontFamily');
+    var shadows = container.parent.parseTextShadows();
+
     this.renderer.font(container.parent.css('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
+    if (shadows.length) {
+        // TODO: support multiple text shadows
+        this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
+    } else {
+        this.renderer.clearShadow();
+    }
 
     textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
         if (bounds) {
