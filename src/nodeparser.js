@@ -10,6 +10,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    this.fontMetrics = new FontMetrics();
     log("Fetched nodes");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
     log("Creating stacking contexts");
@@ -196,14 +197,26 @@ NodeParser.prototype.paintText = function(container) {
     textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
         if (bounds) {
             this.renderer.text(textList[index], bounds.left, bounds.bottom);
-            //  renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
+            this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
         }
-        /*  var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1), stack.transform.matrix);
-         if (bounds) {
-         drawText(text, bounds.left, bounds.bottom, ctx);
-         renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
-         } */
     }, this);
+};
+
+NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics) {
+    switch(container.css("textDecoration").split(" ")[0]) {
+        case "underline":
+            // Draws a line at the baseline of the font
+            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
+            this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.css("color"));
+            break;
+        case "overline":
+            this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.css("color"));
+            break;
+        case "line-through":
+            // TODO try and find exact position for line-through
+            this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.css("color"));
+            break;
+    }
 };
 
 NodeParser.prototype.parseBorders = function(container) {
