@@ -37,6 +37,10 @@ function documentHeight () {
     );
 }
 
+function smallImage() {
+    return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+}
+
 function createWindowClone(ownerDocument, width, height) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = ownerDocument.createElement("iframe");
@@ -51,7 +55,7 @@ function createWindowClone(ownerDocument, width, height) {
     return new Promise(function(resolve) {
         var loadedTimer = function() {
             /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
-            before a certain time has  passed
+            before a certain time has passed
              */
             if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
                 documentClone.body.removeChild(div);
@@ -75,8 +79,8 @@ function createWindowClone(ownerDocument, width, height) {
         div.className = "html2canvas-ready-test";
         documentClone.body.appendChild(div);
         var style = documentClone.createElement("style");
-        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
+        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(" + smallImage() + "); }";
         documentClone.body.appendChild(style);
-        window.setTimeout(loadedTimer, 1000);
+        window.setTimeout(loadedTimer, 10);
     });
 }
