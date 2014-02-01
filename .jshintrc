@@ -14,5 +14,5 @@
       "jQuery": true
     },
     "predef": ["NodeParser", "NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise",
-        "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "log", "smallImage"]
+        "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "GradientContainer", "LinearGradientContainer", "WebkitGradientContainer", "log", "smallImage"]
 }
