@@ -20,9 +20,10 @@ window.html2canvas = function(nodeList, options) {
         var node = clonedWindow.document.documentElement;
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
-
-
-        var renderer = new CanvasRenderer(documentWidth(), documentHeight(), imageLoader);
+        var bounds = NodeParser.prototype.getBounds(node);
+        var width = options.type === "view" ? Math.min(bounds.width, window.innerWidth) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, window.innerHeight) : documentHeight();
+        var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
         window.console.log(parser);
@@ -51,8 +52,9 @@ function createWindowClone(ownerDocument, width, height) {
 
     container.style.display = "hidden";
     container.style.position = "absolute";
-    container.style.width = width + "px";
-    container.style.height = height + "px";
+    container.width = width;
+    container.height = height;
+    container.scrolling = "no"; // ios won't scroll without it
     ownerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
@@ -84,11 +86,12 @@ function createWindowClone(ownerDocument, width, height) {
         var style = documentClone.createElement("style");
         style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
         documentClone.body.appendChild(style);
-        loadedTimer();
+        window.setTimeout(loadedTimer, 10);
     });
 }
 
 function NodeParser(element, renderer, support, imageLoader, options) {
+    log("Starting NodeParser");
     this.renderer = renderer;
     this.options = options;
     this.range = null;
@@ -99,12 +102,16 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    log("Fetched nodes");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
+    log("Creating stacking contexts");
     this.createStackingContexts();
+    log("Sorting stacking contexts");
     this.sortStackingContexts(this.stack);
     this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
+        log("Finished rendering");
         options.onrendered(renderer.canvas);
     }, this));
 }
@@ -156,12 +163,13 @@ NodeParser.prototype.parseBounds = function(nodeContainer) {
 NodeParser.prototype.getBounds = function(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
+        var isBody = node.nodeName === "BODY";
         return {
             top: clientRect.top,
             bottom: clientRect.bottom || (clientRect.top + clientRect.height),
             left: clientRect.left,
-            width: node.offsetWidth,
-            height: node.offsetHeight
+            width:  isBody ? node.scrollWidth : node.offsetWidth,
+            height: isBody ? node.scrollHeight : node.offsetHeight
         };
     }
     return {};
@@ -619,6 +627,9 @@ function ImageContainer(src, cors) {
             image.crossOrigin = "anonymous";
         }
         image.src = src;
+        if (image.complete === true) {
+            resolve(image);
+        }
     });
 }
 
@@ -644,6 +655,7 @@ ImageLoader.prototype.addImage = function(images, callback) {
     return function(newImage) {
         if (!this.imageExists(images, newImage)) {
             images.splice(0, 0, callback.apply(this, arguments));
+            log('Added image #' + (images.length), newImage.substring(0, 100));
         }
     };
 };
@@ -697,7 +709,15 @@ ImageLoader.prototype.get = function(src) {
 
 ImageLoader.prototype.fetch = function(nodes) {
     this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
+    this.images.forEach(function(image, index) {
+        image.promise.then(function() {
+            log("Succesfully loaded image #"+ (index+1));
+        }, function() {
+            log("Failed loading image #"+ (index+1));
+        });
+    });
     this.ready = Promise.all(this.images.map(this.getPromise));
+    log("Finished searching images");
     return this;
 };
 
@@ -745,12 +765,12 @@ NodeContainer.prototype.css = function(attribute) {
 
 NodeContainer.prototype.cssInt = function(attribute) {
     var value = parseInt(this.css(attribute), 10);
-    return (Number.isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
+    return (isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
 };
 
 NodeContainer.prototype.cssFloat = function(attribute) {
     var value = parseFloat(this.css(attribute));
-    return (Number.isNaN(value)) ? 0 : value;
+    return (isNaN(value)) ? 0 : value;
 };
 
 NodeContainer.prototype.fontWeight = function() {
@@ -1058,6 +1078,7 @@ function CanvasRenderer(width, height) {
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
+    log("Initialized CanvasRenderer");
 }
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);

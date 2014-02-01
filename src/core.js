@@ -12,8 +12,8 @@ window.html2canvas = function(nodeList, options) {
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
-        var width = options.type === "view" ? bounds.width : documentWidth();
-        var height = options.type === "view" ? bounds.height : documentHeight();
+        var width = options.type === "view" ? Math.min(bounds.width, window.innerWidth) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, window.innerHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
 
@@ -43,8 +43,9 @@ function createWindowClone(ownerDocument, width, height) {
 
     container.style.display = "hidden";
     container.style.position = "absolute";
-    container.style.width = width + "px";
-    container.style.height = height + "px";
+    container.width = width;
+    container.height = height;
+    container.scrolling = "no"; // ios won't scroll without it
     ownerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
