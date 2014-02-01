@@ -86,8 +86,8 @@ NodeParser.prototype.getBounds = function(node) {
 NodeParser.prototype.parseTextBounds = function(container) {
     return function(text, index, textList) {
         if (container.parent.css("textDecoration") !== "none" || text.trim().length !== 0) {
-            var offset = textList.slice(0, index).join("").length;
             if (this.support.rangeBounds) {
+                var offset = textList.slice(0, index).join("").length;
                 return this.getRangeBounds(container.node, offset, text.length);
             } else if (container.node && typeof(container.node.data) === "string") {
                 var replacementNode = container.node.splitText(text.length);
@@ -95,7 +95,10 @@ NodeParser.prototype.parseTextBounds = function(container) {
                 container.node = replacementNode;
                 return bounds;
             }
+        } else if (!this.support.rangeBounds) {
+            container.node = container.node.splitText(text.length);
         }
+        return {};
     };
 };
 
