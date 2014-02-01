@@ -5,6 +5,7 @@ function CanvasRenderer(width, height) {
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
+    this.variables = {};
     log("Initialized CanvasRenderer");
 }
 
@@ -48,8 +49,27 @@ CanvasRenderer.prototype.font = function(color, style, variant, weight, size, fa
     this.setFillStyle(color).font = [style, variant, weight, size, family].join(" ");
 };
 
+CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
+    this.setVariable("shadowColor", color)
+        .setVariable("shadowOffsetY", offsetX)
+        .setVariable("shadowOffsetX", offsetY)
+        .setVariable("shadowBlur", blur);
+};
+
+CanvasRenderer.prototype.clearShadow = function() {
+    this.setVariable("shadowColor", "rgba(0,0,0,0)");
+};
+
 CanvasRenderer.prototype.setOpacity = function(opacity) {
     this.ctx.globalAlpha = opacity;
+};
+
+CanvasRenderer.prototype.setVariable = function(property, value) {
+    if (this.variables[property] !== value) {
+        this.variables[property] = this.ctx[property] = value;
+    }
+
+    return this;
 };
 
 CanvasRenderer.prototype.text = function(text, left, bottom) {

@@ -216,6 +216,28 @@ NodeContainer.prototype.parseBackgroundRepeat = function(index) {
     return this.cssList("backgroundRepeat", index)[0];
 };
 
+NodeContainer.prototype.parseTextShadows = function() {
+    var textShadow = this.css("textShadow");
+    var results = [];
+
+    if (textShadow && textShadow !== 'none') {
+        var shadows = textShadow.match(this.TEXT_SHADOW_PROPERTY);
+        for (var i = 0; shadows && (i < shadows.length); i++) {
+            var s = shadows[i].match(this.TEXT_SHADOW_VALUES);
+            results.push({
+                color: s[0],
+                offsetX: s[1] ? s[1].replace('px', '') : 0,
+                offsetY: s[2] ? s[2].replace('px', '') : 0,
+                blur: s[3] ? s[3].replace('px', '') : 0
+            });
+        }
+    }
+    return results;
+};
+
+NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
+NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+
 function isPercentage(value) {
     return value.toString().indexOf("%") !== -1;
 }
