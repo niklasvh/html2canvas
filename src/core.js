@@ -4,7 +4,17 @@ window.html2canvas = function(nodeList, options) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
-    createWindowClone(document, window.innerWidth, window.innerHeight).then(function(container) {
+    return renderDocument(document, options, window.innerWidth, window.innerHeight).then(function(canvas) {
+        if (typeof(options.onrendered) === "function") {
+            log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
+            options.onrendered(canvas);
+        }
+        return canvas;
+    });
+};
+
+function renderDocument(document, options, width, height) {
+    return createWindowClone(document, width, height).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -12,14 +22,16 @@ window.html2canvas = function(nodeList, options) {
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, window.innerWidth) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, window.innerHeight) : documentHeight();
+        var width = options.type === "view" ? Math.min(bounds.width, width) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, height) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
-
-        window.console.log(parser);
+        return parser.ready.then(function() {
+            container.parentNode.removeChild(container);
+            return renderer.canvas;
+        });
     });
-};
+}
 
 function documentWidth () {
     return Math.max(
@@ -45,7 +57,7 @@ function createWindowClone(ownerDocument, width, height) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = ownerDocument.createElement("iframe");
 
-    container.style.display = "hidden";
+    container.style.visibility = "hidden";
     container.style.position = "absolute";
     container.width = width;
     container.height = height;
@@ -81,6 +93,6 @@ function createWindowClone(ownerDocument, width, height) {
         var style = documentClone.createElement("style");
         style.innerHTML = "body div.html2canvas-ready-test { background-image:url(" + smallImage() + "); }";
         documentClone.body.appendChild(style);
-        window.setTimeout(loadedTimer, 10);
+        window.setTimeout(loadedTimer, 1000);
     });
 }
