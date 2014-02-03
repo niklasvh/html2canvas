@@ -4,21 +4,20 @@
 (function( $ ){
     $.fn.html2canvas = function(options) {
         if (options && options.profile && window.console && window.console.profile && window.location.search !== "?selenium2") {
-            console.profile();
+            window.console.profile();
         }
         var date = new Date(),
-            html2obj,
             $message = null,
             timeoutTimer = false,
             timer = date.getTime();
         options = options || {};
 
-        options.onrendered = options.onrendered || function( canvas ) {
+        html2canvas(this, options).then(function(canvas) {
             var $canvas = $(canvas),
                 finishTime = new Date();
 
             if (options && options.profile && window.console && window.console.profileEnd) {
-                console.profileEnd();
+                window.console.profileEnd();
             }
             $canvas.addClass("html2canvas")
                 .css({
@@ -43,12 +42,10 @@
             } catch(e) {
                 if ($canvas[0].nodeName.toLowerCase() === "canvas") {
                     // TODO, maybe add a bit less offensive way to present this, but still something that can easily be noticed
-                    alert("Canvas is tainted, unable to read data");
+                    window.alert("Canvas is tainted, unable to read data");
                 }
             }
-        };
-
-        html2obj = html2canvas(this, options);
+        });
 
         function throwMessage(msg,duration){
             window.clearTimeout(timeoutTimer);

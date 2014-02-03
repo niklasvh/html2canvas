@@ -17,11 +17,10 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.createStackingContexts();
     log("Sorting stacking contexts");
     this.sortStackingContexts(this.stack);
-    this.images.ready.then(bind(function() {
+    this.ready = this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
         log("Finished rendering");
-        options.onrendered(renderer.canvas);
     }, this));
 }
 

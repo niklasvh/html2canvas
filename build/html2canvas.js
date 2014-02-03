@@ -13,7 +13,17 @@ window.html2canvas = function(nodeList, options) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
-    createWindowClone(document, window.innerWidth, window.innerHeight).then(function(container) {
+    return renderDocument(document, options, window.innerWidth, window.innerHeight).then(function(canvas) {
+        if (typeof(options.onrendered) === "function") {
+            log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
+            options.onrendered(canvas);
+        }
+        return canvas;
+    });
+};
+
+function renderDocument(document, options, width, height) {
+    return createWindowClone(document, width, height).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -21,14 +31,16 @@ window.html2canvas = function(nodeList, options) {
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, window.innerWidth) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, window.innerHeight) : documentHeight();
+        var width = options.type === "view" ? Math.min(bounds.width, width) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, height) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
-
-        window.console.log(parser);
+        return parser.ready.then(function() {
+            container.parentNode.removeChild(container);
+            return renderer.canvas;
+        });
     });
-};
+}
 
 function documentWidth () {
     return Math.max(
@@ -46,11 +58,15 @@ function documentHeight () {
     );
 }
 
+function smallImage() {
+    return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+}
+
 function createWindowClone(ownerDocument, width, height) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = ownerDocument.createElement("iframe");
 
-    container.style.display = "hidden";
+    container.style.visibility = "hidden";
     container.style.position = "absolute";
     container.width = width;
     container.height = height;
@@ -60,7 +76,7 @@ function createWindowClone(ownerDocument, width, height) {
     return new Promise(function(resolve) {
         var loadedTimer = function() {
             /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
-            before a certain time has  passed
+            before a certain time has passed
              */
             if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
                 documentClone.body.removeChild(div);
@@ -84,11 +100,87 @@ function createWindowClone(ownerDocument, width, height) {
         div.className = "html2canvas-ready-test";
         documentClone.body.appendChild(div);
         var style = documentClone.createElement("style");
-        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7); }";
+        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(" + smallImage() + "); }";
         documentClone.body.appendChild(style);
         window.setTimeout(loadedTimer, 1000);
     });
 }
+
+function Font(family, size) {
+    var container = document.createElement('div'),
+        img = document.createElement('img'),
+        span = document.createElement('span'),
+        sampleText = 'Hidden Text',
+        baseline,
+        middle;
+
+    container.style.visibility = "hidden";
+    container.style.fontFamily = family;
+    container.style.fontSize = size;
+    container.style.margin = 0;
+    container.style.padding = 0;
+
+    document.body.appendChild(container);
+
+    img.src = smallImage();
+    img.width = 1;
+    img.height = 1;
+
+    img.style.margin = 0;
+    img.style.padding = 0;
+    img.style.verticalAlign = "baseline";
+
+    span.style.fontFamily = family;
+    span.style.fontSize = size;
+    span.style.margin = 0;
+    span.style.padding = 0;
+
+    span.appendChild(document.createTextNode(sampleText));
+    container.appendChild(span);
+    container.appendChild(img);
+    baseline = (img.offsetTop - span.offsetTop) + 1;
+
+    container.removeChild(span);
+    container.appendChild(document.createTextNode(sampleText));
+
+    container.style.lineHeight = "normal";
+    img.style.verticalAlign = "super";
+
+    middle = (img.offsetTop-container.offsetTop) + 1;
+
+    document.body.removeChild(container);
+
+    this.baseline = baseline;
+    this.lineWidth = 1;
+    this.middle = middle;
+}
+
+function FontMetrics() {
+    this.data = {};
+}
+
+FontMetrics.prototype.getMetrics = function(family, size) {
+    if (this.data[family + "-" + size] === undefined) {
+        this.data[family + "-" + size] = new Font(family, size);
+    }
+    return this.data[family + "-" + size];
+};
+
+function GradientContainer(imageData) {
+    this.src = imageData.value;
+    this.colorStops = [];
+    this.type = null;
+    this.x0 = 0.5;
+    this.y0 = 0.5;
+    this.x1 = 0.5;
+    this.y1 = 0.5;
+    this.promise = Promise.resolve(true);
+}
+
+GradientContainer.prototype.TYPES = {
+    LINEAR: 1,
+    RADIAL: 2
+};
 
 function ImageContainer(src, cors) {
     this.src = src;
@@ -121,7 +213,7 @@ ImageLoader.prototype.findImages = function(nodes) {
 };
 
 ImageLoader.prototype.findBackgroundImage = function(images, container) {
-    container.parseBackgroundImages().filter(this.isImageBackground).map(this.getBackgroundUrl).forEach(this.addImage(images, this.loadImage), this);
+    container.parseBackgroundImages().filter(this.hasImageBackground).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -129,30 +221,33 @@ ImageLoader.prototype.addImage = function(images, callback) {
     return function(newImage) {
         if (!this.imageExists(images, newImage)) {
             images.splice(0, 0, callback.apply(this, arguments));
-            log('Added image #' + (images.length), newImage.substring(0, 100));
+            log('Added image #' + (images.length), newImage);
         }
     };
 };
 
-ImageLoader.prototype.getBackgroundUrl = function(imageData) {
-    return imageData.args[0];
+ImageLoader.prototype.hasImageBackground = function(imageData) {
+    return imageData.method !== "none";
 };
 
-ImageLoader.prototype.isImageBackground = function(imageData) {
-    return imageData.method === "url";
-};
-
-ImageLoader.prototype.loadImage = function(src) {
-    if (src.match(/data:image\/.*;base64,/i)) {
-        return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-    } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
-        return new ImageContainer(src, false);
-    } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
-        return new ImageContainer(src, true);
-    } else if (this.options.proxy) {
-        return new ProxyImageContainer(src);
-    } else {
-        return new DummyImageContainer(src);
+ImageLoader.prototype.loadImage = function(imageData) {
+    if (imageData.method === "url") {
+        var src = imageData.args[0];
+        if (src.match(/data:image\/.*;base64,/i)) {
+            return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
+        } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
+            return new ImageContainer(src, false);
+        } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
+            return new ImageContainer(src, true);
+        } else if (this.options.proxy) {
+            return new ProxyImageContainer(src);
+        } else {
+            return new DummyImageContainer(src);
+        }
+    } else if (imageData.method === "linear-gradient") {
+        return new LinearGradientContainer(imageData);
+    } else if (imageData.method === "gradient") {
+        return new WebkitGradientContainer(imageData);
     }
 };
 
@@ -202,6 +297,40 @@ function isImage(container) {
 function src(container) {
     return container.node.src;
 }
+
+function LinearGradientContainer(imageData) {
+    GradientContainer.apply(this, arguments);
+    this.type = this.TYPES.LINEAR;
+
+    imageData.args[0].split(" ").forEach(function(position) {
+        switch(position) {
+            case "left":
+                this.x0 = 0;
+                this.x1 = 1;
+                break;
+            case "top":
+                this.y0 = 0;
+                this.y1 = 1;
+                break;
+            case "right":
+                this.x0 = 1;
+                this.x1 = 0;
+                break;
+            case "bottom":
+                this.y0 = 1;
+                this.y1 = 0;
+                break;
+        }
+    }, this);
+
+    imageData.args.slice(1).forEach(function(colorStop) {
+       // console.log(colorStop, colorStop.match(this.stepRegExp));
+    }, this);
+}
+
+LinearGradientContainer.prototype = Object.create(GradientContainer.prototype);
+
+LinearGradientContainer.prototype.stepRegExp = /((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/;
 
 function log() {
     if (window.html2canvas.logging && window.console && window.console.log) {
@@ -427,6 +556,28 @@ NodeContainer.prototype.parseBackgroundRepeat = function(index) {
     return this.cssList("backgroundRepeat", index)[0];
 };
 
+NodeContainer.prototype.parseTextShadows = function() {
+    var textShadow = this.css("textShadow");
+    var results = [];
+
+    if (textShadow && textShadow !== 'none') {
+        var shadows = textShadow.match(this.TEXT_SHADOW_PROPERTY);
+        for (var i = 0; shadows && (i < shadows.length); i++) {
+            var s = shadows[i].match(this.TEXT_SHADOW_VALUES);
+            results.push({
+                color: s[0],
+                offsetX: s[1] ? s[1].replace('px', '') : 0,
+                offsetY: s[2] ? s[2].replace('px', '') : 0,
+                blur: s[3] ? s[3].replace('px', '') : 0
+            });
+        }
+    }
+    return results;
+};
+
+NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
+NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+
 function isPercentage(value) {
     return value.toString().indexOf("%") !== -1;
 }
@@ -443,17 +594,17 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     });
+    this.fontMetrics = new FontMetrics();
     log("Fetched nodes");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
     log("Creating stacking contexts");
     this.createStackingContexts();
     log("Sorting stacking contexts");
     this.sortStackingContexts(this.stack);
-    this.images.ready.then(bind(function() {
+    this.ready = this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
         log("Finished rendering");
-        options.onrendered(renderer.canvas);
     }, this));
 }
 
@@ -505,11 +656,13 @@ NodeParser.prototype.getBounds = function(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
         var isBody = node.nodeName === "BODY";
+        var width = isBody ? node.scrollWidth : node.offsetWidth;
         return {
             top: clientRect.top,
             bottom: clientRect.bottom || (clientRect.top + clientRect.height),
+            right: clientRect.left + width,
             left: clientRect.left,
-            width:  isBody ? node.scrollWidth : node.offsetWidth,
+            width:  width,
             height: isBody ? node.scrollHeight : node.offsetHeight
         };
     }
@@ -519,8 +672,8 @@ NodeParser.prototype.getBounds = function(node) {
 NodeParser.prototype.parseTextBounds = function(container) {
     return function(text, index, textList) {
         if (container.parent.css("textDecoration") !== "none" || text.trim().length !== 0) {
-            var offset = textList.slice(0, index).join("").length;
             if (this.support.rangeBounds) {
+                var offset = textList.slice(0, index).join("").length;
                 return this.getRangeBounds(container.node, offset, text.length);
             } else if (container.node && typeof(container.node.data) === "string") {
                 var replacementNode = container.node.splitText(text.length);
@@ -528,7 +681,10 @@ NodeParser.prototype.parseTextBounds = function(container) {
                 container.node = replacementNode;
                 return bounds;
             }
+        } else if (!this.support.rangeBounds) {
+            container.node = container.node.splitText(text.length);
         }
+        return {};
     };
 };
 
@@ -621,19 +777,39 @@ NodeParser.prototype.paintText = function(container) {
     var weight = container.parent.fontWeight();
     var size = container.parent.css('fontSize');
     var family = container.parent.css('fontFamily');
+    var shadows = container.parent.parseTextShadows();
+
     this.renderer.font(container.parent.css('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
+    if (shadows.length) {
+        // TODO: support multiple text shadows
+        this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
+    } else {
+        this.renderer.clearShadow();
+    }
 
     textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
         if (bounds) {
             this.renderer.text(textList[index], bounds.left, bounds.bottom);
-            //  renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
+            this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
         }
-        /*  var bounds = getTextBounds(state, text, textDecoration, (index < textList.length - 1), stack.transform.matrix);
-         if (bounds) {
-         drawText(text, bounds.left, bounds.bottom, ctx);
-         renderTextDecoration(ctx, textDecoration, bounds, metrics, color);
-         } */
     }, this);
+};
+
+NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics) {
+    switch(container.css("textDecoration").split(" ")[0]) {
+        case "underline":
+            // Draws a line at the baseline of the font
+            // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
+            this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.css("color"));
+            break;
+        case "overline":
+            this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.css("color"));
+            break;
+        case "line-through":
+            // TODO try and find exact position for line-through
+            this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.css("color"));
+            break;
+    }
 };
 
 NodeParser.prototype.parseBorders = function(container) {
@@ -1031,13 +1207,26 @@ Renderer.prototype.renderBorder = function(data) {
 Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
-        if (backgroundImage.method === "url") {
-            var image = this.images.get(backgroundImage.args[0]);
-            if (image) {
-                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
-            } else {
-                log("Error loading background-image", backgroundImage.args[0]);
-            }
+        switch(backgroundImage.method) {
+            case "url":
+                var image = this.images.get(backgroundImage.args[0]);
+                if (image) {
+                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
+                } else {
+                    log("Error loading background-image", backgroundImage.args[0]);
+                }
+                break;
+            case "linear-gradient":
+            case "gradient":
+                var gradientImage = this.images.get(backgroundImage.value);
+                if (gradientImage) {
+                    this.renderBackgroundGradient(gradientImage, bounds);
+                } else {
+                    log("Error loading background-image", backgroundImage.args[0]);
+                }
+                break;
+            default:
+                log("Unknown background-image type", backgroundImage.args[0]);
         }
     }, this);
 };
@@ -1076,6 +1265,7 @@ function CanvasRenderer(width, height) {
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
+    this.variables = {};
     log("Initialized CanvasRenderer");
 }
 
@@ -1119,8 +1309,27 @@ CanvasRenderer.prototype.font = function(color, style, variant, weight, size, fa
     this.setFillStyle(color).font = [style, variant, weight, size, family].join(" ");
 };
 
+CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
+    this.setVariable("shadowColor", color)
+        .setVariable("shadowOffsetY", offsetX)
+        .setVariable("shadowOffsetX", offsetY)
+        .setVariable("shadowBlur", blur);
+};
+
+CanvasRenderer.prototype.clearShadow = function() {
+    this.setVariable("shadowColor", "rgba(0,0,0,0)");
+};
+
 CanvasRenderer.prototype.setOpacity = function(opacity) {
     this.ctx.globalAlpha = opacity;
+};
+
+CanvasRenderer.prototype.setVariable = function(property, value) {
+    if (this.variables[property] !== value) {
+        this.variables[property] = this.ctx[property] = value;
+    }
+
+    return this;
 };
 
 CanvasRenderer.prototype.text = function(text, left, bottom) {
@@ -1145,6 +1354,13 @@ CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backg
     this.ctx.translate(offsetX, offsetY);
     this.ctx.fill();
     this.ctx.translate(-offsetX, -offsetY);
+};
+
+CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
+    if (gradientImage instanceof LinearGradientContainer) {
+        var gradient = this.ctx.createLinearGradient(bounds.left, bounds.top, bounds.right, bounds.bottom);
+        //console.log(gradientImage, bounds, gradient);
+    }
 };
 
 CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
@@ -1239,5 +1455,12 @@ function capitalize(m, p1, p2) {
         return p1 + p2.toUpperCase();
     }
 }
+
+function WebkitGradientContainer(imageData) {
+    GradientContainer.apply(this, arguments);
+    this.type = (imageData.args[0] === "linear") ? this.TYPES.LINEAR : this.TYPES.RADIAL;
+}
+
+WebkitGradientContainer.prototype = Object.create(GradientContainer.prototype);
 
 })(window,document);
