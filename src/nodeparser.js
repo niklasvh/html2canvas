@@ -34,7 +34,7 @@ NodeParser.prototype.createPseudoHideStyles = function(document) {
 
 NodeParser.prototype.getPseudoElements = function(container) {
     var nodes = [[container]];
-    if (container instanceof NodeContainer) {
+    if (container.node.nodeType === Node.ELEMENT_NODE) {
         var before = this.getPseudoElement(container, ":before");
         var after = this.getPseudoElement(container, ":after");
 
@@ -55,6 +55,12 @@ NodeParser.prototype.getPseudoElements = function(container) {
     return flatten(nodes);
 };
 
+function toCamelCase(str) {
+    return str.replace(/(\-[a-z])/g, function(match){
+        return match.toUpperCase().replace('-','');
+    });
+}
+
 NodeParser.prototype.getPseudoElement = function(container, type) {
     var style = container.computedStyle(type);
     if(!style || !style.content || style.content === "none" || style.content === "-moz-alt-content" || style.display === "none") {
@@ -65,14 +71,12 @@ NodeParser.prototype.getPseudoElement = function(container, type) {
     var isImage = content.substr(0, 3) === 'url';
     var pseudoNode = document.createElement(isImage ? 'img' : 'html2canvaspseudoelement');
     var pseudoContainer = new NodeContainer(pseudoNode, container);
-    Object.keys(style).filter(indexedProperty).forEach(function(property) {
-        // Prevent assigning of read only CSS Rules, ex. length, parentRule
-        try {
-            pseudoNode.style[property] = style[property];
-        } catch (e) {
-            log('Tried to assign readonly property ', property, 'Error:', e);
-        }
-    });
+
+
+    for (var i = style.length-1; i >= 0; i--) {
+        var property = toCamelCase(style.item(i));
+        pseudoNode.style[property] = style[property];
+    }
 
     pseudoNode.className = this.pseudoHideClass;
 
@@ -615,8 +619,4 @@ function flatten(arrays) {
 function stripQuotes(content) {
     var first = content.substr(0, 1);
     return (first === content.substr(content.length - 1) && first.match(/'|"/)) ? content.substr(1, content.length - 2) : content;
-}
-
-function indexedProperty(property) {
-    return (isNaN(parseInt(property, 10)));
 }
