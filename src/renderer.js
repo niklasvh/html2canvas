@@ -69,6 +69,8 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
                 break;
+            case "none":
+                break;
             default:
                 log("Unknown background-image type", backgroundImage.args[0]);
         }

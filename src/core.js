@@ -13,8 +13,8 @@ window.html2canvas = function(nodeList, options) {
     });
 };
 
-function renderDocument(document, options, width, height) {
-    return createWindowClone(document, width, height).then(function(container) {
+function renderDocument(document, options, windowWidth, windowHeight) {
+    return createWindowClone(document, windowWidth, windowHeight).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -22,8 +22,8 @@ function renderDocument(document, options, width, height) {
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, width) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, height) : documentHeight();
+        var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
