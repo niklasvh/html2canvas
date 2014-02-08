@@ -7,9 +7,10 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
     parent.visibile = parent.isElementVisible();
-    this.nodes = [parent].concat(this.getChildren(parent)).filter(function(container) {
+    this.createPseudoHideStyles(element.ownerDocument);
+    this.nodes = flatten([parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
-    });
+    }).map(this.getPseudoElements, this));
     this.fontMetrics = new FontMetrics();
     log("Fetched nodes");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
@@ -23,6 +24,68 @@ function NodeParser(element, renderer, support, imageLoader, options) {
         log("Finished rendering");
     }, this));
 }
+
+NodeParser.prototype.createPseudoHideStyles = function(document) {
+    var hidePseudoElements = document.createElement('style');
+    hidePseudoElements.innerHTML = '.' + this.pseudoHideClass + ':before { content: "" !important; display: none !important; }' +
+        '.' + this.pseudoHideClass + ':after { content: "" !important; display: none !important; }';
+    document.body.appendChild(hidePseudoElements);
+};
+
+NodeParser.prototype.getPseudoElements = function(container) {
+    var nodes = [[container]];
+    if (container instanceof NodeContainer) {
+        var before = this.getPseudoElement(container, ":before");
+        var after = this.getPseudoElement(container, ":after");
+
+        if (before) {
+            container.node.insertBefore(before[0].node, container.node.firstChild);
+            nodes.push(before);
+        }
+
+        if (after) {
+            container.node.appendChild(after[0].node);
+            nodes.push(after);
+        }
+
+        if (before || after) {
+            container.node.className += " " + this.pseudoHideClass;
+        }
+    }
+    return flatten(nodes);
+};
+
+NodeParser.prototype.getPseudoElement = function(container, type) {
+    var style = container.computedStyle(type);
+    if(!style || !style.content || style.content === "none" || style.content === "-moz-alt-content" || style.display === "none") {
+        return null;
+    }
+
+    var content = stripQuotes(style.content);
+    var isImage = content.substr(0, 3) === 'url';
+    var pseudoNode = document.createElement(isImage ? 'img' : 'html2canvaspseudoelement');
+    var pseudoContainer = new NodeContainer(pseudoNode, container);
+    Object.keys(style).filter(indexedProperty).forEach(function(property) {
+        // Prevent assigning of read only CSS Rules, ex. length, parentRule
+        try {
+            pseudoNode.style[property] = style[property];
+        } catch (e) {
+            log('Tried to assign readonly property ', property, 'Error:', e);
+        }
+    });
+
+    pseudoNode.className = this.pseudoHideClass;
+
+    if (isImage) {
+        pseudoNode.src = parseBackgrounds(content)[0].args[0];
+        return [pseudoContainer];
+    } else {
+        var text = document.createTextNode(content);
+        pseudoNode.appendChild(text);
+        return [pseudoContainer, new TextContainer(text, pseudoContainer)];
+    }
+};
+
 
 NodeParser.prototype.getChildren = function(parentContainer) {
     return flatten([].filter.call(parentContainer.node.childNodes, renderableNode).map(function(node) {
@@ -328,6 +391,8 @@ NodeParser.prototype.parseBackgroundClip = function(container, borderPoints, bor
     return borderArgs;
 };
 
+NodeParser.prototype.pseudoHideClass = "___html2canvas___pseudoelement";
+
 function getCurvePoints(x, y, r1, r2) {
     var kappa = 4 * ((Math.sqrt(2) - 1) / 3);
     var ox = (r1) * kappa, // control point offset horizontal
@@ -545,4 +610,13 @@ function nonIgnoredElement(nodeContainer) {
 
 function flatten(arrays) {
     return [].concat.apply([], arrays);
+}
+
+function stripQuotes(content) {
+    var first = content.substr(0, 1);
+    return (first === content.substr(content.length - 1) && first.match(/'|"/)) ? content.substr(1, content.length - 2) : content;
+}
+
+function indexedProperty(property) {
+    return (isNaN(parseInt(property, 10)));
 }
