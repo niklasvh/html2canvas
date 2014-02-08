@@ -22,8 +22,8 @@ window.html2canvas = function(nodeList, options) {
     });
 };
 
-function renderDocument(document, options, width, height) {
-    return createWindowClone(document, width, height).then(function(container) {
+function renderDocument(document, options, windowWidth, windowHeight) {
+    return createWindowClone(document, windowWidth, windowHeight).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -31,8 +31,8 @@ function renderDocument(document, options, width, height) {
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, width) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, height) : documentHeight();
+        var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
+        var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
@@ -208,7 +208,7 @@ function ImageLoader(options, support) {
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
-    nodes.filter(isImage).map(src).forEach(this.addImage(images, this.loadImage), this);
+    nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -294,8 +294,11 @@ function isImage(container) {
     return container.node.nodeName === "IMG";
 }
 
-function src(container) {
-    return container.node.src;
+function urlImage(container) {
+    return {
+        args: [container.node.src],
+        method: "url"
+    };
 }
 
 function LinearGradientContainer(imageData) {
@@ -390,101 +393,104 @@ NodeContainer.prototype.fontWeight = function() {
 };
 
 NodeContainer.prototype.parseBackgroundImages = function() {
-    var whitespace = ' \r\n\t',
-        method, definition, prefix, prefix_i, block, results = [],
-        mode = 0, numParen = 0, quote, args;
-    var appendResult = function() {
-        if(method) {
-            if (definition.substr(0, 1) === '"') {
-                definition = definition.substr(1, definition.length - 2);
+    function parseBackgrounds(backgroundImage) {
+        var whitespace = ' \r\n\t',
+            method, definition, prefix, prefix_i, block, results = [],
+            mode = 0, numParen = 0, quote, args;
+        var appendResult = function() {
+            if(method) {
+                if (definition.substr(0, 1) === '"') {
+                    definition = definition.substr(1, definition.length - 2);
+                }
+                if (definition) {
+                    args.push(definition);
+                }
+                if (method.substr(0, 1) === '-' && (prefix_i = method.indexOf('-', 1 ) + 1) > 0) {
+                    prefix = method.substr(0, prefix_i);
+                    method = method.substr(prefix_i);
+                }
+                results.push({
+                    prefix: prefix,
+                    method: method.toLowerCase(),
+                    value: block,
+                    args: args,
+                    image: null
+                });
             }
-            if (definition) {
-                args.push(definition);
-            }
-            if (method.substr(0, 1) === '-' && (prefix_i = method.indexOf('-', 1 ) + 1) > 0) {
-                prefix = method.substr(0, prefix_i);
-                method = method.substr(prefix_i);
-            }
-            results.push({
-                prefix: prefix,
-                method: method.toLowerCase(),
-                value: block,
-                args: args,
-                image: null
-            });
-        }
+            args = [];
+            method = prefix = definition = block = '';
+        };
         args = [];
         method = prefix = definition = block = '';
-    };
-    args = [];
-    method = prefix = definition = block = '';
-    this.css("backgroundImage").split("").forEach(function(c) {
-        if (mode === 0 && whitespace.indexOf(c) > -1) {
-            return;
-        }
-        switch(c) {
-            case '"':
-                if(!quote) {
-                    quote = c;
-                }
-                else if(quote === c) {
-                    quote = null;
-                }
-                break;
-            case '(':
-                if(quote) {
+        backgroundImage.split("").forEach(function(c) {
+            if (mode === 0 && whitespace.indexOf(c) > -1) {
+                return;
+            }
+            switch(c) {
+                case '"':
+                    if(!quote) {
+                        quote = c;
+                    }
+                    else if(quote === c) {
+                        quote = null;
+                    }
                     break;
-                } else if(mode === 0) {
-                    mode = 1;
-                    block += c;
-                    return;
-                } else {
-                    numParen++;
-                }
-                break;
-            case ')':
-                if (quote) {
-                    break;
-                } else if(mode === 1) {
-                    if(numParen === 0) {
-                        mode = 0;
+                case '(':
+                    if(quote) {
+                        break;
+                    } else if(mode === 0) {
+                        mode = 1;
                         block += c;
-                        appendResult();
                         return;
                     } else {
-                        numParen--;
+                        numParen++;
                     }
-                }
-                break;
-
-            case ',':
-                if (quote) {
                     break;
-                } else if(mode === 0) {
-                    appendResult();
-                    return;
-                } else if (mode === 1) {
-                    if (numParen === 0 && !method.match(/^url$/i)) {
-                        args.push(definition);
-                        definition = '';
-                        block += c;
-                        return;
+                case ')':
+                    if (quote) {
+                        break;
+                    } else if(mode === 1) {
+                        if(numParen === 0) {
+                            mode = 0;
+                            block += c;
+                            appendResult();
+                            return;
+                        } else {
+                            numParen--;
+                        }
                     }
-                }
-                break;
-        }
+                    break;
 
-        block += c;
-        if (mode === 0) {
-            method += c;
-        } else {
-            definition += c;
-        }
-    });
+                case ',':
+                    if (quote) {
+                        break;
+                    } else if(mode === 0) {
+                        appendResult();
+                        return;
+                    } else if (mode === 1) {
+                        if (numParen === 0 && !method.match(/^url$/i)) {
+                            args.push(definition);
+                            definition = '';
+                            block += c;
+                            return;
+                        }
+                    }
+                    break;
+            }
 
-    appendResult();
+            block += c;
+            if (mode === 0) {
+                method += c;
+            } else {
+                definition += c;
+            }
+        });
 
-    return this.backgroundImages || (this.backgroundImages = results);
+        appendResult();
+        return results;
+    }
+
+    return this.backgroundImages || (this.backgroundImages = parseBackgrounds(this.css("backgroundImage")));
 };
 
 NodeContainer.prototype.cssList = function(property, index) {
@@ -1224,6 +1230,8 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
                 } else {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
+                break;
+            case "none":
                 break;
             default:
                 log("Unknown background-image type", backgroundImage.args[0]);

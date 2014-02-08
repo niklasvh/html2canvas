@@ -7,7 +7,7 @@ function ImageLoader(options, support) {
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
-    nodes.filter(isImage).map(src).forEach(this.addImage(images, this.loadImage), this);
+    nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -93,6 +93,9 @@ function isImage(container) {
     return container.node.nodeName === "IMG";
 }
 
-function src(container) {
-    return container.node.src;
+function urlImage(container) {
+    return {
+        args: [container.node.src],
+        method: "url"
+    };
 }
