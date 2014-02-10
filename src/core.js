@@ -82,7 +82,7 @@ function createWindowClone(ownerDocument, width, height) {
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         documentClone.open();
-        documentClone.write("");
+        documentClone.write("<!DOCTYPE html>");
         documentClone.close();
 
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
