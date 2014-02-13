@@ -1,6 +1,6 @@
 /*
   html2canvas 0.4.1 <http://html2canvas.hertzen.com>
-  Copyright (c) 2013 Niklas von Hertzen
+  Copyright (c) 2014 Niklas von Hertzen
 
   Released under MIT License
 */
@@ -1369,7 +1369,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
       if (options.chinese) {
         textList.forEach(function(word, index) {
-          if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
+          if (/.*[\uAC00-\uD7a3\u3131-\u3163\u4E00-\u9FA5].*$/.test(word)) {
             word = word.split("");
             word.unshift(index, 1);
             textList.splice.apply(textList, word);
@@ -1714,9 +1714,19 @@ _html2canvas.Parse = function (images, options, cb) {
     brh = borderRadius[2][0],
     brv = borderRadius[2][1],
     blh = borderRadius[3][0],
-    blv = borderRadius[3][1],
+    blv = borderRadius[3][1];
 
-    topWidth = width - trh,
+    var halfHeight = Math.floor(height / 2);
+    tlh = tlh > halfHeight ? halfHeight : tlh;
+    tlv = tlv > halfHeight ? halfHeight : tlv;
+    trh = trh > halfHeight ? halfHeight : trh;
+    trv = trv > halfHeight ? halfHeight : trv;
+    brh = brh > halfHeight ? halfHeight : brh;
+    brv = brv > halfHeight ? halfHeight : brv;
+    blh = blh > halfHeight ? halfHeight : blh;
+    blv = blv > halfHeight ? halfHeight : blv;
+
+    var topWidth = width - trh,
     rightHeight = height - brv,
     bottomWidth = width - brh,
     leftHeight = height - blv;
@@ -2304,6 +2314,7 @@ _html2canvas.Parse = function (images, options, cb) {
     }
   }
 };
+
 _html2canvas.Preload = function( options ) {
 
   var images = {
@@ -2993,7 +3004,9 @@ _html2canvas.Renderer.Canvas = function(options) {
         newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
-        ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+		var imgData = canvas.getContext("2d").getImageData(bounds.left, bounds.top, bounds.width, bounds.height);
+		ctx.putImageData(imgData, 0, 0);
+
         canvas = null;
         return newCanvas;
       }
@@ -3002,4 +3015,5 @@ _html2canvas.Renderer.Canvas = function(options) {
     return canvas;
   };
 };
+
 })(window,document);

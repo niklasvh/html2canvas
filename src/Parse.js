@@ -336,7 +336,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
       if (options.chinese) {
         textList.forEach(function(word, index) {
-          if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
+          if (/.*[\uAC00-\uD7a3\u3131-\u3163\u4E00-\u9FA5].*$/.test(word)) {
             word = word.split("");
             word.unshift(index, 1);
             textList.splice.apply(textList, word);
