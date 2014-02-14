@@ -12,7 +12,12 @@
             timer = date.getTime();
         options = options || {};
 
-        html2canvas(this, options).then(function(canvas) {
+        var promise = html2canvas(this, options);
+        promise.catch(function(err) {
+           console.log("html2canvas threw an error", err);
+        });
+
+        promise.then(function(canvas) {
             var $canvas = $(canvas),
                 finishTime = new Date();
 

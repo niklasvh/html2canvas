@@ -4,6 +4,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.options = options;
     this.range = null;
     this.support = support;
+    this.renderQueue = [];
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
     parent.visibile = parent.isElementVisible();
@@ -21,9 +22,34 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.ready = this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
-        log("Finished rendering");
+        log("Render queue created with " + this.renderQueue.length + " items");
+        return new Promise(bind(function(resolve) {
+            if (!options.async) {
+                this.renderQueue.forEach(this.paint, this);
+                resolve();
+            } else if (typeof(options.async) === "function") {
+                options.async.call(this, this.renderQueue, resolve);
+            } else {
+                this.renderIndex = 0;
+                this.asyncRenderer(this.renderQueue, resolve);
+            }
+        }, this));
     }, this));
 }
+
+NodeParser.prototype.asyncRenderer = function(queue, resolve, asyncTimer) {
+    asyncTimer = asyncTimer || Date.now();
+    this.paint(queue[this.renderIndex++]);
+    if (queue.length === this.renderIndex) {
+        resolve();
+    } else if (asyncTimer + 20 > Date.now()) {
+        this.asyncRenderer(queue, resolve, asyncTimer);
+    } else {
+        setTimeout(bind(function() {
+            this.asyncRenderer(queue, resolve);
+        }, this), 0);
+    }
+};
 
 NodeParser.prototype.createPseudoHideStyles = function(document) {
     var hidePseudoElements = document.createElement('style');
@@ -101,7 +127,7 @@ NodeParser.prototype.getChildren = function(parentContainer) {
 NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
     var stack = new StackingContext(hasOwnStacking, container.cssFloat('opacity'), container.node, container.parent);
     stack.visible = container.visible;
-    var parentStack = stack.getParentStack(this);
+    var parentStack = hasOwnStacking ? stack.getParentStack(this) : stack.parent.stack;
     parentStack.contexts.push(stack);
     container.stack = stack;
 };
@@ -110,7 +136,7 @@ NodeParser.prototype.createStackingContexts = function() {
     this.nodes.forEach(function(container) {
         if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container))) {
             this.newStackingContext(container, true);
-        } else if (isElement(container) && (isPositioned(container))) {
+        } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
         } else {
             container.assignStack(container.parent.stack);
@@ -202,16 +228,9 @@ NodeParser.prototype.parse = function(stack) {
     var stackLevel0 = stack.contexts.concat(descendantNonFloats.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
     var text = stack.children.filter(isTextNode).filter(hasText);
     var positiveZindex = stack.contexts.filter(positiveZIndex); // 7. the child stacking contexts with positive stack levels (least positive first).
-    var rendered = [];
     negativeZindex.concat(nonInlineNonPositionedDescendants).concat(nonPositionedFloats)
         .concat(inFlow).concat(stackLevel0).concat(text).concat(positiveZindex).forEach(function(container) {
-            this.paint(container);
-            if (rendered.indexOf(container.node) !== -1) {
-                log(container, container.node);
-                throw new Error("rendering twice");
-            }
-            rendered.push(container.node);
-
+            this.renderQueue.push(container);
             if (isStackingContext(container)) {
                 this.parse(container);
             }
@@ -238,7 +257,7 @@ NodeParser.prototype.paintNode = function(container) {
     var bounds = this.parseBounds(container);
     var borderData = this.parseBorders(container);
     this.renderer.clip(borderData.clip, function() {
-        this.renderer.renderBackground(container, bounds);
+        this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
     }, this);
     this.renderer.renderBorders(borderData.borders);
 
@@ -575,6 +594,10 @@ function isFloating(container) {
     return container.css("float") !== "none";
 }
 
+function isInlineBlock(container) {
+    return ["inline-block", "inline-table"].indexOf(container.css("display")) !== -1;
+}
+
 function not(callback) {
     var context = this;
     return function() {
@@ -606,6 +629,10 @@ function bind(callback, context) {
 
 function asInt(value) {
     return parseInt(value, 10);
+}
+
+function getWidth(border) {
+    return border.width;
 }
 
 function nonIgnoredElement(nodeContainer) {

@@ -13,6 +13,10 @@ window.html2canvas = function(nodeList, options) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
+
+    options.async = typeof(options.async) === "undefined" ? true : options.async;
+    options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
+
     return renderDocument(document, options, window.innerWidth, window.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
@@ -23,7 +27,7 @@ window.html2canvas = function(nodeList, options) {
 };
 
 function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, windowWidth, windowHeight).then(function(container) {
+    return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -36,7 +40,10 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
-            container.parentNode.removeChild(container);
+            log("Finished rendering");
+            if (options.removeContainer) {
+                container.parentNode.removeChild(container);
+            }
             return renderer.canvas;
         });
     });
@@ -62,7 +69,7 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
-function createWindowClone(ownerDocument, width, height) {
+function createWindowClone(ownerDocument, width, height, options) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = ownerDocument.createElement("iframe");
 
@@ -74,18 +81,6 @@ function createWindowClone(ownerDocument, width, height) {
     ownerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
-        var loadedTimer = function() {
-            /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
-            before a certain time has passed
-             */
-            if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
-                documentClone.body.removeChild(div);
-                documentClone.body.removeChild(style);
-                resolve(container);
-            } else {
-                window.setTimeout(loadedTimer, 10);
-            }
-        };
         var documentClone = container.contentWindow.document;
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
         if window url is about:blank, we can assign the url to current by writing onto the document
@@ -95,14 +90,10 @@ function createWindowClone(ownerDocument, width, height) {
         documentClone.close();
 
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
-        container.contentWindow.scrollTo(window.scrollX, window.scrollY);
-        var div = documentClone.createElement("div");
-        div.className = "html2canvas-ready-test";
-        documentClone.body.appendChild(div);
-        var style = documentClone.createElement("style");
-        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(" + smallImage() + "); }";
-        documentClone.body.appendChild(style);
-        window.setTimeout(loadedTimer, 1000);
+        if (options.type === "view") {
+            container.contentWindow.scrollTo(window.scrollX, window.scrollY);
+        }
+        resolve(container);
     });
 }
 
@@ -598,6 +589,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.options = options;
     this.range = null;
     this.support = support;
+    this.renderQueue = [];
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
     parent.visibile = parent.isElementVisible();
@@ -615,9 +607,34 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.ready = this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
         this.parse(this.stack);
-        log("Finished rendering");
+        log("Render queue created with " + this.renderQueue.length + " items");
+        return new Promise(bind(function(resolve) {
+            if (!options.async) {
+                this.renderQueue.forEach(this.paint, this);
+                resolve();
+            } else if (typeof(options.async) === "function") {
+                options.async.call(this, this.renderQueue, resolve);
+            } else {
+                this.renderIndex = 0;
+                this.asyncRenderer(this.renderQueue, resolve);
+            }
+        }, this));
     }, this));
 }
+
+NodeParser.prototype.asyncRenderer = function(queue, resolve, asyncTimer) {
+    asyncTimer = asyncTimer || Date.now();
+    this.paint(queue[this.renderIndex++]);
+    if (queue.length === this.renderIndex) {
+        resolve();
+    } else if (asyncTimer + 20 > Date.now()) {
+        this.asyncRenderer(queue, resolve, asyncTimer);
+    } else {
+        setTimeout(bind(function() {
+            this.asyncRenderer(queue, resolve);
+        }, this), 0);
+    }
+};
 
 NodeParser.prototype.createPseudoHideStyles = function(document) {
     var hidePseudoElements = document.createElement('style');
@@ -695,7 +712,7 @@ NodeParser.prototype.getChildren = function(parentContainer) {
 NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
     var stack = new StackingContext(hasOwnStacking, container.cssFloat('opacity'), container.node, container.parent);
     stack.visible = container.visible;
-    var parentStack = stack.getParentStack(this);
+    var parentStack = hasOwnStacking ? stack.getParentStack(this) : stack.parent.stack;
     parentStack.contexts.push(stack);
     container.stack = stack;
 };
@@ -704,7 +721,7 @@ NodeParser.prototype.createStackingContexts = function() {
     this.nodes.forEach(function(container) {
         if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container))) {
             this.newStackingContext(container, true);
-        } else if (isElement(container) && (isPositioned(container))) {
+        } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
         } else {
             container.assignStack(container.parent.stack);
@@ -796,16 +813,9 @@ NodeParser.prototype.parse = function(stack) {
     var stackLevel0 = stack.contexts.concat(descendantNonFloats.filter(isPositioned)).filter(zIndex0); // 6. the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
     var text = stack.children.filter(isTextNode).filter(hasText);
     var positiveZindex = stack.contexts.filter(positiveZIndex); // 7. the child stacking contexts with positive stack levels (least positive first).
-    var rendered = [];
     negativeZindex.concat(nonInlineNonPositionedDescendants).concat(nonPositionedFloats)
         .concat(inFlow).concat(stackLevel0).concat(text).concat(positiveZindex).forEach(function(container) {
-            this.paint(container);
-            if (rendered.indexOf(container.node) !== -1) {
-                log(container, container.node);
-                throw new Error("rendering twice");
-            }
-            rendered.push(container.node);
-
+            this.renderQueue.push(container);
             if (isStackingContext(container)) {
                 this.parse(container);
             }
@@ -832,7 +842,7 @@ NodeParser.prototype.paintNode = function(container) {
     var bounds = this.parseBounds(container);
     var borderData = this.parseBorders(container);
     this.renderer.clip(borderData.clip, function() {
-        this.renderer.renderBackground(container, bounds);
+        this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
     }, this);
     this.renderer.renderBorders(borderData.borders);
 
@@ -1169,6 +1179,10 @@ function isFloating(container) {
     return container.css("float") !== "none";
 }
 
+function isInlineBlock(container) {
+    return ["inline-block", "inline-table"].indexOf(container.css("display")) !== -1;
+}
+
 function not(callback) {
     var context = this;
     return function() {
@@ -1200,6 +1214,10 @@ function bind(callback, context) {
 
 function asInt(value) {
     return parseInt(value, 10);
+}
+
+function getWidth(border) {
+    return border.width;
 }
 
 function nonIgnoredElement(nodeContainer) {
@@ -1264,10 +1282,10 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, image) 
     );
 };
 
-Renderer.prototype.renderBackground = function(container, bounds) {
+Renderer.prototype.renderBackground = function(container, bounds, borderData) {
     if (bounds.height > 0 && bounds.width > 0) {
         this.renderBackgroundColor(container, bounds);
-        this.renderBackgroundImage(container, bounds);
+        this.renderBackgroundImage(container, bounds, borderData);
     }
 };
 
@@ -1288,14 +1306,14 @@ Renderer.prototype.renderBorder = function(data) {
     }
 };
 
-Renderer.prototype.renderBackgroundImage = function(container, bounds) {
+Renderer.prototype.renderBackgroundImage = function(container, bounds, borderData) {
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         switch(backgroundImage.method) {
             case "url":
                 var image = this.images.get(backgroundImage.args[0]);
                 if (image) {
-                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
+                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
                 } else {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
@@ -1304,7 +1322,7 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
             case "gradient":
                 var gradientImage = this.images.get(backgroundImage.value);
                 if (gradientImage) {
-                    this.renderBackgroundGradient(gradientImage, bounds);
+                    this.renderBackgroundGradient(gradientImage, bounds, borderData);
                 } else {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
@@ -1317,25 +1335,24 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     }, this);
 };
 
-Renderer.prototype.renderBackgroundRepeating = function(container, bounds, imageContainer, index) {
+Renderer.prototype.renderBackgroundRepeating = function(container, bounds, imageContainer, index, borderData) {
     var size = container.parseBackgroundSize(bounds, imageContainer.image, index);
     var position = container.parseBackgroundPosition(bounds, imageContainer.image, index, size);
     var repeat = container.parseBackgroundRepeat(index);
-//    image = resizeImage(image, backgroundSize);
     switch (repeat) {
         case "repeat-x":
         case "repeat no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + borderData[3], bounds.top + position.top + borderData[0], 99999, imageContainer.image.height, borderData);
             break;
         case "repeat-y":
         case "no-repeat repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + borderData[0], imageContainer.image.width, 99999, borderData);
             break;
         case "no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + position.top + borderData[0], imageContainer.image.width, imageContainer.image.height, borderData);
             break;
         default:
-            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left});
+            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left}, borderData[3], borderData[0]);
             break;
     }
 };
@@ -1422,7 +1439,7 @@ CanvasRenderer.prototype.text = function(text, left, bottom) {
     this.ctx.fillText(text, left, bottom);
 };
 
-CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height) {
+CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height, borderData) {
     var shape = [
         ["line", Math.round(left), Math.round(top)],
         ["line", Math.round(left + width), Math.round(top)],
@@ -1430,12 +1447,12 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
         ["line", Math.round(left), Math.round(height + top)]
     ];
     this.clip(shape, function() {
-        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds);
+        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds, borderData[3], borderData[0]);
     }, this);
 };
 
-CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds) {
-    var offsetX = Math.round(bounds.left + backgroundPosition.left), offsetY = Math.round(bounds.top + backgroundPosition.top);
+CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds, borderLeft, borderTop) {
+    var offsetX = Math.round(bounds.left + backgroundPosition.left + borderLeft), offsetY = Math.round(bounds.top + backgroundPosition.top + borderTop);
     this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
     this.ctx.translate(offsetX, offsetY);
     this.ctx.fill();
