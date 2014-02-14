@@ -24,10 +24,10 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, image) 
     );
 };
 
-Renderer.prototype.renderBackground = function(container, bounds) {
+Renderer.prototype.renderBackground = function(container, bounds, borderData) {
     if (bounds.height > 0 && bounds.width > 0) {
         this.renderBackgroundColor(container, bounds);
-        this.renderBackgroundImage(container, bounds);
+        this.renderBackgroundImage(container, bounds, borderData);
     }
 };
 
@@ -48,14 +48,14 @@ Renderer.prototype.renderBorder = function(data) {
     }
 };
 
-Renderer.prototype.renderBackgroundImage = function(container, bounds) {
+Renderer.prototype.renderBackgroundImage = function(container, bounds, borderData) {
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         switch(backgroundImage.method) {
             case "url":
                 var image = this.images.get(backgroundImage.args[0]);
                 if (image) {
-                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1));
+                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
                 } else {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
@@ -64,7 +64,7 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
             case "gradient":
                 var gradientImage = this.images.get(backgroundImage.value);
                 if (gradientImage) {
-                    this.renderBackgroundGradient(gradientImage, bounds);
+                    this.renderBackgroundGradient(gradientImage, bounds, borderData);
                 } else {
                     log("Error loading background-image", backgroundImage.args[0]);
                 }
@@ -77,25 +77,24 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds) {
     }, this);
 };
 
-Renderer.prototype.renderBackgroundRepeating = function(container, bounds, imageContainer, index) {
+Renderer.prototype.renderBackgroundRepeating = function(container, bounds, imageContainer, index, borderData) {
     var size = container.parseBackgroundSize(bounds, imageContainer.image, index);
     var position = container.parseBackgroundPosition(bounds, imageContainer.image, index, size);
     var repeat = container.parseBackgroundRepeat(index);
-//    image = resizeImage(image, backgroundSize);
     switch (repeat) {
         case "repeat-x":
         case "repeat no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left, bounds.top + position.top, 99999, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + borderData[3], bounds.top + position.top + borderData[0], 99999, imageContainer.image.height, borderData);
             break;
         case "repeat-y":
         case "no-repeat repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top, imageContainer.image.width, 99999);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + borderData[0], imageContainer.image.width, 99999, borderData);
             break;
         case "no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left, bounds.top + position.top, imageContainer.image.width, imageContainer.image.height);
+            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + position.top + borderData[0], imageContainer.image.width, imageContainer.image.height, borderData);
             break;
         default:
-            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left});
+            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left}, borderData[3], borderData[0]);
             break;
     }
 };
