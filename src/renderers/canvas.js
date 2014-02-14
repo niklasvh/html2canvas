@@ -76,7 +76,7 @@ CanvasRenderer.prototype.text = function(text, left, bottom) {
     this.ctx.fillText(text, left, bottom);
 };
 
-CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height) {
+CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height, borderData) {
     var shape = [
         ["line", Math.round(left), Math.round(top)],
         ["line", Math.round(left + width), Math.round(top)],
@@ -84,12 +84,12 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
         ["line", Math.round(left), Math.round(height + top)]
     ];
     this.clip(shape, function() {
-        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds);
+        this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds, borderData[3], borderData[0]);
     }, this);
 };
 
-CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds) {
-    var offsetX = Math.round(bounds.left + backgroundPosition.left), offsetY = Math.round(bounds.top + backgroundPosition.top);
+CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds, borderLeft, borderTop) {
+    var offsetX = Math.round(bounds.left + backgroundPosition.left + borderLeft), offsetY = Math.round(bounds.top + backgroundPosition.top + borderTop);
     this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
     this.ctx.translate(offsetX, offsetY);
     this.ctx.fill();
