@@ -1,0 +1,18 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": false,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "boss": true,
+    "eqnull": true,
+    "browser": true,
+    "globals": {
+        "jQuery": true
+    },
+    "predef": ["deepEqual", "module", "test", "$", "QUnit", "NodeParser", "NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise",
+        "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "GradientContainer", "LinearGradientContainer", "WebkitGradientContainer", "log", "smallImage", "parseBackgrounds"]
+}
