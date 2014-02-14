@@ -4,6 +4,10 @@ window.html2canvas = function(nodeList, options) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
+
+    options.async = typeof(options.async) === "undefined" ? true : options.async;
+    options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
+
     return renderDocument(document, options, window.innerWidth, window.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
@@ -14,7 +18,7 @@ window.html2canvas = function(nodeList, options) {
 };
 
 function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, windowWidth, windowHeight).then(function(container) {
+    return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
         var clonedWindow = container.contentWindow;
         //var element = (nodeList === undefined) ? document.body : nodeList[0];
@@ -27,7 +31,10 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var renderer = new CanvasRenderer(width, height, imageLoader);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
-            container.parentNode.removeChild(container);
+            log("Finished rendering");
+            if (options.removeContainer) {
+                container.parentNode.removeChild(container);
+            }
             return renderer.canvas;
         });
     });
@@ -53,7 +60,7 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
-function createWindowClone(ownerDocument, width, height) {
+function createWindowClone(ownerDocument, width, height, options) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = ownerDocument.createElement("iframe");
 
@@ -65,18 +72,6 @@ function createWindowClone(ownerDocument, width, height) {
     ownerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
-        var loadedTimer = function() {
-            /* Chrome doesn't detect relative background-images assigned in style sheets when fetched through getComputedStyle,
-            before a certain time has passed
-             */
-            if (container.contentWindow.getComputedStyle(div, null)['backgroundImage'] !== "none") {
-                documentClone.body.removeChild(div);
-                documentClone.body.removeChild(style);
-                resolve(container);
-            } else {
-                window.setTimeout(loadedTimer, 10);
-            }
-        };
         var documentClone = container.contentWindow.document;
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
         if window url is about:blank, we can assign the url to current by writing onto the document
@@ -86,13 +81,9 @@ function createWindowClone(ownerDocument, width, height) {
         documentClone.close();
 
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
-        container.contentWindow.scrollTo(window.scrollX, window.scrollY);
-        var div = documentClone.createElement("div");
-        div.className = "html2canvas-ready-test";
-        documentClone.body.appendChild(div);
-        var style = documentClone.createElement("style");
-        style.innerHTML = "body div.html2canvas-ready-test { background-image:url(" + smallImage() + "); }";
-        documentClone.body.appendChild(style);
-        window.setTimeout(loadedTimer, 1000);
+        if (options.type === "view") {
+            container.contentWindow.scrollTo(window.scrollX, window.scrollY);
+        }
+        resolve(container);
     });
 }
