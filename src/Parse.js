@@ -75,7 +75,7 @@ _html2canvas.Parse = function (images, options, cb) {
 
       // Trim off the :after and :before (or ::after and ::before)
       for (i = 0, j = classes.length; i < j; i++) {
-        classes[i] = classes[i].match(/(^[^:]*)/)[1];
+        classes[i] = classes[i].match(/(^[^:]*)/)[1].replace(/(\s+[>]\s+$)|([,]\s+$)/,'');
       }
     }
 
