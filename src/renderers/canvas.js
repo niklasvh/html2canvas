@@ -64,6 +64,12 @@ CanvasRenderer.prototype.setOpacity = function(opacity) {
     this.ctx.globalAlpha = opacity;
 };
 
+CanvasRenderer.prototype.setTransform = function(transform) {
+    this.ctx.translate(transform.origin[0], transform.origin[1]);
+    this.ctx.setTransform.apply(this.ctx, transform.matrix);
+    this.ctx.translate(transform.origin[0], transform.origin[1]);
+};
+
 CanvasRenderer.prototype.setVariable = function(property, value) {
     if (this.variables[property] !== value) {
         this.variables[property] = this.ctx[property] = value;

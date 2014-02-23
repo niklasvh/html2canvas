@@ -134,7 +134,7 @@ NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
 
 NodeParser.prototype.createStackingContexts = function() {
     this.nodes.forEach(function(container) {
-        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container))) {
+        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container) || hasTransform(container))) {
             this.newStackingContext(container, true);
         } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
@@ -252,6 +252,10 @@ NodeParser.prototype.paint = function(container) {
 NodeParser.prototype.paintNode = function(container) {
     if (isStackingContext(container)) {
         this.renderer.setOpacity(container.opacity);
+        var transform = container.parseTransform();
+        if (transform) {
+            this.renderer.setTransform(transform);
+        }
     }
 
     var bounds = this.parseBounds(container);
@@ -619,6 +623,11 @@ function zIndexSort(a, b) {
 
 function hasOpacity(container) {
     return container.css("opacity") < 1;
+}
+
+function hasTransform(container) {
+    var transform = container.prefixedCss("transform");
+    return transform !== null && transform !== "none";
 }
 
 function bind(callback, context) {
