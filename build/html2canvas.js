@@ -75,6 +75,7 @@ function createWindowClone(ownerDocument, width, height, options) {
 
     container.style.visibility = "hidden";
     container.style.position = "absolute";
+    container.style.left = container.style.top = "-10000px";
     container.width = width;
     container.height = height;
     container.scrolling = "no"; // ios won't scroll without it
