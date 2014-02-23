@@ -17,7 +17,7 @@ var h2cSelector, h2cOptions;
         document.write(srcStart + '/src/' + html2canvas[i] + '.js?' + Math.random() + scrEnd);
     }
     window.onload = function() {
-        h2cSelector = [document.body];
+        h2cSelector = [document.documentElement];
 
         if (window.setUp) {
             window.setUp();

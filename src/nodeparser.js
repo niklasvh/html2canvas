@@ -149,7 +149,7 @@ NodeParser.prototype.isBodyWithTransparentRoot = function(container) {
 };
 
 NodeParser.prototype.isRootElement = function(container) {
-    return container.node.nodeName === "HTML";
+    return container.parent === null;
 };
 
 NodeParser.prototype.sortStackingContexts = function(stack) {

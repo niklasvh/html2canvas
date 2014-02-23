@@ -7,6 +7,8 @@
 
 (function(window, document, undefined){
 
+var html2canvasNodeAttribute = "data-html2canvas-node";
+
 window.html2canvas = function(nodeList, options) {
     options = options || {};
     if (options.logging) {
@@ -17,7 +19,9 @@ window.html2canvas = function(nodeList, options) {
     options.async = typeof(options.async) === "undefined" ? true : options.async;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
 
-    return renderDocument(document, options, window.innerWidth, window.innerHeight).then(function(canvas) {
+    var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
+    node.setAttribute(html2canvasNodeAttribute, "true");
+    return renderDocument(node.ownerDocument, options, window.innerWidth, window.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
             options.onrendered(canvas);
@@ -29,9 +33,10 @@ window.html2canvas = function(nodeList, options) {
 function renderDocument(document, options, windowWidth, windowHeight) {
     return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
+        var selector = "[" + html2canvasNodeAttribute + "='true']";
+        document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
         var clonedWindow = container.contentWindow;
-        //var element = (nodeList === undefined) ? document.body : nodeList[0];
-        var node = clonedWindow.document.documentElement;
+        var node = clonedWindow.document.querySelector(selector);
         var support = new Support();
         var imageLoader = new ImageLoader(options, support);
         var bounds = NodeParser.prototype.getBounds(node);
@@ -735,7 +740,7 @@ NodeParser.prototype.isBodyWithTransparentRoot = function(container) {
 };
 
 NodeParser.prototype.isRootElement = function(container) {
-    return container.node.nodeName === "HTML";
+    return container.parent === null;
 };
 
 NodeParser.prototype.sortStackingContexts = function(stack) {
