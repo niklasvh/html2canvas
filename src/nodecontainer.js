@@ -26,6 +26,18 @@ NodeContainer.prototype.css = function(attribute) {
     return this.styles[attribute] || (this.styles[attribute] = this.computedStyles[attribute]);
 };
 
+NodeContainer.prototype.prefixedCss = function(attribute) {
+    var prefixes = ["webkit", "moz", "ms", "o"];
+    var value = this.css(attribute);
+    if (value === undefined) {
+        prefixes.some(function(prefix) {
+            value = this.css(prefix + attribute.substr(0, 1).toUpperCase() + attribute.substr(1));
+            return value !== undefined;
+        }, this);
+    }
+    return value === undefined ? null : value;
+};
+
 NodeContainer.prototype.computedStyle = function(type) {
     return this.node.ownerDocument.defaultView.getComputedStyle(this.node, type);
 };
@@ -145,8 +157,34 @@ NodeContainer.prototype.parseTextShadows = function() {
     return results;
 };
 
+NodeContainer.prototype.parseTransform = function() {
+    var transformRegExp = /(matrix)\((.+)\)/;
+    var transform = this.prefixedCss("transform");
+    if (transform !== null && transform !== "none") {
+        var matrix = parseMatrix(transform.match(transformRegExp));
+        if (matrix) {
+            return {
+                origin: this.prefixedCss("transformOrigin"),
+                matrix: matrix
+            };
+        }
+    }
+    return {
+        origin: [0, 0],
+        matrix: [1, 0, 0, 1, 0, 0]
+    };
+};
+
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
 NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+
+function parseMatrix(match) {
+    if (match && match[1] === "matrix") {
+        return match[2].split(",").map(function(s) {
+            return parseFloat(s.trim());
+        });
+    }
+}
 
 function isPercentage(value) {
     return value.toString().indexOf("%") !== -1;
