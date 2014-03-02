@@ -198,9 +198,20 @@ NodeContainer.prototype.hasTransform = function() {
     return this.parseTransformMatrix().join(",") !== "1,0,0,1,0,0";
 };
 
+NodeContainer.prototype.getValue = function() {
+    var value = this.node.value || "";
+    value = (this.node.tagName === "SELECT") ? selectionValue(this.node) : value;
+    return value.length === 0 ? (this.node.placeholder || "") : value;
+};
+
 NodeContainer.prototype.MATRIX_PROPERTY = /(matrix)\((.+)\)/;
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
 NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+
+function selectionValue(node) {
+    var option = node.options[node.selectedIndex || 0];
+    return option ? (option.text || "") : "";
+}
 
 function parseMatrix(match) {
     if (match && match[1] === "matrix") {
