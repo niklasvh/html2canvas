@@ -88,7 +88,7 @@ function createWindowClone(ownerDocument, width, height, options) {
 
         documentClone.replaceChild(removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         if (options.type === "view") {
-            container.contentWindow.scrollTo(window.scrollX, window.scrollY);
+            container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
         resolve(container);
     });
