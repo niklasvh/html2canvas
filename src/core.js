@@ -28,9 +28,9 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
         var clonedWindow = container.contentWindow;
         var node = clonedWindow.document.querySelector(selector);
-        var support = new Support();
+        var support = new Support(clonedWindow.document);
         var imageLoader = new ImageLoader(options, support);
-        var bounds = NodeParser.prototype.getBounds(node);
+        var bounds = getBounds(node);
         var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
         var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);

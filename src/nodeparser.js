@@ -134,7 +134,7 @@ NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
 
 NodeParser.prototype.createStackingContexts = function() {
     this.nodes.forEach(function(container) {
-        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container) || hasTransform(container))) {
+        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container) || container.hasTransform())) {
             this.newStackingContext(container, true);
         } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
@@ -157,55 +157,33 @@ NodeParser.prototype.sortStackingContexts = function(stack) {
     stack.contexts.forEach(this.sortStackingContexts, this);
 };
 
-NodeParser.prototype.parseBounds = function(nodeContainer) {
-    return nodeContainer.bounds = this.getBounds(nodeContainer.node);
-};
-
-NodeParser.prototype.getBounds = function(node) {
-    if (node.getBoundingClientRect) {
-        var clientRect = node.getBoundingClientRect();
-        var isBody = node.nodeName === "BODY";
-        var width = isBody ? node.scrollWidth : node.offsetWidth;
-        return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            right: clientRect.left + width,
-            left: clientRect.left,
-            width:  width,
-            height: isBody ? node.scrollHeight : node.offsetHeight
-        };
-    }
-    return {};
-};
-
 NodeParser.prototype.parseTextBounds = function(container) {
     return function(text, index, textList) {
-        if (container.parent.css("textDecoration") !== "none" || text.trim().length !== 0) {
-            if (this.support.rangeBounds) {
+        if (container.parent.css("textDecoration").substr(0, 4) !== "none" || text.trim().length !== 0) {
+            if (this.support.rangeBounds && !container.parent.hasTransform()) {
                 var offset = textList.slice(0, index).join("").length;
                 return this.getRangeBounds(container.node, offset, text.length);
             } else if (container.node && typeof(container.node.data) === "string") {
                 var replacementNode = container.node.splitText(text.length);
-                var bounds = this.getWrapperBounds(container.node);
+                var bounds = this.getWrapperBounds(container.node, container.parent.hasTransform());
                 container.node = replacementNode;
                 return bounds;
             }
-        } else if (!this.support.rangeBounds) {
+        } else if(!this.support.rangeBounds || container.parent.hasTransform()){
             container.node = container.node.splitText(text.length);
         }
         return {};
     };
 };
 
-NodeParser.prototype.getWrapperBounds = function(node) {
-    var wrapper = node.ownerDocument.createElement('wrapper');
+NodeParser.prototype.getWrapperBounds = function(node, transform) {
+    var wrapper = node.ownerDocument.createElement('html2canvaswrapper');
     var parent = node.parentNode,
         backupText = node.cloneNode(true);
 
     wrapper.appendChild(node.cloneNode(true));
     parent.replaceChild(wrapper, node);
-
-    var bounds = this.getBounds(wrapper);
+    var bounds = transform ? offsetBounds(wrapper) : getBounds(wrapper);
     parent.replaceChild(backupText, wrapper);
     return bounds;
 };
@@ -216,6 +194,8 @@ NodeParser.prototype.getRangeBounds = function(node, offset, length) {
     range.setEnd(node, offset + length);
     return range.getBoundingClientRect();
 };
+
+function ClearTransform() {}
 
 NodeParser.prototype.parse = function(stack) {
     // http://www.w3.org/TR/CSS21/visuren.html#z-index
@@ -233,13 +213,16 @@ NodeParser.prototype.parse = function(stack) {
             this.renderQueue.push(container);
             if (isStackingContext(container)) {
                 this.parse(container);
+                this.renderQueue.push(new ClearTransform());
             }
         }, this);
 };
 
 NodeParser.prototype.paint = function(container) {
     try {
-        if (isTextNode(container)) {
+        if (container instanceof ClearTransform) {
+            this.renderer.ctx.restore();
+        } else if (isTextNode(container)) {
             this.paintText(container);
         } else {
             this.paintNode(container);
@@ -252,13 +235,12 @@ NodeParser.prototype.paint = function(container) {
 NodeParser.prototype.paintNode = function(container) {
     if (isStackingContext(container)) {
         this.renderer.setOpacity(container.opacity);
-        var transform = container.parseTransform();
-        if (transform) {
-            this.renderer.setTransform(transform);
+        this.renderer.ctx.save();
+        if (container.hasTransform()) {
+            this.renderer.setTransform(container.parseTransform());
         }
     }
-
-    var bounds = this.parseBounds(container);
+    var bounds = container.parseBounds();
     var borderData = this.parseBorders(container);
     this.renderer.clip(borderData.clip, function() {
         this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
@@ -623,11 +605,6 @@ function zIndexSort(a, b) {
 
 function hasOpacity(container) {
     return container.css("opacity") < 1;
-}
-
-function hasTransform(container) {
-    var transform = container.prefixedCss("transform");
-    return transform !== null && transform !== "none";
 }
 
 function bind(callback, context) {

@@ -3,6 +3,7 @@ function NodeContainer(node, parent) {
     this.parent = parent;
     this.stack = null;
     this.bounds = null;
+    this.offsetBounds = null;
     this.visible = null;
     this.computedStyles = null;
     this.styles = {};
@@ -160,19 +161,28 @@ NodeContainer.prototype.parseTextShadows = function() {
 NodeContainer.prototype.parseTransform = function() {
     var transformRegExp = /(matrix)\((.+)\)/;
     var transform = this.prefixedCss("transform");
-    if (transform !== null && transform !== "none") {
-        var matrix = parseMatrix(transform.match(transformRegExp));
-        if (matrix) {
-            return {
-                origin: this.prefixedCss("transformOrigin"),
-                matrix: matrix
-            };
-        }
+    var matrix = parseMatrix(transform.match(transformRegExp));
+    var offset = this.parseBounds();
+    if (matrix) {
+        var origin = this.prefixedCss("transformOrigin").split(" ").map(removePx).map(asFloat);
+        origin[0] += offset.left;
+        origin[1] += offset.top;
+
+        return {
+            origin: origin,
+            matrix: matrix
+        };
     }
-    return {
-        origin: [0, 0],
-        matrix: [1, 0, 0, 1, 0, 0]
-    };
+};
+
+NodeContainer.prototype.parseBounds = function() {
+    return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
+};
+
+
+NodeContainer.prototype.hasTransform = function() {
+    var transform = this.prefixedCss("transform");
+    return (transform !== null && transform !== "none" && transform !== "matrix(1, 0, 0, 1, 0, 0)");
 };
 
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
@@ -285,4 +295,42 @@ function parseBackgrounds(backgroundImage) {
 
     appendResult();
     return results;
+}
+
+function removePx(str) {
+    return str.replace("px", "");
+}
+
+function asFloat(str) {
+    return parseFloat(str);
+}
+
+function getBounds(node) {
+    if (node.getBoundingClientRect) {
+        var clientRect = node.getBoundingClientRect();
+        var isBody = node.nodeName === "BODY";
+        var width = isBody ? node.scrollWidth : node.offsetWidth;
+        return {
+            top: clientRect.top,
+            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
+            right: clientRect.left + width,
+            left: clientRect.left,
+            width:  width,
+            height: isBody ? node.scrollHeight : node.offsetHeight
+        };
+    }
+    return {};
+}
+
+function offsetBounds(node) {
+    var parent = node.offsetParent ? offsetBounds(node.offsetParent) : {top: 0, left: 0};
+
+    return {
+        top: node.offsetTop + parent.top,
+        bottom: node.offsetTop + node.offsetHeight + parent.top,
+        right: node.offsetLeft + parent.left + node.offsetWidth,
+        left: node.offsetLeft + parent.left,
+        width: node.offsetWidth,
+        height: node.offsetHeight
+    };
 }
