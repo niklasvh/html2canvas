@@ -1,9 +1,9 @@
-function Support() {
-    this.rangeBounds = this.testRangeBounds();
+function Support(document) {
+    this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
 }
 
-Support.prototype.testRangeBounds = function() {
+Support.prototype.testRangeBounds = function(document) {
     var range, testElement, rangeBounds, rangeHeight, support = false;
 
     if (document.createRange) {

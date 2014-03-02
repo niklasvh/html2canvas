@@ -37,9 +37,9 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
         var clonedWindow = container.contentWindow;
         var node = clonedWindow.document.querySelector(selector);
-        var support = new Support();
+        var support = new Support(clonedWindow.document);
         var imageLoader = new ImageLoader(options, support);
-        var bounds = NodeParser.prototype.getBounds(node);
+        var bounds = getBounds(node);
         var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
         var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader);
@@ -343,6 +343,7 @@ function NodeContainer(node, parent) {
     this.parent = parent;
     this.stack = null;
     this.bounds = null;
+    this.offsetBounds = null;
     this.visible = null;
     this.computedStyles = null;
     this.styles = {};
@@ -500,19 +501,28 @@ NodeContainer.prototype.parseTextShadows = function() {
 NodeContainer.prototype.parseTransform = function() {
     var transformRegExp = /(matrix)\((.+)\)/;
     var transform = this.prefixedCss("transform");
-    if (transform !== null && transform !== "none") {
-        var matrix = parseMatrix(transform.match(transformRegExp));
-        if (matrix) {
-            return {
-                origin: this.prefixedCss("transformOrigin"),
-                matrix: matrix
-            };
-        }
+    var matrix = parseMatrix(transform.match(transformRegExp));
+    var offset = this.parseBounds();
+    if (matrix) {
+        var origin = this.prefixedCss("transformOrigin").split(" ").map(removePx).map(asFloat);
+        origin[0] += offset.left;
+        origin[1] += offset.top;
+
+        return {
+            origin: origin,
+            matrix: matrix
+        };
     }
-    return {
-        origin: [0, 0],
-        matrix: [1, 0, 0, 1, 0, 0]
-    };
+};
+
+NodeContainer.prototype.parseBounds = function() {
+    return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
+};
+
+
+NodeContainer.prototype.hasTransform = function() {
+    var transform = this.prefixedCss("transform");
+    return (transform !== null && transform !== "none" && transform !== "matrix(1, 0, 0, 1, 0, 0)");
 };
 
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
@@ -625,6 +635,44 @@ function parseBackgrounds(backgroundImage) {
 
     appendResult();
     return results;
+}
+
+function removePx(str) {
+    return str.replace("px", "");
+}
+
+function asFloat(str) {
+    return parseFloat(str);
+}
+
+function getBounds(node) {
+    if (node.getBoundingClientRect) {
+        var clientRect = node.getBoundingClientRect();
+        var isBody = node.nodeName === "BODY";
+        var width = isBody ? node.scrollWidth : node.offsetWidth;
+        return {
+            top: clientRect.top,
+            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
+            right: clientRect.left + width,
+            left: clientRect.left,
+            width:  width,
+            height: isBody ? node.scrollHeight : node.offsetHeight
+        };
+    }
+    return {};
+}
+
+function offsetBounds(node) {
+    var parent = node.offsetParent ? offsetBounds(node.offsetParent) : {top: 0, left: 0};
+
+    return {
+        top: node.offsetTop + parent.top,
+        bottom: node.offsetTop + node.offsetHeight + parent.top,
+        right: node.offsetLeft + parent.left + node.offsetWidth,
+        left: node.offsetLeft + parent.left,
+        width: node.offsetWidth,
+        height: node.offsetHeight
+    };
 }
 
 function NodeParser(element, renderer, support, imageLoader, options) {
@@ -763,7 +811,7 @@ NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
 
 NodeParser.prototype.createStackingContexts = function() {
     this.nodes.forEach(function(container) {
-        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container) || hasTransform(container))) {
+        if (isElement(container) && (this.isRootElement(container) || hasOpacity(container) || isPositionedForStacking(container) || this.isBodyWithTransparentRoot(container) || container.hasTransform())) {
             this.newStackingContext(container, true);
         } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
@@ -786,55 +834,33 @@ NodeParser.prototype.sortStackingContexts = function(stack) {
     stack.contexts.forEach(this.sortStackingContexts, this);
 };
 
-NodeParser.prototype.parseBounds = function(nodeContainer) {
-    return nodeContainer.bounds = this.getBounds(nodeContainer.node);
-};
-
-NodeParser.prototype.getBounds = function(node) {
-    if (node.getBoundingClientRect) {
-        var clientRect = node.getBoundingClientRect();
-        var isBody = node.nodeName === "BODY";
-        var width = isBody ? node.scrollWidth : node.offsetWidth;
-        return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            right: clientRect.left + width,
-            left: clientRect.left,
-            width:  width,
-            height: isBody ? node.scrollHeight : node.offsetHeight
-        };
-    }
-    return {};
-};
-
 NodeParser.prototype.parseTextBounds = function(container) {
     return function(text, index, textList) {
-        if (container.parent.css("textDecoration") !== "none" || text.trim().length !== 0) {
-            if (this.support.rangeBounds) {
+        if (container.parent.css("textDecoration").substr(0, 4) !== "none" || text.trim().length !== 0) {
+            if (this.support.rangeBounds && !container.parent.hasTransform()) {
                 var offset = textList.slice(0, index).join("").length;
                 return this.getRangeBounds(container.node, offset, text.length);
             } else if (container.node && typeof(container.node.data) === "string") {
                 var replacementNode = container.node.splitText(text.length);
-                var bounds = this.getWrapperBounds(container.node);
+                var bounds = this.getWrapperBounds(container.node, container.parent.hasTransform());
                 container.node = replacementNode;
                 return bounds;
             }
-        } else if (!this.support.rangeBounds) {
+        } else if(!this.support.rangeBounds || container.parent.hasTransform()){
             container.node = container.node.splitText(text.length);
         }
         return {};
     };
 };
 
-NodeParser.prototype.getWrapperBounds = function(node) {
-    var wrapper = node.ownerDocument.createElement('wrapper');
+NodeParser.prototype.getWrapperBounds = function(node, transform) {
+    var wrapper = node.ownerDocument.createElement('html2canvaswrapper');
     var parent = node.parentNode,
         backupText = node.cloneNode(true);
 
     wrapper.appendChild(node.cloneNode(true));
     parent.replaceChild(wrapper, node);
-
-    var bounds = this.getBounds(wrapper);
+    var bounds = transform ? offsetBounds(wrapper) : getBounds(wrapper);
     parent.replaceChild(backupText, wrapper);
     return bounds;
 };
@@ -845,6 +871,8 @@ NodeParser.prototype.getRangeBounds = function(node, offset, length) {
     range.setEnd(node, offset + length);
     return range.getBoundingClientRect();
 };
+
+function ClearTransform() {}
 
 NodeParser.prototype.parse = function(stack) {
     // http://www.w3.org/TR/CSS21/visuren.html#z-index
@@ -862,13 +890,16 @@ NodeParser.prototype.parse = function(stack) {
             this.renderQueue.push(container);
             if (isStackingContext(container)) {
                 this.parse(container);
+                this.renderQueue.push(new ClearTransform());
             }
         }, this);
 };
 
 NodeParser.prototype.paint = function(container) {
     try {
-        if (isTextNode(container)) {
+        if (container instanceof ClearTransform) {
+            this.renderer.ctx.restore();
+        } else if (isTextNode(container)) {
             this.paintText(container);
         } else {
             this.paintNode(container);
@@ -881,13 +912,12 @@ NodeParser.prototype.paint = function(container) {
 NodeParser.prototype.paintNode = function(container) {
     if (isStackingContext(container)) {
         this.renderer.setOpacity(container.opacity);
-        var transform = container.parseTransform();
-        if (transform) {
-            this.renderer.setTransform(transform);
+        this.renderer.ctx.save();
+        if (container.hasTransform()) {
+            this.renderer.setTransform(container.parseTransform());
         }
     }
-
-    var bounds = this.parseBounds(container);
+    var bounds = container.parseBounds();
     var borderData = this.parseBorders(container);
     this.renderer.clip(borderData.clip, function() {
         this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
@@ -1254,11 +1284,6 @@ function hasOpacity(container) {
     return container.css("opacity") < 1;
 }
 
-function hasTransform(container) {
-    var transform = container.prefixedCss("transform");
-    return transform !== null && transform !== "none";
-}
-
 function bind(callback, context) {
     return function() {
         return callback.apply(context, arguments);
@@ -1516,8 +1541,8 @@ CanvasRenderer.prototype.setOpacity = function(opacity) {
 
 CanvasRenderer.prototype.setTransform = function(transform) {
     this.ctx.translate(transform.origin[0], transform.origin[1]);
-    this.ctx.setTransform.apply(this.ctx, transform.matrix);
-    this.ctx.translate(transform.origin[0], transform.origin[1]);
+    this.ctx.transform.apply(this.ctx, transform.matrix);
+    this.ctx.translate(-transform.origin[0], -transform.origin[1]);
 };
 
 CanvasRenderer.prototype.setVariable = function(property, value) {
@@ -1588,12 +1613,12 @@ StackingContext.prototype.getParentStack = function(context) {
     return parentStack ? (parentStack.ownStacking ? parentStack : parentStack.getParentStack(context)) : context.stack;
 };
 
-function Support() {
-    this.rangeBounds = this.testRangeBounds();
+function Support(document) {
+    this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
 }
 
-Support.prototype.testRangeBounds = function() {
+Support.prototype.testRangeBounds = function(document) {
     var range, testElement, rangeBounds, rangeHeight, support = false;
 
     if (document.createRange) {
