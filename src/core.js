@@ -86,10 +86,25 @@ function createWindowClone(ownerDocument, width, height, options) {
         documentClone.write("<!DOCTYPE html>");
         documentClone.close();
 
-        documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+        documentClone.replaceChild(removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.scrollX, window.scrollY);
         }
         resolve(container);
     });
+}
+
+function removeScriptNodes(parent) {
+    [].slice.call(parent.childNodes, 0).filter(isElementNode).forEach(function(node) {
+        if (node.tagName === "SCRIPT") {
+            parent.removeChild(node);
+        } else {
+            removeScriptNodes(node);
+        }
+    });
+    return parent;
+}
+
+function isElementNode(node) {
+    return node.nodeType === Node.ELEMENT_NODE;
 }
