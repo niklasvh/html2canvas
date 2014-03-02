@@ -8,6 +8,8 @@ function NodeContainer(node, parent) {
     this.computedStyles = null;
     this.styles = {};
     this.backgroundImages = null;
+    this.transformData = null;
+    this.transformMatrix = null;
 }
 
 NodeContainer.prototype.assignStack = function(stack) {
@@ -159,32 +161,44 @@ NodeContainer.prototype.parseTextShadows = function() {
 };
 
 NodeContainer.prototype.parseTransform = function() {
-    var transformRegExp = /(matrix)\((.+)\)/;
-    var transform = this.prefixedCss("transform");
-    var matrix = parseMatrix(transform.match(transformRegExp));
-    var offset = this.parseBounds();
-    if (matrix) {
-        var origin = this.prefixedCss("transformOrigin").split(" ").map(removePx).map(asFloat);
-        origin[0] += offset.left;
-        origin[1] += offset.top;
-
-        return {
-            origin: origin,
-            matrix: matrix
-        };
+    if (!this.transformData) {
+        if (this.hasTransform()) {
+            var offset = this.parseBounds();
+            var origin = this.prefixedCss("transformOrigin").split(" ").map(removePx).map(asFloat);
+            origin[0] += offset.left;
+            origin[1] += offset.top;
+            this.transformData = {
+                origin: origin,
+                matrix: this.parseTransformMatrix()
+            };
+        } else {
+            this.transformData = {
+                origin: [0, 0],
+                matrix: [1, 0, 0, 1, 0, 0]
+            };
+        }
     }
+    return this.transformData;
+};
+
+NodeContainer.prototype.parseTransformMatrix = function() {
+    if (!this.transformMatrix) {
+        var transform = this.prefixedCss("transform");
+        var matrix = transform ? parseMatrix(transform.match(this.MATRIX_PROPERTY)) : null;
+        this.transformMatrix = matrix ? matrix : [1, 0, 0, 1, 0, 0];
+    }
+    return this.transformMatrix;
 };
 
 NodeContainer.prototype.parseBounds = function() {
     return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
 };
 
-
 NodeContainer.prototype.hasTransform = function() {
-    var transform = this.prefixedCss("transform");
-    return (transform !== null && transform !== "none" && transform !== "matrix(1, 0, 0, 1, 0, 0)");
+    return this.parseTransformMatrix().join(",") !== "1,0,0,1,0,0";
 };
 
+NodeContainer.prototype.MATRIX_PROPERTY = /(matrix)\((.+)\)/;
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
 NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
 
