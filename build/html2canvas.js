@@ -553,9 +553,20 @@ NodeContainer.prototype.hasTransform = function() {
     return this.parseTransformMatrix().join(",") !== "1,0,0,1,0,0";
 };
 
+NodeContainer.prototype.getValue = function() {
+    var value = this.node.value || "";
+    value = (this.node.tagName === "SELECT") ? selectionValue(this.node) : value;
+    return value.length === 0 ? (this.node.placeholder || "") : value;
+};
+
 NodeContainer.prototype.MATRIX_PROPERTY = /(matrix)\((.+)\)/;
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
 NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+
+function selectionValue(node) {
+    var option = node.options[node.selectedIndex || 0];
+    return option ? (option.text || "") : "";
+}
 
 function parseMatrix(match) {
     if (match && match[1] === "matrix") {
@@ -826,7 +837,7 @@ NodeParser.prototype.getPseudoElement = function(container, type) {
 NodeParser.prototype.getChildren = function(parentContainer) {
     return flatten([].filter.call(parentContainer.node.childNodes, renderableNode).map(function(node) {
         var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) : new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
-        return node.nodeType === Node.ELEMENT_NODE && container.length ? (container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
+        return node.nodeType === Node.ELEMENT_NODE && container.length && node.tagName !== "TEXTAREA" ? (container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
     }, this));
 };
 
@@ -962,6 +973,39 @@ NodeParser.prototype.paintNode = function(container) {
                 log("Error loading <img>", container.node.src);
             }
             break;
+        case "SELECT":
+        case "INPUT":
+        case "TEXTAREA":
+            this.paintFormValue(container);
+            break;
+    }
+};
+
+NodeParser.prototype.paintFormValue = function(container) {
+    if (container.getValue().length > 0) {
+        var document = container.node.ownerDocument;
+        var wrapper = document.createElement('html2canvaswrapper');
+        var properties = ['lineHeight', 'textAlign', 'fontFamily', 'fontWeight', 'fontSize', 'color',
+            'paddingLeft', 'paddingTop', 'paddingRight', 'paddingBottom',
+            'width', 'height', 'borderLeftStyle', 'borderTopStyle', 'borderLeftWidth', 'borderTopWidth',
+            'boxSizing', 'whiteSpace', 'wordWrap'];
+
+        properties.forEach(function(property) {
+            try {
+                wrapper.style[property] = container.css(property);
+            } catch(e) {
+                // Older IE has issues with "border"
+                log("html2canvas: Parse: Exception caught in renderFormValue: " + e.message);
+            }
+        });
+        var bounds = container.parseBounds();
+        wrapper.style.position = "absolute";
+        wrapper.style.left = bounds.left + "px";
+        wrapper.style.top = bounds.top + "px";
+        wrapper.textContent = container.getValue();
+        document.body.appendChild(wrapper);
+        this.paintText(new TextContainer(wrapper.firstChild, container));
+        document.body.removeChild(wrapper);
     }
 };
 
@@ -1328,7 +1372,7 @@ function getWidth(border) {
 }
 
 function nonIgnoredElement(nodeContainer) {
-    return (nodeContainer.node.nodeType !== Node.ELEMENT_NODE || ["SCRIPT", "HEAD", "TITLE", "OBJECT", "BR"].indexOf(nodeContainer.node.nodeName) === -1);
+    return (nodeContainer.node.nodeType !== Node.ELEMENT_NODE || ["SCRIPT", "HEAD", "TITLE", "OBJECT", "BR", "OPTION"].indexOf(nodeContainer.node.nodeName) === -1);
 }
 
 function flatten(arrays) {
@@ -1645,6 +1689,7 @@ StackingContext.prototype.getParentStack = function(context) {
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
+    this.nativeRendering = this.testNativeRendering(document);
 }
 
 Support.prototype.testRangeBounds = function(document) {
@@ -1674,6 +1719,24 @@ Support.prototype.testRangeBounds = function(document) {
 
 Support.prototype.testCORS = function() {
     return typeof((new Image()).crossOrigin) !== "undefined";
+};
+
+Support.prototype.testNativeRendering = function(document) {
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    var canvas = document.createElement("canvas");
+    svg.setAttributeNS(NS, "width", "100");
+    svg.setAttributeNS(NS, "height", "100");
+    var div = document.createElement("div");
+    var foreignObject = document.createElementNS(NS, "foreignObject");
+    foreignObject.setAttributeNS(NS, "width", "100%");
+    foreignObject.setAttributeNS(NS, "height", "100%");
+    foreignObject.appendChild(document.documentElement.cloneNode(true));
+    svg.appendChild(foreignObject);
+    div.appendChild(svg);
+    var ctx = canvas.getContext("2d");
+    document.body.appendChild(canvas);
+
 };
 
 function TextContainer(node, parent) {
