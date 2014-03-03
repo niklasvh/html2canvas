@@ -40,9 +40,17 @@ function renderDocument(document, options, windowWidth, windowHeight) {
             if (options.removeContainer) {
                 container.parentNode.removeChild(container);
             }
-            return renderer.canvas;
+            return (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
         });
     });
+}
+
+function crop(canvas, bounds) {
+    var croppedCanvas = document.createElement("canvas");
+    croppedCanvas.width = bounds.width;
+    croppedCanvas.height = bounds.height;
+    croppedCanvas.getContext("2d").drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+    return croppedCanvas;
 }
 
 function documentWidth () {

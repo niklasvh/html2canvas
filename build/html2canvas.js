@@ -49,9 +49,17 @@ function renderDocument(document, options, windowWidth, windowHeight) {
             if (options.removeContainer) {
                 container.parentNode.removeChild(container);
             }
-            return renderer.canvas;
+            return (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
         });
     });
+}
+
+function crop(canvas, bounds) {
+    var croppedCanvas = document.createElement("canvas");
+    croppedCanvas.width = bounds.width;
+    croppedCanvas.height = bounds.height;
+    croppedCanvas.getContext("2d").drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+    return croppedCanvas;
 }
 
 function documentWidth () {
@@ -1689,7 +1697,6 @@ StackingContext.prototype.getParentStack = function(context) {
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
-    this.nativeRendering = this.testNativeRendering(document);
 }
 
 Support.prototype.testRangeBounds = function(document) {
@@ -1719,24 +1726,6 @@ Support.prototype.testRangeBounds = function(document) {
 
 Support.prototype.testCORS = function() {
     return typeof((new Image()).crossOrigin) !== "undefined";
-};
-
-Support.prototype.testNativeRendering = function(document) {
-    var NS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(NS, "svg");
-    var canvas = document.createElement("canvas");
-    svg.setAttributeNS(NS, "width", "100");
-    svg.setAttributeNS(NS, "height", "100");
-    var div = document.createElement("div");
-    var foreignObject = document.createElementNS(NS, "foreignObject");
-    foreignObject.setAttributeNS(NS, "width", "100%");
-    foreignObject.setAttributeNS(NS, "height", "100%");
-    foreignObject.appendChild(document.documentElement.cloneNode(true));
-    svg.appendChild(foreignObject);
-    div.appendChild(svg);
-    var ctx = canvas.getContext("2d");
-    document.body.appendChild(canvas);
-
 };
 
 function TextContainer(node, parent) {
