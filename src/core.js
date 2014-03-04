@@ -47,11 +47,13 @@ function renderDocument(document, options, windowWidth, windowHeight) {
 
 function crop(canvas, bounds) {
     var croppedCanvas = document.createElement("canvas");
-    var width = croppedCanvas.width = Math.max(Math.min(0, bounds.left) + bounds.width, 1);
-    var height = croppedCanvas.height = Math.max(Math.min(0, bounds.top) + bounds.height, 1);
+    var left = Math.max(0, bounds.left);
+    var top = Math.max(0, bounds.top);
+    var width = croppedCanvas.width = Math.min(left + canvas.width, Math.max(Math.min(0, bounds.left) + bounds.width, 1));
+    var height = croppedCanvas.height =  Math.min(top + canvas.height, Math.max(Math.min(0, bounds.top) + bounds.height, 1));
     log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", bounds.width, "height:", bounds.height);
     log("Resulting crop with width", width, "and height", height);
-    croppedCanvas.getContext("2d").drawImage(canvas, Math.max(0, bounds.left), Math.max(0, bounds.top), width, height, 0, 0, width, height);
+    croppedCanvas.getContext("2d").drawImage(canvas, left, top, width, height, 0, 0, width, height);
     return croppedCanvas;
 }
 
