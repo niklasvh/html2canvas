@@ -49,7 +49,7 @@ $(function() {
 
                 var container = new NodeContainer(node, null);
                 var item = container.css(prop),
-                    backgroundPosition = container.parseBackgroundPosition(NodeParser.prototype.parseBounds(container), img),
+                    backgroundPosition = container.parseBackgroundPosition(getBounds(container), img),
                     split = (window.getComputedStyle) ? $(node).css(prop).split(" ") : [$(node).css(prop+"X"),$(node).css(prop+"Y")];
 
                 var testEl = $('<div />').css({
