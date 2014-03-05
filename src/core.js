@@ -104,7 +104,15 @@ function createWindowClone(ownerDocument, width, height, options) {
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
-        resolve(container);
+
+        var timeout = setTimeout(function() {
+            resolve(container);
+        }, 100);
+
+        container.contentWindow.onload = function() {
+            clearTimeout(timeout);
+            resolve(container);
+        };
     });
 }
 
