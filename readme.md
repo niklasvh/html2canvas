@@ -37,14 +37,16 @@ To render an `element` with html2canvas, simply call:
 
 To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
 
-    html2canvas(document.body, {
-        onrendered: function(canvas) {
-            /* canvas is the actual canvas element,
-               to append it to the page call for example
-               document.body.appendChild( canvas );
-            */
-        }
-    });
+```js
+html2canvas(document.body, {
+  onrendered: function(canvas) {
+     /* canvas is the actual canvas element,
+        to append it to the page call for example
+        document.body.appendChild( canvas );
+     */
+  }
+});
+```
 
 ### Building ###
 
@@ -52,11 +54,15 @@ The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you c
 
 Run the full build process (including lint, qunit and webdriver tests):
 
-    $ grunt
+```sh
+$ grunt
+```
 
 Skip lint and tests and simply build from source:
 
-    $ grunt build
+```sh
+$ grunt build
+```
 
 ### Running tests ###
 
@@ -66,11 +72,15 @@ The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver
 
 Start by downloading the dependencies:
 
-    $ npm install
+```sh
+$ npm install
+```
 
 Run qunit tests:
 
-    $ grunt test
+```sh
+$ grunt test
+```
 
 ### Examples ###
 
