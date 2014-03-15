@@ -8,6 +8,9 @@
   <body>
     Image without src attribute, should not crash:
     <img style="width:50px;height:50px;border:1px solid red;display:block;" />
+    Image with broken src attribute, should not crash:
+    <img src="404" style="width:50px;height:50px;border:1px solid red;display:block;" />
+    <img src="404_2" style="width:50px;height:50px;border:1px solid red;display:block;" />
 
   </body>
 </html>

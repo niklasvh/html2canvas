@@ -7,16 +7,16 @@ function ProxyImageContainer(src, proxy) {
     var requestUrl = proxy + ((proxy.indexOf("?") > -1) ? "&" : "?" ) + 'url=' + encodeURIComponent(src) + '&callback=' + callbackName;
     this.src = src;
     this.image = new Image();
-    var image = this.image;
+    var self = this;
     this.promise = new Promise(function(resolve, reject) {
-        image.onload = resolve;
-        image.onerror = reject;
+        self.image.onload = resolve;
+        self.image.onerror = reject;
 
         window[callbackName] = function(a){
             if (a.substring(0,6) === "error:"){
                 reject();
             } else {
-                image.src = a;
+                self.image.src = a;
             }
             window[callbackName] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
             try {
@@ -27,6 +27,11 @@ function ProxyImageContainer(src, proxy) {
         script.setAttribute("type", "text/javascript");
         script.setAttribute("src", requestUrl);
         document.body.appendChild(script);
+    })['catch'](function() {
+        var dummy = new DummyImageContainer(src);
+        return dummy.promise.then(function(image) {
+            self.image = image;
+        });
     });
 }
 
