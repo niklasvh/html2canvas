@@ -57,7 +57,7 @@ window.html2canvas = function(nodeList, options) {
             options.onrendered(canvas);
         }
         return canvas;
-    });  
+    });
 };
 
 function renderDocument(document, options, windowWidth, windowHeight) {
@@ -625,7 +625,7 @@ NodeContainer.prototype.parseBounds = function() {
 };
 
 NodeContainer.prototype.hasTransform = function() {
-    return this.parseTransformMatrix().join(",") !== "1,0,0,1,0,0";
+    return this.parseTransformMatrix().join(",") !== "1,0,0,1,0,0" || (this.parent && this.parent.hasTransform());
 };
 
 NodeContainer.prototype.getValue = function() {
