@@ -1,12 +1,5 @@
 var html2canvasNodeAttribute = "data-html2canvas-node";
 
-if (typeof(Object.create) !== "function" || typeof(document.createElement("canvas").getContext) !== "function") {
-    window.html2canvas = function() {
-        return Promise.reject("No canvas support");
-    };
-    return;
-}
-
 window.html2canvas = function(nodeList, options) {
     options = options || {};
     if (options.logging) {
