@@ -2,7 +2,7 @@ function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
     this.support = support;
-    this.origin = window.location.protocol + window.location.host;
+    this.origin = window.location.protocol + window.location.hostname;
 }
 
 ImageLoader.prototype.findImages = function(nodes) {
@@ -60,7 +60,7 @@ ImageLoader.prototype.isSameOrigin = function(url) {
     var link = this.link || (this.link = document.createElement("a"));
     link.href = url;
     link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
-    var origin = link.protocol + link.host;
+    var origin = link.protocol + link.hostname;
     return (origin === this.origin);
 };
 
