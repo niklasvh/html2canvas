@@ -1098,7 +1098,7 @@ _html2canvas.Parse = function (images, options, cb) {
   function getTransform(element, parentStack) {
     var transformRegExp = /(matrix)\((.+)\)/;
     var transform = getCSS(element, "transform") || getCSS(element, "-webkit-transform") || getCSS(element, "-moz-transform") || getCSS(element, "-ms-transform") || getCSS(element, "-o-transform");
-    var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin") || "0px 0px";
+    var transformOrigin = getCSS(element, "transform-origin") || getCSS(element, "-webkit-transform-origin") || getCSS(element, "-moz-transform-origin") || getCSS(element, "-ms-transform-origin") || getCSS(element, "-o-transform-origin") || getCSS(element, "transformOrigin") || "0px 0px";
 
     transformOrigin = transformOrigin.split(" ").map(removePx).map(Util.asFloat);
 
