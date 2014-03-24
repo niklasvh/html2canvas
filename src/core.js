@@ -96,6 +96,10 @@ function createWindowClone(ownerDocument, width, height, options) {
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
+        container.contentWindow.onload = container.onload = function() {
+            resolve(container);
+        };
+
         documentClone.open();
         documentClone.write("<!DOCTYPE html>");
         documentClone.close();
@@ -104,15 +108,6 @@ function createWindowClone(ownerDocument, width, height, options) {
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
-
-        var timeout = setTimeout(function() {
-            resolve(container);
-        }, 100);
-
-        container.contentWindow.onload = function() {
-            clearTimeout(timeout);
-            resolve(container);
-        };
     });
 }
 
