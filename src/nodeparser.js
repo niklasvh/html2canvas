@@ -7,6 +7,9 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.renderQueue = [];
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
+    if (element !== element.ownerDocument.documentElement && this.renderer.isTransparent(parent.css('backgroundColor'))) {
+        renderer.rectangle(0, 0, renderer.width, renderer.height, new NodeContainer(element.ownerDocument.documentElement, null).css('backgroundColor'));
+    }
     parent.visibile = parent.isElementVisible();
     this.createPseudoHideStyles(element.ownerDocument);
     this.nodes = flatten([parent].concat(this.getChildren(parent)).filter(function(container) {
