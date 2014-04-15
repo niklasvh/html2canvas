@@ -673,25 +673,16 @@ _html2canvas.Parse = function (images, options, cb) {
     y = bounds.top,
     width = bounds.width,
     height = bounds.height,
+	halfHeight = Math.floor(height / 2),
 
-    tlh = borderRadius[0][0],
-    tlv = borderRadius[0][1],
-    trh = borderRadius[1][0],
-    trv = borderRadius[1][1],
-    brh = borderRadius[2][0],
-    brv = borderRadius[2][1],
-    blh = borderRadius[3][0],
-    blv = borderRadius[3][1];
-
-    var halfHeight = Math.floor(height / 2);
-    tlh = tlh > halfHeight ? halfHeight : tlh;
-    tlv = tlv > halfHeight ? halfHeight : tlv;
-    trh = trh > halfHeight ? halfHeight : trh;
-    trv = trv > halfHeight ? halfHeight : trv;
-    brh = brh > halfHeight ? halfHeight : brh;
-    brv = brv > halfHeight ? halfHeight : brv;
-    blh = blh > halfHeight ? halfHeight : blh;
-    blv = blv > halfHeight ? halfHeight : blv;
+    tlh = Math.min(borderRadius[0][0], halfHeight),
+    tlv = Math.min(borderRadius[0][1], halfHeight),
+    trh = Math.min(borderRadius[1][0], halfHeight),
+    trv = Math.min(borderRadius[1][1], halfHeight),
+    brh = Math.min(borderRadius[2][0], halfHeight),
+    brv = Math.min(borderRadius[2][1], halfHeight),
+    blh = Math.min(borderRadius[3][0], halfHeight),
+    blv = Math.min(borderRadius[3][1], halfHeight);
 
     var topWidth = width - trh,
     rightHeight = height - brv,
