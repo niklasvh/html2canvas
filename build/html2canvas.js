@@ -1,6 +1,6 @@
 /*
   html2canvas 0.4.1 <http://html2canvas.hertzen.com>
-  Copyright (c) 2013 Niklas von Hertzen
+  Copyright (c) 2014 Niklas von Hertzen
 
   Released under MIT License
 */
@@ -1527,7 +1527,6 @@ _html2canvas.Parse = function (images, options, cb) {
   }
 
   function renderImage(ctx, element, image, bounds, borders) {
-
     var paddingLeft = getCSSInt(element, 'paddingLeft'),
     paddingTop = getCSSInt(element, 'paddingTop'),
     paddingRight = getCSSInt(element, 'paddingRight'),
@@ -1540,10 +1539,10 @@ _html2canvas.Parse = function (images, options, cb) {
       0, //sy
       image.width, //sw
       image.height, //sh
-      bounds.left + paddingLeft + borders[3].width, //dx
-      bounds.top + paddingTop + borders[0].width, // dy
-      bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
-      bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
+      Math.round(bounds.left + paddingLeft + borders[3].width), //dx
+      Math.round(bounds.top + paddingTop + borders[0].width), // dy
+      Math.round(bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight)), //dw
+      Math.round(bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)) //dh
       );
   }
 
@@ -1714,9 +1713,19 @@ _html2canvas.Parse = function (images, options, cb) {
     brh = borderRadius[2][0],
     brv = borderRadius[2][1],
     blh = borderRadius[3][0],
-    blv = borderRadius[3][1],
+    blv = borderRadius[3][1];
 
-    topWidth = width - trh,
+    var halfHeight = Math.floor(height / 2);
+    tlh = tlh > halfHeight ? halfHeight : tlh;
+    tlv = tlv > halfHeight ? halfHeight : tlv;
+    trh = trh > halfHeight ? halfHeight : trh;
+    trv = trv > halfHeight ? halfHeight : trv;
+    brh = brh > halfHeight ? halfHeight : brh;
+    brv = brv > halfHeight ? halfHeight : brv;
+    blh = blh > halfHeight ? halfHeight : blh;
+    blv = blv > halfHeight ? halfHeight : blv;
+
+    var topWidth = width - trh,
     rightHeight = height - brv,
     bottomWidth = width - brh,
     leftHeight = height - blv;
@@ -2993,7 +3002,9 @@ _html2canvas.Renderer.Canvas = function(options) {
         newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
-        ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+		var imgData = canvas.getContext("2d").getImageData(bounds.left, bounds.top, bounds.width, bounds.height);
+		ctx.putImageData(imgData, 0, 0);
+
         canvas = null;
         return newCanvas;
       }
@@ -3002,4 +3013,5 @@ _html2canvas.Renderer.Canvas = function(options) {
     return canvas;
   };
 };
+
 })(window,document);
