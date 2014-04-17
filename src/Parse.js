@@ -492,6 +492,10 @@ _html2canvas.Parse = function (images, options, cb) {
       children: []
     };
   }
+  
+  function toFixNum(num){
+    return parseFloat((num).toFixed())
+  }
 
   function renderImage(ctx, element, image, bounds, borders) {
 
@@ -507,10 +511,10 @@ _html2canvas.Parse = function (images, options, cb) {
       0, //sy
       image.width, //sw
       image.height, //sh
-      bounds.left + paddingLeft + borders[3].width, //dx
-      bounds.top + paddingTop + borders[0].width, // dy
-      bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight), //dw
-      bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom) //dh
+      toFixNum(bounds.left + paddingLeft + borders[3].width), //dx
+      toFixNum(bounds.top + paddingTop + borders[0].width), // dy
+      toFixNum(bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight)), //dw
+      toFixNum(bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)) //dh
       );
   }
 
