@@ -229,7 +229,7 @@ _html2canvas.Preload = function( options ) {
           };
           images.numTotal++;
           setImageLoadHandlers(img, imageObj);
-          img.src = src;
+          img.src = src + "?timestamp=" + new Date().getTime();
         } else if ( options.proxy ) {
           imageObj = images[src] = {
             img: img
