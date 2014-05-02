@@ -37,9 +37,12 @@ To render an `element` with html2canvas, simply call:
 
 The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fullfillment handler to the promise using `then`:
 
-    html2canvas(document.body).then(function(canvas) {
-        document.body.appendChild(canvas);
-    });
+```js
+html2canvas(document.body).then(function(canvas) {
+    document.body.appendChild(canvas);
+});
+```
+>>>>>>> origin/patch-1
 
 ### Building ###
 
@@ -47,11 +50,15 @@ The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you c
 
 Run the full build process (including lint, qunit and webdriver tests):
 
-    $ grunt
+```sh
+$ grunt
+```
 
 Skip lint and tests and simply build from source:
 
-    $ grunt build
+```sh
+$ grunt build
+```
 
 ### Running tests ###
 
@@ -61,11 +68,15 @@ The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver
 
 Start by downloading the dependencies:
 
-    $ npm install
+```sh
+$ npm install
+```
 
 Run qunit tests:
 
-    $ grunt test
+```sh
+$ grunt test
+```
 
 ### Examples ###
 
