@@ -11,8 +11,8 @@
     "eqnull": true,
     "browser": true,
     "globals": {
-      "jQuery": true
+        "jQuery": true
     },
-    "predef": ["NodeParser", "NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise", "getBounds", "offsetBounds",
+    "predef": ["deepEqual", "module", "test", "$", "QUnit", "NodeParser", "NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise",
         "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "GradientContainer", "LinearGradientContainer", "WebkitGradientContainer", "log", "smallImage", "parseBackgrounds"]
 }
