@@ -47,6 +47,8 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new LinearGradientContainer(imageData);
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
+    } else {
+        return new DummyImageContainer(imageData);
     }
 };
 
