@@ -37,6 +37,13 @@ module.exports = function(grunt) {
                     base: './',
                     keepalive: true
                 }
+            },
+            ci: {
+                options: {
+                    port: 8080,
+                    base: './',
+                    keepalive: false
+                }
             }
         },
         uglify: {
@@ -65,7 +72,7 @@ module.exports = function(grunt) {
         if (arguments.length) {
             selenium[arg1].apply(null, arguments);
         } else {
-            selenium.tests();
+            selenium.tests().onValue(done);
         }
     });
 
@@ -81,6 +88,6 @@ module.exports = function(grunt) {
     grunt.registerTask('server', ['connect']);
     grunt.registerTask('build', ['concat', 'uglify']);
     grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
-    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'webdriver']);
+    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'connect:ci', 'webdriver']);
 
 };
