@@ -193,6 +193,7 @@
     }
 
     function runWebDriver(cases) {
+        var availableBrowsers = new Bacon.Bus();
         var browsers = [
             {
                 browserName: "chrome",
@@ -228,10 +229,16 @@
                 version: "34"
             }
         ];
-        return Bacon.combineTemplate({
-            capabilities: Bacon.sequentially(1000, browsers),
+        var result = Bacon.combineTemplate({
+            capabilities: Bacon.fromArray(browsers).zip(availableBrowsers.take(browsers.length), function(first) { return first; }),
             cases: cases
-        }).flatMap(webdriverStream);
+        }).flatMap(webdriverStream).doAction(function() {
+            availableBrowsers.push("ready");
+        });
+
+        Bacon.fromArray([1, 2, 3, 4]).onValue(availableBrowsers.push);
+
+        return result.fold([], pushToArray);
     }
 
     exports.tests = function() {
