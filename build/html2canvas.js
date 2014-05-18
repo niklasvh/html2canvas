@@ -285,7 +285,7 @@ function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
     this.support = support;
-    this.origin = window.location.protocol + window.location.hostname;
+    this.origin = window.location.protocol + window.location.hostname + window.location.port;
 }
 
 ImageLoader.prototype.findImages = function(nodes) {
@@ -330,6 +330,8 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new LinearGradientContainer(imageData);
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
+    } else {
+        return new DummyImageContainer(imageData);
     }
 };
 
@@ -343,7 +345,7 @@ ImageLoader.prototype.isSameOrigin = function(url) {
     var link = this.link || (this.link = document.createElement("a"));
     link.href = url;
     link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
-    var origin = link.protocol + link.hostname;
+    var origin = link.protocol + link.hostname + link.port;
     return (origin === this.origin);
 };
 
@@ -408,8 +410,33 @@ function LinearGradientContainer(imageData) {
         }
     }, this);
 
-    imageData.args.slice(1).forEach(function(colorStop) {
-       // console.log(colorStop, colorStop.match(this.stepRegExp));
+    this.colorStops = imageData.args.slice(1).map(function(colorStop) {
+        var colorStopMatch = colorStop.match(this.stepRegExp);
+        return {
+            color: colorStopMatch[1],
+            stop: colorStopMatch[3] === "%" ? colorStopMatch[2] / 100 : null
+        };
+    }, this);
+
+    if (this.colorStops[0].stop === null) {
+        this.colorStops[0].stop = 0;
+    }
+
+    if (this.colorStops[this.colorStops.length - 1].stop === null) {
+        this.colorStops[this.colorStops.length - 1].stop = 1;
+    }
+
+    this.colorStops.forEach(function(colorStop, index) {
+        if (colorStop.stop === null) {
+            this.colorStops.slice(index).some(function(find, count) {
+                if (find.stop !== null) {
+                    colorStop.stop = ((find.stop - this.colorStops[index - 1].stop) / (count + 1)) + this.colorStops[index - 1].stop;
+                    return true;
+                } else {
+                    return false;
+                }
+            }, this);
+        }
     }, this);
 }
 
@@ -1707,8 +1734,15 @@ CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backg
 
 CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
     if (gradientImage instanceof LinearGradientContainer) {
-        var gradient = this.ctx.createLinearGradient(bounds.left, bounds.top, bounds.right, bounds.bottom);
-        //console.log(gradientImage, bounds, gradient);
+        var gradient = this.ctx.createLinearGradient(
+            bounds.left + bounds.width * gradientImage.x0,
+            bounds.top + bounds.height * gradientImage.y0,
+            bounds.left +  bounds.width * gradientImage.x1,
+            bounds.top +  bounds.height * gradientImage.y1);
+        gradientImage.colorStops.forEach(function(colorStop) {
+            gradient.addColorStop(colorStop.stop, colorStop.color);
+        });
+        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, gradient);
     }
 };
 

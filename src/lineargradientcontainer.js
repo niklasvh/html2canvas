@@ -23,8 +23,33 @@ function LinearGradientContainer(imageData) {
         }
     }, this);
 
-    imageData.args.slice(1).forEach(function(colorStop) {
-       // console.log(colorStop, colorStop.match(this.stepRegExp));
+    this.colorStops = imageData.args.slice(1).map(function(colorStop) {
+        var colorStopMatch = colorStop.match(this.stepRegExp);
+        return {
+            color: colorStopMatch[1],
+            stop: colorStopMatch[3] === "%" ? colorStopMatch[2] / 100 : null
+        };
+    }, this);
+
+    if (this.colorStops[0].stop === null) {
+        this.colorStops[0].stop = 0;
+    }
+
+    if (this.colorStops[this.colorStops.length - 1].stop === null) {
+        this.colorStops[this.colorStops.length - 1].stop = 1;
+    }
+
+    this.colorStops.forEach(function(colorStop, index) {
+        if (colorStop.stop === null) {
+            this.colorStops.slice(index).some(function(find, count) {
+                if (find.stop !== null) {
+                    colorStop.stop = ((find.stop - this.colorStops[index - 1].stop) / (count + 1)) + this.colorStops[index - 1].stop;
+                    return true;
+                } else {
+                    return false;
+                }
+            }, this);
+        }
     }, this);
 }
 
