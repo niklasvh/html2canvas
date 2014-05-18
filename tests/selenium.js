@@ -123,7 +123,7 @@
     }
 
     function webdriverStream(test) {
-        var browser = wd.remote("ondemand.saucelabs.com", 80, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY);
+        var browser = wd.remote("localhost", 4445, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY);
         var browserStream = new Bacon.Bus();
         var resultStream = Bacon.fromNodeCallback(browser, "init", test.capabilities)
             .flatMap(Bacon.fromNodeCallback(browser, "setImplicitWaitTimeout", 15000)
