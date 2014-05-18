@@ -13,9 +13,14 @@ var h2cSelector, h2cOptions;
     document.write(srcStart + '/tests/assets/jquery.plugin.html2canvas.js' + scrEnd);
     var html2canvas = ['log', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer', 'lineargradientcontainer', 'webkitgradientcontainer',
         'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'renderers/canvas'], i;
-    for (i = 0; i < html2canvas.length; ++i) {
-        document.write(srcStart + '/src/' + html2canvas[i] + '.js?' + Math.random() + scrEnd);
+    if (window.location.search === "?selenium") {
+        document.write(srcStart + '/build/html2canvas.js' + scrEnd);
+    } else {
+        for (i = 0; i < html2canvas.length; ++i) {
+            document.write(srcStart + '/src/' + html2canvas[i] + '.js?' + Math.random() + scrEnd);
+        }
     }
+
     window.onload = function() {
         h2cSelector = [document.documentElement];
 
