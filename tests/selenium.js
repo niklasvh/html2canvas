@@ -126,7 +126,7 @@
         var browser = wd.remote("localhost", 4445, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY);
         var browserStream = new Bacon.Bus();
         test.capabilities["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
-        test.capabilities["name"] = process.env.TRAVIS_BUILD_NUMBER;
+        test.capabilities["name"] = process.env.TRAVIS_COMMIT + " #" + process.env.TRAVIS_BUILD_NUMBER;
 
         var resultStream = Bacon.fromNodeCallback(browser, "init", test.capabilities)
             .flatMap(Bacon.fromNodeCallback(browser, "setImplicitWaitTimeout", 15000)
