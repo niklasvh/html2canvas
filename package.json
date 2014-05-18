@@ -29,7 +29,7 @@
     "base64-arraybuffer": ">= 0.1.0",
     "png-js": ">= 0.1.1",
     "baconjs": "0.7.11",
-    "wd": "~0.2.7",
+    "wd": "0.2.21",
     "grunt-contrib-connect": "0.7.1"
   },
   "scripts": {
