@@ -125,8 +125,10 @@
     function webdriverStream(test) {
         var browser = wd.remote("localhost", 4445, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY);
         var browserStream = new Bacon.Bus();
-        test.capabilities["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
-        test.capabilities["name"] = process.env.TRAVIS_COMMIT + " #" + process.env.TRAVIS_BUILD_NUMBER;
+        if (process.env.TRAVIS_JOB_NUMBER) {
+            test.capabilities["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
+            test.capabilities["name"] = process.env.TRAVIS_COMMIT.substring(0, 10) + " #" + process.env.TRAVIS_BUILD_NUMBER;
+        }
 
         var resultStream = Bacon.fromNodeCallback(browser, "init", test.capabilities)
             .flatMap(Bacon.fromNodeCallback(browser, "setImplicitWaitTimeout", 15000)
@@ -194,7 +196,8 @@
         var browsers = [
             {
                 browserName: "chrome",
-                platform: "Windows 7"
+                platform: "Windows 7",
+                version: "34"
             },{
                 browserName: "firefox",
                 version: "15",
@@ -208,12 +211,21 @@
                 version: "10",
                 platform: "Windows 8"
             },{
+                browserName: "internet explorer",
+                version: "11",
+                platform: "Windows 8.1"
+            },{
                 browserName: "safari",
                 version: "6",
                 platform: "OS X 10.8"
             },{
+                browserName: "safari",
+                platform: "OS X 10.9",
+                version: "7"
+            },{
                 browserName: "chrome",
-                platform: "OS X 10.8"
+                platform: "OS X 10.8",
+                version: "34"
             }
         ];
         return Bacon.combineTemplate({
