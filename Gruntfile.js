@@ -38,6 +38,26 @@ module.exports = function(grunt) {
                     keepalive: true
                 }
             },
+            cors: {
+                options: {
+                    port: 8081,
+                    base: './',
+                    keepalive: false,
+                    middleware: function(connect, options, middlwares) {
+                        return [
+                            function(req, res, next) {
+                                if (req.url !== '/tests/assets/image2.jpg') {
+                                    next();
+                                    return;
+                                }
+                                res.setHeader("Access-Control-Allow-Origin", "*");
+                                res.end(require("fs").readFileSync('tests/assets/image2.jpg'));
+                            },
+                            connect.static(options.base[0])
+                        ];
+                    }
+                }
+            },
             ci: {
                 options: {
                     port: 8080,
@@ -85,9 +105,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Default task.
-    grunt.registerTask('server', ['connect']);
+    grunt.registerTask('server', ['connect:cors', 'connect']);
     grunt.registerTask('build', ['concat', 'uglify']);
     grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
-    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'connect:ci', 'webdriver']);
+    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'connect:ci', 'connect:cors', 'webdriver']);
 
 };
