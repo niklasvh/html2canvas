@@ -104,8 +104,15 @@ CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backg
 
 CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
     if (gradientImage instanceof LinearGradientContainer) {
-        var gradient = this.ctx.createLinearGradient(bounds.left, bounds.top, bounds.right, bounds.bottom);
-        //console.log(gradientImage, bounds, gradient);
+        var gradient = this.ctx.createLinearGradient(
+            bounds.left + bounds.width * gradientImage.x0,
+            bounds.top + bounds.height * gradientImage.y0,
+            bounds.left +  bounds.width * gradientImage.x1,
+            bounds.top +  bounds.height * gradientImage.y1);
+        gradientImage.colorStops.forEach(function(colorStop) {
+            gradient.addColorStop(colorStop.stop, colorStop.color);
+        });
+        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, gradient);
     }
 };
 
