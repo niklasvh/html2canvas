@@ -313,7 +313,8 @@ _html2canvas.Parse = function (images, options, cb) {
   }
 
   function renderText(el, textNode, stack) {
-    var ctx = stack.ctx,
+    var CHINESE_REGEX = /([\u4E00-\u9FA5,\uFF00-\uFF61])/,
+    ctx = stack.ctx,
     color = getCSS(el, "color"),
     textDecoration = getCSS(el, "textDecoration"),
     textAlign = getCSS(el, "textAlign"),
@@ -335,13 +336,18 @@ _html2canvas.Parse = function (images, options, cb) {
       metrics = setTextVariables(ctx, el, textDecoration, color);
 
       if (options.chinese) {
-        textList.forEach(function(word, index) {
-          if (/.*[\u4E00-\u9FA5].*$/.test(word)) {
-            word = word.split("");
-            word.unshift(index, 1);
-            textList.splice.apply(textList, word);
+        textList = textList.reduce(function (prev, word) {
+          if (0 === word.length) {
+            return prev;
           }
-        });
+          if (!CHINESE_REGEX.test(word)) {
+            prev.push(word);
+            return prev;
+          }
+          return prev.concat(word.split(CHINESE_REGEX).filter(function(word) {
+            return word.length !== 0;
+          }));
+        }, []);
       }
 
       textList.forEach(function(text, index) {
