@@ -341,7 +341,7 @@ _html2canvas.Parse = function (images, options, cb) {
             return prev;
           }
           if (!CHINESE_REGEX.test(word)) {
-            prev.push(word)
+            prev.push(word);
             return prev;
           }
           return prev.concat(word.split(CHINESE_REGEX).filter(function(word) {
