@@ -918,6 +918,20 @@ _html2canvas.Parse = function (images, options, cb) {
     valueWrap.style.left = bounds.left + "px";
 
     textValue = (el.nodeName === "SELECT") ? (el.options[el.selectedIndex] || 0).text : el.value;
+
+    if (el.type === "checkbox" || el.type === "radio") {
+      valueWrap.style.fontSize = '10px';
+      valueWrap.style.lineHeight = '10px';
+      renderRect(stack.ctx, bounds.left-2, bounds.top-1, 13, 13, "#888888");
+      renderRect(stack.ctx, bounds.left-1, bounds.top, 11, 11, "#dddddd");
+      if(el.type === "checkbox"){
+        textValue = el.checked ? "\u2714" : "";
+      }
+      else if (el.type === "radio"){
+        textValue = el.checked ? "\u25cf" : "";
+      }
+    }
+
     if(!textValue) {
       textValue = el.placeholder;
     }
@@ -1204,7 +1218,7 @@ _html2canvas.Parse = function (images, options, cb) {
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && (element.value || element.placeholder || "").length > 0){
+        if (/^(text|url|email|submit|button|reset|checkbox|radio)$/.test(element.type) && (element.value || element.placeholder || "").length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
