@@ -1,6 +1,6 @@
 /*
   html2canvas 0.4.1 <http://html2canvas.hertzen.com>
-  Copyright (c) 2013 Niklas von Hertzen
+  Copyright (c) 2014 Niklas von Hertzen
 
   Released under MIT License
 */
@@ -1714,9 +1714,19 @@ _html2canvas.Parse = function (images, options, cb) {
     brh = borderRadius[2][0],
     brv = borderRadius[2][1],
     blh = borderRadius[3][0],
-    blv = borderRadius[3][1],
+    blv = borderRadius[3][1];
 
-    topWidth = width - trh,
+    var halfHeight = Math.floor(height / 2);
+    tlh = tlh > halfHeight ? halfHeight : tlh;
+    tlv = tlv > halfHeight ? halfHeight : tlv;
+    trh = trh > halfHeight ? halfHeight : trh;
+    trv = trv > halfHeight ? halfHeight : trv;
+    brh = brh > halfHeight ? halfHeight : brh;
+    brv = brv > halfHeight ? halfHeight : brv;
+    blh = blh > halfHeight ? halfHeight : blh;
+    blv = blv > halfHeight ? halfHeight : blv;
+
+    var topWidth = width - trh,
     rightHeight = height - brv,
     bottomWidth = width - brh,
     leftHeight = height - blv;
@@ -1941,6 +1951,20 @@ _html2canvas.Parse = function (images, options, cb) {
     valueWrap.style.left = bounds.left + "px";
 
     textValue = (el.nodeName === "SELECT") ? (el.options[el.selectedIndex] || 0).text : el.value;
+
+    if (el.type === "checkbox" || el.type === "radio") {
+      valueWrap.style.fontSize = '10px';
+      valueWrap.style.lineHeight = '10px';
+      renderRect(stack.ctx, bounds.left-2, bounds.top-1, 13, 13, "#888888");
+      renderRect(stack.ctx, bounds.left-1, bounds.top, 11, 11, "#dddddd");
+      if(el.type === "checkbox"){
+        textValue = el.checked ? "\u2714" : "";
+      }
+      else if (el.type === "radio"){
+        textValue = el.checked ? "\u25cf" : "";
+      }
+    }
+
     if(!textValue) {
       textValue = el.placeholder;
     }
@@ -2227,7 +2251,7 @@ _html2canvas.Parse = function (images, options, cb) {
       case "INPUT":
         // TODO add all relevant type's, i.e. HTML5 new stuff
         // todo add support for placeholder attribute for browsers which support it
-        if (/^(text|url|email|submit|button|reset)$/.test(element.type) && (element.value || element.placeholder || "").length > 0){
+        if (/^(text|url|email|submit|button|reset|checkbox|radio)$/.test(element.type) && (element.value || element.placeholder || "").length > 0){
           renderFormValue(element, bounds, stack);
         }
         break;
@@ -2993,7 +3017,9 @@ _html2canvas.Renderer.Canvas = function(options) {
         newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
-        ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+		var imgData = canvas.getContext("2d").getImageData(bounds.left, bounds.top, bounds.width, bounds.height);
+		ctx.putImageData(imgData, 0, 0);
+
         canvas = null;
         return newCanvas;
       }
@@ -3002,4 +3028,5 @@ _html2canvas.Renderer.Canvas = function(options) {
     return canvas;
   };
 };
+
 })(window,document);
