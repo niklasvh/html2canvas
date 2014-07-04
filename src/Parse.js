@@ -58,24 +58,21 @@ _html2canvas.Parse = function (images, options, cb) {
     runJobs();
 
     function getPseudoElementClasses(){
-      var findPsuedoEls = /:before|:after/;
+      var findPsuedoEls = /:?:(before|after)/g;
       var sheets = document.styleSheets;
       for (var i = 0, j = sheets.length; i < j; i++) {
         try {
           var rules = sheets[i].cssRules;
           for (var k = 0, l = rules.length; k < l; k++) {
             if(findPsuedoEls.test(rules[k].selectorText)) {
-              classes.push(rules[k].selectorText);
+              // The real element is the selector without ::before or ::after
+              var realElementSelector = rules[k].selectorText.replace(findPsuedoEls, '');
+              classes.push(realElementSelector);
             }
           }
         }
         catch(e) { // will throw security exception for style sheets loaded from external domains
         }
-      }
-
-      // Trim off the :after and :before (or ::after and ::before)
-      for (i = 0, j = classes.length; i < j; i++) {
-        classes[i] = classes[i].match(/(^[^:]*)/)[1];
       }
     }
 
