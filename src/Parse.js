@@ -261,6 +261,7 @@ _html2canvas.Parse = function (images, options, cb) {
   }
 
   function renderTextDecoration(ctx, text_decoration, bounds, metrics, color) {
+    text_decoration = text_decoration.split(" ")[0];
     switch(text_decoration) {
       case "underline":
         // Draws a line at the baseline of the font
