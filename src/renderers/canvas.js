@@ -83,11 +83,11 @@ CanvasRenderer.prototype.text = function(text, left, bottom) {
 };
 
 CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgroundPosition, size, bounds, left, top, width, height, borderData) {
-    var shape = [
+     var shape = [
         ["line", Math.round(left), Math.round(top)],
-        ["line", Math.round(left + width), Math.round(top)],
-        ["line", Math.round(left + width), Math.round(height + top)],
-        ["line", Math.round(left), Math.round(height + top)]
+        ["line", Math.round(left + Math.max(width, size.width)), Math.round(top)],
+        ["line", Math.round(left + Math.max(width, size.width)), Math.round(Math.max(height, size.height) + top)],
+        ["line", Math.round(left), Math.round(Math.max(height, size.height) + top)]
     ];
     this.clip(shape, function() {
         this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds, borderData[3], borderData[0]);
