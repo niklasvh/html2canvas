@@ -33,26 +33,36 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var bounds = getBounds(node);
         var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
         var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
-        var renderer = new CanvasRenderer(width, height, imageLoader);
+        if (options.type === 'nodeshot') {
+			  width = bounds.width;
+			  height = bounds.height;
+		  }       
+        var renderer = new CanvasRenderer(width, height, imageLoader, bounds, options);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
             log("Finished rendering");
             if (options.removeContainer) {
                 container.parentNode.removeChild(container);
             }
-            return (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
+            return (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds, options);
         });
     });
 }
 
-function crop(canvas, bounds) {
+function crop(canvas, bounds, options) {
+    var width, height;
     var croppedCanvas = document.createElement("canvas");
     var x1 = Math.min(canvas.width - 1, Math.max(0, bounds.left));
     var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width));
     var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top));
     var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height));
-    var width = croppedCanvas.width = x2 - x1;
-    var height = croppedCanvas.height =  y2 - y1;
+    if (options.type === 'nodeshot') {
+		width = croppedCanvas.width = bounds.width;
+		height = croppedCanvas.height =  bounds.height;
+	 } else {
+		width = croppedCanvas.width = x2 - x1;
+		height = croppedCanvas.height =  y2 - y1;
+    }
     log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", bounds.width, "height:", bounds.height);
     log("Resulting crop with width", width, "and height", height, " with x", x1, "and y", y1);
     croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, width, height, 0, 0, width, height);

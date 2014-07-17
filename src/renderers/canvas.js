@@ -1,8 +1,13 @@
-function CanvasRenderer(width, height) {
+function CanvasRenderer(width, height, imageLoader, bounds, options) {
     Renderer.apply(this, arguments);
     this.canvas = document.createElement("canvas");
-    this.canvas.width = width;
-    this.canvas.height = height;
+    if (options.type === 'nodeshot') {
+		this.canvas.width = width + bounds.left;
+		this.canvas.height = height + bounds.height;
+    } else {
+		this.canvas.width = width;
+		this.canvas.height = height;
+    }
     this.ctx = this.canvas.getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
