@@ -32,6 +32,9 @@ The script should work fine on the following browsers:
 As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
 ### Usage ###
+
+**Note!** These instructions are for using the current dev version of 0.5, for the latest release version (0.4.1), checkout the [old readme](https://github.com/niklasvh/html2canvas/blob/v0.4/readme.md).
+
 To render an `element` with html2canvas, simply call:
 ` html2canvas(element[, options]);`
 
