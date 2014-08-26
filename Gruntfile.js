@@ -129,11 +129,11 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('webdriver', 'Browser render tests', function() {
+    grunt.registerTask('webdriver', 'Browser render tests', function(browser, test) {
         var selenium = require("./tests/selenium.js");
         var done = this.async();
-        var browsers = (this.args.length) ? [grunt.config.get(this.nameArgs.replace(":", "."))] : _.values(grunt.config.get(this.name));
-        selenium.tests(browsers).onValue(done);
+        var browsers = (browser) ? [grunt.config.get(this.name + "." + browser)] : _.values(grunt.config.get(this.name));
+        selenium.tests(browsers, test).onValue(done);
     });
 
     // Load tasks
