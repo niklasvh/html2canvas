@@ -1,4 +1,6 @@
 /*global module:false*/
+var _ =  require('lodash');
+
 module.exports = function(grunt) {
 
     var meta = {
@@ -82,18 +84,56 @@ module.exports = function(grunt) {
         jshint: {
             all: ['src/**/*.js', '!src/promise.js'],
             options: grunt.file.readJSON('./.jshintrc')
+        },
+        webdriver: {
+            chrome: {
+                browserName: "chrome",
+                platform: "Windows 7",
+                version: "34"
+            },
+            firefox: {
+                browserName: "firefox",
+                version: "15",
+                platform: "Windows 7"
+            },
+            ie9: {
+                browserName: "internet explorer",
+                version: "9",
+                platform: "Windows 7"
+            },
+            ie10: {
+                browserName: "internet explorer",
+                version: "10",
+                platform: "Windows 8"
+            },
+            ie11: {
+                browserName: "internet explorer",
+                version: "11",
+                platform: "Windows 8.1"
+            },
+            safari6: {
+                browserName: "safari",
+                version: "6",
+                platform: "OS X 10.8"
+            },
+            safari7:{
+                browserName: "safari",
+                platform: "OS X 10.9",
+                version: "7"
+            },
+            chromeOSX:{
+                browserName: "chrome",
+                platform: "OS X 10.8",
+                version: "34"
+            }
         }
     });
 
-    grunt.registerTask('webdriver', 'Browser render tests', function(arg1) {
+    grunt.registerTask('webdriver', 'Browser render tests', function() {
         var selenium = require("./tests/selenium.js");
         var done = this.async();
-
-        if (arguments.length) {
-            selenium[arg1].apply(null, arguments);
-        } else {
-            selenium.tests().onValue(done);
-        }
+        var browsers = (this.args.length) ? [grunt.config.get(this.nameArgs.replace(":", "."))] : _.values(grunt.config.get(this.name));
+        selenium.tests(browsers).onValue(done);
     });
 
     // Load tasks

@@ -20,17 +20,18 @@
     "url": "https://github.com/niklasvh/html2canvas/issues"
   },
   "devDependencies": {
+    "baconjs": "0.7.11",
+    "base64-arraybuffer": ">= 0.1.0",
     "grunt": ">=0.4.0",
     "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*",
+    "grunt-contrib-connect": "0.7.1",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-qunit": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "~0.5.1",
-    "base64-arraybuffer": ">= 0.1.0",
+    "lodash": "^2.4.1",
     "png-js": ">= 0.1.1",
-    "baconjs": "0.7.11",
-    "wd": "0.2.21",
-    "grunt-contrib-connect": "0.7.1"
+    "wd": "0.2.21"
   },
   "scripts": {
     "test": "grunt travis --verbose"

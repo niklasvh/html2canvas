@@ -157,8 +157,9 @@
                 }));
 
         resultStream.onError(function(error) {
-            console.log(colors.red, "ERROR", test.capabilities.browserName, error);
-            browserStream.push(formatResultName(test.capabilities));
+            var name = formatResultName(test.capabilities);
+            console.log(colors.red, "ERROR", name, error.message);
+            browserStream.push(name);
         });
 
         resultStream.onValue(function(result) {
@@ -192,43 +193,8 @@
         return array;
     }
 
-    function runWebDriver(cases) {
+    function runWebDriver(browsers, cases) {
         var availableBrowsers = new Bacon.Bus();
-        var browsers = [
-            {
-                browserName: "chrome",
-                platform: "Windows 7",
-                version: "34"
-            },{
-                browserName: "firefox",
-                version: "15",
-                platform: "Windows 7"
-            },{
-                browserName: "internet explorer",
-                version: "9",
-                platform: "Windows 7"
-            },{
-                browserName: "internet explorer",
-                version: "10",
-                platform: "Windows 8"
-            },{
-                browserName: "internet explorer",
-                version: "11",
-                platform: "Windows 8.1"
-            },{
-                browserName: "safari",
-                version: "6",
-                platform: "OS X 10.8"
-            },{
-                browserName: "safari",
-                platform: "OS X 10.9",
-                version: "7"
-            },{
-                browserName: "chrome",
-                platform: "OS X 10.8",
-                version: "34"
-            }
-        ];
         var result = Bacon.combineTemplate({
             capabilities: Bacon.fromArray(browsers).zip(availableBrowsers.take(browsers.length), function(first) { return first; }),
             cases: cases
@@ -241,7 +207,7 @@
         return result.fold([], pushToArray);
     }
 
-    exports.tests = function() {
-        return getTests("tests/cases").fold([], pushToArray).flatMap(runWebDriver).mapError(false);
+    exports.tests = function(browsers) {
+        return getTests("tests/cases").fold([], pushToArray).flatMap(runWebDriver.bind(null, browsers)).mapError(false);
     };
 })();
