@@ -127,39 +127,44 @@
         var browserStream = new Bacon.Bus();
         if (process.env.TRAVIS_JOB_NUMBER) {
             test.capabilities["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
-            test.capabilities["name"] = process.env.TRAVIS_COMMIT.substring(0, 10) + " #" + process.env.TRAVIS_BUILD_NUMBER;
+            test.capabilities["name"] = process.env.TRAVIS_COMMIT.substring(0, 10);
+            test.capabilities["build"] = process.env.TRAVIS_BUILD_NUMBER;
+        } else {
+            test.capabilities["name"] = "Manual run";
         }
 
         var resultStream = Bacon.fromNodeCallback(browser, "init", test.capabilities)
             .flatMap(Bacon.fromNodeCallback(browser, "setImplicitWaitTimeout", 15000)
-                .flatMap(function() {
-                    Bacon.later(0, formatResultName(test.capabilities)).onValue(browserStream.push);
-                    return Bacon.fromArray(test.cases).zip(browserStream.take(test.cases.length)).flatMap(function(options) {
-                        var testCase = options[0];
-                        var name = options[1];
-                        console.log(colors.green, "STARTING", name, testCase, colors.clear);
-                        return Bacon.fromNodeCallback(browser, "get", "http://localhost:" + port + "/" + testCase + "?selenium")
-                            .flatMap(Bacon.combineTemplate({
-                                dataUrl: Bacon.fromNodeCallback(browser, "elementByCssSelector", ".html2canvas").flatMap(function(canvas) {
-                                    return Bacon.fromNodeCallback(browser, "execute", "return arguments[0].toDataURL('image/png').substring(22)", [canvas]);
-                                }),
-                                screenshot: Bacon.fromNodeCallback(browser, "takeScreenshot")
-                            })).flatMap(function(result) {
-                                return Bacon.combineTemplate({
-                                    browser: name,
-                                    testCase: testCase,
-                                    accuracy: Bacon.constant(result.dataUrl).flatMap(getPixelArray).combine(Bacon.constant(result.screenshot).flatMap(getPixelArray), calculateDifference),
-                                    dataUrl: result.dataUrl,
-                                    screenshot: result.screenshot
-                                });
+            .flatMap(function() {
+                Bacon.later(0, formatResultName(test.capabilities)).onValue(browserStream.push);
+                return Bacon.fromArray(test.cases).zip(browserStream.take(test.cases.length)).flatMap(function(options) {
+                    var testCase = options[0];
+                    var name = options[1];
+                    console.log(colors.green, "STARTING", name, testCase, colors.clear);
+                    return Bacon.fromNodeCallback(browser, "get", "http://localhost:" + port + "/" + testCase + "?selenium")
+                        .flatMap(Bacon.combineTemplate({
+                            dataUrl: Bacon.fromNodeCallback(browser, "elementByCssSelector", ".html2canvas").flatMap(function(canvas) {
+                                return Bacon.fromNodeCallback(browser, "execute", "return arguments[0].toDataURL('image/png').substring(22)", [canvas]);
+                            }),
+                            screenshot: Bacon.fromNodeCallback(browser, "takeScreenshot")
+                        }))
+                        .flatMap(function(result) {
+                            return Bacon.combineTemplate({
+                                browser: name,
+                                testCase: testCase,
+                                accuracy: Bacon.constant(result.dataUrl).flatMap(getPixelArray).combine(Bacon.constant(result.screenshot).flatMap(getPixelArray), calculateDifference),
+                                dataUrl: result.dataUrl,
+                                screenshot: result.screenshot
                             });
-                    });
-                }));
+                        });
+                });
+            }));
 
         resultStream.onError(function(error) {
             var name = formatResultName(test.capabilities);
             console.log(colors.red, "ERROR", name, error.message);
             browserStream.push(name);
+            browser.quit();
         });
 
         resultStream.onValue(function(result) {
@@ -207,7 +212,7 @@
         return result.fold([], pushToArray);
     }
 
-    exports.tests = function(browsers) {
-        return getTests("tests/cases").fold([], pushToArray).flatMap(runWebDriver.bind(null, browsers)).mapError(false);
+    exports.tests = function(browsers, singleTest) {
+        return (singleTest ? Bacon.constant([singleTest]) : getTests("tests/cases").fold([], pushToArray)).flatMap(runWebDriver.bind(null, browsers)).mapError(false);
     };
 })();
