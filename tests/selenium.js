@@ -53,7 +53,7 @@
     function getPixelArray(base64) {
         return Bacon.fromCallback(function(callback) {
             var arraybuffer = base64_arraybuffer.decode(base64);
-            (new PNG(arraybuffer)).decode(callback);
+            (new PNG(arraybuffer)).decodePixels(callback);
         });
     }
 
