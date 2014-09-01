@@ -14,7 +14,7 @@ var h2cSelector, h2cOptions;
     var html2canvas = ['log', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer', 'lineargradientcontainer', 'webkitgradientcontainer',
         'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'renderers/canvas'], i;
     if (window.location.search === "?selenium") {
-        document.write(srcStart + '/build/html2canvas.js' + scrEnd);
+        document.write(srcStart + '/dist/html2canvas.js' + scrEnd);
     } else {
         for (i = 0; i < html2canvas.length; ++i) {
             document.write(srcStart + '/src/' + html2canvas[i] + '.js?' + Math.random() + scrEnd);
