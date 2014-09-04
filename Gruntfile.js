@@ -25,7 +25,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/promise.js', 'src/fallback.js', 'src/**/*.js'
                 ],
-                dest: 'build/<%= pkg.name %>.js'
+                dest: 'dist/<%= pkg.name %>.js'
             },
             options:{
                 banner: meta.banner + meta.pre,
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
         uglify: {
             dist: {
                 src: ['<%= concat.dist.dest %>'],
-                dest: 'build/<%= pkg.name %>.min.js'
+                dest: 'dist/<%= pkg.name %>.min.js'
             },
             options: {
                 banner: meta.banner
