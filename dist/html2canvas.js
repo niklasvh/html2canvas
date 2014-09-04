@@ -77,10 +77,12 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
             log("Finished rendering");
+            var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
             if (options.removeContainer) {
                 container.parentNode.removeChild(container);
+                log("Cleaned up container");
             }
-            return (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
+            return canvas;
         });
     });
 }
