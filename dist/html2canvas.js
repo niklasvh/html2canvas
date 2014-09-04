@@ -47,6 +47,7 @@ window.html2canvas = function(nodeList, options) {
     }
 
     options.async = typeof(options.async) === "undefined" ? true : options.async;
+    options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
 
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
@@ -72,7 +73,7 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var bounds = getBounds(node);
         var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
         var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
-        var renderer = new CanvasRenderer(width, height, imageLoader);
+        var renderer = new CanvasRenderer(width, height, imageLoader, options);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
             log("Finished rendering");
@@ -265,6 +266,7 @@ function ImageContainer(src, cors) {
     this.src = src;
     this.image = new Image();
     var self = this;
+    this.tainted = null;
     this.promise = new Promise(function(resolve, reject) {
         self.image.onload = resolve;
         self.image.onerror = reject;
@@ -1111,7 +1113,7 @@ NodeParser.prototype.paintNode = function(container) {
         case "IMG":
             var imageContainer = this.images.get(container.node.src);
             if (imageContainer) {
-                this.renderer.renderImage(container, bounds, borderData, imageContainer.image);
+                this.renderer.renderImage(container, bounds, borderData, imageContainer);
             } else {
                 log("Error loading <img>", container.node.src);
             }
@@ -1566,13 +1568,14 @@ function ProxyImageContainer(src, proxy) {
 
 var proxyImageCount = 0;
 
-function Renderer(width, height, images) {
+function Renderer(width, height, images, options) {
     this.width = width;
     this.height = height;
     this.images = images;
+    this.options = options;
 }
 
-Renderer.prototype.renderImage = function(container, bounds, borderData, image) {
+Renderer.prototype.renderImage = function(container, bounds, borderData, imageContainer) {
     var paddingLeft = container.cssInt('paddingLeft'),
         paddingTop = container.cssInt('paddingTop'),
         paddingRight = container.cssInt('paddingRight'),
@@ -1580,11 +1583,11 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, image) 
         borders = borderData.borders;
 
     this.drawImage(
-        image,
+        imageContainer,
         0,
         0,
-        image.width,
-        image.height,
+        imageContainer.image.width,
+        imageContainer.image.height,
         bounds.left + paddingLeft + borders[3].width,
         bounds.top + paddingTop + borders[0].width,
         bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
@@ -1677,6 +1680,7 @@ function CanvasRenderer(width, height) {
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
+    this.taintCtx = document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
     log("Initialized CanvasRenderer");
@@ -1698,8 +1702,25 @@ CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.setFillStyle(color).fill();
 };
 
-CanvasRenderer.prototype.drawImage = function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
-    this.ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+CanvasRenderer.prototype.taints = function(imageContainer) {
+    if (imageContainer.tainted === null) {
+        this.taintCtx.drawImage(imageContainer.image, 0, 0);
+        try {
+            this.taintCtx.getImageData(0, 0, 1, 1);
+            imageContainer.tainted = false;
+        } catch(e) {
+            this.taintCtx = document.createElement("canvas").getContext("2d");
+            imageContainer.tainted = true;
+        }
+    }
+
+    return imageContainer.tainted;
+};
+
+CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx, dy, dw, dh) {
+    if (!this.taints(imageContainer)) {
+        this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
 };
 
 CanvasRenderer.prototype.clip = function(shape, callback, context) {

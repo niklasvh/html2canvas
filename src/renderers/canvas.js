@@ -4,6 +4,7 @@ function CanvasRenderer(width, height) {
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
+    this.taintCtx = document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
     log("Initialized CanvasRenderer");
@@ -25,8 +26,25 @@ CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.setFillStyle(color).fill();
 };
 
-CanvasRenderer.prototype.drawImage = function(image, sx, sy, sw, sh, dx, dy, dw, dh) {
-    this.ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+CanvasRenderer.prototype.taints = function(imageContainer) {
+    if (imageContainer.tainted === null) {
+        this.taintCtx.drawImage(imageContainer.image, 0, 0);
+        try {
+            this.taintCtx.getImageData(0, 0, 1, 1);
+            imageContainer.tainted = false;
+        } catch(e) {
+            this.taintCtx = document.createElement("canvas").getContext("2d");
+            imageContainer.tainted = true;
+        }
+    }
+
+    return imageContainer.tainted;
+};
+
+CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx, dy, dw, dh) {
+    if (!this.taints(imageContainer)) {
+        this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
 };
 
 CanvasRenderer.prototype.clip = function(shape, callback, context) {

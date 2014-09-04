@@ -254,7 +254,7 @@ NodeParser.prototype.paintNode = function(container) {
         case "IMG":
             var imageContainer = this.images.get(container.node.src);
             if (imageContainer) {
-                this.renderer.renderImage(container, bounds, borderData, imageContainer.image);
+                this.renderer.renderImage(container, bounds, borderData, imageContainer);
             } else {
                 log("Error loading <img>", container.node.src);
             }
