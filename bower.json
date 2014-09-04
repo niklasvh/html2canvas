@@ -1,8 +1,8 @@
 {
     "name": "html2canvas",
-    "version": "0.4.1",
+    "version": "0.5.0-alpha",
     "description": "Screenshots with JavaScript",
-    "main": "build/html2canvas.js",
+    "main": "dist/html2canvas.js",
     "ignore": [
         "tests",
         ".travis.yml"

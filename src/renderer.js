@@ -1,10 +1,11 @@
-function Renderer(width, height, images) {
+function Renderer(width, height, images, options) {
     this.width = width;
     this.height = height;
     this.images = images;
+    this.options = options;
 }
 
-Renderer.prototype.renderImage = function(container, bounds, borderData, image) {
+Renderer.prototype.renderImage = function(container, bounds, borderData, imageContainer) {
     var paddingLeft = container.cssInt('paddingLeft'),
         paddingTop = container.cssInt('paddingTop'),
         paddingRight = container.cssInt('paddingRight'),
@@ -12,11 +13,11 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, image) 
         borders = borderData.borders;
 
     this.drawImage(
-        image,
+        imageContainer,
         0,
         0,
-        image.width,
-        image.height,
+        imageContainer.image.width,
+        imageContainer.image.height,
         bounds.left + paddingLeft + borders[3].width,
         bounds.top + paddingTop + borders[0].width,
         bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
