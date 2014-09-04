@@ -34,6 +34,8 @@ ImageLoader.prototype.loadImage = function(imageData) {
         var src = imageData.args[0];
         if (src.match(/data:image\/.*;base64,/i)) {
             return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
+        } else if (/(.+).svg$/i.test(src)) {
+            return new SVGContainer(src);
         } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
             return new ImageContainer(src, false);
         } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {

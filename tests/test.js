@@ -12,9 +12,11 @@ var h2cSelector, h2cOptions;
     }
 
     var sources = ['log', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
-        'lineargradientcontainer', 'webkitgradientcontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'renderers/canvas'];
+        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'xhr', 'renderers/canvas'];
 
     ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
+
+    appendScript('/dist/html2canvas.svg');
 
     window.onload = function() {
         (function( $ ){
