@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
             '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
         pre: '\n(function(window, document, undefined){\n\n',
-        post: '\n})(window,document);'
+        post: '\n})(window, document);'
     };
 
     // Project configuration.
@@ -23,13 +23,23 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/promise.js', 'src/fallback.js', 'src/**/*.js'
+                    'src/promise.js', 'src/fallback.js', 'src/*.js', 'src/renderers/*.js'
                 ],
-                dest: 'dist/<%= pkg.name %>.js'
+                dest: 'dist/<%= pkg.name %>.js',
+                options:{
+                    banner: meta.banner + meta.pre,
+                    footer: meta.post
+                }
             },
-            options:{
-                banner: meta.banner + meta.pre,
-                footer: meta.post
+            svg: {
+                src: [
+                    'src/fabric/dist/fabric.js'
+                ],
+                dest: 'dist/<%= pkg.name %>.svg.js',
+                options:{
+                    banner: meta.banner + '\n(function(window, document, exports, undefined){\n\n',
+                    footer: '\n})(window, document, html2canvas);'
+                }
             }
         },
         connect: {
@@ -73,6 +83,10 @@ module.exports = function(grunt) {
                 src: ['<%= concat.dist.dest %>'],
                 dest: 'dist/<%= pkg.name %>.min.js'
             },
+            svg: {
+                src: ['<%= concat.svg.dest %>'],
+                dest: 'dist/<%= pkg.name %>.svg.min.js'
+            },
             options: {
                 banner: meta.banner
             }
@@ -82,7 +96,7 @@ module.exports = function(grunt) {
             tasks: ['jshint', 'build']
         },
         jshint: {
-            all: ['src/**/*.js', '!src/promise.js'],
+            all: ['src/*.js', 'src/renderers/*.js',  '!src/promise.js'],
             options: grunt.file.readJSON('./.jshintrc')
         },
         webdriver: {
