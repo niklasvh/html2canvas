@@ -12,16 +12,18 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, imageCo
         paddingBottom = container.cssInt('paddingBottom'),
         borders = borderData.borders;
 
+    var width = bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight);
+    var height = bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom);
     this.drawImage(
         imageContainer,
         0,
         0,
-        imageContainer.image.width,
-        imageContainer.image.height,
+        imageContainer.image.width || width,
+        imageContainer.image.height || height,
         bounds.left + paddingLeft + borders[3].width,
         bounds.top + paddingTop + borders[0].width,
-        bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
-        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)
+        width,
+        height
     );
 };
 
