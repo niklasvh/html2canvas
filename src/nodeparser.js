@@ -249,8 +249,15 @@ NodeParser.prototype.paintNode = function(container) {
         this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
     }, this);
     this.renderer.renderBorders(borderData.borders);
-
     switch(container.node.nodeName) {
+        case "svg":
+            var svgContainer = this.images.get(container.node);
+            if (svgContainer) {
+                this.renderer.renderImage(container, bounds, borderData, svgContainer);
+            } else {
+                log("Error loading <svg>", container.node);
+            }
+            break;
         case "IMG":
             var imageContainer = this.images.get(container.node.src);
             if (imageContainer) {
