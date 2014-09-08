@@ -324,7 +324,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
         var src = imageData.args[0];
         if (src.match(/data:image\/.*;base64,/i)) {
             return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-        } else if (/(.+).svg$/i.test(src) && !this.support.svg) {
+        } else if (/(.+).svg$/i.test(src) && !this.support.svg && !this.options.allowTaint) {
             return new SVGContainer(src);
         } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
             return new ImageContainer(src, false);
@@ -1587,16 +1587,18 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, imageCo
         paddingBottom = container.cssInt('paddingBottom'),
         borders = borderData.borders;
 
+    var width = bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight);
+    var height = bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom);
     this.drawImage(
         imageContainer,
         0,
         0,
-        imageContainer.image.width,
-        imageContainer.image.height,
+        imageContainer.image.width || width,
+        imageContainer.image.height || height,
         bounds.left + paddingLeft + borders[3].width,
         bounds.top + paddingTop + borders[0].width,
-        bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight),
-        bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom)
+        width,
+        height
     );
 };
 
@@ -1870,7 +1872,7 @@ CanvasRenderer.prototype.taints = function(imageContainer) {
 };
 
 CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx, dy, dw, dh) {
-    if (!this.taints(imageContainer)) {
+    if (!this.taints(imageContainer) || this.options.allowTaint) {
         this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 };
