@@ -1,6 +1,7 @@
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
+    this.svg = this.testSVG();
 }
 
 Support.prototype.testRangeBounds = function(document) {
@@ -30,4 +31,19 @@ Support.prototype.testRangeBounds = function(document) {
 
 Support.prototype.testCORS = function() {
     return typeof((new Image()).crossOrigin) !== "undefined";
+};
+
+Support.prototype.testSVG = function() {
+    var img = new Image();
+    var canvas = document.createElement("canvas");
+    var ctx =  canvas.getContext("2d");
+    img.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'></svg>";
+
+    try {
+        ctx.drawImage(img, 0, 0);
+        canvas.toDataURL();
+    } catch(e) {
+        return false;
+    }
+    return true;
 };

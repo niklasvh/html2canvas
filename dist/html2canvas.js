@@ -52,6 +52,7 @@ window.html2canvas = function(nodeList, options) {
 
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
     node.setAttribute(html2canvasNodeAttribute, "true");
+
     return renderDocument(node.ownerDocument, options, window.innerWidth, window.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
@@ -323,7 +324,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
         var src = imageData.args[0];
         if (src.match(/data:image\/.*;base64,/i)) {
             return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-        } else if (/(.+).svg$/i.test(src)) {
+        } else if (/(.+).svg$/i.test(src) && !this.support.svg) {
             return new SVGContainer(src);
         } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
             return new ImageContainer(src, false);
@@ -1696,6 +1697,7 @@ StackingContext.prototype.getParentStack = function(context) {
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
+    this.svg = this.testSVG();
 }
 
 Support.prototype.testRangeBounds = function(document) {
@@ -1727,12 +1729,31 @@ Support.prototype.testCORS = function() {
     return typeof((new Image()).crossOrigin) !== "undefined";
 };
 
+Support.prototype.testSVG = function() {
+    var img = new Image();
+    var canvas = document.createElement("canvas");
+    var ctx =  canvas.getContext("2d");
+    img.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'></svg>";
+
+    try {
+        ctx.drawImage(img, 0, 0);
+        canvas.toDataURL();
+    } catch(e) {
+        return false;
+    }
+    return true;
+};
+
 function SVGContainer(src) {
     this.src = src;
     this.image = null;
     var self = this;
     this.promise = XHR(src).then(function(svg) {
-        return new Promise(function(resolve) {
+        return new Promise(function(resolve, reject) {
+            if (!html2canvas.fabric) {
+                return reject(new Error("html2canvas.svg.js is not loaded, cannot render svg"));
+            }
+
             html2canvas.fabric.loadSVGFromString(svg, function (objects, options) {
                 var canvas = new html2canvas.fabric.StaticCanvas('c');
                 self.image = canvas.lowerCanvasEl;
@@ -1791,14 +1812,14 @@ function XHR(url) {
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                resolve(xhr.response);
+                resolve(xhr.responseText);
             } else {
-                reject(Error(xhr.statusText));
+                reject(new Error(xhr.statusText));
             }
         };
 
         xhr.onerror = function() {
-            reject(Error("Network Error"));
+            reject(new Error("Network Error"));
         };
 
         xhr.send();

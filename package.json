@@ -29,6 +29,7 @@
     "grunt-contrib-qunit": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "~0.5.1",
+    "grunt-execute": "^0.2.2",
     "lodash": "^2.4.1",
     "png-js": ">= 0.1.1",
     "wd": "^0.2.21"
