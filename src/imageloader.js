@@ -8,6 +8,7 @@ function ImageLoader(options, support) {
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
     nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
+    nodes.filter(isSVGNode).map(svgImage).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -18,10 +19,12 @@ ImageLoader.prototype.findBackgroundImage = function(images, container) {
 
 ImageLoader.prototype.addImage = function(images, callback) {
     return function(newImage) {
-        if (!this.imageExists(images, newImage)) {
-            images.splice(0, 0, callback.apply(this, arguments));
-            log('Added image #' + (images.length), newImage);
-        }
+        newImage.args.forEach(function(image) {
+            if (!this.imageExists(images, image)) {
+                images.splice(0, 0, callback.call(this, newImage));
+                log('Added image #' + (images.length), image);
+            }
+        }, this);
     };
 };
 
@@ -32,11 +35,11 @@ ImageLoader.prototype.hasImageBackground = function(imageData) {
 ImageLoader.prototype.loadImage = function(imageData) {
     if (imageData.method === "url") {
         var src = imageData.args[0];
-        if (src.match(/data:image\/.*;base64,/i)) {
-            return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-        } else if (/(.+).svg$/i.test(src) && !this.support.svg && !this.options.allowTaint) {
+        if (this.isSVG(src) && !this.support.svg && !this.options.allowTaint) {
             return new SVGContainer(src);
-        } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
+        } else if (src.match(/data:image\/.*;base64,/i)) {
+            return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
+        } else if (this.isSameOrigin(src) || this.options.allowTaint === true || this.isSVG(src)) {
             return new ImageContainer(src, false);
         } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
             return new ImageContainer(src, true);
@@ -49,9 +52,15 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new LinearGradientContainer(imageData);
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
+    } else if (imageData.method === "svg") {
+        return new SVGNodeContainer(imageData.args[0]);
     } else {
         return new DummyImageContainer(imageData);
     }
+};
+
+ImageLoader.prototype.isSVG = function(src) {
+    return (/(.+).svg$/i.test(src)) || SVGContainer.prototype.isInline(src);
 };
 
 ImageLoader.prototype.imageExists = function(images, src) {
@@ -97,9 +106,21 @@ function isImage(container) {
     return container.node.nodeName === "IMG";
 }
 
+function isSVGNode(container) {
+    return container.node.nodeName === "svg";
+}
+
 function urlImage(container) {
     return {
         args: [container.node.src],
         method: "url"
     };
 }
+
+function svgImage(container) {
+    return {
+        args: [container.node],
+        method: "svg"
+    };
+}
+

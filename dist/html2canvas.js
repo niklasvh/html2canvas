@@ -298,6 +298,7 @@ function ImageLoader(options, support) {
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
     nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
+    nodes.filter(isSVGNode).map(svgImage).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -308,10 +309,12 @@ ImageLoader.prototype.findBackgroundImage = function(images, container) {
 
 ImageLoader.prototype.addImage = function(images, callback) {
     return function(newImage) {
-        if (!this.imageExists(images, newImage)) {
-            images.splice(0, 0, callback.apply(this, arguments));
-            log('Added image #' + (images.length), newImage);
-        }
+        newImage.args.forEach(function(image) {
+            if (!this.imageExists(images, image)) {
+                images.splice(0, 0, callback.call(this, newImage));
+                log('Added image #' + (images.length), image);
+            }
+        }, this);
     };
 };
 
@@ -322,11 +325,11 @@ ImageLoader.prototype.hasImageBackground = function(imageData) {
 ImageLoader.prototype.loadImage = function(imageData) {
     if (imageData.method === "url") {
         var src = imageData.args[0];
-        if (src.match(/data:image\/.*;base64,/i)) {
-            return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-        } else if (/(.+).svg$/i.test(src) && !this.support.svg && !this.options.allowTaint) {
+        if (this.isSVG(src) && !this.support.svg && !this.options.allowTaint) {
             return new SVGContainer(src);
-        } else if (this.isSameOrigin(src) || this.options.allowTaint === true) {
+        } else if (src.match(/data:image\/.*;base64,/i)) {
+            return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
+        } else if (this.isSameOrigin(src) || this.options.allowTaint === true || this.isSVG(src)) {
             return new ImageContainer(src, false);
         } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
             return new ImageContainer(src, true);
@@ -339,9 +342,15 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new LinearGradientContainer(imageData);
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
+    } else if (imageData.method === "svg") {
+        return new SVGNodeContainer(imageData.args[0]);
     } else {
         return new DummyImageContainer(imageData);
     }
+};
+
+ImageLoader.prototype.isSVG = function(src) {
+    return (/(.+).svg$/i.test(src)) || SVGContainer.prototype.isInline(src);
 };
 
 ImageLoader.prototype.imageExists = function(images, src) {
@@ -387,12 +396,24 @@ function isImage(container) {
     return container.node.nodeName === "IMG";
 }
 
+function isSVGNode(container) {
+    return container.node.nodeName === "svg";
+}
+
 function urlImage(container) {
     return {
         args: [container.node.src],
         method: "url"
     };
 }
+
+function svgImage(container) {
+    return {
+        args: [container.node],
+        method: "svg"
+    };
+}
+
 
 function LinearGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -836,14 +857,14 @@ function getBounds(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
         var isBody = node.nodeName === "BODY";
-        var width = isBody ? node.scrollWidth : node.offsetWidth;
+        var width = isBody ? node.scrollWidth : (node.offsetWidth == null ? clientRect.width : node.offsetWidth);
         return {
             top: clientRect.top,
             bottom: clientRect.bottom || (clientRect.top + clientRect.height),
             right: clientRect.left + width,
             left: clientRect.left,
             width:  width,
-            height: isBody ? node.scrollHeight : node.offsetHeight
+            height: isBody ? node.scrollHeight : (node.offsetHeight == null ? clientRect.height : node.offsetHeight)
         };
     }
     return {};
@@ -1113,8 +1134,15 @@ NodeParser.prototype.paintNode = function(container) {
         this.renderer.renderBackground(container, bounds, borderData.borders.map(getWidth));
     }, this);
     this.renderer.renderBorders(borderData.borders);
-
     switch(container.node.nodeName) {
+        case "svg":
+            var svgContainer = this.images.get(container.node);
+            if (svgContainer) {
+                this.renderer.renderImage(container, bounds, borderData, svgContainer);
+            } else {
+                log("Error loading <svg>", container.node);
+            }
+            break;
         case "IMG":
             var imageContainer = this.images.get(container.node.src);
             if (imageContainer) {
@@ -1750,25 +1778,59 @@ function SVGContainer(src) {
     this.src = src;
     this.image = null;
     var self = this;
-    this.promise = XHR(src).then(function(svg) {
-        return new Promise(function(resolve, reject) {
-            if (!html2canvas.fabric) {
-                return reject(new Error("html2canvas.svg.js is not loaded, cannot render svg"));
-            }
 
-            html2canvas.fabric.loadSVGFromString(svg, function (objects, options) {
-                var canvas = new html2canvas.fabric.StaticCanvas('c');
-                self.image = canvas.lowerCanvasEl;
-                canvas
-                    .setWidth(options.width)
-                    .setHeight(options.height)
-                    .add(html2canvas.fabric.util.groupSVGElements(objects, options))
-                    .renderAll();
-                resolve(canvas.lowerCanvasEl);
-            });
+    this.promise = this.hasFabric().then(function() {
+        return (self.isInline(src) ? Promise.resolve(self.inlineFormatting(src)) : XHR(src));
+    }).then(function(svg) {
+        return new Promise(function(resolve) {
+            html2canvas.fabric.loadSVGFromString(svg, self.createCanvas.call(self, resolve));
         });
     });
 }
+
+SVGContainer.prototype.hasFabric = function() {
+    return !html2canvas.fabric ? Promise.reject(new Error("html2canvas.svg.js is not loaded, cannot render svg")) : Promise.resolve();
+};
+
+SVGContainer.prototype.inlineFormatting = function(src) {
+    return (/^data:image\/svg\+xml;base64,/.test(src)) ? window.atob(this.removeContentType(src)) : this.removeContentType(src);
+};
+
+SVGContainer.prototype.removeContentType = function(src) {
+    return src.replace(/^data:image\/svg\+xml(;base64)?,/,'');
+};
+
+SVGContainer.prototype.isInline = function(src) {
+    return (/^data:image\/svg\+xml/i.test(src));
+};
+
+SVGContainer.prototype.createCanvas = function(resolve) {
+    var self = this;
+    return function (objects, options) {
+        var canvas = new html2canvas.fabric.StaticCanvas('c');
+        self.image = canvas.lowerCanvasEl;
+        canvas
+            .setWidth(options.width)
+            .setHeight(options.height)
+            .add(html2canvas.fabric.util.groupSVGElements(objects, options))
+            .renderAll();
+        resolve(canvas.lowerCanvasEl);
+    };
+};
+
+function SVGNodeContainer(node) {
+    this.src = node;
+    this.image = null;
+    var self = this;
+
+    this.promise = this.hasFabric().then(function() {
+        return new Promise(function(resolve) {
+            html2canvas.fabric.parseSVGDocument(node, self.createCanvas.call(self, resolve));
+        });
+    });
+}
+
+SVGNodeContainer.prototype = Object.create(SVGContainer.prototype);
 
 function TextContainer(node, parent) {
     NodeContainer.call(this, node, parent);
