@@ -170,7 +170,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('server', ['connect:cors', 'connect']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
-    grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
-    grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'connect:ci', 'connect:cors', 'webdriver']);
+    grunt.registerTask('default', ['jshint', 'build', 'qunit']);
+    grunt.registerTask('travis', ['jshint', 'build','qunit', 'connect:ci', 'connect:cors', 'webdriver']);
 
 };
