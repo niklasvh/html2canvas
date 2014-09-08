@@ -1,5 +1,5 @@
 /*global module:false*/
-var _ =  require('lodash');
+var _ =  require('lodash'), path = require('path');
 
 module.exports = function(grunt) {
 
@@ -78,6 +78,16 @@ module.exports = function(grunt) {
                 }
             }
         },
+        execute: {
+            fabric: {
+                options: {
+                    args: ['modules=' + ['text','serialization',
+                        'parser', 'gradient', 'pattern', 'shadow', 'freedrawing',
+                        'image_filters', 'serialization'].join(","), 'no-es5-compat', 'dest=' + path.resolve(__dirname, 'src/fabric/dist/') + '/']
+                },
+                src: ['src/fabric/build.js']
+            }
+        },
         uglify: {
             dist: {
                 src: ['<%= concat.dist.dest %>'],
@@ -92,7 +102,7 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            files: 'src/**/*',
+            files: ['src/**/*', '!src/fabric/**/*'],
             tasks: ['jshint', 'build']
         },
         jshint: {
@@ -150,17 +160,16 @@ module.exports = function(grunt) {
         selenium.tests(browsers, test).onValue(done);
     });
 
-    // Load tasks
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-execute');
 
-    // Default task.
     grunt.registerTask('server', ['connect:cors', 'connect']);
-    grunt.registerTask('build', ['concat', 'uglify']);
+    grunt.registerTask('build', ['execute', 'concat', 'uglify']);
     grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
     grunt.registerTask('travis', ['jshint', 'concat','qunit', 'uglify', 'connect:ci', 'connect:cors', 'webdriver']);
 

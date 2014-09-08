@@ -5,14 +5,14 @@ function XHR(url) {
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                resolve(xhr.response);
+                resolve(xhr.responseText);
             } else {
-                reject(Error(xhr.statusText));
+                reject(new Error(xhr.statusText));
             }
         };
 
         xhr.onerror = function() {
-            reject(Error("Network Error"));
+            reject(new Error("Network Error"));
         };
 
         xhr.send();
