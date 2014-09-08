@@ -42,7 +42,7 @@ CanvasRenderer.prototype.taints = function(imageContainer) {
 };
 
 CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx, dy, dw, dh) {
-    if (!this.taints(imageContainer)) {
+    if (!this.taints(imageContainer) || this.options.allowTaint) {
         this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 };
