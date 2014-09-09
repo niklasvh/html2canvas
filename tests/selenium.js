@@ -172,11 +172,13 @@
             browserStream.push(result.browser);
         });
 
-        resultStream.onEnd(function() {
-            browser.quit();
+        return resultStream.fold([], pushToArray).flatMap(function(value) {
+            return Bacon.fromCallback(function(callback) {
+                browser.quit(function() {
+                    callback(value);
+                });
+            });
         });
-
-        return resultStream.fold([], pushToArray);
     }
 
     function createImages(data) {
