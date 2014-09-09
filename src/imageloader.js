@@ -22,7 +22,7 @@ ImageLoader.prototype.addImage = function(images, callback) {
         newImage.args.forEach(function(image) {
             if (!this.imageExists(images, image)) {
                 images.splice(0, 0, callback.call(this, newImage));
-                log('Added image #' + (images.length), image);
+                log('Added image #' + (images.length), typeof(image) === "string" ? image.substring(0, 100) : image);
             }
         }, this);
     };
