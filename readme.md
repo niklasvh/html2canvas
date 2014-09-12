@@ -32,18 +32,16 @@ The script should work fine on the following browsers:
 As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
 ### Usage ###
+
+**Note!** These instructions are for using the current dev version of 0.5, for the latest release version (0.4.1), checkout the [old readme](https://github.com/niklasvh/html2canvas/blob/v0.4/readme.md).
+
 To render an `element` with html2canvas, simply call:
-` html2canvas(element, options);`
+` html2canvas(element[, options]);`
 
-To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
+The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fullfillment handler to the promise using `then`:
 
-    html2canvas(document.body, {
-        onrendered: function(canvas) {
-            /* canvas is the actual canvas element,
-               to append it to the page call for example
-               document.body.appendChild( canvas );
-            */
-        }
+    html2canvas(document.body).then(function(canvas) {
+        document.body.appendChild(canvas);
     });
 
 ### Building ###

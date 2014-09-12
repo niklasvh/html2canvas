@@ -2,7 +2,7 @@
   "title": "html2canvas",
   "name": "html2canvas",
   "description": "Screenshots with JavaScript",
-  "version": "0.4.1",
+  "version": "0.5.0-alpha",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
@@ -20,19 +20,19 @@
     "url": "https://github.com/niklasvh/html2canvas/issues"
   },
   "devDependencies": {
-    "grunt": ">=0.4.0",
+    "baconjs": "^0.7.11",
+    "base64-arraybuffer": ">= 0.1.0",
+    "grunt": "^0.4.5",
     "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*",
+    "grunt-contrib-connect": "0.7.1",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-qunit": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "~0.5.1",
-    "googleapis": "~0.4.3",
-    "jwt-sign": "~0.1.0",
-    "base64-arraybuffer": ">= 0.1.0",
+    "grunt-execute": "^0.2.2",
+    "lodash": "^2.4.1",
     "png-js": ">= 0.1.1",
-    "sync-webdriver": ">=0.1.1",
-    "express": "~3.2.3",
-    "baconjs": "~0.3.15"
+    "wd": "^0.2.21"
   },
   "scripts": {
     "test": "grunt travis --verbose"
