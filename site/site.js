@@ -13,6 +13,10 @@
       templateUrl:'site/screenshots.html',
       title: 'Test console'
     }).
+    when('/screenshots_beta.html', {
+        templateUrl:'site/screenshots_beta.html',
+        title: 'Test console'
+    }).
     when('/examples.html', {
       templateUrl:'site/examples.html',
       title: 'Examples for html2canvas'

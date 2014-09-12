@@ -1,0 +1,119 @@
+<script src="/dist/html2canvas.js"></script>
+<script src="/dist/html2canvas.svg.js"></script>
+<script>
+    var date = new Date();
+    var message, timeoutTimer, timer;
+
+    function addRow(table,field,val){
+        var tr = $('<tr />').appendTo( $(table));
+        tr.append($('<td />').css('font-weight','bold').text(field)).append($('<td />').text(val));
+
+    }
+
+    function iframeLoad(iframe) {
+        var body = $(iframe).contents().find('body').get(0);
+
+        html2canvas(body, {
+            allowTaint: true,
+            taintTest: false,
+            logging: true
+        }).then(function( canvas ) {
+            $("#content").empty().append(canvas);
+            $('#getscreenshot').prop('disabled', false);
+            $('base').attr('href',"");
+        });
+    }
+
+    $(function(){
+        $('#recommended a').click(function(e){
+            e.preventDefault();
+            $('#url').val(this.href);
+            $('button').click();
+        })
+
+        var iframe,d;
+
+        $('#getscreenshot').click(function(e){
+            e.preventDefault();
+            $(this).prop('disabled',true);
+            var url = $('#url').val();
+            $('#content').append($('<img />').attr('src','/site/img/loading.gif').css('margin-top',40));
+
+            var urlParts = document.createElement('a');
+            urlParts.href = url;
+
+            $.ajax({
+                data: {
+                    xhr2:false,
+                    url:urlParts.href
+
+                },
+                url: "http://html2canvas.appspot.com/query",
+                dataType: "jsonp",
+                success: function(html){
+                    iframe = document.createElement('iframe');
+                    $(iframe).css({
+                        'visibility':'hidden'
+                    }).width($(window).width()).height($(window).height());
+                    $('#content').append(iframe);
+                    d = iframe.contentWindow.document;
+
+                    d.open();
+
+                    $(iframe.contentWindow).load(iframeLoad.bind(null, iframe));
+
+                    $('base').attr('href',urlParts.protocol+"//"+urlParts.hostname+"/" + urlParts.pathname);
+                    html = html.replace("<head>","<head><base href='"+urlParts.protocol+"//"+urlParts.hostname+"/" + urlParts.pathname + "'  />");
+                    if ($("#disablejs").prop('checked')){
+                        html = html.replace(/\<script/gi,"<!--<script");
+          html = html.replace(/\<\/script\>/gi,"<\/script>-->");
+                    }
+
+                    d.write(html);
+                    d.close();
+                }
+            });
+        });
+    });
+</script>
+
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+  <li><a href="/examples.html">Examples</a> <span class="divider">/</span></li>
+  <li class="active">Test console</li>
+</ul>
+
+<div class="page-header">
+  <h1>JavaScript webpage renderer</h1>
+</div>
+
+<p>
+  The whole screenshot is created with JavaScript. The only server interaction that is happening on this page is the proxy for loading the external pages/images into JSONP/CORS enabled page and onwards onto the JavaScript renderer script.
+  There are a lot of problemii s of loading external pages, even with a proxy, and as such many pages will not render at all. If you wish to try the script properly, I recommend you get a copy of the source from <a href="https://github.com/niklasvh/html2canvas">here</a> instead.
+</p>
+<form class="well form-search">
+  <label for="url">Website URL:</label>
+  <input type="url" id="url" value="http://www.yahoo.com" class="input-medium search-query" /><button class="btn" id="getscreenshot">Get screenshot!</button>
+</form>
+
+<label for="disablejs">Disable JavaScript (recommended, doesn't work well with the proxy)</label> <input type="checkbox" id="disablejs" checked /><br />
+<small>Tested with Google Chrome 12, Firefox 4 and Opera 11.5</small>
+
+<h3>Recommended (tested) pages:</h3>
+
+<ul id="recommended">
+  <li><a href="http://www.twitter.com/niklasvh">twitter.com</a></li>
+  <li><a href="http://www.yahoo.com">yahoo.com</a></li>
+  <li><a href="http://www.jquery.com">jquery.com</a></li>
+  <li><a href="http://www.google.com">google.com</a></li>
+  <li><a href="https://github.com/niklasvh/html2canvas">github.com</a></li>
+  <li><a href="http://www.smashingmagazine.com">smashingmagazine.com</a></li>
+  <li><a href="http://www.mashable.com">mashable.com</a></li>
+  <li><a href="http://www.facebook.com/google">facebook.com/google</a></li>
+  <li><a href="http://www.youtube.com/">youtube.com</a></li>
+  <li><a href="http://www.cnn.com/">cnn.com</a></li>
+  <li><a href="http://www.engadget.com/">engadget.com (lot of elements, very slow)</a></li>
+  <li><a href="http://eu.battle.net/en/">battle.net</a></li>
+</ul>
+
+<div id="content"></div>
