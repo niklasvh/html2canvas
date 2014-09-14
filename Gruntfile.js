@@ -23,7 +23,7 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/promise.js', 'src/fallback.js', 'src/*.js', 'src/renderers/*.js'
+                    'src/promise.js', 'src/fallback.js', 'src/punycode/punycode.js', 'src/core.js',  'src/*.js', 'src/renderers/*.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js',
                 options:{
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.svg.js',
                 options:{
                     banner: meta.banner + '\n(function(window, document, exports, undefined){\n\n',
-                    footer: '\n})(window, document, html2canvas);'
+                    footer: '\n}).call({}, window, document, html2canvas);'
                 }
             }
         },

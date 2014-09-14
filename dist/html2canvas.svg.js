@@ -17699,4 +17699,4 @@ fabric.Image.filters.BaseFilter = fabric.util.createClass(/** @lends fabric.Imag
 })(typeof exports !== 'undefined' ? exports : this);
 
 
-})(window, document, html2canvas);
+}).call({}, window, document, html2canvas);
