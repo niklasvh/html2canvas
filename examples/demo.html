@@ -173,10 +173,8 @@
     </p>
     <script type="text/javascript" src="../dist/html2canvas.js"></script>
     <script type="text/javascript">
-        html2canvas(document.body, {
-            onrendered: function(canvas) {
-                document.body.appendChild(canvas);
-            }
+        html2canvas(document.body).then(function(canvas) {
+            document.body.appendChild(canvas);
         });
     </script>
   </body>
