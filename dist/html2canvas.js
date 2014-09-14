@@ -262,8 +262,6 @@ GradientContainer.prototype.TYPES = {
     RADIAL: 2
 };
 
-GradientContainer.prototype.angleRegExp = /([+-]?\d*\.?\d+)(deg|grad|rad|turn)/;
-
 function ImageContainer(src, cors) {
     this.src = src;
     this.image = new Image();
@@ -447,32 +445,6 @@ function LinearGradientContainer(imageData) {
                     this.x1 = x0;
                     this.y1 = y0;
                     break;
-                default:
-                    var angle = position.match(this.angleRegExp);
-                    if (angle) {
-                        switch(angle[2]) {
-                            case "deg":
-                                var angleDeg = parseFloat(angle[1]);
-                                var radians = angleDeg / (180 / Math.PI);
-                                var slope = Math.tan(radians); // m
-
-                                var perpendicularSlope = -1 / slope;
-
-
-
-                                // y = 2
-                                // y = m * x
-                                // 2 = m * x
-
-                                this.y0 = 2 / Math.tan(slope) / 2; // 1
-                          //      console.log(radians, angle);
-                                this.x0 = 0;
-                                this.x1 = 1;
-                                this.y1 = 0;
-
-                                break;
-                        }
-                    }
             }
         }, this);
     } else {
