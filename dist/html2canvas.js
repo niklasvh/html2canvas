@@ -604,7 +604,7 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var bounds = getBounds(node);
         var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
         var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
-        var renderer = new CanvasRenderer(width, height, imageLoader, options);
+        var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
             log("Finished rendering");
@@ -1521,7 +1521,6 @@ NodeParser.prototype.getPseudoElement = function(container, type) {
     var pseudoNode = document.createElement(isImage ? 'img' : 'html2canvaspseudoelement');
     var pseudoContainer = new NodeContainer(pseudoNode, container);
 
-
     for (var i = style.length-1; i >= 0; i--) {
         var property = toCamelCase(style.item(i));
         pseudoNode.style[property] = style[property];
@@ -2178,11 +2177,12 @@ function ProxyImageContainer(src, proxy) {
 
 var proxyImageCount = 0;
 
-function Renderer(width, height, images, options) {
+function Renderer(width, height, images, options, document) {
     this.width = width;
     this.height = height;
     this.images = images;
     this.options = options;
+    this.document = document;
 }
 
 Renderer.prototype.renderImage = function(container, bounds, borderData, imageContainer) {
@@ -2508,11 +2508,11 @@ function XHR(url) {
 
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
-    this.canvas = document.createElement("canvas");
+    this.canvas = this.document.createElement("canvas");
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
-    this.taintCtx = document.createElement("canvas").getContext("2d");
+    this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
     log("Initialized CanvasRenderer");
