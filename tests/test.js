@@ -11,8 +11,8 @@ var h2cSelector, h2cOptions;
         document.write('<script type="text/javascript" src="' + src + '.js?' + Math.random() + '"></script>');
     }
 
-    var sources = ['log', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
-        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'xhr', 'renderers/canvas'];
+    var sources = ['log', 'punycode/punycode', 'core', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
+        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'renderers/canvas'];
 
     ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
 

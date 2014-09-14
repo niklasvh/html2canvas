@@ -22,6 +22,8 @@ window.html2canvas = function(nodeList, options) {
     });
 };
 
+window.html2canvas.punycode = this.punycode;
+
 function renderDocument(document, options, windowWidth, windowHeight) {
     return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
