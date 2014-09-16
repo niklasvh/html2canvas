@@ -7,8 +7,22 @@ function ImageLoader(options, support) {
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
-    nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
-    nodes.filter(isSVGNode).map(svgImage).forEach(this.addImage(images, this.loadImage), this);
+    nodes.reduce(function(imageNodes, container) {
+        switch(container.node.nodeName) {
+            case "IMG":
+                return imageNodes.concat([{
+                    args: [container.node.src],
+                    method: "url"
+                }]);
+            case "svg":
+            case "IFRAME":
+                return imageNodes.concat([{
+                    args: [container.node],
+                    method: container.node.nodeName
+                }]);
+        }
+        return imageNodes;
+    }, []).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -54,6 +68,8 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new WebkitGradientContainer(imageData);
     } else if (imageData.method === "svg") {
         return new SVGNodeContainer(imageData.args[0]);
+    } else if (imageData.method === "IFRAME") {
+        return new FrameContainer(imageData.args[0]);
     } else {
         return new DummyImageContainer(imageData);
     }

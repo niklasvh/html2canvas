@@ -602,8 +602,8 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var support = new Support(clonedWindow.document);
         var imageLoader = new ImageLoader(options, support);
         var bounds = getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
+        var width = options.width != null ? options.width : options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
+        var height = options.height != null ? options.height : options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
@@ -777,6 +777,30 @@ FontMetrics.prototype.getMetrics = function(family, size) {
     return this.data[family + "-" + size];
 };
 
+function FrameContainer(container) {
+    this.image = null;
+    this.src = container;
+    var self = this;
+    var bounds = getBounds(container);
+    this.promise = new Promise(function(resolve) {
+        if (container.contentWindow.document.URL === "about:blank" || container.contentWindow.document.documentElement == null) {
+            container.contentWindow.onload = container.onload = function() {
+                resolve(container);
+            };
+        } else {
+            resolve(container);
+        }
+
+    }).then(function(container) {
+        return html2canvas(container.contentWindow.document.documentElement, {
+            width: bounds.width,
+            height: bounds.height
+        });
+    }).then(function(canvas) {
+        return self.image = canvas;
+    });
+}
+
 function GradientContainer(imageData) {
     this.src = imageData.value;
     this.colorStops = [];
@@ -827,8 +851,22 @@ function ImageLoader(options, support) {
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
-    nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
-    nodes.filter(isSVGNode).map(svgImage).forEach(this.addImage(images, this.loadImage), this);
+    nodes.reduce(function(imageNodes, container) {
+        switch(container.node.nodeName) {
+            case "IMG":
+                return imageNodes.concat([{
+                    args: [container.node.src],
+                    method: "url"
+                }]);
+            case "svg":
+            case "IFRAME":
+                return imageNodes.concat([{
+                    args: [container.node],
+                    method: container.node.nodeName
+                }]);
+        }
+        return imageNodes;
+    }, []).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -874,6 +912,8 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new WebkitGradientContainer(imageData);
     } else if (imageData.method === "svg") {
         return new SVGNodeContainer(imageData.args[0]);
+    } else if (imageData.method === "IFRAME") {
+        return new FrameContainer(imageData.args[0]);
     } else {
         return new DummyImageContainer(imageData);
     }
@@ -1670,11 +1710,12 @@ NodeParser.prototype.paintNode = function(container) {
     this.renderer.renderBorders(borderData.borders);
     switch(container.node.nodeName) {
         case "svg":
-            var svgContainer = this.images.get(container.node);
-            if (svgContainer) {
-                this.renderer.renderImage(container, bounds, borderData, svgContainer);
+        case "IFRAME":
+            var imgContainer = this.images.get(container.node);
+            if (imgContainer) {
+                this.renderer.renderImage(container, bounds, borderData, imgContainer);
             } else {
-                log("Error loading <svg>", container.node);
+                log("Error loading <" + container.node.nodeName + ">", container.node);
             }
             break;
         case "IMG":

@@ -101,7 +101,6 @@ NodeParser.prototype.getPseudoElement = function(container, type) {
     var pseudoNode = document.createElement(isImage ? 'img' : 'html2canvaspseudoelement');
     var pseudoContainer = new NodeContainer(pseudoNode, container);
 
-
     for (var i = style.length-1; i >= 0; i--) {
         var property = toCamelCase(style.item(i));
         pseudoNode.style[property] = style[property];
@@ -251,11 +250,12 @@ NodeParser.prototype.paintNode = function(container) {
     this.renderer.renderBorders(borderData.borders);
     switch(container.node.nodeName) {
         case "svg":
-            var svgContainer = this.images.get(container.node);
-            if (svgContainer) {
-                this.renderer.renderImage(container, bounds, borderData, svgContainer);
+        case "IFRAME":
+            var imgContainer = this.images.get(container.node);
+            if (imgContainer) {
+                this.renderer.renderImage(container, bounds, borderData, imgContainer);
             } else {
-                log("Error loading <svg>", container.node);
+                log("Error loading <" + container.node.nodeName + ">", container.node);
             }
             break;
         case "IMG":
