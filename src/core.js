@@ -34,8 +34,8 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         var support = new Support(clonedWindow.document);
         var imageLoader = new ImageLoader(options, support);
         var bounds = getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
+        var width = options.width != null ? options.width : options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
+        var height = options.height != null ? options.height : options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
         var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
         var parser = new NodeParser(node, renderer, support, imageLoader, options);
         return parser.ready.then(function() {
