@@ -157,7 +157,9 @@ module.exports = function(grunt) {
         var selenium = require("./tests/selenium.js");
         var done = this.async();
         var browsers = (browser) ? [grunt.config.get(this.name + "." + browser)] : _.values(grunt.config.get(this.name));
-        selenium.tests(browsers, test).finally(function() {
+        selenium.tests(browsers, test).catch(function() {
+            done(false);
+        }).finally(function() {
             console.log("Done");
             done();
         });
