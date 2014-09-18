@@ -113,6 +113,12 @@
                 } else {
                     throw new Error("Couldn't run test after 3 retries");
                 }
+            })
+            .then(function(e) {
+                if (e.message === "timeout error") {
+                    throw e;
+                }
+                return e;
             });
     }
 
