@@ -52,7 +52,7 @@ _html2canvas.Parse = function (images, options, cb) {
   function addPseudoElements(el) {
     // These are done in discrete steps to prevent a relayout loop caused by addClass() invalidating
     // layouts & getPseudoElement calling getComputedStyle.
-    var jobs = [], classes = [];
+    var jobs = [], classes = [], selectors = [];
     getPseudoElementClasses();
     findPseudoElements(el);
     runJobs();
@@ -73,15 +73,27 @@ _html2canvas.Parse = function (images, options, cb) {
         }
       }
 
-      // Trim off the :after and :before (or ::after and ::before)
+      // get the selector for all rules that include a :before or :after               
       for (i = 0, j = classes.length; i < j; i++) {
-        classes[i] = classes[i].match(/(^[^:]*)/)[1];
+          var re = /(?:^|,)([^:,\n]+):/g;
+          var matches = [];
+          var match;
+          while (match = re.exec(classes[i])) {
+              matches.push(match[1].trim());
+          }
+          if (matches) {
+              for (var m = 0; m < matches.length; m++) {
+                  if (matches[m] !== '') { // Ignore selectors that are empty strings as this is not valid
+                      selectors.push(matches[m]);
+                  }                            
+              }                        
+          }
       }
     }
 
     // Using the list of elements we know how pseudo el styles, create fake pseudo elements.
     function findPseudoElements(el) {
-      var els = document.querySelectorAll(classes.join(','));
+      var els = document.querySelectorAll(selectors.join(','));
       for(var i = 0, j = els.length; i < j; i++) {
         createPseudoElements(els[i]);
       }
