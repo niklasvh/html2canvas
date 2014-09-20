@@ -94,7 +94,12 @@ ImageLoader.prototype.isSameOrigin = function(url) {
 };
 
 ImageLoader.prototype.getPromise = function(container) {
-    return container.promise;
+    return container.promise['catch'](function() {
+        var dummy = new DummyImageContainer(container.src);
+        return dummy.promise.then(function(image) {
+            container.image = image;
+        });
+    });
 };
 
 ImageLoader.prototype.get = function(src) {
@@ -117,26 +122,3 @@ ImageLoader.prototype.fetch = function(nodes) {
     log("Finished searching images");
     return this;
 };
-
-function isImage(container) {
-    return container.node.nodeName === "IMG";
-}
-
-function isSVGNode(container) {
-    return container.node.nodeName === "svg";
-}
-
-function urlImage(container) {
-    return {
-        args: [container.node.src],
-        method: "url"
-    };
-}
-
-function svgImage(container) {
-    return {
-        args: [container.node],
-        method: "svg"
-    };
-}
-
