@@ -9,7 +9,7 @@
     "url": "http://hertzen.com"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.10.0"
   },
   "dependencies": {},
   "repository": {
@@ -30,7 +30,7 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-execute": "^0.2.2",
-    "html2canvas-proxy": "0.0.2",
+    "html2canvas-proxy": "0.0.5",
     "humanize-duration": "^2.0.1",
     "lodash": "^2.4.1",
     "png-js": ">= 0.1.1",

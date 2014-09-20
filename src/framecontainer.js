@@ -20,7 +20,7 @@ function FrameContainer(container, sameOrigin, proxy) {
 
 FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
     var container = this.src;
-    return XHR(proxy + "?url=" + container.src).then(documentFromHTML(container)).then(function(doc) {
+    return new Proxy(container.src, proxy, window.document).then(documentFromHTML(container)).then(function(doc) {
         return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
     });
 };

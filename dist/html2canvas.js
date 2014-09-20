@@ -591,6 +591,7 @@ window.html2canvas = function(nodeList, options) {
 };
 
 window.html2canvas.punycode = this.punycode;
+window.html2canvas.proxy = {};
 
 function renderDocument(document, options, windowWidth, windowHeight) {
     return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
@@ -799,7 +800,7 @@ function FrameContainer(container, sameOrigin, proxy) {
 
 FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
     var container = this.src;
-    return XHR(proxy + "?url=" + container.src).then(documentFromHTML(container)).then(function(doc) {
+    return new Proxy(container.src, proxy, window.document).then(documentFromHTML(container)).then(function(doc) {
         return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
     });
 };
@@ -2172,44 +2173,73 @@ function hasUnicode(string) {
     return /[^\u0000-\u00ff]/.test(string);
 }
 
+function Proxy(src, proxyUrl, document) {
+    var callback = createCallback(supportsCORS);
+    var url = createProxyUrl(proxyUrl, src, callback);
+
+    return supportsCORS ? XHR(url) : (jsonp(document, url, callback).then(function(response) {
+        return decode64(response.content);
+    }));
+}
+var proxyCount = 0;
+
+var supportsCORS = ('withCredentials' in new XMLHttpRequest());
+var supportsCORSImage = ('crossOrigin' in new Image());
+
+function ProxyURL(src, proxyUrl, document) {
+    var callback = createCallback(supportsCORSImage);
+    var url = createProxyUrl(proxyUrl, src, callback);
+    return (supportsCORSImage ? Promise.resolve(url) : jsonp(document, url, callback).then(function(response) {
+        return "data:" + response.type + ";base64," + response.content;
+    }));
+}
+
+function jsonp(document, url, callback) {
+    return new Promise(function(resolve, reject) {
+        var s = document.createElement("script");
+        var cleanup = function() {
+            delete window.html2canvas.proxy[callback];
+            document.body.removeChild(s);
+        };
+        window.html2canvas.proxy[callback] = function(response) {
+            cleanup();
+            resolve(response);
+        };
+        s.src = url;
+        s.onerror = function(e) {
+            cleanup();
+            reject(e);
+        };
+        document.body.appendChild(s);
+    });
+}
+
+function createCallback(useCORS) {
+    return !useCORS ? "html2canvas_" + Date.now() + "_" + (++proxyCount) + "_" + Math.round(Math.random() * 100000) : "";
+}
+
+function createProxyUrl(proxyUrl, src, callback) {
+    return proxyUrl + "?url=" + encodeURIComponent(src) + (callback.length ? "&callback=html2canvas.proxy." + callback : "");
+}
+
 function ProxyImageContainer(src, proxy) {
-    var callbackName = "html2canvas_" + proxyImageCount++;
     var script = document.createElement("script");
     var link = document.createElement("a");
     link.href = src;
     src = link.href;
-    var requestUrl = proxy + ((proxy.indexOf("?") > -1) ? "&" : "?" ) + 'url=' + encodeURIComponent(src) + '&callback=' + callbackName;
     this.src = src;
     this.image = new Image();
     var self = this;
     this.promise = new Promise(function(resolve, reject) {
+        self.image.crossOrigin = "Anonymous";
         self.image.onload = resolve;
         self.image.onerror = reject;
 
-        window[callbackName] = function(a){
-            if (a.substring(0,6) === "error:"){
-                reject();
-            } else {
-                self.image.src = a;
-            }
-            window[callbackName] = undefined; // to work with IE<9  // NOTE: that the undefined callback property-name still exists on the window object (for IE<9)
-            try {
-                delete window[callbackName];  // for all browser that support this
-            } catch(ex) {}
-            script.parentNode.removeChild(script);
-        };
-        script.setAttribute("type", "text/javascript");
-        script.setAttribute("src", requestUrl);
-        document.body.appendChild(script);
-    })['catch'](function() {
-        var dummy = new DummyImageContainer(src);
-        return dummy.promise.then(function(image) {
-            self.image = image;
-        });
+        new ProxyURL(src, proxy, document).then(function(url) {
+            self.image.src = url;
+        })['catch'](reject);
     });
 }
-
-var proxyImageCount = 0;
 
 function Renderer(width, height, images, options, document) {
     this.width = width;
