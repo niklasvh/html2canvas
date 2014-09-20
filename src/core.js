@@ -25,7 +25,7 @@ window.html2canvas = function(nodeList, options) {
 window.html2canvas.punycode = this.punycode;
 
 function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
+    return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
         var selector = "[" + html2canvasNodeAttribute + "='true']";
         document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
@@ -84,9 +84,9 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
-function createWindowClone(ownerDocument, width, height, options) {
+function createWindowClone(ownerDocument, containerDocument, width, height, options) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
-        container = ownerDocument.createElement("iframe");
+        container = containerDocument.createElement("iframe");
 
     container.style.visibility = "hidden";
     container.style.position = "absolute";
@@ -94,7 +94,7 @@ function createWindowClone(ownerDocument, width, height, options) {
     container.width = width;
     container.height = height;
     container.scrolling = "no"; // ios won't scroll without it
-    ownerDocument.body.appendChild(container);
+    containerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
         var documentClone = container.contentWindow.document;

@@ -1,5 +1,6 @@
 /*global module:false*/
 var _ =  require('lodash'), path = require('path');
+var proxy = require('html2canvas-proxy');
 
 module.exports = function(grunt) {
 
@@ -42,39 +43,39 @@ module.exports = function(grunt) {
                 }
             }
         },
-        connect: {
+        express: {
             server: {
                 options: {
                     port: 8080,
-                    base: './',
-                    keepalive: true
+                    bases: './'
                 }
             },
             cors: {
                 options: {
                     port: 8081,
-                    base: './',
-                    keepalive: false,
-                    middleware: function(connect, options, middlwares) {
-                        return [
-                            function(req, res, next) {
-                                if (req.url !== '/tests/assets/image2.jpg') {
-                                    next();
-                                    return;
-                                }
-                                res.setHeader("Access-Control-Allow-Origin", "*");
-                                res.end(require("fs").readFileSync('tests/assets/image2.jpg'));
-                            },
-                            connect.static(options.base[0])
-                        ];
-                    }
+                    bases: './',
+                    middleware: [
+                        function(req, res, next) {
+                            if (req.url !== '/tests/assets/image2.jpg') {
+                                next();
+                                return;
+                            }
+                            res.setHeader("Access-Control-Allow-Origin", "*");
+                            res.end(require("fs").readFileSync('tests/assets/image2.jpg'));
+                        }
+                    ]
+                }
+            },
+            proxy: {
+                options: {
+                    port: 8082,
+                    middleware: [proxy()]
                 }
             },
             ci: {
                 options: {
                     port: 8080,
-                    base: './',
-                    keepalive: false
+                    bases: './'
                 }
             }
         },
@@ -170,12 +171,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-qunit');
-    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-express');
     grunt.loadNpmTasks('grunt-execute');
 
-    grunt.registerTask('server', ['connect:cors', 'connect']);
+    grunt.registerTask('server', ['express:cors', 'express:proxy', 'express:server', 'express-keepalive']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
     grunt.registerTask('default', ['jshint', 'build', 'qunit']);
-    grunt.registerTask('travis', ['jshint', 'build','qunit', 'connect:ci', 'connect:cors', 'webdriver']);
+    grunt.registerTask('travis', ['jshint', 'build','qunit', 'express:ci', 'express:cors', 'webdriver']);
 
 };
