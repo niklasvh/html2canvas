@@ -43,39 +43,46 @@ module.exports = function(grunt) {
                 }
             }
         },
-        express: {
+        connect: {
             server: {
                 options: {
                     port: 8080,
-                    bases: './'
+                    base: './',
+                    keepalive: true
                 }
             },
             cors: {
                 options: {
                     port: 8081,
-                    bases: './',
-                    middleware: [
-                        function(req, res, next) {
-                            if (req.url !== '/tests/assets/image2.jpg') {
-                                next();
-                                return;
+                    base: './',
+                    middleware:  function(connect, options) {
+                        return [
+                            function(req, res, next) {
+                                if (req.url !== '/tests/assets/image2.jpg') {
+                                    next();
+                                    return;
+                                }
+                                res.setHeader("Access-Control-Allow-Origin", "*");
+                                res.end(require("fs").readFileSync('tests/assets/image2.jpg'));
                             }
-                            res.setHeader("Access-Control-Allow-Origin", "*");
-                            res.end(require("fs").readFileSync('tests/assets/image2.jpg'));
-                        }
-                    ]
+                        ];
+                    }
                 }
             },
             proxy: {
                 options: {
                     port: 8082,
-                    middleware: [proxy()]
+                    middleware:  function(connect, options) {
+                        return [
+                            proxy()
+                        ];
+                    }
                 }
             },
             ci: {
                 options: {
                     port: 8080,
-                    bases: './'
+                    base: './'
                 }
             }
         },
@@ -171,12 +178,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-qunit');
-    grunt.loadNpmTasks('grunt-express');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-execute');
 
-    grunt.registerTask('server', ['express:cors', 'express:proxy', 'express:server', 'express-keepalive']);
+    grunt.registerTask('server', ['connect:cors', 'connect:proxy', 'connect:server']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
     grunt.registerTask('default', ['jshint', 'build', 'qunit']);
-    grunt.registerTask('travis', ['jshint', 'build','qunit', 'express:ci', 'express:cors', 'webdriver']);
+    grunt.registerTask('travis', ['jshint', 'build','qunit', 'connect:ci', 'connect:cors', 'webdriver']);
 
 };
