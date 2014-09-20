@@ -115,7 +115,7 @@ var h2cSelector, h2cOptions;
             $(h2cSelector).html2canvas($.extend({
                 logging: true,
                 profile: true,
-                proxy: "http://html2canvas.appspot.com/query",
+                proxy: "http://localhost:8082",
                 useCORS: false
             }, h2cOptions));
         }, 100);
