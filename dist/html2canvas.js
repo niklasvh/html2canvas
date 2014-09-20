@@ -593,7 +593,7 @@ window.html2canvas = function(nodeList, options) {
 window.html2canvas.punycode = this.punycode;
 
 function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
+    return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
         var selector = "[" + html2canvasNodeAttribute + "='true']";
         document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
@@ -652,9 +652,9 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
-function createWindowClone(ownerDocument, width, height, options) {
+function createWindowClone(ownerDocument, containerDocument, width, height, options) {
     var documentElement = ownerDocument.documentElement.cloneNode(true),
-        container = ownerDocument.createElement("iframe");
+        container = containerDocument.createElement("iframe");
 
     container.style.visibility = "hidden";
     container.style.position = "absolute";
@@ -662,7 +662,7 @@ function createWindowClone(ownerDocument, width, height, options) {
     container.width = width;
     container.height = height;
     container.scrolling = "no"; // ios won't scroll without it
-    ownerDocument.body.appendChild(container);
+    containerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
         var documentClone = container.contentWindow.document;
@@ -777,12 +777,12 @@ FontMetrics.prototype.getMetrics = function(family, size) {
     return this.data[family + "-" + size];
 };
 
-function FrameContainer(container) {
+function FrameContainer(container, sameOrigin, proxy) {
     this.image = null;
     this.src = container;
     var self = this;
     var bounds = getBounds(container);
-    this.promise = new Promise(function(resolve) {
+    this.promise = (!sameOrigin ? this.proxyLoad(proxy, bounds) : new Promise(function(resolve) {
         if (container.contentWindow.document.URL === "about:blank" || container.contentWindow.document.documentElement == null) {
             container.contentWindow.onload = container.onload = function() {
                 resolve(container);
@@ -790,8 +790,7 @@ function FrameContainer(container) {
         } else {
             resolve(container);
         }
-
-    }).then(function(container) {
+    })).then(function(container) {
         return html2canvas(container.contentWindow.document.documentElement, {
             width: bounds.width,
             height: bounds.height
@@ -799,6 +798,31 @@ function FrameContainer(container) {
     }).then(function(canvas) {
         return self.image = canvas;
     });
+}
+
+FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
+    var container = this.src;
+    return XHR(proxy + "?url=" + container.src).then(documentFromHTML(container)).then(function(doc) {
+        return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
+    });
+};
+
+function documentFromHTML(container) {
+    return function(html) {
+        var doc = document.implementation.createHTMLDocument("");
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        var b = doc.querySelector("base");
+        if (!b || !b.href.host) {
+            var base = doc.createElement("base");
+            base.href = container.src;
+            doc.head.insertBefore(base, doc.head.firstChild);
+        }
+
+        return doc;
+    };
 }
 
 function GradientContainer(imageData) {
@@ -913,7 +937,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
     } else if (imageData.method === "svg") {
         return new SVGNodeContainer(imageData.args[0]);
     } else if (imageData.method === "IFRAME") {
-        return new FrameContainer(imageData.args[0]);
+        return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options.proxy);
     } else {
         return new DummyImageContainer(imageData);
     }

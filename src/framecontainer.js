@@ -1,9 +1,9 @@
-function FrameContainer(container) {
+function FrameContainer(container, sameOrigin, proxy) {
     this.image = null;
     this.src = container;
     var self = this;
     var bounds = getBounds(container);
-    this.promise = new Promise(function(resolve) {
+    this.promise = (!sameOrigin ? this.proxyLoad(proxy, bounds) : new Promise(function(resolve) {
         if (container.contentWindow.document.URL === "about:blank" || container.contentWindow.document.documentElement == null) {
             container.contentWindow.onload = container.onload = function() {
                 resolve(container);
@@ -11,8 +11,7 @@ function FrameContainer(container) {
         } else {
             resolve(container);
         }
-
-    }).then(function(container) {
+    })).then(function(container) {
         return html2canvas(container.contentWindow.document.documentElement, {
             width: bounds.width,
             height: bounds.height
@@ -20,4 +19,29 @@ function FrameContainer(container) {
     }).then(function(canvas) {
         return self.image = canvas;
     });
+}
+
+FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
+    var container = this.src;
+    return XHR(proxy + "?url=" + container.src).then(documentFromHTML(container)).then(function(doc) {
+        return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
+    });
+};
+
+function documentFromHTML(container) {
+    return function(html) {
+        var doc = document.implementation.createHTMLDocument("");
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        var b = doc.querySelector("base");
+        if (!b || !b.href.host) {
+            var base = doc.createElement("base");
+            base.href = container.src;
+            doc.head.insertBefore(base, doc.head.firstChild);
+        }
+
+        return doc;
+    };
 }
