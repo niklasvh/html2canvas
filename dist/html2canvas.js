@@ -931,7 +931,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
     } else if (imageData.method === "svg") {
-        return new SVGNodeContainer(imageData.args[0]);
+        return new SVGNodeContainer(imageData.args[0], this.support.svg);
     } else if (imageData.method === "IFRAME") {
         return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options.proxy);
     } else {
@@ -2498,12 +2498,20 @@ function decode64(base64) {
     return output;
 }
 
-function SVGNodeContainer(node) {
+function SVGNodeContainer(node, native) {
     this.src = node;
     this.image = null;
     var self = this;
 
-    this.promise = this.hasFabric().then(function() {
+    this.promise = native ? new Promise(function(resolve, reject) {
+        self.image = new Image();
+        self.image.onload = resolve;
+        self.image.onerror = reject;
+        self.image.src = "data:image/svg+xml," + (new XMLSerializer()).serializeToString(node);
+        if (self.image.complete === true) {
+            resolve(self.image);
+        }
+    }) : this.hasFabric().then(function() {
         return new Promise(function(resolve) {
             html2canvas.fabric.parseSVGDocument(node, self.createCanvas.call(self, resolve));
         });

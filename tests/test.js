@@ -16,7 +16,9 @@ var h2cSelector, h2cOptions;
 
     ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
 
-    appendScript('/dist/html2canvas.svg');
+    if (typeof(noFabric) === "undefined") {
+        appendScript('/dist/html2canvas.svg');
+    }
 
     window.onload = function() {
         (function( $ ){
