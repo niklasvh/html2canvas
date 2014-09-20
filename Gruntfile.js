@@ -74,6 +74,12 @@ module.exports = function(grunt) {
                     port: 8082,
                     middleware:  function(connect, options) {
                         return [
+                            function(req, res, next) {
+                                res.jsonp = function(content) {
+                                    res.end(req.query.callback +  "(" + JSON.stringify(content) + ")");
+                                };
+                                next();
+                            },
                             proxy()
                         ];
                     }
