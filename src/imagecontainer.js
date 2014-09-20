@@ -13,10 +13,5 @@ function ImageContainer(src, cors) {
         if (self.image.complete === true) {
             resolve(self.image);
         }
-    })['catch'](function() {
-        var dummy = new DummyImageContainer(src);
-        return dummy.promise.then(function(image) {
-            self.image = image;
-        });
     });
 }
