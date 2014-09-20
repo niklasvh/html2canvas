@@ -23,6 +23,7 @@ window.html2canvas = function(nodeList, options) {
 };
 
 window.html2canvas.punycode = this.punycode;
+window.html2canvas.proxy = {};
 
 function renderDocument(document, options, windowWidth, windowHeight) {
     return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
