@@ -108,25 +108,19 @@
             .timeout(60000)
             .catch(Promise.TimeoutError, function() {
                 if (retries < 3) {
-                    console.log("Retry", (retries + 1), test);
+                    console.log(colors.violet, "Retry", (retries + 1), test);
                     return runTestWithRetries(browser, test, retries + 1);
                 } else {
                     throw new Error("Couldn't run test after 3 retries");
                 }
-            })
-            .then(function(e) {
-                if (e.message === "timeout error") {
-                    throw e;
-                }
-                return e;
             });
     }
 
     function runTest(browser, test) {
-        return browser
+        return Promise.resolve(browser
             .then(loadTestPage(browser, test))
             .then(captureScreenshots(browser))
-            .then(analyzeResults(test));
+            .then(analyzeResults(test))).cancellable();
     }
 
     exports.tests = function(browsers, singleTest) {
