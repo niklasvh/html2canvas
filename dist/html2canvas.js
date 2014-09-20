@@ -581,7 +581,7 @@ window.html2canvas = function(nodeList, options) {
 
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
     node.setAttribute(html2canvasNodeAttribute, "true");
-    return renderDocument(node.ownerDocument, options, window.innerWidth, window.innerHeight).then(function(canvas) {
+    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
             options.onrendered(canvas);
@@ -791,10 +791,7 @@ function FrameContainer(container, sameOrigin, proxy) {
             resolve(container);
         }
     })).then(function(container) {
-        return html2canvas(container.contentWindow.document.documentElement, {
-            width: bounds.width,
-            height: bounds.height
-        });
+        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: proxy});
     }).then(function(canvas) {
         return self.image = canvas;
     });

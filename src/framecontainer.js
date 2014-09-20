@@ -12,10 +12,7 @@ function FrameContainer(container, sameOrigin, proxy) {
             resolve(container);
         }
     })).then(function(container) {
-        return html2canvas(container.contentWindow.document.documentElement, {
-            width: bounds.width,
-            height: bounds.height
-        });
+        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: proxy});
     }).then(function(canvas) {
         return self.image = canvas;
     });
