@@ -55,8 +55,12 @@ var h2cSelector, h2cOptions;
                         $canvas.siblings().toggle();
                         $(window).click(function(){
                             $canvas.toggle().siblings().toggle();
+                            $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
+                            $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
                             throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
                         });
+                        $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
+                        $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
                         throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)) + " ms<br />",4000);
                     } else {
                         $canvas.css('display', 'none');

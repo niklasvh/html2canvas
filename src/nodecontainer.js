@@ -338,15 +338,14 @@ function asFloat(str) {
 function getBounds(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
-        var isBody = node.nodeName === "BODY";
-        var width = isBody ? node.scrollWidth : (node.offsetWidth == null ? clientRect.width : node.offsetWidth);
+        var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
         return {
             top: clientRect.top,
             bottom: clientRect.bottom || (clientRect.top + clientRect.height),
             right: clientRect.left + width,
             left: clientRect.left,
             width:  width,
-            height: isBody ? node.scrollHeight : (node.offsetHeight == null ? clientRect.height : node.offsetHeight)
+            height: node.offsetHeight == null ? clientRect.height : node.offsetHeight
         };
     }
     return {};
