@@ -2047,7 +2047,7 @@ function renderableNode(node) {
 
 function isPositionedForStacking(container) {
     var position = container.css("position");
-    var zIndex = (position === "absolute" || position === "relative") ? container.css("zIndex") : "auto";
+    var zIndex = (["absolute", "relative", "fixed"].indexOf(position) !== -1) ? container.css("zIndex") : "auto";
     return zIndex !== "auto";
 }
 
