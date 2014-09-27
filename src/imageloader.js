@@ -9,17 +9,17 @@ ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
     nodes.reduce(function(imageNodes, container) {
         switch(container.node.nodeName) {
-            case "IMG":
-                return imageNodes.concat([{
-                    args: [container.node.src],
-                    method: "url"
-                }]);
-            case "svg":
-            case "IFRAME":
-                return imageNodes.concat([{
-                    args: [container.node],
-                    method: container.node.nodeName
-                }]);
+        case "IMG":
+            return imageNodes.concat([{
+                args: [container.node.src],
+                method: "url"
+            }]);
+        case "svg":
+        case "IFRAME":
+            return imageNodes.concat([{
+                args: [container.node],
+                method: container.node.nodeName
+            }]);
         }
         return imageNodes;
     }, []).forEach(this.addImage(images, this.loadImage), this);
@@ -94,7 +94,7 @@ ImageLoader.prototype.isSameOrigin = function(url) {
 };
 
 ImageLoader.prototype.getPromise = function(container) {
-    return container.promise['catch'](function() {
+    return this.timeout(container, this.options.imageTimeout)['catch'](function() {
         var dummy = new DummyImageContainer(container.src);
         return dummy.promise.then(function(image) {
             container.image = image;
@@ -113,12 +113,25 @@ ImageLoader.prototype.fetch = function(nodes) {
     this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
     this.images.forEach(function(image, index) {
         image.promise.then(function() {
-            log("Succesfully loaded image #"+ (index+1));
+            log("Succesfully loaded image #"+ (index+1), image);
         }, function(e) {
-            log("Failed loading image #"+ (index+1), e);
+            log("Failed loading image #"+ (index+1), image, e);
         });
     });
-    this.ready = Promise.all(this.images.map(this.getPromise));
+    this.ready = Promise.all(this.images.map(this.getPromise, this));
     log("Finished searching images");
     return this;
+};
+
+ImageLoader.prototype.timeout = function(container, timeout) {
+    var timer;
+    return Promise.race([container.promise, new Promise(function(res, reject) {
+        timer = setTimeout(function() {
+            log("Timed out loading image", container);
+            reject(container);
+        }, timeout);
+    })]).then(function(container) {
+        clearTimeout(timer);
+        return container;
+    });
 };

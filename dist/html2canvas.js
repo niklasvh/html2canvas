@@ -581,6 +581,7 @@ window.html2canvas = function(nodeList, options) {
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
     options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
+    options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -627,7 +628,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
-        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
+        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, {width: width, height: height, top: bounds.top, left: bounds.left});
         cleanupContainer(container, options);
         return canvas;
     });
@@ -693,10 +694,13 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         container.contentWindow.onload = container.onload = function() {
-            setTimeout(function() {
-                cloneCanvasContents(ownerDocument, documentClone);
-                resolve(container);
-            }, 0);
+            var interval = setInterval(function() {
+                if (documentClone.body.childNodes.length > 0) {
+                    cloneCanvasContents(ownerDocument, documentClone);
+                    clearInterval(interval);
+                    resolve(container);
+                }
+            }, 50);
         };
 
         documentClone.open();
@@ -718,11 +722,8 @@ function loadUrlDocument(src, proxy, document, width, height, options) {
 
 function documentFromHTML(src) {
     return function(html) {
-        var doc = document.implementation.createHTMLDocument("");
-        doc.open();
-        doc.write(html);
-        doc.close();
-
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, "text/html");
         var b = doc.querySelector("base");
         if (!b || !b.href.host) {
             var base = doc.createElement("base");
@@ -871,7 +872,7 @@ function FrameContainer(container, sameOrigin, options) {
             resolve(container);
         }
     })).then(function(container) {
-        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer});
+        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', width: container.width, height: container.height, proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer, allowTaint: options.allowTaint, imageTimeout: options.imageTimeout / 2});
     }).then(function(canvas) {
         return self.image = canvas;
     });
@@ -927,17 +928,17 @@ ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
     nodes.reduce(function(imageNodes, container) {
         switch(container.node.nodeName) {
-            case "IMG":
-                return imageNodes.concat([{
-                    args: [container.node.src],
-                    method: "url"
-                }]);
-            case "svg":
-            case "IFRAME":
-                return imageNodes.concat([{
-                    args: [container.node],
-                    method: container.node.nodeName
-                }]);
+        case "IMG":
+            return imageNodes.concat([{
+                args: [container.node.src],
+                method: "url"
+            }]);
+        case "svg":
+        case "IFRAME":
+            return imageNodes.concat([{
+                args: [container.node],
+                method: container.node.nodeName
+            }]);
         }
         return imageNodes;
     }, []).forEach(this.addImage(images, this.loadImage), this);
@@ -1012,7 +1013,7 @@ ImageLoader.prototype.isSameOrigin = function(url) {
 };
 
 ImageLoader.prototype.getPromise = function(container) {
-    return container.promise['catch'](function() {
+    return this.timeout(container, this.options.imageTimeout)['catch'](function() {
         var dummy = new DummyImageContainer(container.src);
         return dummy.promise.then(function(image) {
             container.image = image;
@@ -1031,14 +1032,27 @@ ImageLoader.prototype.fetch = function(nodes) {
     this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
     this.images.forEach(function(image, index) {
         image.promise.then(function() {
-            log("Succesfully loaded image #"+ (index+1));
+            log("Succesfully loaded image #"+ (index+1), image);
         }, function(e) {
-            log("Failed loading image #"+ (index+1), e);
+            log("Failed loading image #"+ (index+1), image, e);
         });
     });
-    this.ready = Promise.all(this.images.map(this.getPromise));
+    this.ready = Promise.all(this.images.map(this.getPromise, this));
     log("Finished searching images");
     return this;
+};
+
+ImageLoader.prototype.timeout = function(container, timeout) {
+    var timer;
+    return Promise.race([container.promise, new Promise(function(res, reject) {
+        timer = setTimeout(function() {
+            log("Timed out loading image", container);
+            reject(container);
+        }, timeout);
+    })]).then(function(container) {
+        clearTimeout(timer);
+        return container;
+    });
 };
 
 function LinearGradientContainer(imageData) {
@@ -1509,7 +1523,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
         return container.visible = container.isElementVisible();
     }).map(this.getPseudoElements, this));
     this.fontMetrics = new FontMetrics();
-    log("Fetched nodes");
+    log("Fetched nodes, total:", this.nodes.length);
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
     this.ready = this.images.ready.then(bind(function() {
         log("Images loaded, starting parsing");
@@ -2658,7 +2672,7 @@ function CanvasRenderer(width, height) {
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
-    log("Initialized CanvasRenderer");
+    log("Initialized CanvasRenderer with size", width, "x", height);
 }
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
