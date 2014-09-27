@@ -13,6 +13,7 @@ window.html2canvas = function(nodeList, options) {
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
     options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
+    options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -59,7 +60,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
-        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
+        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, {width: width, height: height, top: bounds.top, left: bounds.left});
         cleanupContainer(container, options);
         return canvas;
     });
@@ -125,10 +126,13 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         container.contentWindow.onload = container.onload = function() {
-            setTimeout(function() {
-                cloneCanvasContents(ownerDocument, documentClone);
-                resolve(container);
-            }, 0);
+            var interval = setInterval(function() {
+                if (documentClone.body.childNodes.length > 0) {
+                    cloneCanvasContents(ownerDocument, documentClone);
+                    clearInterval(interval);
+                    resolve(container);
+                }
+            }, 50);
         };
 
         documentClone.open();
@@ -150,11 +154,8 @@ function loadUrlDocument(src, proxy, document, width, height, options) {
 
 function documentFromHTML(src) {
     return function(html) {
-        var doc = document.implementation.createHTMLDocument("");
-        doc.open();
-        doc.write(html);
-        doc.close();
-
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, "text/html");
         var b = doc.querySelector("base");
         if (!b || !b.href.host) {
             var base = doc.createElement("base");

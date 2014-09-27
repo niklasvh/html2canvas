@@ -12,7 +12,7 @@ function FrameContainer(container, sameOrigin, options) {
             resolve(container);
         }
     })).then(function(container) {
-        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer});
+        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', width: container.width, height: container.height, proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer, allowTaint: options.allowTaint, imageTimeout: options.imageTimeout / 2});
     }).then(function(canvas) {
         return self.image = canvas;
     });
