@@ -1,4 +1,6 @@
 var html2canvasNodeAttribute = "data-html2canvas-node";
+var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
+var html2canvasCanvasCloneIndex = 0;
 
 window.html2canvas = function(nodeList, options) {
     options = options || {};
@@ -86,6 +88,7 @@ function smallImage() {
 }
 
 function createWindowClone(ownerDocument, containerDocument, width, height, options) {
+    labelCanvasElements(ownerDocument);
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = containerDocument.createElement("iframe");
 
@@ -103,7 +106,10 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         container.contentWindow.onload = container.onload = function() {
-            resolve(container);
+            setTimeout(function() {
+                cloneCanvasContents(ownerDocument, documentClone);
+                resolve(container);
+            }, 0);
         };
 
         documentClone.open();
@@ -114,6 +120,28 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
+    });
+}
+
+function labelCanvasElements(ownerDocument) {
+    [].slice.call(ownerDocument.querySelectorAll("canvas"), 0).forEach(function(canvas) {
+        canvas.setAttribute(html2canvasCanvasCloneAttribute, "canvas-" + html2canvasCanvasCloneIndex++);
+    });
+}
+
+function cloneCanvasContents(ownerDocument, documentClone) {
+    [].slice.call(ownerDocument.querySelectorAll("[" + html2canvasCanvasCloneAttribute + "]"), 0).forEach(function(canvas) {
+        try {
+            var clonedCanvas = documentClone.querySelector('[' + html2canvasCanvasCloneAttribute + '="' + canvas.getAttribute(html2canvasCanvasCloneAttribute) + '"]');
+            if (clonedCanvas) {
+                clonedCanvas.width = canvas.width;
+                clonedCanvas.height = canvas.height;
+                clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+            }
+        } catch(e) {
+            log("Unable to copy canvas content from", canvas, e);
+        }
+        canvas.removeAttribute(html2canvasCanvasCloneAttribute);
     });
 }
 

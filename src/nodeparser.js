@@ -294,6 +294,9 @@ NodeParser.prototype.paintNode = function(container) {
                 log("Error loading <img>", container.node.src);
             }
             break;
+        case "CANVAS":
+            this.renderer.renderImage(container, bounds, container.borders, {image: container.node});
+            break;
         case "SELECT":
         case "INPUT":
         case "TEXTAREA":
