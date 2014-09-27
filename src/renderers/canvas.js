@@ -47,9 +47,11 @@ CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx
     }
 };
 
-CanvasRenderer.prototype.clip = function(shape, callback, context) {
+CanvasRenderer.prototype.clip = function(shapes, callback, context) {
     this.ctx.save();
-    this.shape(shape).clip();
+    shapes.filter(hasEntries).forEach(function(shape) {
+        this.shape(shape).clip();
+    }, this);
     callback.call(context);
     this.ctx.restore();
 };
@@ -107,7 +109,7 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
         ["line", Math.round(left + width), Math.round(height + top)],
         ["line", Math.round(left), Math.round(height + top)]
     ];
-    this.clip(shape, function() {
+    this.clip([shape], function() {
         this.renderBackgroundRepeat(imageContainer, backgroundPosition, size, bounds, borderData[3], borderData[0]);
     }, this);
 };
@@ -147,3 +149,7 @@ CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
     ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, size.width, size.height );
     return canvas;
 };
+
+function hasEntries(array) {
+    return array.length > 0;
+}

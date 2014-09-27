@@ -3,6 +3,9 @@ function NodeContainer(node, parent) {
     this.parent = parent;
     this.stack = null;
     this.bounds = null;
+    this.borders = null;
+    this.clip = [];
+    this.backgroundClip = [];
     this.offsetBounds = null;
     this.visible = null;
     this.computedStyles = null;
@@ -63,12 +66,12 @@ NodeContainer.prototype.cssFloat = function(attribute) {
 NodeContainer.prototype.fontWeight = function() {
     var weight = this.css("fontWeight");
     switch(parseInt(weight, 10)){
-        case 401:
-            weight = "bold";
-            break;
-        case 400:
-            weight = "normal";
-            break;
+    case 401:
+        weight = "bold";
+        break;
+    case 400:
+        weight = "normal";
+        break;
     }
     return weight;
 };
@@ -264,55 +267,54 @@ function parseBackgrounds(backgroundImage) {
             return;
         }
         switch(c) {
-            case '"':
-                if(!quote) {
-                    quote = c;
-                }
-                else if(quote === c) {
-                    quote = null;
-                }
+        case '"':
+            if(!quote) {
+                quote = c;
+            } else if(quote === c) {
+                quote = null;
+            }
+            break;
+        case '(':
+            if(quote) {
                 break;
-            case '(':
-                if(quote) {
-                    break;
-                } else if(mode === 0) {
-                    mode = 1;
+            } else if(mode === 0) {
+                mode = 1;
+                block += c;
+                return;
+            } else {
+                numParen++;
+            }
+            break;
+        case ')':
+            if (quote) {
+                break;
+            } else if(mode === 1) {
+                if(numParen === 0) {
+                    mode = 0;
                     block += c;
-                    return;
-                } else {
-                    numParen++;
-                }
-                break;
-            case ')':
-                if (quote) {
-                    break;
-                } else if(mode === 1) {
-                    if(numParen === 0) {
-                        mode = 0;
-                        block += c;
-                        appendResult();
-                        return;
-                    } else {
-                        numParen--;
-                    }
-                }
-                break;
-
-            case ',':
-                if (quote) {
-                    break;
-                } else if(mode === 0) {
                     appendResult();
                     return;
-                } else if (mode === 1) {
-                    if (numParen === 0 && !method.match(/^url$/i)) {
-                        args.push(definition);
-                        definition = '';
-                        block += c;
-                        return;
-                    }
+                } else {
+                    numParen--;
                 }
+            }
+            break;
+
+        case ',':
+            if (quote) {
                 break;
+            } else if(mode === 0) {
+                appendResult();
+                return;
+            } else if (mode === 1) {
+                if (numParen === 0 && !method.match(/^url$/i)) {
+                    args.push(definition);
+                    definition = '';
+                    block += c;
+                    return;
+                }
+            }
+            break;
         }
 
         block += c;
