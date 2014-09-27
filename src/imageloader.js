@@ -114,8 +114,8 @@ ImageLoader.prototype.fetch = function(nodes) {
     this.images.forEach(function(image, index) {
         image.promise.then(function() {
             log("Succesfully loaded image #"+ (index+1));
-        }, function() {
-            log("Failed loading image #"+ (index+1));
+        }, function(e) {
+            log("Failed loading image #"+ (index+1), e);
         });
     });
     this.ready = Promise.all(this.images.map(this.getPromise));
