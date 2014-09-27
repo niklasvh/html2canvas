@@ -581,6 +581,15 @@ window.html2canvas = function(nodeList, options) {
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
 
+    if (typeof(nodeList) === "string") {
+        if (typeof(options.proxy) !== "string") {
+            return Promise.reject("Proxy must be used when rendering url");
+        }
+        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight).then(function(container) {
+            return renderWindow(container.contentWindow.document.documentElement, container, options, window.innerWidth, window.innerHeight);
+        });
+    }
+
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
     node.setAttribute(html2canvasNodeAttribute, "true");
     return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight).then(function(canvas) {
@@ -602,22 +611,27 @@ function renderDocument(document, options, windowWidth, windowHeight) {
         document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
         var clonedWindow = container.contentWindow;
         var node = clonedWindow.document.querySelector(selector);
-        var support = new Support(clonedWindow.document);
-        var imageLoader = new ImageLoader(options, support);
-        var bounds = getBounds(node);
-        var width = options.width != null ? options.width : options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth(clonedWindow.document);
-        var height = options.height != null ? options.height : options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight(clonedWindow.document);
-        var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
-        var parser = new NodeParser(node, renderer, support, imageLoader, options);
-        return parser.ready.then(function() {
-            log("Finished rendering");
-            var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
-            if (options.removeContainer) {
-                container.parentNode.removeChild(container);
-                log("Cleaned up container");
-            }
-            return canvas;
-        });
+        return renderWindow(node, container, options, windowWidth, windowHeight);
+    });
+}
+
+function renderWindow(node, container, options, windowWidth, windowHeight) {
+    var clonedWindow = container.contentWindow;
+    var support = new Support(clonedWindow.document);
+    var imageLoader = new ImageLoader(options, support);
+    var bounds = getBounds(node);
+    var width = options.width != null ? options.width : options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth(clonedWindow.document);
+    var height = options.height != null ? options.height : options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight(clonedWindow.document);
+    var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
+    var parser = new NodeParser(node, renderer, support, imageLoader, options);
+    return parser.ready.then(function() {
+        log("Finished rendering");
+        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
+        if (options.removeContainer) {
+            container.parentNode.removeChild(container);
+            log("Cleaned up container");
+        }
+        return canvas;
     });
 }
 
@@ -691,6 +705,31 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
     });
 }
 
+function loadUrlDocument(src, proxy, document, width, height) {
+    return new Proxy(src, proxy, window.document).then(documentFromHTML(src)).then(function(doc) {
+        return createWindowClone(doc, document, width, height, {});
+    });
+}
+
+function documentFromHTML(src) {
+    return function(html) {
+        var doc = document.implementation.createHTMLDocument("");
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        var b = doc.querySelector("base");
+        if (!b || !b.href.host) {
+            var base = doc.createElement("base");
+            base.href = src;
+            doc.head.insertBefore(base, doc.head.firstChild);
+        }
+
+        return doc;
+    };
+}
+
+
 function labelCanvasElements(ownerDocument) {
     [].slice.call(ownerDocument.querySelectorAll("canvas"), 0).forEach(function(canvas) {
         canvas.setAttribute(html2canvasCanvasCloneAttribute, "canvas-" + html2canvasCanvasCloneIndex++);
@@ -726,6 +765,13 @@ function removeScriptNodes(parent) {
 
 function isElementNode(node) {
     return node.nodeType === Node.ELEMENT_NODE;
+}
+
+function absoluteUrl(url) {
+    var link = document.createElement("a");
+    link.href = url;
+    link.href = link.href;
+    return link;
 }
 
 function DummyImageContainer(src) {
@@ -828,28 +874,8 @@ function FrameContainer(container, sameOrigin, proxy) {
 
 FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
     var container = this.src;
-    return new Proxy(container.src, proxy, window.document).then(documentFromHTML(container)).then(function(doc) {
-        return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
-    });
+    return loadUrlDocument(container.src, proxy, container.ownerDocument, bounds.width, bounds.height);
 };
-
-function documentFromHTML(container) {
-    return function(html) {
-        var doc = document.implementation.createHTMLDocument("");
-        doc.open();
-        doc.write(html);
-        doc.close();
-
-        var b = doc.querySelector("base");
-        if (!b || !b.href.host) {
-            var base = doc.createElement("base");
-            base.href = container.src;
-            doc.head.insertBefore(base, doc.head.firstChild);
-        }
-
-        return doc;
-    };
-}
 
 function GradientContainer(imageData) {
     this.src = imageData.value;

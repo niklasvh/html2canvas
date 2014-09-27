@@ -20,25 +20,5 @@ function FrameContainer(container, sameOrigin, proxy) {
 
 FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
     var container = this.src;
-    return new Proxy(container.src, proxy, window.document).then(documentFromHTML(container)).then(function(doc) {
-        return createWindowClone(doc, container.ownerDocument, bounds.width, bounds.height, {});
-    });
+    return loadUrlDocument(container.src, proxy, container.ownerDocument, bounds.width, bounds.height);
 };
-
-function documentFromHTML(container) {
-    return function(html) {
-        var doc = document.implementation.createHTMLDocument("");
-        doc.open();
-        doc.write(html);
-        doc.close();
-
-        var b = doc.querySelector("base");
-        if (!b || !b.href.host) {
-            var base = doc.createElement("base");
-            base.href = container.src;
-            doc.head.insertBefore(base, doc.head.firstChild);
-        }
-
-        return doc;
-    };
-}
