@@ -12,12 +12,13 @@ window.html2canvas = function(nodeList, options) {
     options.async = typeof(options.async) === "undefined" ? true : options.async;
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
+    options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
             return Promise.reject("Proxy must be used when rendering url");
         }
-        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight).then(function(container) {
+        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight, options).then(function(container) {
             return renderWindow(container.contentWindow.document.documentElement, container, options, window.innerWidth, window.innerHeight);
         });
     }
@@ -59,12 +60,16 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     return parser.ready.then(function() {
         log("Finished rendering");
         var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
-        if (options.removeContainer) {
-            container.parentNode.removeChild(container);
-            log("Cleaned up container");
-        }
+        cleanupContainer(container, options);
         return canvas;
     });
+}
+
+function cleanupContainer(container, options) {
+    if (options.removeContainer) {
+        container.parentNode.removeChild(container);
+        log("Cleaned up container");
+    }
 }
 
 function crop(canvas, bounds) {
@@ -130,16 +135,16 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         documentClone.write("<!DOCTYPE html>");
         documentClone.close();
 
-        documentClone.replaceChild(removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
+        documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
     });
 }
 
-function loadUrlDocument(src, proxy, document, width, height) {
+function loadUrlDocument(src, proxy, document, width, height, options) {
     return new Proxy(src, proxy, window.document).then(documentFromHTML(src)).then(function(doc) {
-        return createWindowClone(doc, document, width, height, {});
+        return createWindowClone(doc, document, width, height, options);
     });
 }
 

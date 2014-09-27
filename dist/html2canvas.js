@@ -580,12 +580,13 @@ window.html2canvas = function(nodeList, options) {
     options.async = typeof(options.async) === "undefined" ? true : options.async;
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
+    options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
             return Promise.reject("Proxy must be used when rendering url");
         }
-        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight).then(function(container) {
+        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight, options).then(function(container) {
             return renderWindow(container.contentWindow.document.documentElement, container, options, window.innerWidth, window.innerHeight);
         });
     }
@@ -627,12 +628,16 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     return parser.ready.then(function() {
         log("Finished rendering");
         var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
-        if (options.removeContainer) {
-            container.parentNode.removeChild(container);
-            log("Cleaned up container");
-        }
+        cleanupContainer(container, options);
         return canvas;
     });
+}
+
+function cleanupContainer(container, options) {
+    if (options.removeContainer) {
+        container.parentNode.removeChild(container);
+        log("Cleaned up container");
+    }
 }
 
 function crop(canvas, bounds) {
@@ -698,16 +703,16 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         documentClone.write("<!DOCTYPE html>");
         documentClone.close();
 
-        documentClone.replaceChild(removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
+        documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         if (options.type === "view") {
             container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
         }
     });
 }
 
-function loadUrlDocument(src, proxy, document, width, height) {
+function loadUrlDocument(src, proxy, document, width, height, options) {
     return new Proxy(src, proxy, window.document).then(documentFromHTML(src)).then(function(doc) {
-        return createWindowClone(doc, document, width, height, {});
+        return createWindowClone(doc, document, width, height, options);
     });
 }
 
@@ -852,12 +857,12 @@ FontMetrics.prototype.getMetrics = function(family, size) {
     return this.data[family + "-" + size];
 };
 
-function FrameContainer(container, sameOrigin, proxy) {
+function FrameContainer(container, sameOrigin, options) {
     this.image = null;
     this.src = container;
     var self = this;
     var bounds = getBounds(container);
-    this.promise = (!sameOrigin ? this.proxyLoad(proxy, bounds) : new Promise(function(resolve) {
+    this.promise = (!sameOrigin ? this.proxyLoad(options.proxy, bounds, options) : new Promise(function(resolve) {
         if (container.contentWindow.document.URL === "about:blank" || container.contentWindow.document.documentElement == null) {
             container.contentWindow.onload = container.onload = function() {
                 resolve(container);
@@ -866,15 +871,15 @@ function FrameContainer(container, sameOrigin, proxy) {
             resolve(container);
         }
     })).then(function(container) {
-        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: proxy});
+        return html2canvas(container.contentWindow.document.documentElement, {type: 'view', proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer});
     }).then(function(canvas) {
         return self.image = canvas;
     });
 }
 
-FrameContainer.prototype.proxyLoad = function(proxy, bounds) {
+FrameContainer.prototype.proxyLoad = function(proxy, bounds, options) {
     var container = this.src;
-    return loadUrlDocument(container.src, proxy, container.ownerDocument, bounds.width, bounds.height);
+    return loadUrlDocument(container.src, proxy, container.ownerDocument, bounds.width, bounds.height, options);
 };
 
 function GradientContainer(imageData) {
@@ -982,7 +987,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
     } else if (imageData.method === "svg") {
         return new SVGNodeContainer(imageData.args[0], this.support.svg);
     } else if (imageData.method === "IFRAME") {
-        return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options.proxy);
+        return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options);
     } else {
         return new DummyImageContainer(imageData);
     }
