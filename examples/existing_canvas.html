@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Using an existing canvas to draw on</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        button {
+            clear: both;
+            display: block;
+        }
+        #content {
+            background: rgba(100, 255, 255, 0.5);
+            padding: 50px 10px;
+        }
+    </style>
+</head>
+<body>
+<div><h1>HTML content to render:</h1>
+    <div id="content">Render the content in this element <strong>only</strong> onto the existing canvas element</div>
+</div>
+<h1>Existing canvas:</h1>
+<canvas width="500" height="200"></canvas>
+<script type="text/javascript" src="../dist/html2canvas.js"></script>
+<button>Run html2canvas</button>
+<script type="text/javascript">
+    var canvas = document.querySelector("canvas");
+    var ctx = canvas.getContext("2d");
+
+    var ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+    ctx.arc(75,75,50,0,Math.PI*2,true); // Outer circle
+    ctx.moveTo(110,75);
+    ctx.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
+    ctx.moveTo(65,65);
+    ctx.arc(60,65,5,0,Math.PI*2,true);  // Left eye
+    ctx.moveTo(95,65);
+    ctx.arc(90,65,5,0,Math.PI*2,true);  // Right eye
+    ctx.stroke();
+
+    document.querySelector("button").addEventListener("click", function() {
+        html2canvas(document.querySelector("#content"), {canvas: canvas}).then(function(canvas) {
+            console.log('Drew on the existing canvas');
+        });
+    }, false);
+
+</script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
-    this.canvas = this.document.createElement("canvas");
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas = this.options.canvas || this.document.createElement("canvas");
+    if (!this.options.canvas) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+    }
     this.ctx = this.canvas.getContext("2d");
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
