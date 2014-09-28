@@ -628,7 +628,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
-        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, {width: width, height: height, top: bounds.top, left: bounds.left});
+        var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null)) ? renderer.canvas : crop(renderer.canvas, {width: width, height: height, top: bounds.top, left: bounds.left});
         cleanupContainer(container, options);
         return canvas;
     });
@@ -2679,9 +2679,11 @@ function XHR(url) {
 
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
-    this.canvas = this.document.createElement("canvas");
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas = this.options.canvas || this.document.createElement("canvas");
+    if (!this.options.canvas) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+    }
     this.ctx = this.canvas.getContext("2d");
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
