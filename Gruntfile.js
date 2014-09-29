@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
             '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
-        pre: '\n(function(window, document, undefined){\n\n',
+        pre: '\n(function(window, document, module, exports, undefined){\n\n',
         post: '\n}).call({}, window, document);'
     };
 

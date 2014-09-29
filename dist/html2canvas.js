@@ -5,7 +5,7 @@
   Released under MIT License
 */
 
-(function(window, document, undefined){
+(function(window, document, module, exports, undefined){
 
 /*
  Copyright (c) 2013 Yehuda Katz, Tom Dale, and contributors
