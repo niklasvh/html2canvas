@@ -2835,4 +2835,4 @@ function hasEntries(array) {
     return array.length > 0;
 }
 
-})(window, document);
+}).call({}, window, document);
