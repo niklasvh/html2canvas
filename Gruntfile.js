@@ -10,7 +10,7 @@ module.exports = function(grunt) {
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
             '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
         pre: '\n(function(window, document, undefined){\n\n',
-        post: '\n})(window, document);'
+        post: '\n}).call({}, window, document);'
     };
 
     // Project configuration.
