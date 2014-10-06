@@ -13,7 +13,25 @@ function NodeContainer(node, parent) {
     this.backgroundImages = null;
     this.transformData = null;
     this.transformMatrix = null;
+    this.isPseudoElement = false;
+    this.opacity = null;
 }
+
+NodeContainer.prototype.cloneTo = function(stack) {
+    stack.visible = this.visible;
+    stack.borders = this.borders;
+    stack.bounds = this.bounds;
+    stack.clip = this.clip;
+    stack.backgroundClip = this.backgroundClip;
+    stack.computedStyles = this.computedStyles;
+    stack.styles = this.styles;
+    stack.backgroundImages = this.backgroundImages;
+    stack.opacity = this.opacity;
+};
+
+NodeContainer.prototype.getOpacity = function() {
+    return this.opacity === null ? (this.opacity = this.cssFloat('opacity')) : this.opacity;
+};
 
 NodeContainer.prototype.assignStack = function(stack) {
     this.stack = stack;
@@ -31,7 +49,7 @@ NodeContainer.prototype.isElementVisible = function() {
 
 NodeContainer.prototype.css = function(attribute) {
     if (!this.computedStyles) {
-        this.computedStyles = this.computedStyle(null);
+        this.computedStyles = this.isPseudoElement ? this.parent.computedStyle(this.before ? ":before" : ":after") : this.computedStyle(null);
     }
 
     return this.styles[attribute] || (this.styles[attribute] = this.computedStyles[attribute]);
