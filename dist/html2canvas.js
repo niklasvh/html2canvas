@@ -1821,7 +1821,9 @@ NodeParser.prototype.paintNode = function(container) {
 
     this.renderer.clip(container.clip, function() {
         this.renderer.renderBorders(container.borders.borders);
+    }, this);
 
+    this.renderer.clip(container.backgroundClip, function() {
         switch (container.node.nodeName) {
         case "svg":
         case "IFRAME":
