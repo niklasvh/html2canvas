@@ -935,7 +935,7 @@ function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
     this.support = support;
-    this.origin = window.location.protocol + window.location.hostname + window.location.port;
+    this.origin = this.getOrigin(window.location.href);
 }
 
 ImageLoader.prototype.findImages = function(nodes) {
@@ -1019,11 +1019,14 @@ ImageLoader.prototype.imageExists = function(images, src) {
 };
 
 ImageLoader.prototype.isSameOrigin = function(url) {
+    return (this.getOrigin(url) === this.origin);
+};
+
+ImageLoader.prototype.getOrigin = function(url) {
     var link = this.link || (this.link = document.createElement("a"));
     link.href = url;
     link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
-    var origin = link.protocol + link.hostname + link.port;
-    return (origin === this.origin);
+    return link.protocol + link.hostname + link.port;
 };
 
 ImageLoader.prototype.getPromise = function(container) {
