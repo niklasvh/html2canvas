@@ -120,7 +120,8 @@ var h2cSelector, h2cOptions;
                 logging: true,
                 profile: true,
                 proxy: "http://localhost:8082",
-                useCORS: false
+                useCORS: false,
+                removeContainer: false
             }, h2cOptions));
         };
 
