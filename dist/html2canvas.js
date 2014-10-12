@@ -1248,6 +1248,19 @@ NodeContainer.prototype.fontWeight = function() {
     return weight;
 };
 
+NodeContainer.prototype.parseClip = function() {
+    var matches = this.css('clip').match(this.CLIP);
+    if (matches) {
+        return {
+            top: parseInt(matches[1], 10),
+            right: parseInt(matches[2], 10),
+            bottom: parseInt(matches[3], 10),
+            left: parseInt(matches[4], 10)
+        };
+    }
+    return null;
+};
+
 NodeContainer.prototype.parseBackgroundImages = function() {
     return this.backgroundImages || (this.backgroundImages = parseBackgrounds(this.css("backgroundImage")));
 };
@@ -1387,6 +1400,7 @@ NodeContainer.prototype.getValue = function() {
 NodeContainer.prototype.MATRIX_PROPERTY = /(matrix)\((.+)\)/;
 NodeContainer.prototype.TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
 NodeContainer.prototype.TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+NodeContainer.prototype.CLIP = /^rect\((\d+)px,? (\d+)px,? (\d+)px,? (\d+)px\)$/;
 
 function selectionValue(node) {
     var option = node.options[node.selectedIndex || 0];
@@ -1593,6 +1607,15 @@ NodeParser.prototype.calculateOverflowClips = function() {
             }
             container.borders = this.parseBorders(container);
             var clip = (container.css('overflow') === "hidden") ? [container.borders.clip] : [];
+            var cssClip = container.parseClip();
+            if (cssClip && ["absolute", "fixed"].indexOf(container.css('position')) !== -1) {
+                clip.push([["rect",
+                        container.bounds.left + cssClip.left,
+                        container.bounds.top + cssClip.top,
+                        cssClip.right - cssClip.left,
+                        cssClip.bottom - cssClip.top
+                ]]);
+            }
             container.clip = hasParentClip(container) ? container.parent.clip.concat(clip) : clip;
             container.backgroundClip = (container.css('overflow') !== "hidden") ? container.clip.concat([container.borders.clip]) : container.clip;
             if (isPseudoElement(container)) {
@@ -2806,7 +2829,11 @@ CanvasRenderer.prototype.clip = function(shapes, callback, context) {
 CanvasRenderer.prototype.shape = function(shape) {
     this.ctx.beginPath();
     shape.forEach(function(point, index) {
-        this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        if (point[0] === "rect") {
+            this.ctx.rect.apply(this.ctx, point.slice(1));
+        } else {
+            this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        }
     }, this);
     this.ctx.closePath();
     return this.ctx;

@@ -53,6 +53,15 @@ NodeParser.prototype.calculateOverflowClips = function() {
             }
             container.borders = this.parseBorders(container);
             var clip = (container.css('overflow') === "hidden") ? [container.borders.clip] : [];
+            var cssClip = container.parseClip();
+            if (cssClip && ["absolute", "fixed"].indexOf(container.css('position')) !== -1) {
+                clip.push([["rect",
+                        container.bounds.left + cssClip.left,
+                        container.bounds.top + cssClip.top,
+                        cssClip.right - cssClip.left,
+                        cssClip.bottom - cssClip.top
+                ]]);
+            }
             container.clip = hasParentClip(container) ? container.parent.clip.concat(clip) : clip;
             container.backgroundClip = (container.css('overflow') !== "hidden") ? container.clip.concat([container.borders.clip]) : container.clip;
             if (isPseudoElement(container)) {
