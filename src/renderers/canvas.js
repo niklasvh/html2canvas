@@ -61,7 +61,11 @@ CanvasRenderer.prototype.clip = function(shapes, callback, context) {
 CanvasRenderer.prototype.shape = function(shape) {
     this.ctx.beginPath();
     shape.forEach(function(point, index) {
-        this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        if (point[0] === "rect") {
+            this.ctx.rect.apply(this.ctx, point.slice(1));
+        } else {
+            this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        }
     }, this);
     this.ctx.closePath();
     return this.ctx;
