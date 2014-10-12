@@ -13,12 +13,30 @@
         }
         div {
             background: red;
+            border: 5px solid blue;
         }
     </style>
 
 </head>
 <body>
-<div style="clip: rect(0px, 500px, 200px, 200px); position: absolute;">Some inline text <span> followed by text in span </span> followed by more inline text.
+<div style="clip: rect(0px, 400px, 50px, 200px); ">Some inline text <span> followed by text in span </span> followed by more inline text.
+    <p>Then a block level element.</p>
+    Then more inline text.</div>
+
+<div style="clip: rect(0px, 400px, 50px, 200px); position: relative; ">Some inline text <span> followed by text in span </span> followed by more inline text.
+    <p>Then a block level element.</p>
+    Then more inline text.</div>
+
+<div style="clip: rect(0px, 400px, 50px, 200px); position: fixed; ">Some inline text <span> followed by text in span </span> followed by more inline text.
+    <p>Then a block level element.</p>
+    Then more inline text.</div>
+
+<div style="clip: rect(0px, 400px, 50px, 200px); position: absolute; top: 250px; left: 500px;">Some inline text <span> followed by text in span </span> followed by more inline text.
+    <p>Then a block level element.</p>
+    Then more inline text.</div>
+</body>
+
+<div style="clip: rect(0px, 400px, 50px, 200px); position: absolute; top: 500px;">Some inline text <span> followed by text in span </span> followed by more inline text.
     <p>Then a block level element.</p>
     Then more inline text.</div>
 </body>
