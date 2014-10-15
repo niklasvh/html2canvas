@@ -190,8 +190,8 @@ NodeContainer.prototype.parseTextShadows = function() {
             var s = shadows[i].match(this.TEXT_SHADOW_VALUES);
             results.push({
                 color: s[0],
-                offsetX: s[1] ? s[1].replace('px', '') : 0,
-                offsetY: s[2] ? s[2].replace('px', '') : 0,
+                offsetX: s[1] ? parseFloat(s[1].replace('px', '')) : 0,
+                offsetY: s[2] ? parseFloat(s[2].replace('px', '')) : 0,
                 blur: s[3] ? s[3].replace('px', '') : 0
             });
         }
