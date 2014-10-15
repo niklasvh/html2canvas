@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
             '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
-        pre: '\n(function(window, document, module, exports, undefined){\n\n',
+        pre: '\n(function(window, document, module, exports, global, define, undefined){\n\n',
         post: '\n}).call({}, window, document);'
     };
 
@@ -18,9 +18,6 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        qunit: {
-            files: ['tests/qunit/index.html']
-        },
         concat: {
             dist: {
                 src: [
@@ -123,6 +120,9 @@ module.exports = function(grunt) {
             all: ['src/*.js', 'src/renderers/*.js',  '!src/promise.js'],
             options: grunt.file.readJSON('./.jshintrc')
         },
+        mocha_phantomjs: {
+            all: ['tests/mocha/**/*.html']
+        },
         webdriver: {
             chrome: {
                 browserName: "chrome",
@@ -179,17 +179,17 @@ module.exports = function(grunt) {
         });
     });
 
+    grunt.loadNpmTasks('grunt-mocha-phantomjs');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-execute');
 
     grunt.registerTask('server', ['connect:cors', 'connect:proxy', 'connect:server']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
-    grunt.registerTask('default', ['jshint', 'build', 'qunit']);
-    grunt.registerTask('travis', ['jshint', 'build','qunit', 'connect:ci', 'connect:proxy', 'connect:cors', 'webdriver']);
+    grunt.registerTask('default', ['jshint', 'build', 'mocha_phantomjs']);
+    grunt.registerTask('travis', ['jshint', 'build','mocha_phantomjs', 'connect:ci', 'connect:proxy', 'connect:cors', 'webdriver']);
 
 };
