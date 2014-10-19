@@ -1771,7 +1771,7 @@ NodeParser.prototype.isRootElement = function(container) {
 };
 
 NodeParser.prototype.sortStackingContexts = function(stack) {
-    stack.contexts.sort(zIndexSort);
+    stack.contexts.sort(zIndexSort(stack.contexts.slice(0)));
     stack.contexts.forEach(this.sortStackingContexts, this);
 };
 
@@ -2281,8 +2281,10 @@ function isTextNode(container) {
     return container.node.nodeType === Node.TEXT_NODE;
 }
 
-function zIndexSort(a, b) {
-    return a.cssInt("zIndex") - b.cssInt("zIndex");
+function zIndexSort(contexts) {
+    return function(a, b) {
+        return (a.cssInt("zIndex") + (contexts.indexOf(a) / contexts.length)) - (b.cssInt("zIndex") + (contexts.indexOf(b) / contexts.length));
+    };
 }
 
 function hasOpacity(container) {
