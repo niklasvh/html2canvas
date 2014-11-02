@@ -76,7 +76,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
 };
 
 ImageLoader.prototype.isSVG = function(src) {
-    return (/(.+).svg$/i.test(src)) || SVGContainer.prototype.isInline(src);
+    return src.substring(src.length - 3).toLowerCase() === "svg" || SVGContainer.prototype.isInline(src);
 };
 
 ImageLoader.prototype.imageExists = function(images, src) {
