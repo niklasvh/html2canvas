@@ -23,6 +23,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/promise.js', 'src/fallback.js', 'src/punycode/punycode.js', 'src/core.js',  'src/*.js', 'src/renderers/*.js'
                 ],
+                nonull: true,
                 dest: 'dist/<%= pkg.name %>.js',
                 options:{
                     banner: meta.banner + meta.pre,
