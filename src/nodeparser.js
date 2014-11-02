@@ -103,7 +103,8 @@ NodeParser.prototype.createPseudoHideStyles = function(document) {
 };
 
 NodeParser.prototype.disableAnimations = function(document) {
-    this.createStyles(document, '* { -webkit-animation: none !important; -moz-animation: none !important; -o-animation: none !important; animation: none !important; }');
+    this.createStyles(document, '* { -webkit-animation: none !important; -moz-animation: none !important; -o-animation: none !important; animation: none !important; ' +
+        '-webkit-transition: none !important; -moz-transition: none !important; -o-transition: none !important; transition: none !important;}');
 };
 
 NodeParser.prototype.createStyles = function(document, styles) {
