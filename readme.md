@@ -46,7 +46,11 @@ The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/Ja
 
 ### Building ###
 
-The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](http://html2canvas.hertzen.com/build/html2canvas.js).
+The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](https://github.com/niklasvh/html2canvas/blob/master/dist/html2canvas.js).
+
+Clone git repository with submodules:
+
+    $ git clone --recursive git://github.com/niklasvh/html2canvas.git
 
 Run the full build process (including lint, qunit and webdriver tests):
 
