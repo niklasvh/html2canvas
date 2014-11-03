@@ -722,15 +722,15 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         var y = ownerDocument.defaultView.pageYOffset;
 
         documentClone.open();
-        documentClone.write("<!DOCTYPE html>");
-        documentClone.close();
+        documentClone.write("<!DOCTYPE html><html></html>");
 
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         if (x !== ownerDocument.defaultView.pageXOffset || y !== ownerDocument.defaultView.pageYOffset) {
             ownerDocument.defaultView.scrollTo(x, y);
         }
-
         documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
+        documentClone.close();
+
     });
 }
 
