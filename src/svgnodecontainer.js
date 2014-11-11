@@ -7,6 +7,7 @@ function SVGNodeContainer(node, native) {
         self.image = new Image();
         self.image.onload = resolve;
         self.image.onerror = reject;
+        node.setAttribute("xmlns", "http://www.w3.org/2000/svg");
         self.image.src = "data:image/svg+xml," + (new XMLSerializer()).serializeToString(node);
         if (self.image.complete === true) {
             resolve(self.image);
