@@ -692,6 +692,7 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = containerDocument.createElement("iframe");
 
+    container.className = "html2canvas-container";
     container.style.visibility = "hidden";
     container.style.position = "absolute";
     container.style.left = container.style.top = "-10000px";
