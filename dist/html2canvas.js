@@ -694,8 +694,10 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
 
     container.className = "html2canvas-container";
     container.style.visibility = "hidden";
-    container.style.position = "absolute";
-    container.style.left = container.style.top = "-10000px";
+    container.style.position = "fixed";
+    container.style.left = "-10000px";
+    container.style.top = "0px";
+    container.style.border = "0";
     container.width = width;
     container.height = height;
     container.scrolling = "no"; // ios won't scroll without it
@@ -712,7 +714,6 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
                     cloneCanvasContents(ownerDocument, documentClone);
                     clearInterval(interval);
                     if (options.type === "view") {
-                        restoreOwnerScroll(ownerDocument, x, y);
                         container.contentWindow.scrollTo(x, y);
                     }
                     resolve(container);
