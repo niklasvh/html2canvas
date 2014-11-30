@@ -12,7 +12,7 @@
 <body>
 <div id="mocha"></div>
 <script>mocha.setup('bdd')</script>
-<div style="height: 2100px;"></div>
+<div style="height: 2200px;"></div>
 <div style="height: 500px;background: green;"><a name="content">content</a></div>
 <script>
     describe("Scrolling", function() {
@@ -32,10 +32,10 @@
             window.location.hash = "#content";
             setTimeout(function() {
                 var top = $(window).scrollTop();
-                html2canvas(document.body, {type: 'view', logging: true}).then(function (canvas) {
+                html2canvas(document.body, {type: 'view', logging: true, removeContainer: false}).then(function () {
                     var currentTop = $(window).scrollTop();
                     window.location.hash = "";
-                    expect(currentTop).to.be.greaterThan(2000);
+                    expect(currentTop).to.be.greaterThan(1500);
                     expect(currentTop).to.equal(top);
                     done();
                 }).catch(function (error) {
