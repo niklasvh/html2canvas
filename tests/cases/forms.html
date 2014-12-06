@@ -5,7 +5,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="../test.js"></script>
         <style>
-
+            input[type="radio"], input[type="checkbox"] {
+                margin: 10px;
+                display: inline-block;
+            }
         </style>
 
     </head>
@@ -55,5 +58,23 @@
 
                 <textarea> text </textarea>
         <textarea style="border-width:10px;">text</textarea>
+        <hr />
+        <input type="radio" value="radio1" />
+        <input type="radio" value="radio2" style="transform:scale(3)" />
+        <input type="RADIO" value="radio3" checked />
+        <input type="radio" value="radio4" style="transform:scale(3)" checked />
+        <input type="radio" value="radio5" style="transform:scale(3); background: red;" />
+        <input type="radio" value="radio6" style="width: 200px;" />
+        <input type="radio" value="radio6" style="width: 200px; height: 200px;" />
+        <input type="radio" value="radio6" style="width: 200px; height: 200px;" checked />
+        <input type="checkbox" value="checkbox1" />
+        <input type="chECKbox" value="checkbox2" style="transform:scale(3)" />
+        <input type="checkbox" value="checkbox3" checked />
+        <input type="checkbox" value="checkbox4" style="transform:scale(3)" checked />
+        <input type="checkbox" value="checkbox5" style="transform:scale(3); background: red;" />
+        <input type="checkbox" value="checkbox6" style="width: 200px;" />
+        <input type="checkbox" value="checkbox6" style="width: 200px; height: 200px;" />
+        <input type="checkbox" value="checkbox6" style="width: 200px; height: 200px;" checked />
+        <div style="position: absolute; width: 10px; height: 10px; border:1px solid rgb(165,165,165); border-radius: 3px; background: rgb(222,222,222)"></div>
     </body>
 </html>
