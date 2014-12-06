@@ -26,6 +26,20 @@ CanvasRenderer.prototype.rectangle = function(left, top, width, height, color) {
     this.setFillStyle(color).fillRect(left, top, width, height);
 };
 
+CanvasRenderer.prototype.circle = function(left, top, size, color) {
+    this.setFillStyle(color);
+    this.ctx.beginPath();
+    this.ctx.arc(left + size / 2, top + size / 2, size / 2, 0, Math.PI*2, true);
+    this.ctx.closePath();
+    this.ctx.fill();
+};
+
+CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke, strokeColor) {
+    this.circle(left, top, size, color);
+    this.ctx.strokeStyle = strokeColor;
+    this.ctx.stroke();
+};
+
 CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.shape(shape);
     this.setFillStyle(color).fill();

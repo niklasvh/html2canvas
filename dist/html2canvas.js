@@ -1874,6 +1874,16 @@ NodeParser.prototype.paintNode = function(container) {
         }
     }
 
+    if (container.node.nodeName === "INPUT" && container.node.type === "checkbox") {
+        this.paintCheckbox(container);
+    } else if (container.node.nodeName === "INPUT" && container.node.type === "radio") {
+        this.paintRadio(container);
+    } else {
+        this.paintElement(container);
+    }
+};
+
+NodeParser.prototype.paintElement = function(container) {
     var bounds = container.parseBounds();
     this.renderer.clip(container.backgroundClip, function() {
         this.renderer.renderBackground(container, bounds, container.borders.borders.map(getWidth));
@@ -1910,6 +1920,42 @@ NodeParser.prototype.paintNode = function(container) {
         case "TEXTAREA":
             this.paintFormValue(container);
             break;
+        }
+    }, this);
+};
+
+NodeParser.prototype.paintCheckbox = function(container) {
+    var b = container.parseBounds();
+
+    var size = Math.min(b.width, b.height);
+    var bounds = {width: size - 1, height: size - 1, top: b.top, left: b.left};
+    var r = [3, 3];
+    var radius = [r, r, r, r];
+    var borders = [1,1,1,1].map(function(w) {
+        return {color: '#A5A5A5', width: w};
+    });
+
+    var borderPoints = calculateCurvePoints(bounds, radius, borders);
+
+    this.renderer.clip(container.backgroundClip, function() {
+        this.renderer.rectangle(bounds.left + 1, bounds.top + 1, bounds.width - 2, bounds.height - 2, "#DEDEDE");
+        this.renderer.renderBorders(calculateBorders(borders, bounds, borderPoints, radius));
+        if (container.node.checked) {
+            this.renderer.font('#424242', 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
+            this.renderer.text("\u2714", bounds.left + size / 6, bounds.top + size - 1);
+        }
+    }, this);
+};
+
+NodeParser.prototype.paintRadio = function(container) {
+    var bounds = container.parseBounds();
+
+    var size = Math.min(bounds.width, bounds.height) - 2;
+
+    this.renderer.clip(container.backgroundClip, function() {
+        this.renderer.circleStroke(bounds.left + 1, bounds.top + 1, size, '#DEDEDE', 1, '#A5A5A5');
+        if (container.node.checked) {
+            this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), '#424242');
         }
     }, this);
 };
@@ -2003,67 +2049,71 @@ NodeParser.prototype.parseBorders = function(container) {
 
     return {
         clip: this.parseBackgroundClip(container, borderPoints, borders, radius, nodeBounds),
-        borders: borders.map(function(border, borderSide) {
-            if (border.width > 0) {
-                var bx = nodeBounds.left;
-                var by = nodeBounds.top;
-                var bw = nodeBounds.width;
-                var bh = nodeBounds.height - (borders[2].width);
+        borders: calculateBorders(borders, nodeBounds, borderPoints, radius)
+    };
+};
 
-                switch(borderSide) {
-                case 0:
-                    // top border
-                    bh = borders[0].width;
-                    border.args = drawSide({
+function calculateBorders(borders, nodeBounds, borderPoints, radius) {
+    return borders.map(function(border, borderSide) {
+        if (border.width > 0) {
+            var bx = nodeBounds.left;
+            var by = nodeBounds.top;
+            var bw = nodeBounds.width;
+            var bh = nodeBounds.height - (borders[2].width);
+
+            switch(borderSide) {
+            case 0:
+                // top border
+                bh = borders[0].width;
+                border.args = drawSide({
                         c1: [bx, by],
                         c2: [bx + bw, by],
                         c3: [bx + bw - borders[1].width, by + bh],
                         c4: [bx + borders[3].width, by + bh]
                     }, radius[0], radius[1],
                     borderPoints.topLeftOuter, borderPoints.topLeftInner, borderPoints.topRightOuter, borderPoints.topRightInner);
-                    break;
-                case 1:
-                    // right border
-                    bx = nodeBounds.left + nodeBounds.width - (borders[1].width);
-                    bw = borders[1].width;
+                break;
+            case 1:
+                // right border
+                bx = nodeBounds.left + nodeBounds.width - (borders[1].width);
+                bw = borders[1].width;
 
-                    border.args = drawSide({
+                border.args = drawSide({
                         c1: [bx + bw, by],
                         c2: [bx + bw, by + bh + borders[2].width],
                         c3: [bx, by + bh],
                         c4: [bx, by + borders[0].width]
                     }, radius[1], radius[2],
                     borderPoints.topRightOuter, borderPoints.topRightInner, borderPoints.bottomRightOuter, borderPoints.bottomRightInner);
-                    break;
-                case 2:
-                    // bottom border
-                    by = (by + nodeBounds.height) - (borders[2].width);
-                    bh = borders[2].width;
-                    border.args = drawSide({
+                break;
+            case 2:
+                // bottom border
+                by = (by + nodeBounds.height) - (borders[2].width);
+                bh = borders[2].width;
+                border.args = drawSide({
                         c1: [bx + bw, by + bh],
                         c2: [bx, by + bh],
                         c3: [bx + borders[3].width, by],
                         c4: [bx + bw - borders[3].width, by]
                     }, radius[2], radius[3],
                     borderPoints.bottomRightOuter, borderPoints.bottomRightInner, borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner);
-                    break;
-                case 3:
-                    // left border
-                    bw = borders[3].width;
-                    border.args = drawSide({
+                break;
+            case 3:
+                // left border
+                bw = borders[3].width;
+                border.args = drawSide({
                         c1: [bx, by + bh + borders[2].width],
                         c2: [bx, by],
                         c3: [bx + bw, by + borders[0].width],
                         c4: [bx + bw, by + bh]
                     }, radius[3], radius[0],
                     borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner, borderPoints.topLeftOuter, borderPoints.topLeftInner);
-                    break;
-                }
+                break;
             }
-            return border;
-        })
-    };
-};
+        }
+        return border;
+    });
+}
 
 NodeParser.prototype.parseBackgroundClip = function(container, borderPoints, borders, radius, bounds) {
     var backgroundClip = container.css('backgroundClip'),
@@ -2831,6 +2881,20 @@ CanvasRenderer.prototype.setFillStyle = function(color) {
 
 CanvasRenderer.prototype.rectangle = function(left, top, width, height, color) {
     this.setFillStyle(color).fillRect(left, top, width, height);
+};
+
+CanvasRenderer.prototype.circle = function(left, top, size, color) {
+    this.setFillStyle(color);
+    this.ctx.beginPath();
+    this.ctx.arc(left + size / 2, top + size / 2, size / 2, 0, Math.PI*2, true);
+    this.ctx.closePath();
+    this.ctx.fill();
+};
+
+CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke, strokeColor) {
+    this.circle(left, top, size, color);
+    this.ctx.strokeStyle = strokeColor;
+    this.ctx.stroke();
 };
 
 CanvasRenderer.prototype.drawShape = function(shape, color) {
