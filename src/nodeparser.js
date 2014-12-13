@@ -456,13 +456,28 @@ NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics)
     }
 };
 
+var borderColorTransforms = {
+    inset: [
+        ["darken", 0.60],
+        ["darken", 0.10],
+        ["darken", 0.10],
+        ["darken", 0.60]
+    ]
+};
+
 NodeParser.prototype.parseBorders = function(container) {
     var nodeBounds = container.parseBounds();
     var radius = getBorderRadiusData(container);
-    var borders = ["Top", "Right", "Bottom", "Left"].map(function(side) {
+    var borders = ["Top", "Right", "Bottom", "Left"].map(function(side, index) {
+        var style = container.css('border' + side + 'Style');
+        var color = container.color('border' + side + 'Color');
+        if (style === "inset" && color.isBlack()) {
+            color = new Color([255, 255, 255, color.a]); // this is wrong, but
+        }
+        var colorTransform = borderColorTransforms[style] ? borderColorTransforms[style][index] : null;
         return {
             width: container.cssInt('border' + side + 'Width'),
-            color: container.color('border' + side + 'Color'),
+            color: colorTransform ? color[colorTransform[0]](colorTransform[1]) : color,
             args: null
         };
     });

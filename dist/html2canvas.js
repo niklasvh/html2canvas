@@ -834,15 +834,29 @@ function Color(value) {
         this.hex3(value);
 }
 
+Color.prototype.darken = function(amount) {
+    var a = 1 - amount;
+    return  new Color([
+        Math.round(this.r * a),
+        Math.round(this.g * a),
+        Math.round(this.b * a),
+        this.a
+    ]);
+};
+
 Color.prototype.isTransparent = function() {
     return this.a === 0;
 };
 
+Color.prototype.isBlack = function() {
+    return this.r === 0 && this.g === 0 && this.b === 0;
+};
+
 Color.prototype.fromArray = function(array) {
     if (Array.isArray(array)) {
-        this.r = array[0];
-        this.g = array[1];
-        this.b = array[2];
+        this.r = Math.min(array[0], 255);
+        this.g = Math.min(array[1], 255);
+        this.b = Math.min(array[2], 255);
         if (array.length > 3) {
             this.a = array[3];
         }
@@ -2295,13 +2309,28 @@ NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics)
     }
 };
 
+var borderColorTransforms = {
+    inset: [
+        ["darken", 0.60],
+        ["darken", 0.10],
+        ["darken", 0.10],
+        ["darken", 0.60]
+    ]
+};
+
 NodeParser.prototype.parseBorders = function(container) {
     var nodeBounds = container.parseBounds();
     var radius = getBorderRadiusData(container);
-    var borders = ["Top", "Right", "Bottom", "Left"].map(function(side) {
+    var borders = ["Top", "Right", "Bottom", "Left"].map(function(side, index) {
+        var style = container.css('border' + side + 'Style');
+        var color = container.color('border' + side + 'Color');
+        if (style === "inset" && color.isBlack()) {
+            color = new Color([255, 255, 255, color.a]); // this is wrong, but
+        }
+        var colorTransform = borderColorTransforms[style] ? borderColorTransforms[style][index] : null;
         return {
             width: container.cssInt('border' + side + 'Width'),
-            color: container.color('border' + side + 'Color'),
+            color: colorTransform ? color[colorTransform[0]](colorTransform[1]) : color,
             args: null
         };
     });
