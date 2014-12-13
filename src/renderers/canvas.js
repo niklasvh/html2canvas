@@ -7,7 +7,7 @@ function CanvasRenderer(width, height) {
     }
     this.ctx = this.canvas.getContext("2d");
     if (this.options.background) {
-        this.rectangle(0, 0, width, height, this.options.background);
+        this.rectangle(0, 0, width, height, new Color(this.options.background));
     }
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
@@ -18,7 +18,7 @@ function CanvasRenderer(width, height) {
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
 
 CanvasRenderer.prototype.setFillStyle = function(fillStyle) {
-    this.ctx.fillStyle = fillStyle;
+    this.ctx.fillStyle = (fillStyle instanceof Color) ? fillStyle.toString() : fillStyle;
     return this.ctx;
 };
 
@@ -36,7 +36,7 @@ CanvasRenderer.prototype.circle = function(left, top, size, color) {
 
 CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke, strokeColor) {
     this.circle(left, top, size, color);
-    this.ctx.strokeStyle = strokeColor;
+    this.ctx.strokeStyle = strokeColor.toString();
     this.ctx.stroke();
 };
 
@@ -93,7 +93,7 @@ CanvasRenderer.prototype.font = function(color, style, variant, weight, size, fa
 };
 
 CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
-    this.setVariable("shadowColor", color)
+    this.setVariable("shadowColor", color.toString())
         .setVariable("shadowOffsetY", offsetX)
         .setVariable("shadowOffsetX", offsetY)
         .setVariable("shadowBlur", blur);
@@ -153,7 +153,7 @@ CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, boun
             bounds.left +  bounds.width * gradientImage.x1,
             bounds.top +  bounds.height * gradientImage.y1);
         gradientImage.colorStops.forEach(function(colorStop) {
-            gradient.addColorStop(colorStop.stop, colorStop.color);
+            gradient.addColorStop(colorStop.stop, colorStop.color.toString());
         });
         this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, gradient);
     }
