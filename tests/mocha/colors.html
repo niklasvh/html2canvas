@@ -1,0 +1,96 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="lib/mocha.css" />
+    <script type="text/javascript" src="../../src/color.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+</head>
+<body>
+<div id="mocha"></div>
+<script>mocha.setup('bdd')</script>
+<script>
+    describe("Colors", function() {
+        describe("named colors", function() {
+            it("bisque", function () {
+                var c = new Color("bisque");
+                assertColor(c, 255, 228, 196, null);
+            });
+
+            it("BLUE", function () {
+                var c = new Color("BLUE");
+                assertColor(c, 0, 0, 255, null);
+            });
+        });
+
+        describe("rgb()", function() {
+            it("rgb(1,3,5)", function () {
+                var c = new Color("rgb(1,3,5)");
+                assertColor(c, 1, 3, 5, null);
+            });
+
+            it("rgb(222, 111, 50)", function () {
+                var c = new Color("rgb(222, 111, 50)");
+                assertColor(c, 222, 111, 50, null);
+            });
+
+            it("rgb( 222, 111 , 50)", function () {
+                var c = new Color("rgb(222 , 111 , 50)");
+                assertColor(c, 222, 111, 50, null);
+            });
+        });
+
+        describe("rgba()", function() {
+            it("rgba(200,3,5,0)", function () {
+                var c = new Color("rgba(200,3,5,0)");
+                assertColor(c, 200, 3, 5, 0);
+            });
+
+            it("rgba(222, 111, 50, 0.22)", function () {
+                var c = new Color("rgba(222, 111, 50, 0.22)");
+                assertColor(c, 222, 111, 50, 0.22);
+            });
+
+            it("rgba( 222, 111 , 50, 0.123 )", function () {
+                var c = new Color("rgba(222 , 111 , 50, 0.123)");
+                assertColor(c, 222, 111, 50, 0.123);
+            });
+        });
+
+        describe("hex", function() {
+            it("#7FFFD4", function () {
+                var c = new Color("#7FFFD4");
+                assertColor(c, 127, 255, 212, null);
+            });
+
+            it("#f0ffff", function () {
+                var c = new Color("#f0ffff");
+                assertColor(c, 240, 255, 255, null);
+            });
+
+            it("#fff", function () {
+                var c = new Color("#fff");
+                assertColor(c, 255, 255, 255, null);
+            });
+        });
+    });
+
+    function assertColor(c, r, g, b, a) {
+        expect(c.r).to.equal(r);
+        expect(c.g).to.equal(g);
+        expect(c.b).to.equal(b);
+        expect(c.a).to.equal(a);
+    }
+
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+    }
+    else {
+        mocha.run();
+    }
+</script>
+</body>
+</html>
