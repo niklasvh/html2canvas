@@ -86,6 +86,26 @@
             });
         });
 
+        describe("from array", function() {
+            it("[1,2,3]", function () {
+                var c = new Color([1,2,3]);
+                assertColor(c, 1, 2, 3, null);
+                expect(c.isTransparent()).to.equal(false);
+            });
+
+            it("[5,6,7,1]", function () {
+                var c = new Color([5,6,7, 1]);
+                assertColor(c, 5, 6, 7, 1);
+                expect(c.isTransparent()).to.equal(false);
+            });
+
+            it("[5,6,7,0]", function () {
+                var c = new Color([5,6,7, 0]);
+                assertColor(c, 5, 6, 7, 0);
+                expect(c.isTransparent()).to.equal(true);
+            });
+        });
+
         describe("transparency", function() {
             it("transparent", function () {
                 var c = new Color("transparent");

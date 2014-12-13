@@ -826,7 +826,8 @@ function Color(value) {
     this.g = 0;
     this.b = 0;
     this.a = null;
-    var result = this.namedColor(value) ||
+    var result = this.fromArray(value) ||
+        this.namedColor(value) ||
         this.rgb(value) ||
         this.rgba(value) ||
         this.hex6(value) ||
@@ -835,6 +836,19 @@ function Color(value) {
 
 Color.prototype.isTransparent = function() {
     return this.a === 0;
+};
+
+Color.prototype.fromArray = function(array) {
+    if (Array.isArray(array)) {
+        this.r = array[0];
+        this.g = array[1];
+        this.b = array[2];
+        if (array.length > 3) {
+            this.a = array[3];
+        }
+    }
+
+    return (Array.isArray(array));
 };
 
 var _hex3 = /^#([a-f0-9]{3})$/i;
@@ -888,7 +902,7 @@ Color.prototype.rgba = function(value) {
 };
 
 Color.prototype.toString = function() {
-    return this.a !== null ?
+    return this.a !== null && this.a !== 1 ?
     "rgba(" + [this.r, this.g, this.b, this.a].join(",") + ")" :
     "rgb(" + [this.r, this.g, this.b].join(",") + ")";
 };
