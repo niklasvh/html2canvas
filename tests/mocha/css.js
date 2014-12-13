@@ -72,12 +72,12 @@ describe('Text-shadow', function() {
             expect(shadows[0].offsetX).to.equal(i);
             expect(shadows[0].offsetY).to.equal(i);
             if (i < 2) {
-                expect(shadows[0].color).to.match(/rgba?\(0, 0, 0(, 0)?\)/);
+                expect(shadows[0].color.toString()).to.equal('rgba(0,0,0,0)');
             } else if (i % 2 === 0) {
-                expect(shadows[0].color).to.equal('rgb(2, 2, 2)');
+                expect(shadows[0].color.toString()).to.equal('rgb(2,2,2)');
             } else {
                 var opacity = '0.2';
-                expect(shadows[0].color).to.match(/rgba\(2, 2, 2, (0.2|0\.199219)\)/);
+                expect(shadows[0].color.toString()).to.match(/rgba\(2,2,2,(0.2|0\.199219)\)/);
             }
 
             // only testing blur once
