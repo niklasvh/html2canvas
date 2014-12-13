@@ -833,6 +833,10 @@ function Color(value) {
         this.hex3(value);
 }
 
+Color.prototype.isTransparent = function() {
+    return this.a === 0;
+};
+
 var _hex3 = /^#([a-f0-9]{3})$/i;
 
 Color.prototype.hex3 = function(value) {
@@ -883,6 +887,11 @@ Color.prototype.rgba = function(value) {
     return match !== null;
 };
 
+Color.prototype.toString = function() {
+    return this.a !== null ?
+    "rgba(" + [this.r, this.g, this.b, this.a].join(",") + ")" :
+    "rgb(" + [this.r, this.g, this.b].join(",") + ")";
+};
 
 Color.prototype.namedColor = function(value) {
     var color = colors[value.toLowerCase()];
@@ -890,6 +899,9 @@ Color.prototype.namedColor = function(value) {
         this.r = color[0];
         this.g = color[1];
         this.b = color[2];
+    } else if (value.toLowerCase() === "transparent") {
+        this.r = this.g = this.b = this.a = 0;
+        return true;
     }
 
     return !!color;
@@ -1335,30 +1347,30 @@ function LinearGradientContainer(imageData) {
     if (hasDirection) {
         imageData.args[0].split(" ").reverse().forEach(function(position) {
             switch(position) {
-                case "left":
-                    this.x0 = 0;
-                    this.x1 = 1;
-                    break;
-                case "top":
-                    this.y0 = 0;
-                    this.y1 = 1;
-                    break;
-                case "right":
-                    this.x0 = 1;
-                    this.x1 = 0;
-                    break;
-                case "bottom":
-                    this.y0 = 1;
-                    this.y1 = 0;
-                    break;
-                case "to":
-                    var y0 = this.y0;
-                    var x0 = this.x0;
-                    this.y0 = this.y1;
-                    this.x0 = this.x1;
-                    this.x1 = x0;
-                    this.y1 = y0;
-                    break;
+            case "left":
+                this.x0 = 0;
+                this.x1 = 1;
+                break;
+            case "top":
+                this.y0 = 0;
+                this.y1 = 1;
+                break;
+            case "right":
+                this.x0 = 1;
+                this.x1 = 0;
+                break;
+            case "bottom":
+                this.y0 = 1;
+                this.y1 = 0;
+                break;
+            case "to":
+                var y0 = this.y0;
+                var x0 = this.x0;
+                this.y0 = this.y1;
+                this.x0 = this.x1;
+                this.x1 = x0;
+                this.y1 = y0;
+                break;
             }
         }, this);
     } else {
@@ -1369,7 +1381,7 @@ function LinearGradientContainer(imageData) {
     this.colorStops = imageData.args.slice(hasDirection ? 1 : 0).map(function(colorStop) {
         var colorStopMatch = colorStop.match(this.stepRegExp);
         return {
-            color: colorStopMatch[1],
+            color: new Color(colorStopMatch[1]),
             stop: colorStopMatch[3] === "%" ? colorStopMatch[2] / 100 : null
         };
     }, this);
@@ -1417,6 +1429,7 @@ function NodeContainer(node, parent) {
     this.offsetBounds = null;
     this.visible = null;
     this.computedStyles = null;
+    this.colors = {};
     this.styles = {};
     this.backgroundImages = null;
     this.transformData = null;
@@ -1482,6 +1495,10 @@ NodeContainer.prototype.computedStyle = function(type) {
 NodeContainer.prototype.cssInt = function(attribute) {
     var value = parseInt(this.css(attribute), 10);
     return (isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
+};
+
+NodeContainer.prototype.color = function(attribute) {
+    return this.colors[attribute] || (this.colors[attribute] = new Color(this.css(attribute)));
 };
 
 NodeContainer.prototype.cssFloat = function(attribute) {
@@ -1597,7 +1614,7 @@ NodeContainer.prototype.parseTextShadows = function() {
         for (var i = 0; shadows && (i < shadows.length); i++) {
             var s = shadows[i].match(this.TEXT_SHADOW_VALUES);
             results.push({
-                color: s[0],
+                color: new Color(s[0]),
                 offsetX: s[1] ? parseFloat(s[1].replace('px', '')) : 0,
                 offsetY: s[2] ? parseFloat(s[2].replace('px', '')) : 0,
                 blur: s[3] ? s[3].replace('px', '') : 0
@@ -1817,8 +1834,8 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     var parent = new NodeContainer(element, null);
     if (element === element.ownerDocument.documentElement) {
         // http://www.w3.org/TR/css3-background/#special-backgrounds
-        var canvasBackground = new NodeContainer(this.renderer.isTransparent(parent.css('backgroundColor')) ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
-        renderer.rectangle(0, 0, renderer.width, renderer.height, canvasBackground.css('backgroundColor'));
+        var canvasBackground = new NodeContainer(parent.color('backgroundColor').isTransparent() ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
+        renderer.rectangle(0, 0, renderer.width, renderer.height, canvasBackground.color('backgroundColor'));
     }
     parent.visibile = parent.isElementVisible();
     this.createPseudoHideStyles(element.ownerDocument);
@@ -2001,7 +2018,7 @@ NodeParser.prototype.createStackingContexts = function() {
 };
 
 NodeParser.prototype.isBodyWithTransparentRoot = function(container) {
-    return container.node.nodeName === "BODY" && this.renderer.isTransparent(container.parent.css('backgroundColor'));
+    return container.node.nodeName === "BODY" && container.parent.color('backgroundColor').isTransparent();
 };
 
 NodeParser.prototype.isRootElement = function(container) {
@@ -2161,16 +2178,16 @@ NodeParser.prototype.paintCheckbox = function(container) {
     var r = [3, 3];
     var radius = [r, r, r, r];
     var borders = [1,1,1,1].map(function(w) {
-        return {color: '#A5A5A5', width: w};
+        return {color: new Color('#A5A5A5'), width: w};
     });
 
     var borderPoints = calculateCurvePoints(bounds, radius, borders);
 
     this.renderer.clip(container.backgroundClip, function() {
-        this.renderer.rectangle(bounds.left + 1, bounds.top + 1, bounds.width - 2, bounds.height - 2, "#DEDEDE");
+        this.renderer.rectangle(bounds.left + 1, bounds.top + 1, bounds.width - 2, bounds.height - 2, new Color("#DEDEDE"));
         this.renderer.renderBorders(calculateBorders(borders, bounds, borderPoints, radius));
         if (container.node.checked) {
-            this.renderer.font('#424242', 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
+            this.renderer.font(new Color('#424242'), 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
             this.renderer.text("\u2714", bounds.left + size / 6, bounds.top + size - 1);
         }
     }, this);
@@ -2182,9 +2199,9 @@ NodeParser.prototype.paintRadio = function(container) {
     var size = Math.min(bounds.width, bounds.height) - 2;
 
     this.renderer.clip(container.backgroundClip, function() {
-        this.renderer.circleStroke(bounds.left + 1, bounds.top + 1, size, '#DEDEDE', 1, '#A5A5A5');
+        this.renderer.circleStroke(bounds.left + 1, bounds.top + 1, size, new Color('#DEDEDE'), 1, new Color('#A5A5A5'));
         if (container.node.checked) {
-            this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), '#424242');
+            this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), new Color('#424242'));
         }
     }, this);
 };
@@ -2229,7 +2246,7 @@ NodeParser.prototype.paintText = function(container) {
     var family = container.parent.css('fontFamily');
     var shadows = container.parent.parseTextShadows();
 
-    this.renderer.font(container.parent.css('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
+    this.renderer.font(container.parent.color('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
     if (shadows.length) {
         // TODO: support multiple text shadows
         this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
@@ -2252,14 +2269,14 @@ NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics)
     case "underline":
         // Draws a line at the baseline of the font
         // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
-        this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.color("color"));
         break;
     case "overline":
-        this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.color("color"));
         break;
     case "line-through":
         // TODO try and find exact position for line-through
-        this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.color("color"));
         break;
     }
 };
@@ -2270,7 +2287,7 @@ NodeParser.prototype.parseBorders = function(container) {
     var borders = ["Top", "Right", "Bottom", "Left"].map(function(side) {
         return {
             width: container.cssInt('border' + side + 'Width'),
-            color: container.css('border' + side + 'Color'),
+            color: container.color('border' + side + 'Color'),
             args: null
         };
     });
@@ -2785,9 +2802,9 @@ Renderer.prototype.renderBackground = function(container, bounds, borderData) {
 };
 
 Renderer.prototype.renderBackgroundColor = function(container, bounds) {
-    var color = container.css("backgroundColor");
-    if (!this.isTransparent(color)) {
-        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, container.css("backgroundColor"));
+    var color = container.color("backgroundColor");
+    if (!color.isTransparent()) {
+        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, color);
     }
 };
 
@@ -2796,7 +2813,7 @@ Renderer.prototype.renderBorders = function(borders) {
 };
 
 Renderer.prototype.renderBorder = function(data) {
-    if (!this.isTransparent(data.color) && data.args !== null) {
+    if (!data.color.isTransparent() && data.args !== null) {
         this.drawShape(data.args, data.color);
     }
 };
@@ -2805,27 +2822,27 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds, borderDat
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         switch(backgroundImage.method) {
-            case "url":
-                var image = this.images.get(backgroundImage.args[0]);
-                if (image) {
-                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
-                } else {
-                    log("Error loading background-image", backgroundImage.args[0]);
-                }
-                break;
-            case "linear-gradient":
-            case "gradient":
-                var gradientImage = this.images.get(backgroundImage.value);
-                if (gradientImage) {
-                    this.renderBackgroundGradient(gradientImage, bounds, borderData);
-                } else {
-                    log("Error loading background-image", backgroundImage.args[0]);
-                }
-                break;
-            case "none":
-                break;
-            default:
-                log("Unknown background-image type", backgroundImage.args[0]);
+        case "url":
+            var image = this.images.get(backgroundImage.args[0]);
+            if (image) {
+                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
+            } else {
+                log("Error loading background-image", backgroundImage.args[0]);
+            }
+            break;
+        case "linear-gradient":
+        case "gradient":
+            var gradientImage = this.images.get(backgroundImage.value);
+            if (gradientImage) {
+                this.renderBackgroundGradient(gradientImage, bounds, borderData);
+            } else {
+                log("Error loading background-image", backgroundImage.args[0]);
+            }
+            break;
+        case "none":
+            break;
+        default:
+            log("Unknown background-image type", backgroundImage.args[0]);
         }
     }, this);
 };
@@ -2850,10 +2867,6 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
         this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left}, borderData[3], borderData[0]);
         break;
     }
-};
-
-Renderer.prototype.isTransparent = function(color) {
-    return (!color || color === "transparent" || color === "rgba(0, 0, 0, 0)");
 };
 
 function StackingContext(hasOwnStacking, opacity, element, parent) {
@@ -3103,8 +3116,8 @@ function CanvasRenderer(width, height) {
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
 
-CanvasRenderer.prototype.setFillStyle = function(color) {
-    this.ctx.fillStyle = color;
+CanvasRenderer.prototype.setFillStyle = function(fillStyle) {
+    this.ctx.fillStyle = fillStyle;
     return this.ctx;
 };
 

@@ -17,8 +17,8 @@ function CanvasRenderer(width, height) {
 
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
 
-CanvasRenderer.prototype.setFillStyle = function(color) {
-    this.ctx.fillStyle = color;
+CanvasRenderer.prototype.setFillStyle = function(fillStyle) {
+    this.ctx.fillStyle = fillStyle;
     return this.ctx;
 };
 

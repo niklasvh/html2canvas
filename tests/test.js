@@ -12,7 +12,7 @@ var h2cSelector, h2cOptions;
     }
 
     var sources = ['log', 'punycode/punycode', 'core', 'nodecontainer', 'pseudoelementcontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
-        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'framecontainer', 'proxy', 'renderers/canvas'];
+        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'framecontainer', 'proxy', 'color', 'renderers/canvas'];
 
     ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
 

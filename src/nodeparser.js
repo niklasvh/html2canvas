@@ -9,8 +9,8 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     var parent = new NodeContainer(element, null);
     if (element === element.ownerDocument.documentElement) {
         // http://www.w3.org/TR/css3-background/#special-backgrounds
-        var canvasBackground = new NodeContainer(this.renderer.isTransparent(parent.css('backgroundColor')) ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
-        renderer.rectangle(0, 0, renderer.width, renderer.height, canvasBackground.css('backgroundColor'));
+        var canvasBackground = new NodeContainer(parent.color('backgroundColor').isTransparent() ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
+        renderer.rectangle(0, 0, renderer.width, renderer.height, canvasBackground.color('backgroundColor'));
     }
     parent.visibile = parent.isElementVisible();
     this.createPseudoHideStyles(element.ownerDocument);
@@ -193,7 +193,7 @@ NodeParser.prototype.createStackingContexts = function() {
 };
 
 NodeParser.prototype.isBodyWithTransparentRoot = function(container) {
-    return container.node.nodeName === "BODY" && this.renderer.isTransparent(container.parent.css('backgroundColor'));
+    return container.node.nodeName === "BODY" && container.parent.color('backgroundColor').isTransparent();
 };
 
 NodeParser.prototype.isRootElement = function(container) {
@@ -353,16 +353,16 @@ NodeParser.prototype.paintCheckbox = function(container) {
     var r = [3, 3];
     var radius = [r, r, r, r];
     var borders = [1,1,1,1].map(function(w) {
-        return {color: '#A5A5A5', width: w};
+        return {color: new Color('#A5A5A5'), width: w};
     });
 
     var borderPoints = calculateCurvePoints(bounds, radius, borders);
 
     this.renderer.clip(container.backgroundClip, function() {
-        this.renderer.rectangle(bounds.left + 1, bounds.top + 1, bounds.width - 2, bounds.height - 2, "#DEDEDE");
+        this.renderer.rectangle(bounds.left + 1, bounds.top + 1, bounds.width - 2, bounds.height - 2, new Color("#DEDEDE"));
         this.renderer.renderBorders(calculateBorders(borders, bounds, borderPoints, radius));
         if (container.node.checked) {
-            this.renderer.font('#424242', 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
+            this.renderer.font(new Color('#424242'), 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
             this.renderer.text("\u2714", bounds.left + size / 6, bounds.top + size - 1);
         }
     }, this);
@@ -374,9 +374,9 @@ NodeParser.prototype.paintRadio = function(container) {
     var size = Math.min(bounds.width, bounds.height) - 2;
 
     this.renderer.clip(container.backgroundClip, function() {
-        this.renderer.circleStroke(bounds.left + 1, bounds.top + 1, size, '#DEDEDE', 1, '#A5A5A5');
+        this.renderer.circleStroke(bounds.left + 1, bounds.top + 1, size, new Color('#DEDEDE'), 1, new Color('#A5A5A5'));
         if (container.node.checked) {
-            this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), '#424242');
+            this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), new Color('#424242'));
         }
     }, this);
 };
@@ -421,7 +421,7 @@ NodeParser.prototype.paintText = function(container) {
     var family = container.parent.css('fontFamily');
     var shadows = container.parent.parseTextShadows();
 
-    this.renderer.font(container.parent.css('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
+    this.renderer.font(container.parent.color('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
     if (shadows.length) {
         // TODO: support multiple text shadows
         this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
@@ -444,14 +444,14 @@ NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics)
     case "underline":
         // Draws a line at the baseline of the font
         // TODO As some browsers display the line as more than 1px if the font-size is big, need to take that into account both in position and size
-        this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.round(bounds.top + metrics.baseline + metrics.lineWidth), bounds.width, 1, container.color("color"));
         break;
     case "overline":
-        this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.round(bounds.top), bounds.width, 1, container.color("color"));
         break;
     case "line-through":
         // TODO try and find exact position for line-through
-        this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.css("color"));
+        this.renderer.rectangle(bounds.left, Math.ceil(bounds.top + metrics.middle + metrics.lineWidth), bounds.width, 1, container.color("color"));
         break;
     }
 };
@@ -462,7 +462,7 @@ NodeParser.prototype.parseBorders = function(container) {
     var borders = ["Top", "Right", "Bottom", "Left"].map(function(side) {
         return {
             width: container.cssInt('border' + side + 'Width'),
-            color: container.css('border' + side + 'Color'),
+            color: container.color('border' + side + 'Color'),
             args: null
         };
     });

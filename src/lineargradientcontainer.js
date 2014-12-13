@@ -7,30 +7,30 @@ function LinearGradientContainer(imageData) {
     if (hasDirection) {
         imageData.args[0].split(" ").reverse().forEach(function(position) {
             switch(position) {
-                case "left":
-                    this.x0 = 0;
-                    this.x1 = 1;
-                    break;
-                case "top":
-                    this.y0 = 0;
-                    this.y1 = 1;
-                    break;
-                case "right":
-                    this.x0 = 1;
-                    this.x1 = 0;
-                    break;
-                case "bottom":
-                    this.y0 = 1;
-                    this.y1 = 0;
-                    break;
-                case "to":
-                    var y0 = this.y0;
-                    var x0 = this.x0;
-                    this.y0 = this.y1;
-                    this.x0 = this.x1;
-                    this.x1 = x0;
-                    this.y1 = y0;
-                    break;
+            case "left":
+                this.x0 = 0;
+                this.x1 = 1;
+                break;
+            case "top":
+                this.y0 = 0;
+                this.y1 = 1;
+                break;
+            case "right":
+                this.x0 = 1;
+                this.x1 = 0;
+                break;
+            case "bottom":
+                this.y0 = 1;
+                this.y1 = 0;
+                break;
+            case "to":
+                var y0 = this.y0;
+                var x0 = this.x0;
+                this.y0 = this.y1;
+                this.x0 = this.x1;
+                this.x1 = x0;
+                this.y1 = y0;
+                break;
             }
         }, this);
     } else {
@@ -41,7 +41,7 @@ function LinearGradientContainer(imageData) {
     this.colorStops = imageData.args.slice(hasDirection ? 1 : 0).map(function(colorStop) {
         var colorStopMatch = colorStop.match(this.stepRegExp);
         return {
-            color: colorStopMatch[1],
+            color: new Color(colorStopMatch[1]),
             stop: colorStopMatch[3] === "%" ? colorStopMatch[2] / 100 : null
         };
     }, this);
