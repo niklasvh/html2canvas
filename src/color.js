@@ -12,6 +12,10 @@ function Color(value) {
         this.hex3(value);
 }
 
+Color.prototype.isTransparent = function() {
+    return this.a === 0;
+};
+
 var _hex3 = /^#([a-f0-9]{3})$/i;
 
 Color.prototype.hex3 = function(value) {
@@ -62,6 +66,11 @@ Color.prototype.rgba = function(value) {
     return match !== null;
 };
 
+Color.prototype.toString = function() {
+    return this.a !== null ?
+    "rgba(" + [this.r, this.g, this.b, this.a].join(",") + ")" :
+    "rgb(" + [this.r, this.g, this.b].join(",") + ")";
+};
 
 Color.prototype.namedColor = function(value) {
     var color = colors[value.toLowerCase()];
@@ -69,6 +78,9 @@ Color.prototype.namedColor = function(value) {
         this.r = color[0];
         this.g = color[1];
         this.b = color[2];
+    } else if (value.toLowerCase() === "transparent") {
+        this.r = this.g = this.b = this.a = 0;
+        return true;
     }
 
     return !!color;

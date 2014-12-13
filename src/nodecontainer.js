@@ -9,6 +9,7 @@ function NodeContainer(node, parent) {
     this.offsetBounds = null;
     this.visible = null;
     this.computedStyles = null;
+    this.colors = {};
     this.styles = {};
     this.backgroundImages = null;
     this.transformData = null;
@@ -74,6 +75,10 @@ NodeContainer.prototype.computedStyle = function(type) {
 NodeContainer.prototype.cssInt = function(attribute) {
     var value = parseInt(this.css(attribute), 10);
     return (isNaN(value)) ? 0 : value; // borders in old IE are throwing 'medium' for demo.html
+};
+
+NodeContainer.prototype.color = function(attribute) {
+    return this.colors[attribute] || (this.colors[attribute] = new Color(this.css(attribute)));
 };
 
 NodeContainer.prototype.cssFloat = function(attribute) {
@@ -189,7 +194,7 @@ NodeContainer.prototype.parseTextShadows = function() {
         for (var i = 0; shadows && (i < shadows.length); i++) {
             var s = shadows[i].match(this.TEXT_SHADOW_VALUES);
             results.push({
-                color: s[0],
+                color: new Color(s[0]),
                 offsetX: s[1] ? parseFloat(s[1].replace('px', '')) : 0,
                 offsetY: s[2] ? parseFloat(s[2].replace('px', '')) : 0,
                 blur: s[3] ? s[3].replace('px', '') : 0
