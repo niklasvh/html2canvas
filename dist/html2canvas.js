@@ -2287,10 +2287,130 @@ NodeParser.prototype.paintText = function(container) {
             if (bounds) {
                 this.renderer.text(textList[index], bounds.left, bounds.bottom);
                 this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
+                if (index == 0 && container.parent.node.nodeName === 'LI'){
+                	this.renderBullet(container, bounds);
+                }
             }
         }, this);
     }, this);
 };
+
+NodeParser.prototype.generateListNumber = {
+	listAlpha : function(number) {
+		var tmp = "", modulus;
+	
+		do {
+			modulus = number % 26;
+			tmp = String.fromCharCode((modulus) + 64) + tmp;
+			number = number / 26;
+		} while ((number * 26) > 26);
+	
+		return tmp;
+	},
+	
+	listRoman : function(number) {
+		var romanArray = [
+				"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"
+		], decimal = [
+				1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+		], roman = "", v, len = romanArray.length;
+	
+		if (number <= 0 || number >= 4000) {
+			return number;
+		}
+	
+		for (v = 0; v < len; v += 1) {
+			while (number >= decimal[v]) {
+				number -= decimal[v];
+				roman += romanArray[v];
+			}
+		}
+	
+		return roman;
+	}
+};
+
+
+NodeParser.prototype.listItemText = function (type, currentIndex) {
+	switch (type) {
+	case "decimal-leading-zero":
+		text = (currentIndex.toString().length === 1) ? currentIndex = "0" + currentIndex.toString() : currentIndex.toString();
+		break;
+	case "upper-roman":
+		text = this.generateListNumber.listRoman(currentIndex);
+		break;
+	case "lower-roman":
+		text = this.generateListNumber.listRoman(currentIndex).toLowerCase();
+		break;
+	case "lower-alpha":
+		text = this.generateListNumber.listAlpha(currentIndex).toLowerCase();
+		break;
+	case "upper-alpha":
+		text = this.generateListNumber.listAlpha(currentIndex);
+		break;
+	case "decimal":
+	default:
+		text = currentIndex;
+			break;
+	}
+
+	return text;
+}
+
+NodeParser.prototype.renderBullet = function(container, bounds){
+	var type = container.parent.css('listStyleType');
+	if (type === 'none'){
+		return;
+	}
+	var y = bounds.top + (bounds.bottom - bounds.top) / 2;
+	var c2d = this.renderer.canvas.getContext("2d");
+	var textWidth= c2d.measureText("M").width;
+	var size = textWidth/4;
+	var padding = textWidth * .75;
+	var x = bounds.left - padding;
+	switch(type){
+		case 'decimal':
+		case "decimal-leading-zero":
+		case 'upper-alpha':
+		case 'lower-alpha':
+		case 'upper-roman':
+		case 'lower-roman':
+			var li = container.parent;
+			var list = li.parent;
+			var nodeList = Array.prototype.slice.call(list.node.children);
+			var index = nodeList.indexOf(li.node) + 1;
+			
+			var value = this.listItemText(type, index);
+			value += '.';
+			var left = bounds.left - padding;
+			left -= c2d.measureText(value).width;
+			c2d.fillText(value, left, bounds.bottom);
+			break;
+		case 'square':
+			var size = textWidth/3;
+			x -= size;
+			y -= size / 2;
+			c2d.fillRect(x, y , size, size);
+			break;
+		case 'circle':
+			var size = textWidth/6;
+			x -= size;
+			c2d.beginPath();
+			c2d.arc(x, y, size, 0, Math.PI * 2);
+			c2d.closePath();
+			c2d.stroke();
+			break;
+		case 'disc':
+		default:
+			var size = textWidth/6;
+			x -= size;
+			c2d.beginPath();
+			c2d.arc(x, y, size, 0, Math.PI * 2);
+			c2d.closePath();
+			c2d.fill();
+			break;
+	}
+}
 
 NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics) {
     switch(container.css("textDecoration").split(" ")[0]) {
