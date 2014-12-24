@@ -27,6 +27,7 @@
 <script>
     describe("Multiple renders", function() {
         it("render correctly", function(done) {
+            this.timeout(5000);
             var d = 0;
             for (var i = 0; i < 10; i++) {
                 html2canvas(document.querySelector('#green-block')).then(function (canvas) {
@@ -43,6 +44,7 @@
         });
 
         it("render correctly when non sequential", function(done) {
+            this.timeout(5000);
             var d = 0;
             for (var i = 0; i < 10; i++) {
                 html2canvas(document.querySelector('#block'), {onclone: function(document) {
