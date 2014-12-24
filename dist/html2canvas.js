@@ -569,8 +569,10 @@ if (typeof(Object.create) !== "function" || typeof(document.createElement("canva
 var html2canvasNodeAttribute = "data-html2canvas-node";
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
+var html2canvasCloneIndex = 0;
 
 window.html2canvas = function(nodeList, options) {
+    var index = html2canvasCloneIndex++;
     options = options || {};
     if (options.logging) {
         window.html2canvas.logging = true;
@@ -593,8 +595,8 @@ window.html2canvas = function(nodeList, options) {
     }
 
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
-    node.setAttribute(html2canvasNodeAttribute, "true");
-    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight).then(function(canvas) {
+    node.setAttribute(html2canvasNodeAttribute + index, index);
+    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
             options.onrendered(canvas);
@@ -606,11 +608,12 @@ window.html2canvas = function(nodeList, options) {
 window.html2canvas.punycode = this.punycode;
 window.html2canvas.proxy = {};
 
-function renderDocument(document, options, windowWidth, windowHeight) {
+function renderDocument(document, options, windowWidth, windowHeight, html2canvasIndex) {
     return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
-        var selector = "[" + html2canvasNodeAttribute + "='true']";
-        document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
+        var attributeName = html2canvasNodeAttribute + html2canvasIndex;
+        var selector = "[" + attributeName + "='" + html2canvasIndex + "']";
+        document.querySelector(selector).removeAttribute(attributeName);
         var clonedWindow = container.contentWindow;
         var node = clonedWindow.document.querySelector(selector);
         var oncloneHandler = (typeof(options.onclone) === "function") ? Promise.resolve(options.onclone(clonedWindow.document)) : Promise.resolve(true);
