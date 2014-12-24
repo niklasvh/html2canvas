@@ -52,6 +52,10 @@ Clone git repository with submodules:
 
     $ git clone --recursive git://github.com/niklasvh/html2canvas.git
 
+Install Grunt and uglifyjs:
+
+    $ npm install -g grunt-cli uglify-js
+
 Run the full build process (including lint, qunit and webdriver tests):
 
     $ grunt
