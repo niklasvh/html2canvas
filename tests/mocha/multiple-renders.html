@@ -30,7 +30,7 @@
             this.timeout(5000);
             var d = 0;
             for (var i = 0; i < 10; i++) {
-                html2canvas(document.querySelector('#green-block')).then(function (canvas) {
+                html2canvas(document.querySelector('#green-block'), {logging: true}).then(function (canvas) {
                     console.log('canvas', d);
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
