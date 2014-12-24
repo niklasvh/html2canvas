@@ -570,6 +570,7 @@ var html2canvasNodeAttribute = "data-html2canvas-node";
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
 var html2canvasCloneIndex = 0;
+var html2canvasIframeName = "____html2canvas-container";
 
 window.html2canvas = function(nodeList, options) {
     var index = html2canvasCloneIndex++;
@@ -695,7 +696,7 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
     var documentElement = ownerDocument.documentElement.cloneNode(true),
         container = containerDocument.createElement("iframe");
 
-    container.className = "html2canvas-container";
+    container.className = html2canvasIframeName;
     container.style.visibility = "hidden";
     container.style.position = "fixed";
     container.style.left = "-10000px";
@@ -731,7 +732,8 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         documentClone.write("<!DOCTYPE html><html></html>");
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         restoreOwnerScroll(ownerDocument, x, y);
-        documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
+        var clonedDocumentElement = removeHtml2canvasIframes(documentClone.adoptNode(documentElement));
+        documentClone.replaceChild(options.javascriptEnabled === true ? clonedDocumentElement : removeScriptNodes(clonedDocumentElement), documentClone.documentElement);
         documentClone.close();
     });
 }
@@ -803,6 +805,17 @@ function cloneCanvasContents(ownerDocument, documentClone) {
 function removeScriptNodes(parent) {
     [].slice.call(parent.childNodes, 0).filter(isElementNode).forEach(function(node) {
         if (node.tagName === "SCRIPT") {
+            parent.removeChild(node);
+        } else {
+            removeScriptNodes(node);
+        }
+    });
+    return parent;
+}
+
+function removeHtml2canvasIframes(parent) {
+    [].slice.call(parent.childNodes, 0).filter(isElementNode).forEach(function(node) {
+        if (node.tagName === "IFRAME" && node.className === html2canvasIframeName) {
             parent.removeChild(node);
         } else {
             removeScriptNodes(node);
