@@ -47,17 +47,22 @@
             this.timeout(5000);
             var d = 0;
             for (var i = 0; i < 10; i++) {
-                html2canvas(document.querySelector('#block'), {onclone: function(document) {
+                html2canvas(document.querySelector('#block'), {logging: true, onclone: function(document) {
+                    console.log('onclone');
                     return new Promise(function(resolve) {
+                        console.log('promise');
                         document.querySelector('#block').style.backgroundColor = 'green';
                         setTimeout(function() {
+                            console.log('timeout');
                             resolve();
                         }, 100);
                     });
                 }}).then(function (canvas) {
+                    console.log('done', d);
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
                     validCanvasPixels(canvas);
+                    console.log('valid', d);
                     canvas.width = canvas.height = 10;
                     d++;
                     if (d === 10) {
