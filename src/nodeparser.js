@@ -388,7 +388,8 @@ NodeParser.prototype.paintRadio = function(container) {
 };
 
 NodeParser.prototype.paintFormValue = function(container) {
-    if (container.getValue().length > 0) {
+    var value = container.getValue();
+    if (value.length > 0) {
         var document = container.node.ownerDocument;
         var wrapper = document.createElement('html2canvaswrapper');
         var properties = ['lineHeight', 'textAlign', 'fontFamily', 'fontWeight', 'fontSize', 'color',
@@ -408,7 +409,7 @@ NodeParser.prototype.paintFormValue = function(container) {
         wrapper.style.position = "fixed";
         wrapper.style.left = bounds.left + "px";
         wrapper.style.top = bounds.top + "px";
-        wrapper.textContent = container.getValue();
+        wrapper.textContent = value;
         document.body.appendChild(wrapper);
         this.paintText(new TextContainer(wrapper.firstChild, container));
         document.body.removeChild(wrapper);
