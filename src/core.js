@@ -16,6 +16,7 @@ window.html2canvas = function(nodeList, options) {
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
     options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
     options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
+    options.renderer = typeof(options.renderer) === "function" ? options.renderer : CanvasRenderer;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -62,7 +63,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var bounds = getBounds(node);
     var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
     var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
-    var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
+    var renderer = new options.renderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");

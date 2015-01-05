@@ -1,6 +1,6 @@
 /*
   html2canvas 0.5.0-alpha <http://html2canvas.hertzen.com>
-  Copyright (c) 2014 Niklas von Hertzen
+  Copyright (c) 2015 Niklas von Hertzen
 
   Released under MIT License
 */

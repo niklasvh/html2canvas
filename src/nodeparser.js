@@ -7,6 +7,9 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.renderQueue = [];
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
+    if (options.background) {
+        renderer.rectangle(0, 0, renderer.width, renderer.height, new Color(options.background));
+    }
     if (element === element.ownerDocument.documentElement) {
         // http://www.w3.org/TR/css3-background/#special-backgrounds
         var canvasBackground = new NodeContainer(parent.color('backgroundColor').isTransparent() ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
@@ -283,6 +286,9 @@ NodeParser.prototype.paint = function(container) {
         }
     } catch(e) {
         log(e);
+        if (this.options.strict) {
+            throw e;
+        }
     }
 };
 
