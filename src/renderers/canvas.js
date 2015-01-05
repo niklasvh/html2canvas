@@ -6,9 +6,6 @@ function CanvasRenderer(width, height) {
         this.canvas.height = height;
     }
     this.ctx = this.canvas.getContext("2d");
-    if (this.options.background) {
-        this.rectangle(0, 0, width, height, new Color(this.options.background));
-    }
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
@@ -18,7 +15,7 @@ function CanvasRenderer(width, height) {
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
 
 CanvasRenderer.prototype.setFillStyle = function(fillStyle) {
-    this.ctx.fillStyle = (fillStyle instanceof Color) ? fillStyle.toString() : fillStyle;
+    this.ctx.fillStyle = typeof(fillStyle) === "object" ? fillStyle.toString() : fillStyle;
     return this.ctx;
 };
 

@@ -1,6 +1,6 @@
 /*
   html2canvas 0.5.0-alpha <http://html2canvas.hertzen.com>
-  Copyright (c) 2014 Niklas von Hertzen
+  Copyright (c) 2015 Niklas von Hertzen
 
   Released under MIT License
 */
@@ -580,6 +580,7 @@ window.html2canvas = function(nodeList, options) {
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
     options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
     options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
+    options.renderer = typeof(options.renderer) === "function" ? options.renderer : CanvasRenderer;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -626,7 +627,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var bounds = getBounds(node);
     var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
     var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
-    var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
+    var renderer = new options.renderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
@@ -1691,7 +1692,11 @@ NodeContainer.prototype.hasTransform = function() {
 
 NodeContainer.prototype.getValue = function() {
     var value = this.node.value || "";
-    value = (this.node.tagName === "SELECT") ? selectionValue(this.node) : value;
+    if (this.node.tagName === "SELECT") {
+        value = selectionValue(this.node);
+    } else if (this.node.type === "password") {
+        value = Array(value.length + 1).join('\u2022'); // jshint ignore:line
+    }
     return value.length === 0 ? (this.node.placeholder || "") : value;
 };
 
@@ -1859,6 +1864,9 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.renderQueue = [];
     this.stack = new StackingContext(true, 1, element.ownerDocument, null);
     var parent = new NodeContainer(element, null);
+    if (options.background) {
+        renderer.rectangle(0, 0, renderer.width, renderer.height, new Color(options.background));
+    }
     if (element === element.ownerDocument.documentElement) {
         // http://www.w3.org/TR/css3-background/#special-backgrounds
         var canvasBackground = new NodeContainer(parent.color('backgroundColor').isTransparent() ? element.ownerDocument.body : element.ownerDocument.documentElement, null);
@@ -2135,6 +2143,9 @@ NodeParser.prototype.paint = function(container) {
         }
     } catch(e) {
         log(e);
+        if (this.options.strict) {
+            throw e;
+        }
     }
 };
 
@@ -3147,9 +3158,6 @@ function CanvasRenderer(width, height) {
         this.canvas.height = height;
     }
     this.ctx = this.canvas.getContext("2d");
-    if (this.options.background) {
-        this.rectangle(0, 0, width, height, new Color(this.options.background));
-    }
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
@@ -3159,7 +3167,7 @@ function CanvasRenderer(width, height) {
 CanvasRenderer.prototype = Object.create(Renderer.prototype);
 
 CanvasRenderer.prototype.setFillStyle = function(fillStyle) {
-    this.ctx.fillStyle = (fillStyle instanceof Color) ? fillStyle.toString() : fillStyle;
+    this.ctx.fillStyle = typeof(fillStyle) === "object" ? fillStyle.toString() : fillStyle;
     return this.ctx;
 };
 

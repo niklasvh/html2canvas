@@ -244,7 +244,11 @@ NodeContainer.prototype.hasTransform = function() {
 
 NodeContainer.prototype.getValue = function() {
     var value = this.node.value || "";
-    value = (this.node.tagName === "SELECT") ? selectionValue(this.node) : value;
+    if (this.node.tagName === "SELECT") {
+        value = selectionValue(this.node);
+    } else if (this.node.type === "password") {
+        value = Array(value.length + 1).join('\u2022'); // jshint ignore:line
+    }
     return value.length === 0 ? (this.node.placeholder || "") : value;
 };
 
