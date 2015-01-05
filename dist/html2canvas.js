@@ -581,6 +581,7 @@ window.html2canvas = function(nodeList, options) {
     options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
     options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
     options.renderer = typeof(options.renderer) === "function" ? options.renderer : CanvasRenderer;
+    options.strict = !!options.strict;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -705,8 +706,12 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
 
     return new Promise(function(resolve) {
         var documentClone = container.contentWindow.document;
+
+        cloneNodeValues(ownerDocument.documentElement, documentElement, "textarea");
+        cloneNodeValues(ownerDocument.documentElement, documentElement, "select");
+
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
-        if window url is about:blank, we can assign the url to current by writing onto the document
+         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         container.contentWindow.onload = container.onload = function() {
             var interval = setInterval(function() {
@@ -731,6 +736,15 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         documentClone.close();
     });
+}
+
+function cloneNodeValues(document, clone, nodeName) {
+    var originalNodes = document.getElementsByTagName(nodeName);
+    var clonedNodes = clone.getElementsByTagName(nodeName);
+    var count = originalNodes.length;
+    for (var i = 0; i < count; i++) {
+        clonedNodes[i].value = originalNodes[i].value;
+    }
 }
 
 function restoreOwnerScroll(ownerDocument, x, y) {
@@ -2245,7 +2259,8 @@ NodeParser.prototype.paintRadio = function(container) {
 };
 
 NodeParser.prototype.paintFormValue = function(container) {
-    if (container.getValue().length > 0) {
+    var value = container.getValue();
+    if (value.length > 0) {
         var document = container.node.ownerDocument;
         var wrapper = document.createElement('html2canvaswrapper');
         var properties = ['lineHeight', 'textAlign', 'fontFamily', 'fontWeight', 'fontSize', 'color',
@@ -2265,7 +2280,7 @@ NodeParser.prototype.paintFormValue = function(container) {
         wrapper.style.position = "fixed";
         wrapper.style.left = bounds.left + "px";
         wrapper.style.top = bounds.top + "px";
-        wrapper.textContent = container.getValue();
+        wrapper.textContent = value;
         document.body.appendChild(wrapper);
         this.paintText(new TextContainer(wrapper.firstChild, container));
         document.body.removeChild(wrapper);
