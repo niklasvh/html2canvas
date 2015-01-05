@@ -29,14 +29,15 @@
         it("render correctly", function(done) {
             this.timeout(5000);
             var d = 0;
-            for (var i = 0; i < 10; i++) {
+            var count = 3;
+            for (var i = 0; i < count; i++) {
                 html2canvas(document.querySelector('#green-block')).then(function (canvas) {
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
                     validCanvasPixels(canvas);
                     canvas.width = canvas.height = 10;
                     d++;
-                    if (d === 10) {
+                    if (d === count) {
                         done();
                     }
                 });
@@ -46,7 +47,8 @@
         it("render correctly when non sequential", function(done) {
             this.timeout(5000);
             var d = 0;
-            for (var i = 0; i < 10; i++) {
+            var count = 3;
+            for (var i = 0; i < count; i++) {
                 html2canvas(document.querySelector('#block'), {onclone: function(document) {
                     return new Promise(function(resolve) {
                         document.querySelector('#block').style.backgroundColor = 'green';
@@ -60,7 +62,7 @@
                     validCanvasPixels(canvas);
                     canvas.width = canvas.height = 10;
                     d++;
-                    if (d === 10) {
+                    if (d === count) {
                         done();
                     }
                 });
