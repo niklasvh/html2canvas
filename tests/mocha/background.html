@@ -17,6 +17,17 @@
             height: 200px;
             background: green;
         }
+        #background-block {
+            width: 200px;
+            height: 200px;
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgaGD4DwAChAGAJVtEDQAAAABJRU5ErkJggg==) red;
+        }
+        #gradient-block {
+            width: 200px;
+            height: 200px;
+            background-image: -webkit-linear-gradient(top, #008000, #008000);
+            background-image:         linear-gradient(to bottom, #008000, #008000);
+        }
     </style>
 </head>
 <body>
@@ -24,6 +35,8 @@
 <script>mocha.setup('bdd')</script>
 <div id="block"></div>
 <div id="green-block"></div>
+<div id="background-block"></div>
+<div id="gradient-block"></div>
 <script>
     describe("options.background", function() {
         it("with hexcolor", function(done) {
@@ -60,11 +73,47 @@
         });
     });
 
+    describe('element background', function() {
+        it('with background-color', function(done) {
+            html2canvas(document.querySelector("#green-block")).then(function(canvas) {
+                expect(canvas.width).to.equal(200);
+                expect(canvas.height).to.equal(200);
+                validCanvasPixels(canvas);
+                done();
+            }).catch(function(error) {
+                done(error);
+            });
+        });
+
+        it('with background-image', function(done) {
+            html2canvas(document.querySelector("#background-block")).then(function(canvas) {
+                expect(canvas.width).to.equal(200);
+                expect(canvas.height).to.equal(200);
+                validCanvasPixels(canvas);
+                done();
+            }).catch(function(error) {
+                done(error);
+            });
+        });
+
+        it('with gradient background-image', function(done) {
+            html2canvas(document.querySelector("#gradient-block")).then(function(canvas) {
+                expect(canvas.width).to.equal(200);
+                expect(canvas.height).to.equal(200);
+                validCanvasPixels(canvas);
+                done();
+            }).catch(function(error) {
+                done(error);
+            });
+        });
+    });
+
     function validCanvasPixels(canvas) {
         var ctx = canvas.getContext("2d");
         var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         for (var i = 0, len = data.length; i < len; i+=4) {
             if (data[i] !== 0 || data[i+1] !== 128 || data[i+2] !== 0 || data[i+3] !== 255) {
+                console.log(i,data[i], data[i+1], data[i+2], data[i+3]);
                 expect().fail("Invalid canvas data");
             }
         }
