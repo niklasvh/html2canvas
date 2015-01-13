@@ -12,3 +12,10 @@ addons:
 before_script:
   - npm install -g grunt-cli
   - npm install -g uglify-js
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/2b007d4f86de89588804
+    on_success: always
+    on_failure: always
+    on_start: false
