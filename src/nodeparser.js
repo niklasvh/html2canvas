@@ -423,26 +423,37 @@ NodeParser.prototype.paintText = function(container) {
         return window.html2canvas.punycode.ucs2.encode([character]);
     });
 
-    var weight = container.parent.fontWeight();
-    var size = container.parent.css('fontSize');
-    var family = container.parent.css('fontFamily');
-    var shadows = container.parent.parseTextShadows();
+    var color = container.parent.css('color');
+    var fontFamily = container.parent.css('fontFamily');
+    var fontSize = container.parent.css('fontSize');
+    var fontStyle = container.parent.css('fontStyle');
+    var fontVariant = container.parent.css('fontVariant');
+    var fontWeight = container.parent.fontWeight();
+    var textShadow = container.parent.parseTextShadows().reverse();
+    var fontMetrics = this.fontMetrics.getMetrics(fontFamily, fontSize);
 
-    this.renderer.font(container.parent.color('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
-    if (shadows.length) {
-        // TODO: support multiple text shadows
-        this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
-    } else {
-        this.renderer.clearShadow();
-    }
+    this.renderer.font(color, fontStyle, fontVariant, fontWeight, fontSize, fontFamily);
 
     this.renderer.clip(container.parent.clip, function() {
-        textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
-            if (bounds) {
-                this.renderer.text(textList[index], bounds.left, bounds.bottom);
-                this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
-            }
-        }, this);
+    	var textBounds = this.parseTextBounds(container);
+		var fillStyle = this.renderer.ctx.fillStyle;
+		textList.map(textBounds, this).forEach(function(bounds, index) {
+			var text = textList[index];
+			if (bounds && bounds.width) {
+				if (textShadow.length) {
+					textShadow.forEach(function(shadow) {
+						var dx = this.renderer.ctx.canvas.width;
+						this.renderer.ctx.fillStyle = '#000';
+						this.renderer.fontShadow(shadow.color, shadow.offsetX - dx, shadow.offsetY, shadow.blur);
+						this.renderer.text(text, bounds.left + dx, bounds.bottom);
+						this.renderTextDecoration(container.parent, bounds, fontMetrics);
+						this.renderer.ctx.fillStyle = fillStyle;
+					}, this);
+				}
+				this.renderer.text(text, bounds.left, bounds.bottom);
+				this.renderTextDecoration(container.parent, bounds, fontMetrics);
+			}
+		}, this);
     }, this);
 };
 
