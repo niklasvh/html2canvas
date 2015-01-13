@@ -113,7 +113,6 @@
         var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         for (var i = 0, len = data.length; i < len; i+=4) {
             if (data[i] !== 0 || data[i+1] !== 128 || data[i+2] !== 0 || data[i+3] !== 255) {
-                console.log(i,data[i], data[i+1], data[i+2], data[i+3]);
                 expect().fail("Invalid canvas data");
             }
         }
