@@ -26,6 +26,7 @@
             width: 200px;
             height: 200px;
             background-image: -webkit-linear-gradient(top, #008000, #008000);
+            background-image:    -moz-linear-gradient(to bottom, #008000, #008000);
             background-image:         linear-gradient(to bottom, #008000, #008000);
         }
     </style>
@@ -126,6 +127,9 @@
     else {
         mocha.run();
     }
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
 </script>
 </body>
 </html>

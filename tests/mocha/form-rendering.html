@@ -158,6 +158,9 @@
     else {
         mocha.run();
     }
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
 </script>
 </body>
 </html>

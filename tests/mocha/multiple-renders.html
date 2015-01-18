@@ -27,7 +27,7 @@
 <script>
     describe("Multiple renders", function() {
         it("render correctly", function(done) {
-            this.timeout(5000);
+            this.timeout(10000);
             var d = 0;
             var count = 3;
             for (var i = 0; i < count; i++) {
@@ -45,7 +45,7 @@
         });
 
         it("render correctly when non sequential", function(done) {
-            this.timeout(5000);
+            this.timeout(10000);
             var d = 0;
             var count = 3;
             for (var i = 0; i < count; i++) {
@@ -73,12 +73,17 @@
     function validCanvasPixels(canvas) {
         var ctx = canvas.getContext("2d");
         var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        for (var i = 0, len = data.length; i < len; i+=4) {
+        for (var i = 0, len = 200*199*4; i < len; i+=4) {
             if (data[i] !== 0 || data[i+1] !== 128 || data[i+2] !== 0 || data[i+3] !== 255) {
+                console.log(i, data[i], data[i+1], data[i+2], data[i+3]);
                 expect().fail("Invalid canvas data");
             }
         }
     }
+
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
 
     mocha.checkLeaks();
     mocha.globals(['jQuery']);

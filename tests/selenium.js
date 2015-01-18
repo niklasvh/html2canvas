@@ -12,25 +12,12 @@
         humanizeDuration = require("humanize-duration"),
         fs = require("fs");
 
+    var utils = require('./utils');
+    var colors = utils.colors;
+
     Promise.promisifyAll(fs);
 
-    var port = 8080,
-        colors = {
-            red: "\x1b[1;31m",
-            blue: "\x1b[1;36m",
-            violet: "\x1b[0;35m",
-            green: "\x1b[0;32m",
-            clear: "\x1b[0m"
-        };
-
-    function getTests(path) {
-        return fs.readdirAsync(path).map(function(name) {
-            var filename = path + "/" + name;
-            return fs.statAsync(filename).then(function(stat) {
-                return stat.isDirectory() ? getTests(filename) : filename;
-            });
-        });
-    }
+    var port = 8080;
 
     function getPixelArray(base64) {
         return new Promise(function(resolve) {
@@ -49,39 +36,10 @@
         return (100 - (Math.round((diff/h2cPixels.length) * 10000) / 100));
     }
 
-    function initBrowser(settings) {
-        var browser = wd.remote({
-            hostname: 'localhost',
-            port: 4445,
-            user: process.env.SAUCE_USERNAME,
-            pwd: process.env.SAUCE_ACCESS_KEY
-        }, 'promiseChain');
-
-        if (process.env.TRAVIS_JOB_NUMBER) {
-            settings["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
-            settings["name"] = process.env.TRAVIS_COMMIT.substring(0, 10);
-            settings["build"] = process.env.TRAVIS_BUILD_NUMBER;
-        } else {
-            settings["name"] = "Manual run";
-        }
-
-        return browser.resolve(Promise).init(settings).setImplicitWaitTimeout(15000).then(function() {
-            return settings;
-        });
-    }
-
-    function loadTestPage(browser, test) {
-        return function(settings) {
-            return browser.get("http://localhost:" + port + "/" + test + "?selenium").then(function() {
-                return settings;
-            });
-        };
-    }
-
     function captureScreenshots(browser) {
         return function() {
             return Promise.props({
-                dataUrl: browser.elementByCss(".html2canvas").then(function(node) {
+                dataUrl: browser.waitForElementByCss(".html2canvas", 15000).then(function(node) {
                     return browser.execute("return arguments[0].toDataURL('image/png').substring(22)", [node]);
                 }),
                 screenshot: browser.takeScreenshot()
@@ -118,33 +76,31 @@
 
     function runTest(browser, test) {
         return Promise.resolve(browser
-            .then(loadTestPage(browser, test))
+            .then(utils.loadTestPage(browser, test, port))
             .then(captureScreenshots(browser))
             .then(analyzeResults(test))).cancellable();
     }
 
     exports.tests = function(browsers, singleTest) {
         var path = "tests/cases";
-        return (singleTest ? Promise.resolve([singleTest]) : getTests(path)).then(function(t) {
-            var tests = _.flatten(t);
+        return (singleTest ? Promise.resolve([singleTest]) : utils.getTests(path)).then(function(tests) {
             return Promise.map(browsers, function(settings) {
-                var browser = initBrowser(settings);
+                var browser = utils.initBrowser(settings);
                 var name = [settings.browserName, settings.version, settings.platform].join("-");
                 var count = 0;
-                return Promise.map(tests, function(test, index, total) {
-                    console.log(colors.green, "STARTING", "(" + (++count) + "/" + total + ")", name, test, colors.clear);
-                    var start = Date.now();
-                    return runTestWithRetries(browser, test).then(function(result) {
-                        console.log(colors.green, "COMPLETE", humanizeDuration(Date.now() - start), "(" + count + "/" + total + ")", name, result.testCase.substring(path.length), result.accuracy.toFixed(2) + "%", colors.clear);
-                    });
-                }, {concurrency: 1})
-                .settle()
-                .catch(function(error) {
-                    console.log(colors.red, "ERROR", name, error.message);
-                    throw error;
-                })
-                .finally(function() {
-                    return browser.quit();
+                return Promise.using(browser, function() {
+                    return Promise.map(tests, function(test, index, total) {
+                        console.log(colors.green, "STARTING", "(" + (++count) + "/" + total + ")", name, test, colors.clear);
+                        var start = Date.now();
+                        return runTestWithRetries(browser, test).then(function(result) {
+                            console.log(colors.green, "COMPLETE", humanizeDuration(Date.now() - start), "(" + count + "/" + total + ")", name, result.testCase.substring(path.length), result.accuracy.toFixed(2) + "%", colors.clear);
+                        });
+                    }, {concurrency: 1})
+                        .settle()
+                        .catch(function(error) {
+                            console.log(colors.red, "ERROR", name, error.message);
+                            throw error;
+                        });
                 });
             }, {concurrency: 3});
         });

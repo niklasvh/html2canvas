@@ -13,7 +13,48 @@ module.exports = function(grunt) {
         post: '\n}).call({}, window, document);'
     };
 
-    // Project configuration.
+    var browsers = {
+        chrome: {
+            browserName: "chrome",
+            platform: "Windows 7",
+            version: "39"
+        },
+        firefox: {
+            browserName: "firefox",
+            version: "15",
+            platform: "Windows 7"
+        },
+        ie9: {
+            browserName: "internet explorer",
+            version: "9",
+            platform: "Windows 7"
+        },
+        ie10: {
+            browserName: "internet explorer",
+            version: "10",
+            platform: "Windows 8"
+        },
+        ie11: {
+            browserName: "internet explorer",
+            version: "11",
+            platform: "Windows 8.1"
+        },
+        safari6: {
+            browserName: "safari",
+            version: "6",
+            platform: "OS X 10.8"
+        },
+        safari7:{
+            browserName: "safari",
+            platform: "OS X 10.9",
+            version: "7"
+        },
+        chromeOSX:{
+            browserName: "chrome",
+            platform: "OS X 10.8",
+            version: "39"
+        }
+    };
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
@@ -124,48 +165,8 @@ module.exports = function(grunt) {
         mocha_phantomjs: {
             all: ['tests/mocha/**/*.html']
         },
-        webdriver: {
-            chrome: {
-                browserName: "chrome",
-                platform: "Windows 7",
-                version: "34"
-            },
-            firefox: {
-                browserName: "firefox",
-                version: "15",
-                platform: "Windows 7"
-            },
-            ie9: {
-                browserName: "internet explorer",
-                version: "9",
-                platform: "Windows 7"
-            },
-            ie10: {
-                browserName: "internet explorer",
-                version: "10",
-                platform: "Windows 8"
-            },
-            ie11: {
-                browserName: "internet explorer",
-                version: "11",
-                platform: "Windows 8.1"
-            },
-            safari6: {
-                browserName: "safari",
-                version: "6",
-                platform: "OS X 10.8"
-            },
-            safari7:{
-                browserName: "safari",
-                platform: "OS X 10.9",
-                version: "7"
-            },
-            chromeOSX:{
-                browserName: "chrome",
-                platform: "OS X 10.8",
-                version: "34"
-            }
-        }
+        mocha_webdriver: browsers,
+        webdriver: browsers
     });
 
     grunt.registerTask('webdriver', 'Browser render tests', function(browser, test) {
@@ -176,6 +177,17 @@ module.exports = function(grunt) {
             done(false);
         }).finally(function() {
             console.log("Done");
+            done();
+        });
+    });
+
+    grunt.registerTask('mocha_webdriver', 'Browser mocha tests', function(browser, test) {
+        var selenium = require("./tests/mocha/selenium.js");
+        var done = this.async();
+        var browsers = (browser) ? [grunt.config.get(this.name + "." + browser)] : _.values(grunt.config.get(this.name));
+        selenium.tests(browsers, test).catch(function() {
+            done(false);
+        }).finally(function() {
             done();
         });
     });
