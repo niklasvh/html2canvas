@@ -128,7 +128,7 @@ ImageLoader.prototype.fetch = function(nodes) {
 
 ImageLoader.prototype.timeout = function(container, timeout) {
     var timer;
-    return Promise.race([container.promise, new Promise(function(res, reject) {
+    var promise = Promise.race([container.promise, new Promise(function(res, reject) {
         timer = setTimeout(function() {
             log("Timed out loading image", container);
             reject(container);
@@ -137,4 +137,8 @@ ImageLoader.prototype.timeout = function(container, timeout) {
         clearTimeout(timer);
         return container;
     });
+    promise['catch'](function() {
+        clearTimeout(timer);
+    });
+    return promise;
 };
