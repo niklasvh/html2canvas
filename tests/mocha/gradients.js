@@ -102,6 +102,9 @@ describe("Gradients", function() {
         var value = container.css("backgroundImage");
         it(value, function() {
             var parsedBackground = parseBackgrounds(value);
+            if (parsedBackground[0].args[0] === "0% 50%") {
+                parsedBackground[0].args[0] = 'left';
+            }
             expect(parsedBackground[0].args).to.eql(expected[i].args);
             expect(parsedBackground[0].method).to.eql(expected[i].method);
         });
