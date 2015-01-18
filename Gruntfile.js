@@ -90,6 +90,12 @@ module.exports = function(grunt) {
                     keepalive: true
                 }
             },
+            altServer: {
+                options: {
+                    port: 8083,
+                    base: './'
+                }
+            },
             cors: {
                 options: {
                     port: 8081,
@@ -200,9 +206,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-execute');
 
-    grunt.registerTask('server', ['connect:cors', 'connect:proxy', 'connect:server']);
+    grunt.registerTask('server', ['connect:cors', 'connect:proxy', 'connect:altServer', 'connect:server']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
-    grunt.registerTask('default', ['jshint', 'build', 'mocha_phantomjs']);
-    grunt.registerTask('travis', ['jshint', 'build','mocha_phantomjs', 'connect:ci', 'connect:proxy', 'connect:cors', 'webdriver']);
+    grunt.registerTask('default', ['jshint', 'build', 'connect:altServer', 'mocha_phantomjs']);
+    grunt.registerTask('travis', ['jshint', 'build', 'connect:altServer', 'connect:ci', 'connect:proxy', 'connect:cors', 'mocha_phantomjs', 'webdriver']);
 
 };
