@@ -23,6 +23,7 @@
   "devDependencies": {
     "base64-arraybuffer": ">= 0.1.0",
     "bluebird": "^2.7.1",
+    "bower": "^1.3.12",
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-connect": "^0.8.0",
@@ -39,7 +40,8 @@
     "wd": "^0.2.21"
   },
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt travis --verbose",
+    "postpublish": "bower register html2canvas git://github.com/niklasvh/html2canvas.git"
   },
   "homepage": "http://html2canvas.hertzen.com",
   "licenses": [
