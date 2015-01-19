@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="lib/mocha.css" />
+    <script src="../../dist/html2canvas.js"></script>
+    <script src="../assets/jquery-1.6.2.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+</head>
+<body>
+<div id="mocha"></div>
+<script>mocha.setup('bdd')</script>
+<div style="background: red; width: 200px; height:200px;" id="block"></div>
+<script>
+    describe("options.appendCssClassname", function() {
+        it("window view with body", function(done) {
+            html2canvas(document.body, {
+                type: 'view',
+                removeContainer: false,
+                appendCssClass: 'my-css-class'
+            }).then(function(canvas) {
+                var iframe = document.body.querySelector('iframe');
+                var html = iframe.contentDocument.querySelector('html');
+
+                expect(html.getAttribute('class')).to.equal('my-css-class');
+
+                done();
+            }).catch(function(error) {
+                done(error);
+            });
+        });
+    });
+
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+    }
+    else {
+        mocha.run();
+    }
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
+</script>
+</body>
+</html>

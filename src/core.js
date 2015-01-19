@@ -18,6 +18,7 @@ window.html2canvas = function(nodeList, options) {
     options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
     options.renderer = typeof(options.renderer) === "function" ? options.renderer : CanvasRenderer;
     options.strict = !!options.strict;
+    options.appendCssClass = typeof(options.appendCssClass) === "undefined" ? false : options.appendCssClass;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -170,6 +171,14 @@ function createWindowClone(ownerDocument, containerDocument, width, height, opti
         restoreOwnerScroll(ownerDocument, x, y);
         documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
         documentClone.close();
+
+        if (options.appendCssClass) {
+            var htmlNode = documentClone.querySelector('html');
+            if (htmlNode) {
+                htmlNode.setAttribute('class', options.appendCssClass);
+            }
+        }
+
     });
 }
 
