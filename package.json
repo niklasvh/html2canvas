@@ -2,7 +2,8 @@
   "title": "html2canvas",
   "name": "html2canvas",
   "description": "Screenshots with JavaScript",
-  "version": "0.5.0-alpha",
+  "main": "main.js",
+  "version": "0.5.0-alpha1",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
@@ -29,6 +30,7 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-execute": "^0.2.2",
+    "grunt-mocha-cli": "^1.12.0",
     "grunt-mocha-phantomjs": "^0.6.0",
     "html2canvas-proxy": "0.0.5",
     "humanize-duration": "^2.0.1",

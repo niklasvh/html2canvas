@@ -9,8 +9,8 @@ module.exports = function(grunt) {
             '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
             '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n',
-        pre: '\n(function(window, document, module, exports, global, define, undefined){\n\n',
-        post: '\n}).call({}, window, document);'
+        pre: '\n(function(window, document, exports, global, define, undefined){\n\n',
+        post: '\n}).call({}, typeof(window) !== "undefined" ? window : undefined, typeof(document) !== "undefined" ? document : undefined);'
     };
 
     var browsers = {
@@ -168,6 +168,12 @@ module.exports = function(grunt) {
             all: ['src/*.js', 'src/renderers/*.js',  '!src/promise.js'],
             options: grunt.file.readJSON('./.jshintrc')
         },
+        mochacli: {
+            options: {
+                reporter: 'spec'
+            },
+            all: ['tests/node/*.js']
+        },
         mocha_phantomjs: {
             all: ['tests/mocha/**/*.html']
         },
@@ -205,10 +211,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-execute');
+    grunt.loadNpmTasks('grunt-mocha-cli');
 
     grunt.registerTask('server', ['connect:cors', 'connect:proxy', 'connect:altServer', 'connect:server']);
     grunt.registerTask('build', ['execute', 'concat', 'uglify']);
-    grunt.registerTask('default', ['jshint', 'build', 'connect:altServer', 'mocha_phantomjs']);
+    grunt.registerTask('default', ['jshint', 'build', 'mochacli', 'connect:altServer', 'mocha_phantomjs']);
     grunt.registerTask('travis', ['jshint', 'build', 'connect:altServer', 'connect:ci', 'connect:proxy', 'connect:cors', 'mocha_phantomjs', 'webdriver']);
 
 };
