@@ -694,6 +694,7 @@ function isIE9() {
     return document.documentMode && document.documentMode <= 9;
 }
 
+// https://github.com/niklasvh/html2canvas/issues/503
 function cloneNodeIE9(node, javascriptEnabled) {
     var clone = node.nodeType === 3 ? document.createTextNode(node.nodeValue) : node.cloneNode(false);
 
