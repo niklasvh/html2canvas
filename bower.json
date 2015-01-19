@@ -1,6 +1,5 @@
 {
     "name": "html2canvas",
-    "version": "0.5.0-alpha",
     "description": "Screenshots with JavaScript",
     "main": "dist/html2canvas.js",
     "ignore": [
