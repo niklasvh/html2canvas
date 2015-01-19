@@ -690,10 +690,28 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
+function isIE9() {
+    return document.documentMode && document.documentMode <= 9;
+}
+
+function cloneNodeIE9(node, javascriptEnabled) {
+    var clone = node.nodeType === 3 ? document.createTextNode(node.nodeValue) : node.cloneNode(false);
+
+    var child = node.firstChild;
+    while(child) {
+        if (javascriptEnabled === true || child.nodeType !== 1 || child.nodeName !== 'SCRIPT') {
+            clone.appendChild(cloneNodeIE9(child, javascriptEnabled));
+        }
+        child = child.nextSibling;
+    }
+
+    return clone;
+}
+
 function createWindowClone(ownerDocument, containerDocument, width, height, options, x ,y) {
     labelCanvasElements(ownerDocument);
-    var documentElement = ownerDocument.documentElement.cloneNode(true),
-        container = containerDocument.createElement("iframe");
+    var documentElement = isIE9() ? cloneNodeIE9(ownerDocument.documentElement, options.javascriptEnabled) : ownerDocument.documentElement.cloneNode(true);
+    var container = containerDocument.createElement("iframe");
 
     container.className = "html2canvas-container";
     container.style.visibility = "hidden";
