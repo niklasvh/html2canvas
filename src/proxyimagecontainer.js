@@ -1,5 +1,4 @@
 function ProxyImageContainer(src, proxy) {
-    var script = document.createElement("script");
     var link = document.createElement("a");
     link.href = src;
     src = link.href;
