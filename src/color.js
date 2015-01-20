@@ -69,7 +69,7 @@ Color.prototype.hex6 = function(value) {
 };
 
 
-var _rgb = /^rgb\((\d{1,3}) *, *(\d{1,3}) *, *(\d{1,3})\)$/;
+var _rgb = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/;
 
 Color.prototype.rgb = function(value) {
     var match = null;
@@ -81,7 +81,7 @@ Color.prototype.rgb = function(value) {
     return match !== null;
 };
 
-var _rgba = /^rgba\((\d{1,3}) *, *(\d{1,3}) *, *(\d{1,3}) *, *(\d+\.?\d*)\)$/;
+var _rgba = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d?\.?\d+)\s*\)$/;
 
 Color.prototype.rgba = function(value) {
     var match = null;
@@ -101,12 +101,13 @@ Color.prototype.toString = function() {
 };
 
 Color.prototype.namedColor = function(value) {
-    var color = colors[value.toLowerCase()];
+    value = value.toLowerCase();
+    var color = colors[value];
     if (color) {
         this.r = color[0];
         this.g = color[1];
         this.b = color[2];
-    } else if (value.toLowerCase() === "transparent") {
+    } else if (value === "transparent") {
         this.r = this.g = this.b = this.a = 0;
         return true;
     }

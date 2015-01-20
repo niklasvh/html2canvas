@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -67,7 +68,8 @@
         <div style="background-position: left bottom;"></div>
     </div>
 
-    <style>
+    <div id="backgroundGradients">
+        <style scoped>
         .linearGradientSimple {
             /* FF 3.6+ */
             background: -moz-linear-gradient(left, #ff0000, #ffff00, #00ff00);
@@ -81,6 +83,20 @@
             background: -ms-linear-gradient(left, #ff0000, #ffff00, #00ff00);
             /* W3C */
             background: linear-gradient(left, #ff0000, #ffff00, #00ff00);
+        }
+        .linearGradientSimple2 {
+            /* FF 3.6+ */
+            background: -moz-linear-gradient(left, red, #ff0, #0f0);
+            /* Chrome,Safari4+ */
+            background: -webkit-gradient(linear, left center, right center, color-stop(red), color-stop(#ff0), color-stop(#0f0));
+            /* Chrome 10+, Safari 5.1+ */
+            background: -webkit-linear-gradient(left, red, #ff0, #0f0);
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(left, red, #ff0, #0f0);
+            /* IE 10+ */
+            background: -ms-linear-gradient(left, red, #ff0, #0f0);
+            /* W3C */
+            background: linear-gradient(left, red, #ff0, #0f0);
         }
         .linearGradientWithStops {
             /* FF 3.6+ */
@@ -96,7 +112,23 @@
             /* W3C */
             background: linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
         }
-        .linearGradient3 {
+        .linearGradientWithPixelLengthStops {
+            width: 100px;
+            height: 100px;
+            /* FF 3.6+ */
+            background: -moz-linear-gradient(left, #cedbe9 0%, #aac5de 17px, #6199c7 50%, #3a84c3 51px, #419ad6 59%, #4bb8f0 71px, #3a8bc2 84%, #26558b 100px);
+            /* Chrome, Safari 4+ */
+            background: -webkit-gradient(linear, left center, right center, color-stop(0%, #cedbe9), color-stop(17px, #aac5de), color-stop(50%, #6199c7), color-stop(51%, #3a84c3), color-stop(59%, #419ad6), color-stop(71px, #4bb8f0), color-stop(84%, #3a8bc2), color-stop(100px, #26558b));
+            /* Chrome 10+, Safari 5.1+ */
+            background: -webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17px, #6199c7 50%, #3a84c3 51px, #419ad6 59%, #4bb8f0 71px, #3a8bc2 84%, #26558b 100px);
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(left, #cedbe9 0%, #aac5de 17px, #6199c7 50%, #3a84c3 51px, #419ad6 59%, #4bb8f0 71px, #3a8bc2 84%, #26558b 100px);
+            /* IE 10+ */
+            background: -ms-linear-gradient(left, #cedbe9 0%, #aac5de 17px, #6199c7 50%, #3a84c3 51px, #419ad6 59%, #4bb8f0 71px, #3a8bc2 84%, #26558b 100px);
+            /* W3C */
+            background: linear-gradient(left, #cedbe9 0%, #aac5de 17px, #6199c7 50%, #3a84c3 51px, #419ad6 59%, #4bb8f0 71px, #3a8bc2 84%, #26558b 100px);
+        }
+        .linearGradient5 {
             /* FF 3.6+ */
             background: -moz-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
             /* Chrome, Safari 4+ */
@@ -108,8 +140,19 @@
             /* W3C */
             background: linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
         }
-
-        .linearGradient4 {
+        .linearGradient6 {
+            /* FF 3.6+ */
+            background: -moz-linear-gradient(top, #F00 0, green 31.4159%, #0000fF 51%, rgba(0, 0, 0, 0.0) 100%);
+            /* Chrome, Safari 4+ */
+            background: -webkit-gradient(linear, center top, center bottom, color-stop(0, #F00), color-stop(31.4159%, green), color-stop(51%, #0000fF), color-stop(100%, rgba(0, 0, 0, 0.0)));
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(top, #F00 0, green 31.4159%, #0000fF 51%, rgba(0, 0, 0, 0.0) 100%);
+            /* IE 10+ */
+            background: -ms-linear-gradient(top, #F00 0, green 31.4159%, #0000fF 51%, rgba(0, 0, 0, 0.0) 100%);
+            /* W3C */
+            background: linear-gradient(top, #F00 0, green 31.4159%, #0000fF 51%, rgba(0, 0, 0, 0.0) 100%);
+        }
+        .linearGradient7 {
             background: -webkit-linear-gradient(0deg, #ddd, #ddd 50%, transparent 50%);
             background: linear-gradient(0deg, #ddd, #ddd 50%, transparent 50%);
         }
@@ -157,12 +200,14 @@
             background: -ms-radial-gradient(75% 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
             background: radial-gradient(75% 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
         }
-    </style>
-    <div id="backgroundGradients">
+        </style>
         <div class="linearGradientSimple"></div>
+        <div class="linearGradientSimple2"></div>
         <div class="linearGradientWithStops"></div>
-        <div class="linearGradient3"></div>
-        <div class="linearGradient4"></div>
+        <div class="linearGradientWithPixelLengthStops"></div>
+        <div class="linearGradient5"></div>
+        <div class="linearGradient6"></div>
+        <div class="linearGradient7"></div>
         <div class="radialGradient"></div>
         <div class="radialGradient2"></div>
         <div class="radialGradient3"></div>
