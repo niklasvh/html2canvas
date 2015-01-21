@@ -10,6 +10,7 @@
     "boss": true,
     "eqnull": true,
     "browser": true,
+    "node": true,
     "indent": 4,
     "globals": {
       "jQuery": true

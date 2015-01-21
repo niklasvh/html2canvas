@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Proxy tests</title>
+    <link rel="stylesheet" href="lib/mocha.css" />
+    <script src="../assets/jquery-1.6.2.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+    <style>
+        #block {
+            background: red;
+        }
+
+        #block.class {
+            background: green;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 200px; height:200px;" id="block"></div>
+<script src="../../dist/html2canvas.js"></script>
+<script src="clone.js"></script>
+<div id="mocha"></div>
+<script>mocha.setup('bdd')</script>
+<script>
+    // https://github.com/niklasvh/html2canvas/issues/503
+    describe("Document clone should not re-execute javascript", function() {
+        it("with mutating className", function (done) {
+            this.timeout(10000);
+            html2canvas(document.querySelector("#block")).then(function (canvas) {
+                expect(canvas.width).to.equal(200);
+                expect(canvas.height).to.equal(200);
+                validCanvasPixels(canvas);
+                done();
+            }).catch(function (error) {
+                done(error);
+            });
+        });
+
+    });
+
+    function validCanvasPixels(canvas) {
+        var ctx = canvas.getContext("2d");
+        var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        for (var i = 0, len = data.length; i < len; i+=4) {
+            if (data[i] !== 0 || data[i+1] !== 128 || data[i+2] !== 0 || data[i+3] !== 255) {
+                expect().fail("Invalid canvas data");
+            }
+        }
+    }
+
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+    }
+    else {
+        mocha.run();
+    }
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
+</script>
+</body>
+</html>

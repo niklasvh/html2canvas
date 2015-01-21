@@ -2,7 +2,8 @@
   "title": "html2canvas",
   "name": "html2canvas",
   "description": "Screenshots with JavaScript",
-  "version": "0.5.0-alpha",
+  "main": "main.js",
+  "version": "0.5.0-alpha1",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
@@ -21,7 +22,8 @@
   },
   "devDependencies": {
     "base64-arraybuffer": ">= 0.1.0",
-    "bluebird": "^2.3.2",
+    "bluebird": "^2.7.1",
+    "bower": "^1.3.12",
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-connect": "^0.8.0",
@@ -29,6 +31,7 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-execute": "^0.2.2",
+    "grunt-mocha-cli": "^1.12.0",
     "grunt-mocha-phantomjs": "^0.6.0",
     "html2canvas-proxy": "0.0.5",
     "humanize-duration": "^2.0.1",
@@ -37,7 +40,8 @@
     "wd": "^0.2.21"
   },
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt travis --verbose",
+    "postpublish": "bower register html2canvas git://github.com/niklasvh/html2canvas.git"
   },
   "homepage": "http://html2canvas.hertzen.com",
   "licenses": [
