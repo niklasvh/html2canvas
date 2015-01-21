@@ -434,26 +434,35 @@ NodeParser.prototype.paintText = function(container) {
 
     this.renderer.font(color, fontStyle, fontVariant, fontWeight, fontSize, fontFamily);
 
+    var useShadowOffset = !!textShadow.length;   
+    if (textShadow.length === 1) {
+        var alpha = new Color(color).a;
+        if (alpha === null || alpha === 1.0) {
+            useShadowOffset = false;
+            this.renderer.fontShadow(textShadow[0].color, textShadow[0].offsetX, textShadow[0].offsetY, textShadow[0].blur);
+        }
+    }
+
     this.renderer.clip(container.parent.clip, function() {
-    	var textBounds = this.parseTextBounds(container);
-		var fillStyle = this.renderer.ctx.fillStyle;
-		textList.map(textBounds, this).forEach(function(bounds, index) {
-			var text = textList[index];
-			if (bounds && bounds.width) {
-				if (textShadow.length) {
-					textShadow.forEach(function(shadow) {
-						var dx = this.renderer.ctx.canvas.width;
-						this.renderer.ctx.fillStyle = '#000';
-						this.renderer.fontShadow(shadow.color, shadow.offsetX - dx, shadow.offsetY, shadow.blur);
-						this.renderer.text(text, bounds.left + dx, bounds.bottom);
-						this.renderTextDecoration(container.parent, bounds, fontMetrics);
-						this.renderer.ctx.fillStyle = fillStyle;
-					}, this);
-				}
-				this.renderer.text(text, bounds.left, bounds.bottom);
-				this.renderTextDecoration(container.parent, bounds, fontMetrics);
-			}
-		}, this);
+        var textBounds = this.parseTextBounds(container);
+        var fillStyle = this.renderer.ctx.fillStyle;
+        textList.map(textBounds, this).forEach(function(bounds, index) {
+            var text = textList[index];
+            if (bounds && bounds.width) {
+                if (useShadowOffset) {
+                    var dx = this.renderer.width;
+                    this.renderer.setVariable('fillStyle', '#000');
+                    textShadow.forEach(function(shadow) {
+                        this.renderer.fontShadow(shadow.color, shadow.offsetX - dx, shadow.offsetY, shadow.blur);
+                        this.renderer.text(text, bounds.left + dx, bounds.bottom);
+                        this.renderTextDecoration(container.parent, bounds, fontMetrics);
+                    }, this);
+                    this.renderer.setVariable('fillStyle', fillStyle);
+                }
+                this.renderer.text(text, bounds.left, bounds.bottom);
+                this.renderTextDecoration(container.parent, bounds, fontMetrics);
+            }
+        }, this);
     }, this);
 };
 
