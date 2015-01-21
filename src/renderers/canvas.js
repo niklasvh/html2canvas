@@ -8,7 +8,6 @@ function CanvasRenderer(width, height) {
     this.ctx = this.canvas.getContext("2d");
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
-    this.variables = {};
     log("Initialized CanvasRenderer with size", width, "x", height);
 }
 
@@ -91,8 +90,8 @@ CanvasRenderer.prototype.font = function(color, style, variant, weight, size, fa
 
 CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
     this.setVariable("shadowColor", color.toString())
-        .setVariable("shadowOffsetY", offsetX)
-        .setVariable("shadowOffsetX", offsetY)
+        .setVariable("shadowOffsetX", offsetX)
+        .setVariable("shadowOffsetY", offsetY)
         .setVariable("shadowBlur", blur);
 };
 
@@ -111,10 +110,9 @@ CanvasRenderer.prototype.setTransform = function(transform) {
 };
 
 CanvasRenderer.prototype.setVariable = function(property, value) {
-    if (this.variables[property] !== value) {
-        this.variables[property] = this.ctx[property] = value;
+    if (this.ctx[property] !== value) {
+        this.ctx[property] = value;
     }
-
     return this;
 };
 
