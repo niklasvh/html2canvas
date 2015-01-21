@@ -436,10 +436,10 @@ NodeParser.prototype.paintText = function(container) {
 
     var useShadowOffset = !!textShadow.length;   
     if (textShadow.length === 1) {
-        var alpha = new Color(color).a;
-        if (alpha === null || alpha === 1.0) {
-            useShadowOffset = false;
+        color = new Color(color);
+        if (color && (color.a === null || color.a === 1.0)) {
             this.renderer.fontShadow(textShadow[0].color, textShadow[0].offsetX, textShadow[0].offsetY, textShadow[0].blur);
+            useShadowOffset = false;
         }
     }
 
