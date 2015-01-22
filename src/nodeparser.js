@@ -435,7 +435,9 @@ NodeParser.prototype.paintText = function(container) {
     this.renderer.font(color, fontStyle, fontVariant, fontWeight, fontSize, fontFamily);
 
     var renderShadowAlone = textShadow.length;   
-    if (renderShadowAlone === 1) {
+    if (renderShadowAlone === 0) {
+        this.renderer.clearShadow();
+    } else if (renderShadowAlone === 1) {
         color = new Color(color);
         if (color && (color.a === null || color.a === 1.0)) {
             this.renderer.fontShadow(textShadow[0].color, textShadow[0].offsetX, textShadow[0].offsetY, textShadow[0].blur);
