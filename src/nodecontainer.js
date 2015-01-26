@@ -121,7 +121,7 @@ NodeContainer.prototype.cssList = function(property, index) {
     value = value[index || 0] || value[0] || 'auto';
     value = value.trim().split(' ');
     if (value.length === 1) {
-        value = [value[0], value[0]];
+        value = [value[0], isPercentage(value[0]) ? 'auto' : value[0]];
     }
     return value;
 };
