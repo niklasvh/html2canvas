@@ -1539,11 +1539,8 @@ process.umask = function() { return 0; };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],4:[function(require,module,exports){
-module.exports = require('es6-promise').Promise;
-
-},{"es6-promise":1}],5:[function(require,module,exports){
 var log = require('./log');
-var Promise = require('./Promise');
+var Promise = require('./promise');
 
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
@@ -1668,7 +1665,7 @@ module.exports = function(ownerDocument, containerDocument, width, height, optio
     });
 };
 
-},{"./Promise":4,"./log":16}],6:[function(require,module,exports){
+},{"./log":15,"./promise":18}],5:[function(require,module,exports){
 // http://dev.w3.org/csswg/css-color/
 
 function Color(value) {
@@ -1941,7 +1938,7 @@ var colors = {
 
 module.exports = Color;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Promise = require('./promise');
 var Support = require('./support');
 var CanvasRenderer = require('./renderers/canvas');
@@ -2090,7 +2087,7 @@ function absoluteUrl(url) {
     return link;
 }
 
-},{"./clone":5,"./imageloader":14,"./log":16,"./nodecontainer":17,"./nodeparser":18,"./promise":19,"./proxy":20,"./renderers/canvas":24,"./support":26,"./utils":30}],8:[function(require,module,exports){
+},{"./clone":4,"./imageloader":13,"./log":15,"./nodecontainer":16,"./nodeparser":17,"./promise":18,"./proxy":19,"./renderers/canvas":23,"./support":25,"./utils":29}],7:[function(require,module,exports){
 var Promise = require('./promise');
 var log = require('./log');
 var smallImage = require('./utils').smallImage;
@@ -2115,7 +2112,7 @@ function DummyImageContainer(src) {
 
 module.exports = DummyImageContainer;
 
-},{"./log":16,"./promise":19,"./utils":30}],9:[function(require,module,exports){
+},{"./log":15,"./promise":18,"./utils":29}],8:[function(require,module,exports){
 var smallImage = require('./utils').smallImage;
 
 function Font(family, size) {
@@ -2169,7 +2166,7 @@ function Font(family, size) {
 
 module.exports = Font;
 
-},{"./utils":30}],10:[function(require,module,exports){
+},{"./utils":29}],9:[function(require,module,exports){
 var Font = require('./font');
 
 function FontMetrics() {
@@ -2185,9 +2182,9 @@ FontMetrics.prototype.getMetrics = function(family, size) {
 
 module.exports = FontMetrics;
 
-},{"./font":9}],11:[function(require,module,exports){
+},{"./font":8}],10:[function(require,module,exports){
 var utils = require('./utils');
-var Promise = require('./Promise');
+var Promise = require('./promise');
 var getBounds = utils.getBounds;
 var loadUrlDocument = require('./proxy').loadUrlDocument;
 
@@ -2219,7 +2216,7 @@ FrameContainer.prototype.proxyLoad = function(proxy, bounds, options) {
 
 module.exports = FrameContainer;
 
-},{"./Promise":4,"./core":7,"./proxy":20,"./utils":30}],12:[function(require,module,exports){
+},{"./core":6,"./promise":18,"./proxy":19,"./utils":29}],11:[function(require,module,exports){
 var Promise = require('./promise');
 
 function GradientContainer(imageData) {
@@ -2240,7 +2237,7 @@ GradientContainer.prototype.TYPES = {
 
 module.exports = GradientContainer;
 
-},{"./promise":19}],13:[function(require,module,exports){
+},{"./promise":18}],12:[function(require,module,exports){
 var Promise = require('./promise');
 
 function ImageContainer(src, cors) {
@@ -2263,7 +2260,7 @@ function ImageContainer(src, cors) {
 
 module.exports = ImageContainer;
 
-},{"./promise":19}],14:[function(require,module,exports){
+},{"./promise":18}],13:[function(require,module,exports){
 var Promise = require('./promise');
 var log = require('./log');
 var ImageContainer = require('./imagecontainer');
@@ -2423,7 +2420,7 @@ ImageLoader.prototype.timeout = function(container, timeout) {
 
 module.exports = ImageLoader;
 
-},{"./dummyimagecontainer":8,"./framecontainer":11,"./imagecontainer":13,"./lineargradientcontainer":15,"./log":16,"./promise":19,"./proxyimagecontainer":21,"./svgcontainer":27,"./svgnodecontainer":28,"./utils":30,"./webkitgradientcontainer":31}],15:[function(require,module,exports){
+},{"./dummyimagecontainer":7,"./framecontainer":10,"./imagecontainer":12,"./lineargradientcontainer":14,"./log":15,"./promise":18,"./proxyimagecontainer":20,"./svgcontainer":26,"./svgnodecontainer":27,"./utils":29,"./webkitgradientcontainer":30}],14:[function(require,module,exports){
 var GradientContainer = require('./gradientcontainer');
 var Color = require('./color');
 
@@ -2503,14 +2500,14 @@ LinearGradientContainer.prototype.stepRegExp = /((?:rgb|rgba)\(\d{1,3},\s\d{1,3}
 
 module.exports = LinearGradientContainer;
 
-},{"./color":6,"./gradientcontainer":12}],16:[function(require,module,exports){
+},{"./color":5,"./gradientcontainer":11}],15:[function(require,module,exports){
 module.exports = function() {
     if (window.html2canvas.logging && window.console && window.console.log) {
         Function.prototype.bind.call(window.console.log, (window.console)).apply(window.console, [(Date.now() - window.html2canvas.start) + "ms", "html2canvas:"].concat([].slice.call(arguments, 0)));
     }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var Color = require('./color');
 var utils = require('./utils');
 var getBounds = utils.getBounds;
@@ -2803,7 +2800,7 @@ function asFloat(str) {
 
 module.exports = NodeContainer;
 
-},{"./color":6,"./utils":30}],18:[function(require,module,exports){
+},{"./color":5,"./utils":29}],17:[function(require,module,exports){
 var log = require('./log');
 var punycode = require('punycode');
 var NodeContainer = require('./nodecontainer');
@@ -3675,9 +3672,10 @@ function hasUnicode(string) {
 
 module.exports = NodeParser;
 
-},{"./color":6,"./fontmetrics":10,"./log":16,"./nodecontainer":17,"./promise":19,"./pseudoelementcontainer":22,"./stackingcontext":25,"./textcontainer":29,"./utils":30,"punycode":3}],19:[function(require,module,exports){
-arguments[4][4][0].apply(exports,arguments)
-},{"dup":4,"es6-promise":1}],20:[function(require,module,exports){
+},{"./color":5,"./fontmetrics":9,"./log":15,"./nodecontainer":16,"./promise":18,"./pseudoelementcontainer":21,"./stackingcontext":24,"./textcontainer":28,"./utils":29,"punycode":3}],18:[function(require,module,exports){
+module.exports = require('es6-promise').Promise;
+
+},{"es6-promise":1}],19:[function(require,module,exports){
 var Promise = require('./promise');
 var XHR = require('./xhr');
 var utils = require('./utils');
@@ -3775,7 +3773,7 @@ exports.Proxy = Proxy;
 exports.ProxyURL = ProxyURL;
 exports.loadUrlDocument = loadUrlDocument;
 
-},{"./clone":5,"./log":16,"./promise":19,"./utils":30,"./xhr":32}],21:[function(require,module,exports){
+},{"./clone":4,"./log":15,"./promise":18,"./utils":29,"./xhr":31}],20:[function(require,module,exports){
 var ProxyURL = require('./proxy').ProxyURL;
 var Promise = require('./promise');
 
@@ -3799,7 +3797,7 @@ function ProxyImageContainer(src, proxy) {
 
 module.exports = ProxyImageContainer;
 
-},{"./promise":19,"./proxy":20}],22:[function(require,module,exports){
+},{"./promise":18,"./proxy":19}],21:[function(require,module,exports){
 var NodeContainer = require('./nodecontainer');
 
 function PseudoElementContainer(node, parent, type) {
@@ -3839,7 +3837,7 @@ PseudoElementContainer.prototype.PSEUDO_HIDE_ELEMENT_CLASS_AFTER = "___html2canv
 
 module.exports = PseudoElementContainer;
 
-},{"./nodecontainer":17}],23:[function(require,module,exports){
+},{"./nodecontainer":16}],22:[function(require,module,exports){
 var log = require('./log');
 
 function Renderer(width, height, images, options, document) {
@@ -3949,7 +3947,7 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
 
 module.exports = Renderer;
 
-},{"./log":16}],24:[function(require,module,exports){
+},{"./log":15}],23:[function(require,module,exports){
 var Renderer = require('../renderer');
 var LinearGradientContainer = require('../lineargradientcontainer');
 var log = require('../log');
@@ -4132,7 +4130,7 @@ function hasEntries(array) {
 
 module.exports = CanvasRenderer;
 
-},{"../lineargradientcontainer":15,"../log":16,"../renderer":23}],25:[function(require,module,exports){
+},{"../lineargradientcontainer":14,"../log":15,"../renderer":22}],24:[function(require,module,exports){
 var NodeContainer = require('./nodecontainer');
 
 function StackingContext(hasOwnStacking, opacity, element, parent) {
@@ -4152,7 +4150,7 @@ StackingContext.prototype.getParentStack = function(context) {
 
 module.exports = StackingContext;
 
-},{"./nodecontainer":17}],26:[function(require,module,exports){
+},{"./nodecontainer":16}],25:[function(require,module,exports){
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
@@ -4205,7 +4203,7 @@ Support.prototype.testSVG = function() {
 
 module.exports = Support;
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var Promise = require('./promise');
 var XHR = require('./xhr');
 var decode64 = require('./utils').decode64;
@@ -4260,7 +4258,7 @@ SVGContainer.prototype.decode64 = function(str) {
 
 module.exports = SVGContainer;
 
-},{"./promise":19,"./utils":30,"./xhr":32}],28:[function(require,module,exports){
+},{"./promise":18,"./utils":29,"./xhr":31}],27:[function(require,module,exports){
 var SVGContainer = require('./svgcontainer');
 var Promise = require('./promise');
 
@@ -4288,7 +4286,7 @@ SVGNodeContainer.prototype = Object.create(SVGContainer.prototype);
 
 module.exports = SVGNodeContainer;
 
-},{"./promise":19,"./svgcontainer":27}],29:[function(require,module,exports){
+},{"./promise":18,"./svgcontainer":26}],28:[function(require,module,exports){
 var NodeContainer = require('./nodecontainer');
 
 function TextContainer(node, parent) {
@@ -4323,7 +4321,7 @@ function capitalize(m, p1, p2) {
 
 module.exports = TextContainer;
 
-},{"./nodecontainer":17}],30:[function(require,module,exports){
+},{"./nodecontainer":16}],29:[function(require,module,exports){
 exports.smallImage = function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 };
@@ -4494,7 +4492,7 @@ exports.parseBackgrounds = function(backgroundImage) {
     return results;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var GradientContainer = require('./gradientcontainer');
 
 function WebkitGradientContainer(imageData) {
@@ -4506,7 +4504,7 @@ WebkitGradientContainer.prototype = Object.create(GradientContainer.prototype);
 
 module.exports = WebkitGradientContainer;
 
-},{"./gradientcontainer":12}],32:[function(require,module,exports){
+},{"./gradientcontainer":11}],31:[function(require,module,exports){
 var Promise = require('./promise');
 
 function XHR(url) {
@@ -4532,5 +4530,5 @@ function XHR(url) {
 
 module.exports = XHR;
 
-},{"./promise":19}]},{},[7])(7)
+},{"./promise":18}]},{},[6])(6)
 });

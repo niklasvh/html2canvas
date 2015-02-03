@@ -1,5 +1,5 @@
 var log = require('./log');
-var Promise = require('./Promise');
+var Promise = require('./promise');
 
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
