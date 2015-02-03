@@ -1,3 +1,5 @@
+var Font = require('./font');
+
 function FontMetrics() {
     this.data = {};
 }
@@ -8,3 +10,5 @@ FontMetrics.prototype.getMetrics = function(family, size) {
     }
     return this.data[family + "-" + size];
 };
+
+module.exports = FontMetrics;

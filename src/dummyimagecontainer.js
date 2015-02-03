@@ -1,3 +1,7 @@
+var Promise = require('./promise');
+var log = require('./log');
+var smallImage = require('./utils').smallImage;
+
 function DummyImageContainer(src) {
     this.src = src;
     log("DummyImageContainer for", src);
@@ -15,3 +19,5 @@ function DummyImageContainer(src) {
         });
     }
 }
+
+module.exports = DummyImageContainer;

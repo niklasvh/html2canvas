@@ -1,9 +1,19 @@
+var Promise = require('./promise');
+var Support = require('./support');
+var CanvasRenderer = require('./renderers/canvas');
+var ImageLoader = require('./imageloader');
+var NodeParser = require('./nodeparser');
+var NodeContainer = require('./nodecontainer');
+var log = require('./log');
+var utils = require('./utils');
+var createWindowClone = require('./clone');
+var loadUrlDocument = require('./proxy').loadUrlDocument;
+var getBounds = utils.getBounds;
+
 var html2canvasNodeAttribute = "data-html2canvas-node";
-var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
-var html2canvasCanvasCloneIndex = 0;
 var html2canvasCloneIndex = 0;
 
-window.html2canvas = function(nodeList, options) {
+function html2canvas(nodeList, options) {
     var index = html2canvasCloneIndex++;
     options = options || {};
     if (options.logging) {
@@ -39,10 +49,17 @@ window.html2canvas = function(nodeList, options) {
         }
         return canvas;
     });
-};
+}
 
-window.html2canvas.punycode = this.punycode;
-window.html2canvas.proxy = {};
+html2canvas.Promise = Promise;
+html2canvas.CanvasRenderer = CanvasRenderer;
+html2canvas.NodeContainer = NodeContainer;
+html2canvas.log = log;
+html2canvas.utils = utils;
+
+module.exports = (typeof(document) === "undefined" || typeof(Object.create) !== "function" || typeof(document.createElement("canvas").getContext) !== "function") ? function() {
+    return Promise.reject("No canvas support");
+} : html2canvas;
 
 function renderDocument(document, options, windowWidth, windowHeight, html2canvasIndex) {
     return createWindowClone(document, document, windowWidth, windowHeight, options, document.defaultView.pageXOffset, document.defaultView.pageYOffset).then(function(container) {
@@ -120,164 +137,6 @@ function documentHeight (doc) {
         Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
         Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
     );
-}
-
-function smallImage() {
-    return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-}
-
-function isIE9() {
-    return document.documentMode && document.documentMode <= 9;
-}
-
-// https://github.com/niklasvh/html2canvas/issues/503
-function cloneNodeIE9(node, javascriptEnabled) {
-    var clone = node.nodeType === 3 ? document.createTextNode(node.nodeValue) : node.cloneNode(false);
-
-    var child = node.firstChild;
-    while(child) {
-        if (javascriptEnabled === true || child.nodeType !== 1 || child.nodeName !== 'SCRIPT') {
-            clone.appendChild(cloneNodeIE9(child, javascriptEnabled));
-        }
-        child = child.nextSibling;
-    }
-
-    return clone;
-}
-
-function createWindowClone(ownerDocument, containerDocument, width, height, options, x ,y) {
-    labelCanvasElements(ownerDocument);
-    var documentElement = isIE9() ? cloneNodeIE9(ownerDocument.documentElement, options.javascriptEnabled) : ownerDocument.documentElement.cloneNode(true);
-    var container = containerDocument.createElement("iframe");
-
-    container.className = "html2canvas-container";
-    container.style.visibility = "hidden";
-    container.style.position = "fixed";
-    container.style.left = "-10000px";
-    container.style.top = "0px";
-    container.style.border = "0";
-    container.width = width;
-    container.height = height;
-    container.scrolling = "no"; // ios won't scroll without it
-    containerDocument.body.appendChild(container);
-
-    return new Promise(function(resolve) {
-        var documentClone = container.contentWindow.document;
-
-        cloneNodeValues(ownerDocument.documentElement, documentElement, "textarea");
-        cloneNodeValues(ownerDocument.documentElement, documentElement, "select");
-
-        /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
-         if window url is about:blank, we can assign the url to current by writing onto the document
-         */
-        container.contentWindow.onload = container.onload = function() {
-            var interval = setInterval(function() {
-                if (documentClone.body.childNodes.length > 0) {
-                    cloneCanvasContents(ownerDocument, documentClone);
-                    clearInterval(interval);
-                    if (options.type === "view") {
-                        container.contentWindow.scrollTo(x, y);
-                    }
-                    resolve(container);
-                }
-            }, 50);
-        };
-
-        documentClone.open();
-        documentClone.write("<!DOCTYPE html><html></html>");
-        // Chrome scrolls the parent document for some reason after the write to the cloned window???
-        restoreOwnerScroll(ownerDocument, x, y);
-        documentClone.replaceChild(options.javascriptEnabled === true ? documentClone.adoptNode(documentElement) : removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
-        documentClone.close();
-    });
-}
-
-function cloneNodeValues(document, clone, nodeName) {
-    var originalNodes = document.getElementsByTagName(nodeName);
-    var clonedNodes = clone.getElementsByTagName(nodeName);
-    var count = originalNodes.length;
-    for (var i = 0; i < count; i++) {
-        clonedNodes[i].value = originalNodes[i].value;
-    }
-}
-
-function restoreOwnerScroll(ownerDocument, x, y) {
-    if (ownerDocument.defaultView && (x !== ownerDocument.defaultView.pageXOffset || y !== ownerDocument.defaultView.pageYOffset)) {
-        ownerDocument.defaultView.scrollTo(x, y);
-    }
-}
-
-function loadUrlDocument(src, proxy, document, width, height, options) {
-    return new Proxy(src, proxy, window.document).then(documentFromHTML(src)).then(function(doc) {
-        return createWindowClone(doc, document, width, height, options, 0, 0);
-    });
-}
-
-function documentFromHTML(src) {
-    return function(html) {
-        var parser = new DOMParser(), doc;
-        try {
-            doc = parser.parseFromString(html, "text/html");
-        } catch(e) {
-            log("DOMParser not supported, falling back to createHTMLDocument");
-            doc = document.implementation.createHTMLDocument("");
-            try {
-                doc.open();
-                doc.write(html);
-                doc.close();
-            } catch(ee) {
-                log("createHTMLDocument write not supported, falling back to document.body.innerHTML");
-                doc.body.innerHTML = html; // ie9 doesnt support writing to documentElement
-            }
-        }
-
-        var b = doc.querySelector("base");
-        if (!b || !b.href.host) {
-            var base = doc.createElement("base");
-            base.href = src;
-            doc.head.insertBefore(base, doc.head.firstChild);
-        }
-
-        return doc;
-    };
-}
-
-
-function labelCanvasElements(ownerDocument) {
-    [].slice.call(ownerDocument.querySelectorAll("canvas"), 0).forEach(function(canvas) {
-        canvas.setAttribute(html2canvasCanvasCloneAttribute, "canvas-" + html2canvasCanvasCloneIndex++);
-    });
-}
-
-function cloneCanvasContents(ownerDocument, documentClone) {
-    [].slice.call(ownerDocument.querySelectorAll("[" + html2canvasCanvasCloneAttribute + "]"), 0).forEach(function(canvas) {
-        try {
-            var clonedCanvas = documentClone.querySelector('[' + html2canvasCanvasCloneAttribute + '="' + canvas.getAttribute(html2canvasCanvasCloneAttribute) + '"]');
-            if (clonedCanvas) {
-                clonedCanvas.width = canvas.width;
-                clonedCanvas.height = canvas.height;
-                clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
-            }
-        } catch(e) {
-            log("Unable to copy canvas content from", canvas, e);
-        }
-        canvas.removeAttribute(html2canvasCanvasCloneAttribute);
-    });
-}
-
-function removeScriptNodes(parent) {
-    [].slice.call(parent.childNodes, 0).filter(isElementNode).forEach(function(node) {
-        if (node.tagName === "SCRIPT") {
-            parent.removeChild(node);
-        } else {
-            removeScriptNodes(node);
-        }
-    });
-    return parent;
-}
-
-function isElementNode(node) {
-    return node.nodeType === Node.ELEMENT_NODE;
 }
 
 function absoluteUrl(url) {

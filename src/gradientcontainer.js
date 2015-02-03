@@ -1,3 +1,5 @@
+var Promise = require('./promise');
+
 function GradientContainer(imageData) {
     this.src = imageData.value;
     this.colorStops = [];
@@ -13,3 +15,5 @@ GradientContainer.prototype.TYPES = {
     LINEAR: 1,
     RADIAL: 2
 };
+
+module.exports = GradientContainer;

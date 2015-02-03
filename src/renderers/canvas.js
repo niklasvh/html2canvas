@@ -1,3 +1,7 @@
+var Renderer = require('../renderer');
+var LinearGradientContainer = require('../lineargradientcontainer');
+var log = require('../log');
+
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
     this.canvas = this.options.canvas || this.document.createElement("canvas");
@@ -173,3 +177,5 @@ CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
 function hasEntries(array) {
     return array.length > 0;
 }
+
+module.exports = CanvasRenderer;

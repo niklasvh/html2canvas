@@ -23,6 +23,7 @@
 <div style="background: red; width: 200px; height:200px;" id="block"></div>
 <div style="width: 200px; height:200px;" id="block2"></div>
 <script>
+    var Promise = html2canvas.Promise;
     describe("options.onclone", function() {
         it("with a function", function(done) {
             html2canvas(document.querySelector("#block"), {onclone: function(document) {

@@ -268,3 +268,4 @@ var colors = {
     "yellowgreen": [154, 205, 50]
 };
 
+module.exports = Color;

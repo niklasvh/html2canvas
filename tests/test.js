@@ -1,10 +1,3 @@
-/*
-  html2canvas @VERSION@ <http://html2canvas.hertzen.com>
-  Copyright (c) 2011 Niklas von Hertzen. All rights reserved.
-  http://www.twitter.com/niklasvh
-
-  Released under MIT License
-*/
 var h2cSelector, h2cOptions;
 (function(document, window) {
     function appendScript(src) {
@@ -14,7 +7,7 @@ var h2cSelector, h2cOptions;
     var sources = ['log', 'punycode/punycode', 'core', 'nodecontainer', 'pseudoelementcontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
         'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'framecontainer', 'proxy', 'color', 'renderers/canvas'];
 
-    ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
+    ['/tests/assets/jquery-1.6.2', '/dist/html2canvas'].forEach(appendScript);
 
     if (typeof(noFabric) === "undefined") {
         appendScript('/dist/html2canvas.svg');
@@ -104,7 +97,7 @@ var h2cSelector, h2cOptions;
                         textDecoration:'none',
                         display:'none'
                     }).appendTo(document.body).fadeIn();
-                    log(msg);
+                    console.log(msg);
                 }
             };
         })(jQuery);

@@ -1,3 +1,5 @@
+var log = require('./log');
+
 function Renderer(width, height, images, options, document) {
     this.width = width;
     this.height = height;
@@ -102,3 +104,5 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
         break;
     }
 };
+
+module.exports = Renderer;
