@@ -1,5 +1,9 @@
 ### Changelog ###
 
+v0.5.0-alpha2 - 3.2.2015
+ * Switch to using browserify for building
+ * Fix (#517) Chrome stretches background images with 'auto' or single attributes
+
 v0.5.0-alpha - 19.1.2015
  * Complete rewrite of library
  * Switched interface to return Promise
