@@ -1,3 +1,5 @@
+var NodeContainer = html2canvas.NodeContainer;
+
 describe('Borders', function() {
     $('#borders div').each(function(i, node) {
         it($(this).attr('style'), function() {
@@ -41,7 +43,7 @@ describe('Background-position', function() {
 
             var container = new NodeContainer(node, null);
             var item = container.css(prop),
-                backgroundPosition = container.parseBackgroundPosition(getBounds(node), img),
+                backgroundPosition = container.parseBackgroundPosition(html2canvas.utils.getBounds(node), img),
                 split = (window.getComputedStyle) ? $(node).css(prop).split(" ") : [$(node).css(prop+"X"), $(node).css(prop+"Y")];
 
             var testEl = $('<div />').css({
@@ -210,7 +212,7 @@ describe('Background-image', function() {
 
     function test_parse_background_image(value, expected, name) {
         it(name, function() {
-            expect(parseBackgrounds(value)).to.eql(Array.isArray(expected) ? expected : [expected]);
+            expect(html2canvas.utils.parseBackgrounds(value)).to.eql(Array.isArray(expected) ? expected : [expected]);
         });
     }
 });

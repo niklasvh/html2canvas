@@ -98,10 +98,10 @@ describe("Gradients", function() {
     ];
 
     $('#backgroundGradients div').each(function(i, node) {
-        var container = new NodeContainer(node, null);
+        var container = new html2canvas.NodeContainer(node, null);
         var value = container.css("backgroundImage");
         it(value, function() {
-            var parsedBackground = parseBackgrounds(value);
+            var parsedBackground = html2canvas.utils.parseBackgrounds(value);
             if (parsedBackground[0].args[0] === "0% 50%") {
                 parsedBackground[0].args[0] = 'left';
             }

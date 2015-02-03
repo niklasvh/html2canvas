@@ -1,3 +1,5 @@
+var NodeContainer = require('./nodecontainer');
+
 function PseudoElementContainer(node, parent, type) {
     NodeContainer.call(this, node, parent);
     this.isPseudoElement = true;
@@ -32,3 +34,5 @@ PseudoElementContainer.prototype.getHideClass = function() {
 
 PseudoElementContainer.prototype.PSEUDO_HIDE_ELEMENT_CLASS_BEFORE = "___html2canvas___pseudoelement_before";
 PseudoElementContainer.prototype.PSEUDO_HIDE_ELEMENT_CLASS_AFTER = "___html2canvas___pseudoelement_after";
+
+module.exports = PseudoElementContainer;

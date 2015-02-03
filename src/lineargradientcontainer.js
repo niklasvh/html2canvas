@@ -1,3 +1,6 @@
+var GradientContainer = require('./gradientcontainer');
+var Color = require('./color');
+
 function LinearGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
     this.type = this.TYPES.LINEAR;
@@ -71,3 +74,5 @@ function LinearGradientContainer(imageData) {
 LinearGradientContainer.prototype = Object.create(GradientContainer.prototype);
 
 LinearGradientContainer.prototype.stepRegExp = /((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/;
+
+module.exports = LinearGradientContainer;

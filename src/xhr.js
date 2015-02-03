@@ -1,3 +1,5 @@
+var Promise = require('./promise');
+
 function XHR(url) {
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
@@ -18,3 +20,5 @@ function XHR(url) {
         xhr.send();
     });
 }
+
+module.exports = XHR;

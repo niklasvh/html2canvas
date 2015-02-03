@@ -1,3 +1,5 @@
+var NodeContainer = require('./nodecontainer');
+
 function StackingContext(hasOwnStacking, opacity, element, parent) {
     NodeContainer.call(this, element, parent);
     this.ownStacking = hasOwnStacking;
@@ -12,3 +14,5 @@ StackingContext.prototype.getParentStack = function(context) {
     var parentStack = (this.parent) ? this.parent.stack : null;
     return parentStack ? (parentStack.ownStacking ? parentStack : parentStack.getParentStack(context)) : context.stack;
 };
+
+module.exports = StackingContext;

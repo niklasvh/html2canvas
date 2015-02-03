@@ -1,3 +1,5 @@
+var Promise = require('./promise');
+
 function ImageContainer(src, cors) {
     this.src = src;
     this.image = new Image();
@@ -15,3 +17,5 @@ function ImageContainer(src, cors) {
         }
     });
 }
+
+module.exports = ImageContainer;

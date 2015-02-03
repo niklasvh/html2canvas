@@ -1,3 +1,15 @@
+var Promise = require('./promise');
+var log = require('./log');
+var ImageContainer = require('./imagecontainer');
+var DummyImageContainer = require('./dummyimagecontainer');
+var ProxyImageContainer = require('./proxyimagecontainer');
+var FrameContainer = require('./framecontainer');
+var SVGContainer = require('./svgcontainer');
+var SVGNodeContainer = require('./svgnodecontainer');
+var LinearGradientContainer = require('./lineargradientcontainer');
+var WebkitGradientContainer = require('./webkitgradientcontainer');
+var bind = require('./utils').bind;
+
 function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
@@ -142,3 +154,5 @@ ImageLoader.prototype.timeout = function(container, timeout) {
     });
     return promise;
 };
+
+module.exports = ImageLoader;

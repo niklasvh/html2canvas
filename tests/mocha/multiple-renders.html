@@ -25,6 +25,7 @@
 <div id="green-block"></div>
 <script>mocha.setup('bdd')</script>
 <script>
+    var Promise = html2canvas.Promise;
     describe("Multiple renders", function() {
         it("render correctly", function(done) {
             this.timeout(10000);

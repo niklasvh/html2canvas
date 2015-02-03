@@ -1,3 +1,5 @@
+var smallImage = require('./utils').smallImage;
+
 function Font(family, size) {
     var container = document.createElement('div'),
         img = document.createElement('img'),
@@ -46,3 +48,5 @@ function Font(family, size) {
     this.lineWidth = 1;
     this.middle = middle;
 }
+
+module.exports = Font;

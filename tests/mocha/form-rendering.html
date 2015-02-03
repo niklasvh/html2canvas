@@ -4,9 +4,6 @@
     <title>Mocha Tests</title>
     <link rel="stylesheet" href="lib/mocha.css" />
     <script src="../../dist/html2canvas.js"></script>
-    <script src="../../src/log.js"></script>
-    <script src="../../src/renderer.js"></script>
-    <script src="../../src/renderers/canvas.js"></script>
     <script src="../assets/jquery-1.6.2.js"></script>
     <script src="lib/expect.js"></script>
     <script src="lib/mocha.js"></script>
@@ -44,6 +41,8 @@
 
 <div id="green-block"></div>
 <script>
+    var CanvasRenderer = html2canvas.CanvasRenderer;
+
     describe("Rendering input values", function() {
         it("uses default value for input[type='text']", function(done) {
             CanvasRenderer.prototype.text = function(text) {

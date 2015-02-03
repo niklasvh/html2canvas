@@ -47,3 +47,5 @@ Support.prototype.testSVG = function() {
     }
     return true;
 };
+
+module.exports = Support;

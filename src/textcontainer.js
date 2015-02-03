@@ -1,3 +1,5 @@
+var NodeContainer = require('./nodecontainer');
+
 function TextContainer(node, parent) {
     NodeContainer.call(this, node, parent);
 }
@@ -27,3 +29,5 @@ function capitalize(m, p1, p2) {
         return p1 + p2.toUpperCase();
     }
 }
+
+module.exports = TextContainer;
