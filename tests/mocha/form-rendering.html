@@ -108,7 +108,7 @@
                 CanvasRenderer.prototype.text = function(text) {
                     expect(text).to.equal('updated');
                 };
-                html2canvas(document.querySelector("#block4"), {renderer: CanvasRenderer, strict: true, logging: true, removeContainer: false}).then(function(canvas) {
+                html2canvas(document.querySelector("#block4"), {renderer: CanvasRenderer, strict: true}).then(function(canvas) {
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
                     done();
@@ -138,7 +138,7 @@
                 CanvasRenderer.prototype.text = function(text) {
                     expect(text).to.equal('3');
                 };
-                html2canvas(document.querySelector("#block5"), {renderer: CanvasRenderer, strict: true, logging: true, removeContainer: false}).then(function(canvas) {
+                html2canvas(document.querySelector("#block5"), {renderer: CanvasRenderer, strict: true}).then(function(canvas) {
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
                     done();
