@@ -167,12 +167,24 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
     var attachment = this.cssList('backgroundAttachment', index);
     var isAttachmentFixed = attachment[0] === 'fixed';
     var left, top;
+    var borderLeft = 0;
+    var borderTop = 0;
+
+    if(this.borders && this.borders.borders) {
+        if(this.borders.borders[0] && this.borders.borders[0].width) {
+            borderTop = this.borders.borders[0].width
+        }
+        if(this.borders.borders[3] && this.borders.borders[3].width) {
+            borderLeft = this.borders.borders[3].width
+        }
+    }
+
 
     if (isPercentage(position[0]) && isAttachmentFixed) {
         left = (window.innerWidth - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
     } else if (isPercentage(position[0])) {
         left = (bounds.width - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
-        left -= this.borders.borders[3].width * (parseFloat(position[0]) / 100);
+        left -= borderLeft * (parseFloat(position[0]) / 100);
     } else {
         left = parseInt(position[0], 10);
     }
@@ -183,7 +195,7 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
         top = (window.innerHeight - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
     } else if (isPercentage(position[1])) {
         top = (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
-        top -= this.borders.borders[0].width * parseFloat(position[1]) / 100;
+        top -= borderTop * parseFloat(position[1]) / 100;
     } else {
         top = parseInt(position[1], 10);
     }
@@ -193,8 +205,8 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
     }
 
     if (isAttachmentFixed) {
-        left -= bounds.left + this.borders.borders[3].width;
-        top -= bounds.top + this.borders.borders[0].width;
+        left -= bounds.left + borderLeft;
+        top -= bounds.top + borderTop;
     }
     return {left: left, top: top};
 };
