@@ -165,18 +165,25 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
 NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
     var position = this.cssList('backgroundPosition', index);
     var attachment = this.cssList('backgroundAttachment', index);
+    var isAttachmentFixed = attachment[0] === 'fixed';
     var left, top;
 
-    if (isPercentage(position[0])){
+    if (isPercentage(position[0]) && isAttachmentFixed) {
+        left = (window.innerWidth - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
+    } else if (isPercentage(position[0])) {
         left = (bounds.width - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
+        left -= this.borders.borders[3].width * (parseFloat(position[0]) / 100);
     } else {
         left = parseInt(position[0], 10);
     }
 
     if (position[1] === 'auto') {
         top = left / image.width * image.height;
-    } else if (isPercentage(position[1])){
-        top =  (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
+    } else if (isPercentage(position[1]) && isAttachmentFixed) {
+        top = (window.innerHeight - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
+    } else if (isPercentage(position[1])) {
+        top = (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
+        top -= this.borders.borders[0].width * parseFloat(position[1]) / 100;
     } else {
         top = parseInt(position[1], 10);
     }
@@ -185,11 +192,10 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
         left = top / image.height * image.width;
     }
 
-    if (attachment[0] === 'fixed') {
-        left -= bounds.left;
-        top -= bounds.top;
+    if (isAttachmentFixed) {
+        left -= bounds.left + this.borders.borders[3].width;
+        top -= bounds.top + this.borders.borders[0].width;
     }
-
     return {left: left, top: top};
 };
 
