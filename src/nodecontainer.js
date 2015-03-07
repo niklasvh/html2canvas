@@ -172,10 +172,10 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
 
     if(this.borders && this.borders.borders) {
         if(this.borders.borders[0] && this.borders.borders[0].width) {
-            borderTop = this.borders.borders[0].width
+            borderTop = this.borders.borders[0].width;
         }
         if(this.borders.borders[3] && this.borders.borders[3].width) {
-            borderLeft = this.borders.borders[3].width
+            borderLeft = this.borders.borders[3].width;
         }
     }
 
