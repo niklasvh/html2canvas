@@ -163,7 +163,6 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
 };
 
 NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
-    // TODO: calculate attachment
     var position = this.cssList('backgroundPosition', index);
     var attachment = this.cssList('backgroundAttachment', index);
     var left, top;
