@@ -765,7 +765,9 @@ function isPositionedForStacking(container) {
     var position = container.css("position");
     var zIndex = (["absolute", "relative", "fixed"].indexOf(position) !== -1) ? container.css("zIndex") : "auto";
     // In chrome fixed has a default zIndex of 0 instead of auto
-    if(parseFloat(zIndex, 10) === 0) zIndex = "auto";
+    if(parseFloat(zIndex, 10) === 0) {
+        zIndex = "auto";
+    }
     return zIndex !== "auto";
 }
 
