@@ -163,7 +163,9 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
 };
 
 NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
+    // TODO: calculate attachment
     var position = this.cssList('backgroundPosition', index);
+    var attachment = this.cssList('backgroundAttachment', index);
     var left, top;
 
     if (isPercentage(position[0])){
@@ -182,6 +184,11 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
 
     if (position[0] === 'auto') {
         left = top / image.height * image.width;
+    }
+
+    if (attachment[0] === 'fixed') {
+        left -= bounds.left;
+        top -= bounds.top;
     }
 
     return {left: left, top: top};
