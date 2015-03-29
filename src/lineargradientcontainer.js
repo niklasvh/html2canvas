@@ -42,7 +42,7 @@ function LinearGradientContainer(imageData) {
     }
 
     this.colorStops = imageData.args.slice(hasDirection ? 1 : 0).map(function(colorStop) {
-        var colorStopMatch = colorStop.replace(/transparent/g, 'rgba(0, 0, 0, 0.0)').match(this.stepRegExp);
+        var colorStopMatch = colorStop.match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)|\w+)\s*(\d{1,3})?(%|px)?/);
         return {
             color: new Color(colorStopMatch[1]),
             stop: colorStopMatch[3] === "%" ? colorStopMatch[2] / 100 : null
