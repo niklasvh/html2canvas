@@ -1625,6 +1625,11 @@ module.exports = function(ownerDocument, containerDocument, width, height, optio
                     clearInterval(interval);
                     if (options.type === "view") {
                         container.contentWindow.scrollTo(x, y);
+                        if ((/(iPad|iPhone|iPod)/g).test(navigator.userAgent) && (container.contentWindow.scrollY !== y || container.contentWindow.scrollX !== x)) {
+                            documentClone.documentElement.style.top = (-y) + "px";
+                            documentClone.documentElement.style.left = (-x) + "px";
+                            documentClone.documentElement.style.position = 'absolute';
+                        }
                     }
                     resolve(container);
                 }
