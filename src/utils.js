@@ -47,17 +47,38 @@ exports.getBounds = function(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
         var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
+        var height = node.offsetHeight == null ? clientRect.height : node.offsetHeight;
+        var left = clientRect.left;
+        var top = clientRect.top;
+
+        // check boundary error only if it isn't last node
+        // firefox doesn't need to do this
+        if (typeof is_firefox === 'undefined') {
+            is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
+        }
+        if (node.parentNode && node.parentNode.parentNode && is_firefox < 0) {
+            var style = window.getComputedStyle(node.parentNode.parentNode);
+            if (style.getPropertyValue('border-collapse') == 'collapse') {
+                    var border = window.getComputedStyle(node);
+                    var borderwidth = parseInt(border.getPropertyValue('stroke-width').replace('px', ''));
+                    if (node.parentNode.children[node.parentNode.children.length-1] != node)
+                        width += borderwidth*2; // if it's last node in rightmost, ignore
+                    if (node.parentNode.parentNode.children[node.parentNode.parentNode.children.length-1] != node.parentNode)
+                        height += borderwidth*2;    // if it's last node in bottom, ignore
+            }
+        }
+
         return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            right: clientRect.left + width,
-            left: clientRect.left,
+            top: top,
+            bottom: top + height,
+            right: left + width,
+            left: left,
             width:  width,
-            height: node.offsetHeight == null ? clientRect.height : node.offsetHeight
+            height: height
         };
     }
     return {};
-};
+}
 
 exports.offsetBounds = function(node) {
     var parent = node.offsetParent ? exports.offsetBounds(node.offsetParent) : {top: 0, left: 0};
