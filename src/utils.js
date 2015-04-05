@@ -53,10 +53,10 @@ exports.getBounds = function(node) {
 
         // check boundary error only if it isn't last node
         // firefox doesn't need to do this
-        if (typeof global.is_firefox === 'undefined') {
-            global.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
+        if (typeof exports.is_firefox === 'undefined') {
+            exports.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
         }
-        if (node.parentNode && node.parentNode.parentNode && global.is_firefox < 0) {
+        if (node.parentNode && node.parentNode.parentNode && exports.is_firefox < 0) {
             var style = window.getComputedStyle(node.parentNode.parentNode);
             if (style.getPropertyValue('border-collapse') === 'collapse') {
                     var border = window.getComputedStyle(node);

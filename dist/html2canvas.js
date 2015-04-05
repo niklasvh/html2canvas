@@ -4308,7 +4308,6 @@ function capitalize(m, p1, p2) {
 module.exports = TextContainer;
 
 },{"./nodecontainer":16}],29:[function(require,module,exports){
-(function (global){
 exports.smallImage = function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 };
@@ -4364,10 +4363,10 @@ exports.getBounds = function(node) {
 
         // check boundary error only if it isn't last node
         // firefox doesn't need to do this
-        if (typeof global.is_firefox === 'undefined') {
-            global.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
+        if (typeof exports.is_firefox === 'undefined') {
+            exports.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
         }
-        if (node.parentNode && node.parentNode.parentNode && global.is_firefox < 0) {
+        if (node.parentNode && node.parentNode.parentNode && exports.is_firefox < 0) {
             var style = window.getComputedStyle(node.parentNode.parentNode);
             if (style.getPropertyValue('border-collapse') === 'collapse') {
                     var border = window.getComputedStyle(node);
@@ -4502,7 +4501,6 @@ exports.parseBackgrounds = function(backgroundImage) {
     return results;
 };
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
 var GradientContainer = require('./gradientcontainer');
 
