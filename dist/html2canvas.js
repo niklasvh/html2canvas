@@ -4368,7 +4368,7 @@ exports.getBounds = function(node) {
         }
         if (node.parentNode && node.parentNode.parentNode && exports.is_firefox < 0) {
             var style = window.getComputedStyle(node.parentNode.parentNode);
-            if (style.getPropertyValue('border-collapse') === 'collapse') {
+            if (style && style.getPropertyValue('border-collapse') === 'collapse') {
                     var border = window.getComputedStyle(node);
                     var borderwidth = parseInt(border.getPropertyValue('stroke-width').replace('px', ''));
                     if (node.parentNode.children[node.parentNode.children.length-1] !== node) {
