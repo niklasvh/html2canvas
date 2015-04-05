@@ -5,7 +5,7 @@
   Released under MIT License
 */
 
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.html2canvas=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.html2canvas = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -1005,6 +1005,7 @@ process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 
@@ -4307,6 +4308,7 @@ function capitalize(m, p1, p2) {
 module.exports = TextContainer;
 
 },{"./nodecontainer":16}],29:[function(require,module,exports){
+(function (global){
 exports.smallImage = function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 };
@@ -4356,13 +4358,36 @@ exports.getBounds = function(node) {
     if (node.getBoundingClientRect) {
         var clientRect = node.getBoundingClientRect();
         var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
+        var height = node.offsetHeight == null ? clientRect.height : node.offsetHeight;
+        var left = clientRect.left;
+        var top = clientRect.top;
+
+        // check boundary error only if it isn't last node
+        // firefox doesn't need to do this
+        if (typeof global.is_firefox === 'undefined') {
+            global.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
+        }
+        if (node.parentNode && node.parentNode.parentNode && global.is_firefox < 0) {
+            var style = window.getComputedStyle(node.parentNode.parentNode);
+            if (style.getPropertyValue('border-collapse') === 'collapse') {
+                    var border = window.getComputedStyle(node);
+                    var borderwidth = parseInt(border.getPropertyValue('stroke-width').replace('px', ''));
+                    if (node.parentNode.children[node.parentNode.children.length-1] !== node) {
+                        width += borderwidth*2; // if it's last node in rightmost, ignore
+                    }
+                    if (node.parentNode.parentNode.children[node.parentNode.parentNode.children.length-1] !== node.parentNode) {
+                        height += borderwidth*2;    // if it's last node in bottom, ignore
+                    }
+            }
+        }
+
         return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            right: clientRect.left + width,
-            left: clientRect.left,
+            top: top,
+            bottom: top + height,
+            right: left + width,
+            left: left,
             width:  width,
-            height: node.offsetHeight == null ? clientRect.height : node.offsetHeight
+            height: height
         };
     }
     return {};
@@ -4477,6 +4502,7 @@ exports.parseBackgrounds = function(backgroundImage) {
     return results;
 };
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
 var GradientContainer = require('./gradientcontainer');
 

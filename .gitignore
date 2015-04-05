@@ -9,3 +9,4 @@ node_modules/
 *.iml
 .idea/
 .DS_Store
+dist/html2canvas.svg*

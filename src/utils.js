@@ -53,18 +53,20 @@ exports.getBounds = function(node) {
 
         // check boundary error only if it isn't last node
         // firefox doesn't need to do this
-        if (typeof is_firefox === 'undefined') {
-            is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
+        if (typeof global.is_firefox === 'undefined') {
+            global.is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox');
         }
-        if (node.parentNode && node.parentNode.parentNode && is_firefox < 0) {
+        if (node.parentNode && node.parentNode.parentNode && global.is_firefox < 0) {
             var style = window.getComputedStyle(node.parentNode.parentNode);
-            if (style.getPropertyValue('border-collapse') == 'collapse') {
+            if (style.getPropertyValue('border-collapse') === 'collapse') {
                     var border = window.getComputedStyle(node);
                     var borderwidth = parseInt(border.getPropertyValue('stroke-width').replace('px', ''));
-                    if (node.parentNode.children[node.parentNode.children.length-1] != node)
+                    if (node.parentNode.children[node.parentNode.children.length-1] !== node) {
                         width += borderwidth*2; // if it's last node in rightmost, ignore
-                    if (node.parentNode.parentNode.children[node.parentNode.parentNode.children.length-1] != node.parentNode)
+                    }
+                    if (node.parentNode.parentNode.children[node.parentNode.parentNode.children.length-1] !== node.parentNode) {
                         height += borderwidth*2;    // if it's last node in bottom, ignore
+                    }
             }
         }
 
@@ -78,7 +80,7 @@ exports.getBounds = function(node) {
         };
     }
     return {};
-}
+};
 
 exports.offsetBounds = function(node) {
     var parent = node.offsetParent ? exports.offsetBounds(node.offsetParent) : {top: 0, left: 0};
