@@ -2653,7 +2653,6 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
 
 NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
     function calculatePosition(pos_) {
-        console.log(pos_);
         if (isPercentage(pos_)){
             return (bounds.width - (backgroundSize || image).width) * (parseFloat(pos_) / 100);
         } else {
@@ -2661,7 +2660,7 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
         }
     }
 
-    var position = this.css('backgroundPosition').match(/calc\(.*\)|(\w|%|-)+/g);
+    var position = this.css('backgroundPosition').match(/calc\([^\)]*\)|(\w|\%|\-)+/g);
     var left=0, top=0;
     var position_arr, i;
 
@@ -2675,7 +2674,7 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
         left = calculatePosition(position[0]);
     }
     if (position[1].indexOf('calc') === 0) {
-        position_arr = position[1].replace(/calc|\(|\)|\s|\+/g, '').split('+');
+        position_arr = position[1].replace(/calc|\(|\)|\s/g, '').split('+');
         for (i=0; i<position_arr.length; i++) {
             top += calculatePosition(position_arr[i]);
         }
@@ -2685,10 +2684,6 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
 
     if (position[1] === 'auto') {
         top = left / image.width * image.height;
-    } else if (isPercentage(position[1])){
-        top =  (bounds.height - (backgroundSize || image).height) * parseFloat(position[1]) / 100;
-    } else {
-        top = parseInt(position[1], 10);
     }
 
     if (position[0] === 'auto') {
