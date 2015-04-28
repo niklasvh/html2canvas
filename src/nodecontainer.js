@@ -163,13 +163,35 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
 };
 
 NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index, backgroundSize) {
-    var position = this.cssList('backgroundPosition', index);
-    var left, top;
+    function calculatePosition(pos_) {
+        console.log(pos_);
+        if (isPercentage(pos_)){
+            return (bounds.width - (backgroundSize || image).width) * (parseFloat(pos_) / 100);
+        } else {
+            return parseInt(pos_, 10);
+        }
+    }
 
-    if (isPercentage(position[0])){
-        left = (bounds.width - (backgroundSize || image).width) * (parseFloat(position[0]) / 100);
+    var position = this.css('backgroundPosition').match(/calc\(.*\)|(\w|%|-)+/g);
+    var left=0, top=0;
+    var position_arr, i;
+
+    // calculate calc
+    if (position[0].indexOf('calc') === 0) {
+        position_arr = position[0].replace(/calc|\(|\)|\s/g, '').split('+');
+        for (i=0; i<position_arr.length; i++) {
+            left += calculatePosition(position_arr[i]);
+        }
     } else {
-        left = parseInt(position[0], 10);
+        left = calculatePosition(position[0]);
+    }
+    if (position[1].indexOf('calc') === 0) {
+        position_arr = position[1].replace(/calc|\(|\)|\s|\+/g, '').split('+');
+        for (i=0; i<position_arr.length; i++) {
+            top += calculatePosition(position_arr[i]);
+        }
+    } else {
+        top = calculatePosition(position[1]);
     }
 
     if (position[1] === 'auto') {
