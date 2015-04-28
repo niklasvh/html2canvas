@@ -2660,9 +2660,13 @@ NodeContainer.prototype.parseBackgroundPosition = function(bounds, image, index,
         }
     }
 
-    var position = this.css('backgroundPosition').match(/calc\([^\)]*\)|(\w|\%|\-)+/g);
+    var position = this.css('backgroundPosition').match(/(right|left|top|bottom) (\w|\%|\-)+|calc\([^\)]*\)|(\w|\%|\-)+/g);
     var left=0, top=0;
     var position_arr, i;
+
+    // interpret for IE/Chrome
+    position[0] = position[0].replace('right ', 'calc(100% + -').replace('left ', 'calc(0% + ');
+    position[1] = position[1].replace('bottom ', 'calc(100% + -').replace('top ', 'calc(0% + ');
 
     // calculate calc
     if (position[0].indexOf('calc') === 0) {
