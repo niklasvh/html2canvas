@@ -1,14 +1,18 @@
 (function(){
     "use strict;";
-    var Bacon = require('baconjs').Bacon,
-        wd = require('wd'),
+    var wd = require('wd'),
         http = require("http"),
         https = require("https"),
         url = require("url"),
         path = require("path"),
         base64_arraybuffer = require('base64-arraybuffer'),
         PNG = require('png-js'),
+        Promise = require('bluebird'),
+        _ = require('lodash'),
+        humanizeDuration = require("humanize-duration"),
         fs = require("fs");
+
+    Promise.promisifyAll(fs);
 
     var port = 8080,
         colors = {
@@ -19,41 +23,19 @@
             clear: "\x1b[0m"
         };
 
-    function mapStat(item) {
-        return Bacon.combineTemplate({
-            stat: Bacon.fromNodeCallback(fs.stat, item),
-            item: item
+    function getTests(path) {
+        return fs.readdirAsync(path).map(function(name) {
+            var filename = path + "/" + name;
+            return fs.statAsync(filename).then(function(stat) {
+                return stat.isDirectory() ? getTests(filename) : filename;
+            });
         });
     }
 
-    function isDirectory(item) {
-        return item.stat.isDirectory();
-    }
-
-    function getItem(item) {
-        return item.item;
-    }
-
-    function isFile(item) {
-        return !isDirectory(item);
-    }
-
-    function arrayStream(arr) {
-        return Bacon.fromArray(arr);
-    }
-
-    function getTests(path) {
-        var items = Bacon.fromNodeCallback(fs.readdir, path).flatMap(arrayStream).map(function(name) {
-            return path + "/" + name;
-        }).flatMap(mapStat);
-        return items.filter(isFile).map(getItem).merge(items.filter(isDirectory).map(getItem).flatMap(getTests));
-    }
-
-
     function getPixelArray(base64) {
-        return Bacon.fromCallback(function(callback) {
+        return new Promise(function(resolve) {
             var arraybuffer = base64_arraybuffer.decode(base64);
-            (new PNG(arraybuffer)).decodePixels(callback);
+            (new PNG(arraybuffer)).decodePixels(resolve);
         });
     }
 
@@ -67,154 +49,104 @@
         return (100 - (Math.round((diff/h2cPixels.length) * 10000) / 100));
     }
 
-    function findResult(testName, tests) {
-        var item = null;
-        return tests.some(function(testCase) {
-            item = testCase;
-            return testCase.test === testName;
-        }) ? item : null;
-    }
+    function initBrowser(settings) {
+        var browser = wd.remote({
+            hostname: 'localhost',
+            port: 4445,
+            user: process.env.SAUCE_USERNAME,
+            pwd: process.env.SAUCE_ACCESS_KEY
+        }, 'promiseChain');
 
-    function compareResults(oldResults, newResults, browser) {
-        var improved = [],
-            regressed = [],
-            newItems = [];
-
-        newResults.forEach(function(testCase){
-            var testResult = testCase.result,
-                oldResult = findResult(testCase.test, oldResults),
-                oldResultValue = oldResult ? oldResult.result : null,
-                dataObject = {
-                    amount: (Math.abs(testResult - oldResultValue) < 0.01) ? 0 : testResult - oldResultValue,
-                    test: testCase.test
-                };
-            if (oldResultValue === null) {
-                newItems.push(dataObject);
-            } else if (dataObject.amount > 0) {
-                improved.push(dataObject);
-            } else if (dataObject.amount < 0) {
-                regressed.push(dataObject);
-            }
-        });
-
-        reportChanges(browser, improved, regressed, newItems);
-    }
-
-    function reportChanges(browser, improved, regressed, newItems) {
-        if (newItems.length > 0 || improved.length > 0 || regressed.length > 0) {
-            console.log((regressed.length > 0) ? colors.red : colors.green, browser);
-
-            regressed.forEach(function(item) {
-                console.log(colors.red, item.amount + "%", item.test);
-            });
-
-            improved.forEach(function(item) {
-                console.log(colors.green, item.amount + "%", item.test);
-            });
-
-            newItems.forEach(function(item) {
-                console.log(colors.blue, "NEW", item.test);
-            });
-        }
-    }
-
-    function formatResultName(navigator) {
-        return (navigator.browserName + "-" + ((navigator.version) ? navigator.version : "release") + "-" + navigator.platform).replace(/ /g, "").toLowerCase();
-    }
-
-    function webdriverStream(test) {
-        var browser = wd.remote("localhost", 4445, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY);
-        var browserStream = new Bacon.Bus();
         if (process.env.TRAVIS_JOB_NUMBER) {
-            test.capabilities["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
-            test.capabilities["name"] = process.env.TRAVIS_COMMIT.substring(0, 10);
-            test.capabilities["build"] = process.env.TRAVIS_BUILD_NUMBER;
+            settings["tunnel-identifier"] = process.env.TRAVIS_JOB_NUMBER;
+            settings["name"] = process.env.TRAVIS_COMMIT.substring(0, 10);
+            settings["build"] = process.env.TRAVIS_BUILD_NUMBER;
         } else {
-            test.capabilities["name"] = "Manual run";
+            settings["name"] = "Manual run";
         }
 
-        var resultStream = Bacon.fromNodeCallback(browser, "init", test.capabilities)
-            .flatMap(Bacon.fromNodeCallback(browser, "setImplicitWaitTimeout", 15000)
-            .flatMap(function() {
-                Bacon.later(0, formatResultName(test.capabilities)).onValue(browserStream.push);
-                return Bacon.fromArray(test.cases).zip(browserStream.take(test.cases.length)).flatMap(function(options) {
-                    var testCase = options[0];
-                    var name = options[1];
-                    console.log(colors.green, "STARTING", name, testCase, colors.clear);
-                    return Bacon.fromNodeCallback(browser, "get", "http://localhost:" + port + "/" + testCase + "?selenium")
-                        .flatMap(Bacon.combineTemplate({
-                            dataUrl: Bacon.fromNodeCallback(browser, "elementByCssSelector", ".html2canvas").flatMap(function(canvas) {
-                                return Bacon.fromNodeCallback(browser, "execute", "return arguments[0].toDataURL('image/png').substring(22)", [canvas]);
-                            }),
-                            screenshot: Bacon.fromNodeCallback(browser, "takeScreenshot")
-                        }))
-                        .flatMap(function(result) {
-                            return Bacon.combineTemplate({
-                                browser: name,
-                                testCase: testCase,
-                                accuracy: Bacon.constant(result.dataUrl).flatMap(getPixelArray).combine(Bacon.constant(result.screenshot).flatMap(getPixelArray), calculateDifference),
-                                dataUrl: result.dataUrl,
-                                screenshot: result.screenshot
-                            });
-                        });
-                });
-            }));
-
-        resultStream.onError(function(error) {
-            var name = formatResultName(test.capabilities);
-            console.log(colors.red, "ERROR", name, error.message);
-            browserStream.push(name);
-            browser.quit();
+        return browser.resolve(Promise).init(settings).setImplicitWaitTimeout(15000).then(function() {
+            return settings;
         });
+    }
 
-        resultStream.onValue(function(result) {
-            console.log(colors.green, "COMPLETE", result.browser, result.testCase, result.accuracy, "%", colors.clear);
-            browserStream.push(result.browser);
-        });
-
-        return resultStream.fold([], pushToArray).flatMap(function(value) {
-            return Bacon.fromCallback(function(callback) {
-                browser.quit(function() {
-                    callback(value);
-                });
+    function loadTestPage(browser, test) {
+        return function(settings) {
+            return browser.get("http://localhost:" + port + "/" + test + "?selenium").then(function() {
+                return settings;
             });
-        });
+        };
     }
 
-    function createImages(data) {
-        var dataurlFileName = "tests/results/" + data.browser + "-" +  data.testCase.replace(/\//g, "-") + "-html2canvas.png";
-        var screenshotFileName = "tests/results/" + data.browser + "-" + data.testCase.replace(/\//g, "-") + "-screencapture.png";
-        return Bacon.combineTemplate({
-            name: data.testCase,
-            dataurl: Bacon.fromNodeCallback(fs.writeFile, dataurlFileName, data.dataUrl, "base64").map(function() {
-                return dataurlFileName;
-            }),
-            screenshot: Bacon.fromNodeCallback(fs.writeFile, screenshotFileName, data.screenshot, "base64").map(function() {
-                return screenshotFileName;
-            })
-        });
+    function captureScreenshots(browser) {
+        return function() {
+            return Promise.props({
+                dataUrl: browser.elementByCss(".html2canvas").then(function(node) {
+                    return browser.execute("return arguments[0].toDataURL('image/png').substring(22)", [node]);
+                }),
+                screenshot: browser.takeScreenshot()
+            });
+        };
     }
 
-    function pushToArray(array, item) {
-        array.push(item);
-        return array;
+    function analyzeResults(test) {
+        return function(result) {
+            return Promise.all([getPixelArray(result.dataUrl), getPixelArray(result.screenshot)]).spread(calculateDifference).then(function(accuracy) {
+                return {
+                    testCase: test,
+                    accuracy: accuracy,
+                    dataUrl: result.dataUrl,
+                    screenshot: result.screenshot
+                };
+            });
+        };
     }
 
-    function runWebDriver(browsers, cases) {
-        var availableBrowsers = new Bacon.Bus();
-        var result = Bacon.combineTemplate({
-            capabilities: Bacon.fromArray(browsers).zip(availableBrowsers.take(browsers.length), function(first) { return first; }),
-            cases: cases
-        }).flatMap(webdriverStream).doAction(function() {
-            availableBrowsers.push("ready");
-        });
+    function runTestWithRetries(browser, test, retries) {
+        retries = retries || 0;
+        return runTest(browser, test)
+            .timeout(60000)
+            .catch(Promise.TimeoutError, function() {
+                if (retries < 3) {
+                    console.log(colors.violet, "Retry", (retries + 1), test);
+                    return runTestWithRetries(browser, test, retries + 1);
+                } else {
+                    throw new Error("Couldn't run test after 3 retries");
+                }
+            });
+    }
 
-        Bacon.fromArray([1, 2, 3, 4]).onValue(availableBrowsers.push);
-
-        return result.fold([], pushToArray);
+    function runTest(browser, test) {
+        return Promise.resolve(browser
+            .then(loadTestPage(browser, test))
+            .then(captureScreenshots(browser))
+            .then(analyzeResults(test))).cancellable();
     }
 
     exports.tests = function(browsers, singleTest) {
-        return (singleTest ? Bacon.constant([singleTest]) : getTests("tests/cases").fold([], pushToArray)).flatMap(runWebDriver.bind(null, browsers)).mapError(false);
+        var path = "tests/cases";
+        return (singleTest ? Promise.resolve([singleTest]) : getTests(path)).then(function(t) {
+            var tests = _.flatten(t);
+            return Promise.map(browsers, function(settings) {
+                var browser = initBrowser(settings);
+                var name = [settings.browserName, settings.version, settings.platform].join("-");
+                var count = 0;
+                return Promise.map(tests, function(test, index, total) {
+                    console.log(colors.green, "STARTING", "(" + (++count) + "/" + total + ")", name, test, colors.clear);
+                    var start = Date.now();
+                    return runTestWithRetries(browser, test).then(function(result) {
+                        console.log(colors.green, "COMPLETE", humanizeDuration(Date.now() - start), "(" + count + "/" + total + ")", name, result.testCase.substring(path.length), result.accuracy.toFixed(2) + "%", colors.clear);
+                    });
+                }, {concurrency: 1})
+                .settle()
+                .catch(function(error) {
+                    console.log(colors.red, "ERROR", name, error.message);
+                    throw error;
+                })
+                .finally(function() {
+                    return browser.quit();
+                });
+            }, {concurrency: 3});
+        });
     };
 })();

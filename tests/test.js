@@ -11,12 +11,14 @@ var h2cSelector, h2cOptions;
         document.write('<script type="text/javascript" src="' + src + '.js?' + Math.random() + '"></script>');
     }
 
-    var sources = ['log', 'nodecontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
-        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'core', 'renderer', 'promise', 'xhr', 'renderers/canvas'];
+    var sources = ['log', 'punycode/punycode', 'core', 'nodecontainer', 'pseudoelementcontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
+        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'framecontainer', 'proxy', 'color', 'renderers/canvas'];
 
     ['/tests/assets/jquery-1.6.2'].concat(window.location.search === "?selenium" ? ['/dist/html2canvas'] : sources.map(function(src) { return '/src/' + src; })).forEach(appendScript);
 
-    appendScript('/dist/html2canvas.svg');
+    if (typeof(noFabric) === "undefined") {
+        appendScript('/dist/html2canvas.svg');
+    }
 
     window.onload = function() {
         (function( $ ){
@@ -53,8 +55,12 @@ var h2cSelector, h2cOptions;
                         $canvas.siblings().toggle();
                         $(window).click(function(){
                             $canvas.toggle().siblings().toggle();
+                            $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
+                            $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
                             throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
                         });
+                        $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
+                        $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
                         throwMessage('Screenshot created in '+ ((finishTime.getTime()-timer)) + " ms<br />",4000);
                     } else {
                         $canvas.css('display', 'none');
@@ -109,13 +115,18 @@ var h2cSelector, h2cOptions;
             window.setUp();
         }
 
-        setTimeout(function() {
+        window.run = function() {
             $(h2cSelector).html2canvas($.extend({
                 logging: true,
                 profile: true,
-                proxy: "http://html2canvas.appspot.com/query",
-                useCORS: false
+                proxy: "http://localhost:8082",
+                useCORS: false,
+                removeContainer: false
             }, h2cOptions));
-        }, 100);
+        };
+
+        if (typeof(dontRun) === "undefined") {
+            setTimeout(window.run, 100);
+        }
     };
 }(document, window));

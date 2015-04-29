@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>z-index18</title>
+    <style>
+        body {
+            background: violet;
+        }
+
+        #container {
+            position: relative;
+            height: 300px;
+        }
+
+        .base {
+            background: green;
+        }
+
+        #container div {
+            width: 800px;
+            height: 300px;
+        }
+
+        .div1 {
+            background: red;
+        }
+
+        #container .div2 {
+            width: 400px;
+            background: blue;
+        }
+
+        #container .div3 {
+            background: orange;
+            width: 200px;
+            height: 200px;
+        }
+
+        #container .highlight1 {
+            background: purple;
+            height: 100px;
+        }
+
+        #container .highlight2 {
+            background: pink;
+            height: 100px;
+        }
+
+        #container .highlight3 {
+            background: navy;
+            height: 100px;
+        }
+
+        #container .last {
+            background: brown;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script type="text/javascript" src="../../test.js"></script>
+</head>
+<body>
+<div id="container" class="jqplot-target" style="position: relative; height: 300px;">
+    <div class="base" style="position: absolute; left: 0px; top: 0px;">a</div>
+    <div class="base" style="position: absolute; left: 0px; top: 0px;">b</div>
+    <div style="position: absolute; left: 16px; top: 10px;">c</div>
+    <div style="position: absolute; left: 16px; top: 10px;">d</div>
+    <div style="position: absolute; left: 16px; top: 10px;">e</div>
+    <div class="div1" style="position: absolute; left: 16px; top: 10px;">f</div>
+    <div class="div2" style="position: absolute; left: 16px; top: 10px;">g</div>
+    <div class="div3" style="position: absolute; left: 16px; top: 10px;">h</div>
+    <div class="highlight1" style="position: absolute; right: 16px; top: 10px;">i</div>
+    <div class="highlight2" style="position: absolute; left: 16px; top: 60px;">j</div>
+    <div class="highlight3" style="position: absolute; left: 56px; top: 90px;">k</div>
+    <div class="last" style="position: absolute; left: 16px; top: 10px;">l</div>
+</div>
+</body>
+</html>

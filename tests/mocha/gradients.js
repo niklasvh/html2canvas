@@ -1,11 +1,5 @@
-$(function() {
-    var propsToTest = {},
-        numDivs = {},
-        expected = {};
-
-    propsToTest['parseBackgrounds Gradient'] = ["backgroundImage"];
-    numDivs['parseBackgrounds Gradient'] = $('#backgroundGradients div').length;
-    expected['parseBackgrounds Gradient'] = [
+describe("Gradients", function() {
+    var expected = [
         {
             method: "linear-gradient",
             args: [
@@ -103,18 +97,13 @@ $(function() {
         }
     ];
 
-    test('parseBackgrounds Gradient', numDivs['parseBackgrounds Gradient'] * 2, function() {
-        $('#backgroundGradients div').each(function(i, node) {
-            var container = new NodeContainer(node, null);
-            var value = container.css("backgroundImage");
-
-            if (/^(-webkit|-o|-moz|-ms|linear)-/.test(value)) {
-                var parsedBackground = parseBackgrounds(value);
-                QUnit.deepEqual(parsedBackground[0].args, expected['parseBackgrounds Gradient'][i].args, 'Parsed gradient with CSS: ' + value);
-                QUnit.deepEqual(parsedBackground[0].method, expected['parseBackgrounds Gradient'][i].method, 'Parsed gradient with CSS: ' + value);
-            } else {
-                QUnit.ok(true, 'No CSS Background Gradient support');
-            }
+    $('#backgroundGradients div').each(function(i, node) {
+        var container = new NodeContainer(node, null);
+        var value = container.css("backgroundImage");
+        it(value, function() {
+            var parsedBackground = parseBackgrounds(value);
+            expect(parsedBackground[0].args).to.eql(expected[i].args);
+            expect(parsedBackground[0].method).to.eql(expected[i].method);
         });
     });
 });

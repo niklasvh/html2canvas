@@ -1,6 +1,11 @@
 var html2canvasNodeAttribute = "data-html2canvas-node";
+var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
+var html2canvasCanvasCloneIndex = 0;
+var html2canvasCloneIndex = 0;
+var html2canvasIframeName = "____html2canvas-container";
 
 window.html2canvas = function(nodeList, options) {
+    var index = html2canvasCloneIndex++;
     options = options || {};
     if (options.logging) {
         window.html2canvas.logging = true;
@@ -10,10 +15,21 @@ window.html2canvas = function(nodeList, options) {
     options.async = typeof(options.async) === "undefined" ? true : options.async;
     options.allowTaint = typeof(options.allowTaint) === "undefined" ? false : options.allowTaint;
     options.removeContainer = typeof(options.removeContainer) === "undefined" ? true : options.removeContainer;
+    options.javascriptEnabled = typeof(options.javascriptEnabled) === "undefined" ? false : options.javascriptEnabled;
+    options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
+
+    if (typeof(nodeList) === "string") {
+        if (typeof(options.proxy) !== "string") {
+            return Promise.reject("Proxy must be used when rendering url");
+        }
+        return loadUrlDocument(absoluteUrl(nodeList), options.proxy, document, window.innerWidth, window.innerHeight, options).then(function(container) {
+            return renderWindow(container.contentWindow.document.documentElement, container, options, window.innerWidth, window.innerHeight);
+        });
+    }
 
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
-    node.setAttribute(html2canvasNodeAttribute, "true");
-    return renderDocument(node.ownerDocument, options, window.innerWidth, window.innerHeight).then(function(canvas) {
+    node.setAttribute(html2canvasNodeAttribute + index, index);
+    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
             options.onrendered(canvas);
@@ -22,30 +38,55 @@ window.html2canvas = function(nodeList, options) {
     });
 };
 
-function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, windowWidth, windowHeight, options).then(function(container) {
+window.html2canvas.punycode = this.punycode;
+window.html2canvas.proxy = {};
+
+function renderDocument(document, options, windowWidth, windowHeight, html2canvasIndex) {
+    return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
         log("Document cloned");
-        var selector = "[" + html2canvasNodeAttribute + "='true']";
-        document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
+        var attributeName = html2canvasNodeAttribute + html2canvasIndex;
+        var selector = "[" + attributeName + "='" + html2canvasIndex + "']";
+        document.querySelector(selector).removeAttribute(attributeName);
         var clonedWindow = container.contentWindow;
         var node = clonedWindow.document.querySelector(selector);
-        var support = new Support(clonedWindow.document);
-        var imageLoader = new ImageLoader(options, support);
-        var bounds = getBounds(node);
-        var width = options.type === "view" ? Math.min(bounds.width, windowWidth) : documentWidth();
-        var height = options.type === "view" ? Math.min(bounds.height, windowHeight) : documentHeight();
-        var renderer = new CanvasRenderer(width, height, imageLoader, options);
-        var parser = new NodeParser(node, renderer, support, imageLoader, options);
-        return parser.ready.then(function() {
-            log("Finished rendering");
-            var canvas = (options.type !== "view" && (node === clonedWindow.document.body || node === clonedWindow.document.documentElement)) ? renderer.canvas : crop(renderer.canvas, bounds);
-            if (options.removeContainer) {
-                container.parentNode.removeChild(container);
-                log("Cleaned up container");
-            }
-            return canvas;
+        var oncloneHandler = (typeof(options.onclone) === "function") ? Promise.resolve(options.onclone(clonedWindow.document)) : Promise.resolve(true);
+        return oncloneHandler.then(function() {
+            return renderWindow(node, container, options, windowWidth, windowHeight);
         });
     });
+}
+
+function renderWindow(node, container, options, windowWidth, windowHeight) {
+    var clonedWindow = container.contentWindow;
+    var support = new Support(clonedWindow.document);
+    var imageLoader = new ImageLoader(options, support);
+    var bounds = getBounds(node);
+    var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
+    var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
+    var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
+    var parser = new NodeParser(node, renderer, support, imageLoader, options);
+    return parser.ready.then(function() {
+        log("Finished rendering");
+        var canvas;
+
+        if (options.type === "view") {
+            canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
+        } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
+            canvas = renderer.canvas;
+        } else {
+            canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: clonedWindow.pageXOffset, y: clonedWindow.pageYOffset});
+        }
+
+        cleanupContainer(container, options);
+        return canvas;
+    });
+}
+
+function cleanupContainer(container, options) {
+    if (options.removeContainer) {
+        container.parentNode.removeChild(container);
+        log("Cleaned up container");
+    }
 }
 
 function crop(canvas, bounds) {
@@ -54,27 +95,27 @@ function crop(canvas, bounds) {
     var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width));
     var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top));
     var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height));
-    var width = croppedCanvas.width = x2 - x1;
-    var height = croppedCanvas.height =  y2 - y1;
-    log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", bounds.width, "height:", bounds.height);
-    log("Resulting crop with width", width, "and height", height, " with x", x1, "and y", y1);
-    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, width, height, 0, 0, width, height);
+    croppedCanvas.width = bounds.width;
+    croppedCanvas.height =  bounds.height;
+    log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", (x2-x1), "height:", (y2-y1));
+    log("Resulting crop with width", bounds.width, "and height", bounds.height, " with x", x1, "and y", y1);
+    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, x2-x1, y2-y1, bounds.x, bounds.y, x2-x1, y2-y1);
     return croppedCanvas;
 }
 
-function documentWidth () {
+function documentWidth (doc) {
     return Math.max(
-        Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
-        Math.max(document.body.offsetWidth, document.documentElement.offsetWidth),
-        Math.max(document.body.clientWidth, document.documentElement.clientWidth)
+        Math.max(doc.body.scrollWidth, doc.documentElement.scrollWidth),
+        Math.max(doc.body.offsetWidth, doc.documentElement.offsetWidth),
+        Math.max(doc.body.clientWidth, doc.documentElement.clientWidth)
     );
 }
 
-function documentHeight () {
+function documentHeight (doc) {
     return Math.max(
-        Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
-        Math.max(document.body.offsetHeight, document.documentElement.offsetHeight),
-        Math.max(document.body.clientHeight, document.documentElement.clientHeight)
+        Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight),
+        Math.max(doc.body.offsetHeight, doc.documentElement.offsetHeight),
+        Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
     );
 }
 
@@ -82,17 +123,21 @@ function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 }
 
-function createWindowClone(ownerDocument, width, height, options) {
+function createWindowClone(ownerDocument, containerDocument, width, height, options) {
+    labelCanvasElements(ownerDocument);
     var documentElement = ownerDocument.documentElement.cloneNode(true),
-        container = ownerDocument.createElement("iframe");
+        container = containerDocument.createElement("iframe");
 
+    container.className = html2canvasIframeName;
     container.style.visibility = "hidden";
-    container.style.position = "absolute";
-    container.style.left = container.style.top = "-10000px";
+    container.style.position = "fixed";
+    container.style.left = "-10000px";
+    container.style.top = "0px";
+    container.style.border = "0";
     container.width = width;
     container.height = height;
     container.scrolling = "no"; // ios won't scroll without it
-    ownerDocument.body.appendChild(container);
+    containerDocument.body.appendChild(container);
 
     return new Promise(function(resolve) {
         var documentClone = container.contentWindow.document;
@@ -100,17 +145,92 @@ function createWindowClone(ownerDocument, width, height, options) {
         if window url is about:blank, we can assign the url to current by writing onto the document
          */
         container.contentWindow.onload = container.onload = function() {
-            resolve(container);
+            var interval = setInterval(function() {
+                if (documentClone.body.childNodes.length > 0) {
+                    cloneCanvasContents(ownerDocument, documentClone);
+                    clearInterval(interval);
+                    if (options.type === "view") {
+                        container.contentWindow.scrollTo(x, y);
+                    }
+                    resolve(container);
+                }
+            }, 50);
         };
 
-        documentClone.open();
-        documentClone.write("<!DOCTYPE html>");
-        documentClone.close();
+        var x = ownerDocument.defaultView.pageXOffset;
+        var y = ownerDocument.defaultView.pageYOffset;
 
-        documentClone.replaceChild(removeScriptNodes(documentClone.adoptNode(documentElement)), documentClone.documentElement);
-        if (options.type === "view") {
-            container.contentWindow.scrollTo(window.pageXOffset, window.pageYOffset);
+        documentClone.open();
+        documentClone.write("<!DOCTYPE html><html></html>");
+        // Chrome scrolls the parent document for some reason after the write to the cloned window???
+        restoreOwnerScroll(ownerDocument, x, y);
+        var clonedDocumentElement = removeHtml2canvasIframes(documentClone.adoptNode(documentElement));
+        documentClone.replaceChild(options.javascriptEnabled === true ? clonedDocumentElement : removeScriptNodes(clonedDocumentElement), documentClone.documentElement);
+        documentClone.close();
+    });
+}
+
+function restoreOwnerScroll(ownerDocument, x, y) {
+    if (x !== ownerDocument.defaultView.pageXOffset || y !== ownerDocument.defaultView.pageYOffset) {
+        ownerDocument.defaultView.scrollTo(x, y);
+    }
+}
+
+function loadUrlDocument(src, proxy, document, width, height, options) {
+    return new Proxy(src, proxy, window.document).then(documentFromHTML(src)).then(function(doc) {
+        return createWindowClone(doc, document, width, height, options);
+    });
+}
+
+function documentFromHTML(src) {
+    return function(html) {
+        var parser = new DOMParser(), doc;
+        try {
+            doc = parser.parseFromString(html, "text/html");
+        } catch(e) {
+            log("DOMParser not supported, falling back to createHTMLDocument");
+            doc = document.implementation.createHTMLDocument("");
+            try {
+                doc.open();
+                doc.write(html);
+                doc.close();
+            } catch(ee) {
+                log("createHTMLDocument write not supported, falling back to document.body.innerHTML");
+                doc.body.innerHTML = html; // ie9 doesnt support writing to documentElement
+            }
         }
+
+        var b = doc.querySelector("base");
+        if (!b || !b.href.host) {
+            var base = doc.createElement("base");
+            base.href = src;
+            doc.head.insertBefore(base, doc.head.firstChild);
+        }
+
+        return doc;
+    };
+}
+
+
+function labelCanvasElements(ownerDocument) {
+    [].slice.call(ownerDocument.querySelectorAll("canvas"), 0).forEach(function(canvas) {
+        canvas.setAttribute(html2canvasCanvasCloneAttribute, "canvas-" + html2canvasCanvasCloneIndex++);
+    });
+}
+
+function cloneCanvasContents(ownerDocument, documentClone) {
+    [].slice.call(ownerDocument.querySelectorAll("[" + html2canvasCanvasCloneAttribute + "]"), 0).forEach(function(canvas) {
+        try {
+            var clonedCanvas = documentClone.querySelector('[' + html2canvasCanvasCloneAttribute + '="' + canvas.getAttribute(html2canvasCanvasCloneAttribute) + '"]');
+            if (clonedCanvas) {
+                clonedCanvas.width = canvas.width;
+                clonedCanvas.height = canvas.height;
+                clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+            }
+        } catch(e) {
+            log("Unable to copy canvas content from", canvas, e);
+        }
+        canvas.removeAttribute(html2canvasCanvasCloneAttribute);
     });
 }
 
@@ -125,6 +245,24 @@ function removeScriptNodes(parent) {
     return parent;
 }
 
+function removeHtml2canvasIframes(parent) {
+    [].slice.call(parent.childNodes, 0).filter(isElementNode).forEach(function(node) {
+        if (node.tagName === "IFRAME" && node.className === html2canvasIframeName) {
+            parent.removeChild(node);
+        } else {
+            removeScriptNodes(node);
+        }
+    });
+    return parent;
+}
+
 function isElementNode(node) {
     return node.nodeType === Node.ELEMENT_NODE;
+}
+
+function absoluteUrl(url) {
+    var link = document.createElement("a");
+    link.href = url;
+    link.href = link.href;
+    return link;
 }

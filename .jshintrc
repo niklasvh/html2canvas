@@ -14,6 +14,6 @@
     "globals": {
       "jQuery": true
     },
-    "predef": ["NodeParser", "NodeContainer", "StackingContext", "TextContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise", "getBounds", "offsetBounds", "XHR",
-        "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "GradientContainer", "LinearGradientContainer", "WebkitGradientContainer", "SVGContainer", "SVGNodeContainer", "html2canvas", "log", "smallImage", "parseBackgrounds"]
+    "predef": ["NodeParser", "NodeContainer", "Color", "StackingContext", "TextContainer", "PseudoElementContainer", "ImageLoader", "CanvasRenderer", "Renderer", "Support", "bind", "Promise", "getBounds", "offsetBounds", "XHR",
+        "ImageContainer", "ProxyImageContainer", "DummyImageContainer", "Font", "FontMetrics", "GradientContainer", "LinearGradientContainer", "WebkitGradientContainer", "SVGContainer", "SVGNodeContainer", "FrameContainer", "html2canvas", "log", "smallImage", "parseBackgrounds", "loadUrlDocument", "decode64", "Proxy", "ProxyURL"]
 }

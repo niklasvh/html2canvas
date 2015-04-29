@@ -2,13 +2,27 @@ function ImageLoader(options, support) {
     this.link = null;
     this.options = options;
     this.support = support;
-    this.origin = window.location.protocol + window.location.hostname + window.location.port;
+    this.origin = this.getOrigin(window.location.href);
 }
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
-    nodes.filter(isImage).map(urlImage).forEach(this.addImage(images, this.loadImage), this);
-    nodes.filter(isSVGNode).map(svgImage).forEach(this.addImage(images, this.loadImage), this);
+    nodes.reduce(function(imageNodes, container) {
+        switch(container.node.nodeName) {
+        case "IMG":
+            return imageNodes.concat([{
+                args: [container.node.src],
+                method: "url"
+            }]);
+        case "svg":
+        case "IFRAME":
+            return imageNodes.concat([{
+                args: [container.node],
+                method: container.node.nodeName
+            }]);
+        }
+        return imageNodes;
+    }, []).forEach(this.addImage(images, this.loadImage), this);
     return images;
 };
 
@@ -53,14 +67,16 @@ ImageLoader.prototype.loadImage = function(imageData) {
     } else if (imageData.method === "gradient") {
         return new WebkitGradientContainer(imageData);
     } else if (imageData.method === "svg") {
-        return new SVGNodeContainer(imageData.args[0]);
+        return new SVGNodeContainer(imageData.args[0], this.support.svg);
+    } else if (imageData.method === "IFRAME") {
+        return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options);
     } else {
         return new DummyImageContainer(imageData);
     }
 };
 
 ImageLoader.prototype.isSVG = function(src) {
-    return (/(.+).svg$/i.test(src)) || SVGContainer.prototype.isInline(src);
+    return src.substring(src.length - 3).toLowerCase() === "svg" || SVGContainer.prototype.isInline(src);
 };
 
 ImageLoader.prototype.imageExists = function(images, src) {
@@ -70,15 +86,23 @@ ImageLoader.prototype.imageExists = function(images, src) {
 };
 
 ImageLoader.prototype.isSameOrigin = function(url) {
+    return (this.getOrigin(url) === this.origin);
+};
+
+ImageLoader.prototype.getOrigin = function(url) {
     var link = this.link || (this.link = document.createElement("a"));
     link.href = url;
     link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
-    var origin = link.protocol + link.hostname + link.port;
-    return (origin === this.origin);
+    return link.protocol + link.hostname + link.port;
 };
 
 ImageLoader.prototype.getPromise = function(container) {
-    return container.promise;
+    return this.timeout(container, this.options.imageTimeout)['catch'](function() {
+        var dummy = new DummyImageContainer(container.src);
+        return dummy.promise.then(function(image) {
+            container.image = image;
+        });
+    });
 };
 
 ImageLoader.prototype.get = function(src) {
@@ -92,35 +116,25 @@ ImageLoader.prototype.fetch = function(nodes) {
     this.images = nodes.reduce(bind(this.findBackgroundImage, this), this.findImages(nodes));
     this.images.forEach(function(image, index) {
         image.promise.then(function() {
-            log("Succesfully loaded image #"+ (index+1));
-        }, function() {
-            log("Failed loading image #"+ (index+1));
+            log("Succesfully loaded image #"+ (index+1), image);
+        }, function(e) {
+            log("Failed loading image #"+ (index+1), image, e);
         });
     });
-    this.ready = Promise.all(this.images.map(this.getPromise));
+    this.ready = Promise.all(this.images.map(this.getPromise, this));
     log("Finished searching images");
     return this;
 };
 
-function isImage(container) {
-    return container.node.nodeName === "IMG";
-}
-
-function isSVGNode(container) {
-    return container.node.nodeName === "svg";
-}
-
-function urlImage(container) {
-    return {
-        args: [container.node.src],
-        method: "url"
-    };
-}
-
-function svgImage(container) {
-    return {
-        args: [container.node],
-        method: "svg"
-    };
-}
-
+ImageLoader.prototype.timeout = function(container, timeout) {
+    var timer;
+    return Promise.race([container.promise, new Promise(function(res, reject) {
+        timer = setTimeout(function() {
+            log("Timed out loading image", container);
+            reject(container);
+        }, timeout);
+    })]).then(function(container) {
+        clearTimeout(timer);
+        return container;
+    });
+};

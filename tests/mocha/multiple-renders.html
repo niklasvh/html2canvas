@@ -1,0 +1,101 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="lib/mocha.css" />
+    <script src="../../dist/html2canvas.js"></script>
+    <script src="../assets/jquery-1.6.2.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+    <style>
+        #block {
+            width: 200px;
+            height: 200px;
+        }
+        #green-block {
+            width: 200px;
+            height: 200px;
+            background: green;
+        }
+    </style>
+</head>
+<body>
+<div id="mocha"></div>
+<div id="block"></div>
+<div id="green-block"></div>
+<script>mocha.setup('bdd')</script>
+<script>
+    describe("Multiple renders", function() {
+        it("render correctly", function(done) {
+            this.timeout(5000);
+            var d = 0;
+            for (var i = 0; i < 10; i++) {
+                html2canvas(document.querySelector('#green-block'), {logging: true}).then(function (canvas) {
+                    console.log('canvas', d);
+                    expect(canvas.width).to.equal(200);
+                    expect(canvas.height).to.equal(200);
+                    validCanvasPixels(canvas);
+                    canvas.width = canvas.height = 10;
+                    d++;
+                    console.log(d);
+                    if (d === 10) {
+                        console.log('done');
+                        done();
+                    }
+                });
+            }
+        });
+
+        it("render correctly when non sequential", function(done) {
+            this.timeout(5000);
+            var d = 0;
+            for (var i = 0; i < 10; i++) {
+                html2canvas(document.querySelector('#block'), {logging: true, onclone: function(document) {
+                    console.log('onclone');
+                    return new Promise(function(resolve) {
+                        console.log('promise');
+                        document.querySelector('#block').style.backgroundColor = 'green';
+                        setTimeout(function() {
+                            console.log('timeout');
+                            resolve();
+                        }, 100);
+                    });
+                }}).then(function (canvas) {
+                    console.log('done', d);
+                    expect(canvas.width).to.equal(200);
+                    expect(canvas.height).to.equal(200);
+                    validCanvasPixels(canvas);
+                    console.log('valid', d);
+                    canvas.width = canvas.height = 10;
+                    d++;
+                    console.log(d);
+                    if (d === 10) {
+                        console.log('done')
+                        done();
+                    }
+                });
+            }
+        });
+    });
+
+    function validCanvasPixels(canvas) {
+        var ctx = canvas.getContext("2d");
+        var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        for (var i = 0, len = data.length; i < len; i+=4) {
+            if (data[i] !== 0 || data[i+1] !== 128 || data[i+2] !== 0 || data[i+3] !== 255) {
+                expect().fail("Invalid canvas data");
+            }
+        }
+    }
+
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+    }
+    else {
+        mocha.run();
+    }
+</script>
+</body>
+</html>

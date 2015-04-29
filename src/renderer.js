@@ -1,8 +1,9 @@
-function Renderer(width, height, images, options) {
+function Renderer(width, height, images, options, document) {
     this.width = width;
     this.height = height;
     this.images = images;
     this.options = options;
+    this.document = document;
 }
 
 Renderer.prototype.renderImage = function(container, bounds, borderData, imageContainer) {
@@ -35,9 +36,9 @@ Renderer.prototype.renderBackground = function(container, bounds, borderData) {
 };
 
 Renderer.prototype.renderBackgroundColor = function(container, bounds) {
-    var color = container.css("backgroundColor");
-    if (!this.isTransparent(color)) {
-        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, container.css("backgroundColor"));
+    var color = container.color("backgroundColor");
+    if (!color.isTransparent()) {
+        this.rectangle(bounds.left, bounds.top, bounds.width, bounds.height, color);
     }
 };
 
@@ -46,7 +47,7 @@ Renderer.prototype.renderBorders = function(borders) {
 };
 
 Renderer.prototype.renderBorder = function(data) {
-    if (!this.isTransparent(data.color) && data.args !== null) {
+    if (!data.color.isTransparent() && data.args !== null) {
         this.drawShape(data.args, data.color);
     }
 };
@@ -55,27 +56,27 @@ Renderer.prototype.renderBackgroundImage = function(container, bounds, borderDat
     var backgroundImages = container.parseBackgroundImages();
     backgroundImages.reverse().forEach(function(backgroundImage, index, arr) {
         switch(backgroundImage.method) {
-            case "url":
-                var image = this.images.get(backgroundImage.args[0]);
-                if (image) {
-                    this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
-                } else {
-                    log("Error loading background-image", backgroundImage.args[0]);
-                }
-                break;
-            case "linear-gradient":
-            case "gradient":
-                var gradientImage = this.images.get(backgroundImage.value);
-                if (gradientImage) {
-                    this.renderBackgroundGradient(gradientImage, bounds, borderData);
-                } else {
-                    log("Error loading background-image", backgroundImage.args[0]);
-                }
-                break;
-            case "none":
-                break;
-            default:
-                log("Unknown background-image type", backgroundImage.args[0]);
+        case "url":
+            var image = this.images.get(backgroundImage.args[0]);
+            if (image) {
+                this.renderBackgroundRepeating(container, bounds, image, arr.length - (index+1), borderData);
+            } else {
+                log("Error loading background-image", backgroundImage.args[0]);
+            }
+            break;
+        case "linear-gradient":
+        case "gradient":
+            var gradientImage = this.images.get(backgroundImage.value);
+            if (gradientImage) {
+                this.renderBackgroundGradient(gradientImage, bounds, borderData);
+            } else {
+                log("Error loading background-image", backgroundImage.args[0]);
+            }
+            break;
+        case "none":
+            break;
+        default:
+            log("Unknown background-image type", backgroundImage.args[0]);
         }
     }, this);
 };
@@ -85,23 +86,19 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
     var position = container.parseBackgroundPosition(bounds, imageContainer.image, index, size);
     var repeat = container.parseBackgroundRepeat(index);
     switch (repeat) {
-        case "repeat-x":
-        case "repeat no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + borderData[3], bounds.top + position.top + borderData[0], 99999, imageContainer.image.height, borderData);
-            break;
-        case "repeat-y":
-        case "no-repeat repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + borderData[0], imageContainer.image.width, 99999, borderData);
-            break;
-        case "no-repeat":
-            this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + position.top + borderData[0], imageContainer.image.width, imageContainer.image.height, borderData);
-            break;
-        default:
-            this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left}, borderData[3], borderData[0]);
-            break;
+    case "repeat-x":
+    case "repeat no-repeat":
+        this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + borderData[3], bounds.top + position.top + borderData[0], 99999, size.height, borderData);
+        break;
+    case "repeat-y":
+    case "no-repeat repeat":
+        this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + borderData[0], size.width, 99999, borderData);
+        break;
+    case "no-repeat":
+        this.backgroundRepeatShape(imageContainer, position, size, bounds, bounds.left + position.left + borderData[3], bounds.top + position.top + borderData[0], size.width, size.height, borderData);
+        break;
+    default:
+        this.renderBackgroundRepeat(imageContainer, position, size, {top: bounds.top, left: bounds.left}, borderData[3], borderData[0]);
+        break;
     }
-};
-
-Renderer.prototype.isTransparent = function(color) {
-    return (!color || color === "transparent" || color === "rgba(0, 0, 0, 0)");
 };
