@@ -1113,11 +1113,31 @@ _html2canvas.Parse = function (images, options, cb) {
     }
 
     // Using the list of elements we know how pseudo el styles, create fake pseudo elements.
+    // FIXED: https://github.com/niklasvh/html2canvas#issuecomment-52404551
     function findPseudoElements(el) {
-      var els = document.querySelectorAll(classes.join(','));
-      for(var i = 0, j = els.length; i < j; i++) {
-        createPseudoElements(els[i]);
-      }
+        var re = /^\s*$/;
+        var newClasses = [];
+        
+        for (var i=0; i<classes.length; i++) {
+            if (!re.test(classes[i]) && classes[i].indexOf(',') == -1) {
+                newClasses.push(classes[i]);
+            }
+        }
+        
+        // If you don't need to support IE 6-8, 
+        // you can use `Array.filter()` function alternatively.
+        /*
+        var newClasses = classes.filter(function(element) {
+            return !re.test(element);
+        });
+        */
+        
+        if (newClasses.length === 0) return;
+            
+        var els = document.querySelectorAll(newClasses.join(','));
+        for(var i = 0, j = els.length; i < j; i++) {
+            createPseudoElements(els[i]);
+        }
     }
 
     // Create pseudo elements & add them to a job queue.
