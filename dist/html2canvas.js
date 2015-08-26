@@ -1963,7 +1963,7 @@ function html2canvas(nodeList, options) {
 
     var node = document.documentElement[0];
     if (nodeList) {
-        var node = (nodeList.length) ? nodeList[0] : nodeList;
+        node = (nodeList.length) ? nodeList[0] : nodeList;
     }
     node.setAttribute(html2canvasNodeAttribute + index, index);
     return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
