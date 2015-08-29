@@ -39,6 +39,7 @@
     "humanize-duration": "^2.0.1",
     "lodash": "^2.4.1",
     "png-js": ">= 0.1.1",
+    "requirejs": "^2.1.20",
     "wd": "^0.2.21"
   },
   "scripts": {
