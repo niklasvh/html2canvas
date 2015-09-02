@@ -8,16 +8,21 @@ function restoreOwnerScroll(ownerDocument, x, y) {
 }
 
 function cloneCanvasContents(canvas, clonedCanvas) {
-    try {
-        if (clonedCanvas) {
-            clonedCanvas.width = canvas.width;
-            clonedCanvas.height = canvas.height;
-            clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+        try {
+            if (clonedCanvas) {
+                clonedCanvas.width = canvas.width;
+                clonedCanvas.height = canvas.height;
+                /*for web gl based canvases the 2d context is not available */
+                if(!canvas.getContext("2d")){
+                    clonedCanvas.getContext("2d").drawImage(canvas, 0, 0);
+                }else{
+                    clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+                }
+            }
+        } catch(e) {
+            log("Unable to copy canvas content from", canvas, e);
         }
-    } catch(e) {
-        log("Unable to copy canvas content from", canvas, e);
     }
-}
 
 function cloneNode(node, javascriptEnabled) {
     var clone = node.nodeType === 3 ? document.createTextNode(node.nodeValue) : node.cloneNode(false);
