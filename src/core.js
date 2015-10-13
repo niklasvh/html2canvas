@@ -88,7 +88,7 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var clonedWindow = container.contentWindow;
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
-    var bounds = getBounds(node);
+    var bounds = getBounds(node, true);
     var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
     var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
     var renderer = new options.renderer(width, height, imageLoader, options, document);
