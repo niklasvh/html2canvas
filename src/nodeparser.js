@@ -739,7 +739,7 @@ function isStackingContext(container) {
 }
 
 function hasText(container) {
-    return container.node.data.trim().length > 0;
+    return container.node.data.trim().length > 0 && !isSvg(container.parent);
 }
 
 function noLetterSpacing(container) {
@@ -792,6 +792,10 @@ function isElement(container) {
 
 function isPseudoElement(container) {
     return container.isPseudoElement === true;
+}
+
+function isSvg(container) {
+    return container.parent.node.tagName == "svg";
 }
 
 function isTextNode(container) {
