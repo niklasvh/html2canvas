@@ -91,7 +91,20 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var bounds = getBounds(node);
     var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
     var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
+    if (options.useBounds) {
+        width = bounds.width * 2;
+        height = bounds.height * 2;
+    }
     var renderer = new options.renderer(width, height, imageLoader, options, document);
+    if (options.useBounds) {
+        //scale the canvas
+        renderer.canvas.style.width = bounds.width+'px';
+        renderer.canvas.style.height = bounds.height+'px';
+        renderer.canvas.getContext('2d').translate(-bounds.left*2, -bounds.top*2);
+        renderer.canvas.getContext('2d').scale(2, 2);
+        // prevents cropping...
+        options.canvas = renderer.canvas;
+    }
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
