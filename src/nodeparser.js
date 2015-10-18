@@ -617,14 +617,14 @@ function calculateCurvePoints(bounds, borderRadius, borders) {
         width = bounds.width,
         height = bounds.height,
 
-        tlh = borderRadius[0][0],
-        tlv = borderRadius[0][1],
-        trh = borderRadius[1][0],
-        trv = borderRadius[1][1],
-        brh = borderRadius[2][0],
-        brv = borderRadius[2][1],
-        blh = borderRadius[3][0],
-        blv = borderRadius[3][1];
+        tlh = borderRadius[0][0] < width / 2 ? borderRadius[0][0] : width / 2,
+        tlv = borderRadius[0][1] < height / 2 ? borderRadius[0][1] : height / 2,
+        trh = borderRadius[1][0] < width / 2 ? borderRadius[1][0] : width / 2,
+        trv = borderRadius[1][1] < height / 2 ? borderRadius[1][1] : height / 2,
+        brh = borderRadius[2][0] < width / 2 ? borderRadius[2][0] : width / 2,
+        brv = borderRadius[2][1] < height / 2 ? borderRadius[2][1] : height / 2,
+        blh = borderRadius[3][0] < width / 2 ? borderRadius[3][0] : width / 2,
+        blv = borderRadius[3][1] < height / 2 ? borderRadius[3][1] : height / 2;
 
     var topWidth = width - trh,
         rightHeight = height - brv,
