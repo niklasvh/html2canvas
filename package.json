@@ -20,8 +20,8 @@
     "url": "https://github.com/niklasvh/html2canvas/issues"
   },
   "devDependencies": {
-    "base64-arraybuffer": ">= 0.1.0",
-    "bluebird": "^2.7.1",
+    "base64-arraybuffer": ">= 0.1.4",
+    "bluebird": "2.7.1",
     "bower": "^1.3.12",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.3.0",
