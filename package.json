@@ -12,9 +12,6 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "dependencies": {
-    "es6-promise": "^2.0.1"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:niklasvh/html2canvas.git"

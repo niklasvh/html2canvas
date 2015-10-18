@@ -20,7 +20,7 @@ The script is still in a **very experimental state**, so I don't recommend using
 
 ###Browser compatibility###
 
-The script should work fine on the following browsers:
+The library should work fine on the following browsers (with `Promise` polyfill):
 
 * Firefox 3.5+
 * Google Chrome
@@ -31,6 +31,10 @@ The script should work fine on the following browsers:
 As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
 ### Usage ###
+
+The html2canvas library utilizes `Promise`s and expects them to be available in the global context. If you wish to
+support [older browsers](http://caniuse.com/#search=promise) that do not natively support `Promise`s, please include a polyfill such as
+[es6-promise](https://github.com/jakearchibald/es6-promise) before including `html2canvas`.
 
 **Note!** These instructions are for using the current dev version of 0.5, for the latest release version (0.4.1), checkout the [old readme](https://github.com/niklasvh/html2canvas/blob/v0.4/readme.md).
 

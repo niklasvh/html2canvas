@@ -1,4 +1,3 @@
-var Promise = require('./promise');
 var Support = require('./support');
 var CanvasRenderer = require('./renderers/canvas');
 var ImageLoader = require('./imageloader');
@@ -51,7 +50,6 @@ function html2canvas(nodeList, options) {
     });
 }
 
-html2canvas.Promise = Promise;
 html2canvas.CanvasRenderer = CanvasRenderer;
 html2canvas.NodeContainer = NodeContainer;
 html2canvas.log = log;

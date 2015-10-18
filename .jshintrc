@@ -15,5 +15,5 @@
     "globals": {
       "jQuery": true
     },
-    "predef": ["-Promise", "define"]
+    "predef": ["Promise", "define"]
 }
