@@ -1,4 +1,3 @@
-var Promise = require('./promise');
 var XHR = require('./xhr');
 var utils = require('./utils');
 var log = require('./log');

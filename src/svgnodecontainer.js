@@ -1,5 +1,4 @@
 var SVGContainer = require('./svgcontainer');
-var Promise = require('./promise');
 
 function SVGNodeContainer(node, _native) {
     this.src = node;

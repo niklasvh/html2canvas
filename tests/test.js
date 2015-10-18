@@ -4,10 +4,7 @@ var h2cSelector, h2cOptions;
         document.write('<script type="text/javascript" src="' + src + '.js?' + Math.random() + '"></script>');
     }
 
-    var sources = ['log', 'punycode/punycode', 'core', 'nodecontainer', 'pseudoelementcontainer', 'stackingcontext', 'textcontainer', 'support', 'imagecontainer', 'dummyimagecontainer', 'proxyimagecontainer', 'gradientcontainer',
-        'lineargradientcontainer', 'webkitgradientcontainer', 'svgcontainer', 'svgnodecontainer', 'imageloader', 'nodeparser', 'font', 'fontmetrics', 'renderer', 'promise', 'xhr', 'framecontainer', 'proxy', 'color', 'renderers/canvas'];
-
-    ['/tests/assets/jquery-1.6.2', '/dist/html2canvas'].forEach(appendScript);
+    ['/node_modules/bluebird/js/browser/bluebird', '/tests/assets/jquery-1.6.2', '/dist/html2canvas'].forEach(appendScript);
 
     if (typeof(noFabric) === "undefined") {
         appendScript('/dist/html2canvas.svg');

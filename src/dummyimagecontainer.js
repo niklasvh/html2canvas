@@ -1,4 +1,3 @@
-var Promise = require('./promise');
 var log = require('./log');
 var smallImage = require('./utils').smallImage;
 
