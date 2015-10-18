@@ -1,7 +1,7 @@
 var GradientContainer = require('./gradientcontainer');
 var Color = require('./color');
 
-var COLOR_STOP_REGEXP = /^(.*)\s*(\d{1,3})?(%|px)?$/;
+var COLOR_STOP_REGEXP = /^\s*(.*)\s*(\d{1,3})?(%|px)?$/;
 
 function LinearGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -42,7 +42,6 @@ function LinearGradientContainer(imageData) {
         this.y0 = 0;
         this.y1 = 1;
     }
-
 
     this.colorStops = imageData.args.slice(hasDirection ? 1 : 0)
         .map(function(colorStop) { return colorStop.match(COLOR_STOP_REGEXP);})
