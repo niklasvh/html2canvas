@@ -1,6 +1,7 @@
 /nbproject/
 image.jpg
 /.project
+dist/
 /.settings/
 node_modules/
 .envrc
@@ -9,3 +10,4 @@ node_modules/
 *.iml
 .idea/
 .DS_Store
+npm-debug.log
