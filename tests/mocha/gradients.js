@@ -36,6 +36,15 @@ describe("Gradients", function() {
             ]
         },
         {
+            method: 'linear-gradient',
+            args: [
+                "0deg",
+                " rgb(221, 221, 221)",
+                " rgb(221, 221, 221) 50%",
+                " transparent 50%"
+            ]
+        },
+        {
             method: "radial-gradient",
             args: [
                 "75% 19%",
@@ -97,7 +106,7 @@ describe("Gradients", function() {
         }
     ];
 
-    $('#backgroundGradients div').each(function(i, node) {
+    [].slice.call(document.querySelectorAll('#backgroundGradients div'), 0).forEach(function(node, i) {
         var container = new html2canvas.NodeContainer(node, null);
         var value = container.css("backgroundImage");
         it(value, function() {
