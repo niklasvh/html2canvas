@@ -3,3 +3,5 @@ examples/
 Gruntfile.js
 bower.json
 src/
+*.iml
+.idea/
