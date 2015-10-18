@@ -40,8 +40,7 @@
     "wd": "^0.2.21"
   },
   "scripts": {
-    "test": "grunt travis --verbose",
-    "postpublish": "bower register html2canvas git://github.com/niklasvh/html2canvas.git"
+    "test": "grunt travis --verbose"
   },
   "homepage": "http://html2canvas.hertzen.com",
   "licenses": [

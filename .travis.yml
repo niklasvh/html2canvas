@@ -22,7 +22,7 @@ deploy:
   - provider: npm
     email: niklasvh@gmail.com
     api_key:
-      secure: dot+HzIe3thKep5mz5pyNYQV1ZYiGlVQAWScmfYh75AtOCJQJGvvw1alwRZDL0Ykn/7LeftZik845INn8Al8h4OEUQyuq2WmybZ5zn7PsLXRes7FtlJeYERO79bV5P3aV4vq4QoaZkPB5jQ98CmgQ2/9xPB+1ogNd7fRfUpSvSI=
+      secure: G/Szpr8q4/D6hp+H/Z9yyluUXtHAwf7LLa1Y07X59/Enlj1h7V5fQ7AW4/iAVM3XbIsrCPWR3dJU9g/ZxpxFg4OovIHVpS2Jr/mahtPYWdHR3pWuSmMW8QD+Twnq2VAFwSgg5Oumq3QxhX3YbCOnZox6+6Uviqk8FO7Z5B0RwW4=
     on:
       tags: true
       branch: master
