@@ -5,3 +5,6 @@ bower.json
 src/
 *.iml
 .idea/
+.npmignore
+.jshintrc
+.travis.yml
