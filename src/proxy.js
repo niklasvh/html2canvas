@@ -28,6 +28,10 @@ function ProxyURL(src, proxyUrl, document) {
 }
 
 function jsonp(document, url, callback) {
+    if (!window.html2canvas.proxy) {
+        window.html2canvas.proxy = {};
+    }
+
     return new Promise(function(resolve, reject) {
         var s = document.createElement("script");
         var cleanup = function() {
