@@ -19,7 +19,7 @@ function Proxy(src, proxyUrl, document) {
 var proxyCount = 0;
 
 function ProxyURL(src, proxyUrl, document) {
-    var supportsCORSImage = ('crossOrigin' in new Image());
+    var supportsCORSImage = ('crossOrigin' in new Image()) && !window.GM_PROXY;
     var callback = createCallback(supportsCORSImage);
     var url = createProxyUrl(proxyUrl, src, callback);
     return (supportsCORSImage ? Promise.resolve(url) : jsonp(document, url, callback).then(function(response) {
@@ -28,6 +28,10 @@ function ProxyURL(src, proxyUrl, document) {
 }
 
 function jsonp(document, url, callback) {
+    if (!window.html2canvas.proxy) {
+        window.html2canvas.proxy = {};
+    }
+
     return new Promise(function(resolve, reject) {
         var s = document.createElement("script");
         var cleanup = function() {

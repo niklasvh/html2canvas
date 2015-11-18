@@ -117,15 +117,19 @@ function cleanupContainer(container, options) {
 
 function crop(canvas, bounds) {
     var croppedCanvas = document.createElement("canvas");
-    var x1 = Math.min(canvas.width - 1, Math.max(0, bounds.left));
-    var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width));
-    var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top));
-    var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height));
-    croppedCanvas.width = bounds.width;
-    croppedCanvas.height =  bounds.height;
-    log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", (x2-x1), "height:", (y2-y1));
+    var x1 = Math.min(canvas.width - 1, Math.max(0, bounds.left)) - 1;
+    var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width)) + 1;
+    var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top)) - 1;
+    var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height)) + 1;
+
+    var w = x2 - x1;
+    var h = y2 - y1;
+
+    croppedCanvas.width = w;
+    croppedCanvas.height =  h;
+    log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", w, "height:", h);
     log("Resulting crop with width", bounds.width, "and height", bounds.height, " with x", x1, "and y", y1);
-    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, x2-x1, y2-y1, bounds.x, bounds.y, x2-x1, y2-y1);
+    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, w, h, 0, 0, w, h);
     return croppedCanvas;
 }
 
