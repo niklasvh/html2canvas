@@ -10,7 +10,7 @@
     "url": "http://hertzen.com"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0.0"
   },
   "repository": {
     "type": "git",
@@ -20,31 +20,28 @@
     "url": "https://github.com/niklasvh/html2canvas/issues"
   },
   "devDependencies": {
-    "base64-arraybuffer": ">= 0.1.4",
-    "bluebird": "2.7.1",
+    "base64-arraybuffer": "^0.1.5",
+    "bluebird": "^3.0.6",
     "grunt": "^0.4.5",
-    "grunt-browserify": "^3.3.0",
-    "grunt-contrib-connect": "^0.8.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-browserify": "^4.0.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-execute": "^0.2.2",
     "grunt-mocha-cli": "^1.12.0",
     "grunt-mocha-phantomjs": "^2.0.0",
     "html2canvas-proxy": "0.0.5",
     "humanize-duration": "^2.0.1",
-    "lodash": "^2.4.1",
-    "png-js": ">= 0.1.1",
+    "lodash": "^3.10.1",
+    "png-js": "^0.1.1",
     "requirejs": "^2.1.20",
-    "wd": "^0.2.21"
+    "wd": "^0.4.0"
   },
   "scripts": {
     "test": "grunt travis --verbose"
   },
   "homepage": "http://html2canvas.hertzen.com",
-  "licenses": [
-    {
-      "type": "MIT"
-    }
-  ]
+  "license": "MIT"
 }
