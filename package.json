@@ -35,12 +35,15 @@
     "html2canvas-proxy": "0.0.5",
     "humanize-duration": "^2.0.1",
     "lodash": "^3.10.1",
-    "png-js": "^0.1.1",
+    "pngjs": "^2.2.0",
     "requirejs": "^2.1.20",
+    "sauce-connect-launcher": "^0.13.0",
     "wd": "^0.4.0"
   },
   "scripts": {
-    "test": "grunt travis --verbose"
+    "test": "grunt travis --verbose",
+    "start": "grunt server",
+    "sauceconnect": "tests/sauceconnect.js"
   },
   "homepage": "http://html2canvas.hertzen.com",
   "license": "MIT"

@@ -6,7 +6,7 @@
         url = require("url"),
         path = require("path"),
         base64_arraybuffer = require('base64-arraybuffer'),
-        PNG = require('png-js'),
+        PNG = require('pngjs').PNG,
         Promise = require('bluebird'),
         _ = require('lodash'),
         humanizeDuration = require("humanize-duration"),
@@ -20,9 +20,15 @@
     var port = 8080;
 
     function getPixelArray(base64) {
-        return new Promise(function(resolve) {
-            var arraybuffer = base64_arraybuffer.decode(base64);
-            (new PNG(arraybuffer)).decodePixels(resolve);
+        return new Promise(function(resolve, reject) {
+            const arraybuffer = base64_arraybuffer.decode(base64);
+            new PNG().parse(arraybuffer, (error, data) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(data.data);
+                }
+            });
         });
     }
 
@@ -78,7 +84,7 @@
         return Promise.resolve(browser
             .then(utils.loadTestPage(browser, test, port))
             .then(captureScreenshots(browser))
-            .then(analyzeResults(test))).cancellable();
+            .then(analyzeResults(test)));
     }
 
     exports.tests = function(browsers, singleTest) {
