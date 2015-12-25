@@ -16,8 +16,8 @@ function html2canvas(nodeList, options) {
     var index = html2canvasCloneIndex++;
     options = options || {};
     if (options.logging) {
-        window.html2canvas.logging = true;
-        window.html2canvas.start = Date.now();
+        log.enabled = true;
+        log.start = Date.now();
     }
 
     options.async = typeof(options.async) === "undefined" ? true : options.async;
