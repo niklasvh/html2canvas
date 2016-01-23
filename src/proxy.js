@@ -19,11 +19,14 @@ function Proxy(src, proxyUrl, document) {
 var proxyCount = 0;
 
 function ProxyURL(src, proxyUrl, document) {
-    var supportsCORSImage = ('crossOrigin' in new Image());
+    // Disable CORS for now as it doesn't take options.useCORS in account
+    // And it defaults to true instead of false.
+    var supportsCORSImage = false; //('crossOrigin' in new Image());
     var callback = createCallback(supportsCORSImage);
     var url = createProxyUrl(proxyUrl, src, callback);
     return (supportsCORSImage ? Promise.resolve(url) : jsonp(document, url, callback).then(function(response) {
-        return "data:" + response.type + ";base64," + response.content;
+        // Proxy returns response with both type & content, return it directly.
+        return response;
     }));
 }
 
