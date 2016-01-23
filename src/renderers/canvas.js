@@ -90,7 +90,14 @@ CanvasRenderer.prototype.shape = function(shape) {
 };
 
 CanvasRenderer.prototype.font = function(color, style, variant, weight, size, family) {
-    this.setFillStyle(color).font = [style, variant, weight, size, family].join(" ").split(",")[0];
+    var realFamily = family.split(',');
+    for (var i = realFamily.length-1; i >= 0; i--) {
+        if (realFamily[i].indexOf('\'') > -1 || realFamily[i].indexOf('"') > -1) {
+            // remove this from the family; the name is too fancy for canvas
+            realFamily.splice(i, 1);
+        }
+    }
+    this.setFillStyle(color).font = [style, variant, weight, size, realFamily].join(" ").split(",")[0];  
 };
 
 CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
