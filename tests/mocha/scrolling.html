@@ -19,8 +19,8 @@
         <div style="height: 650px; background: green"></div>
     </div>
 </div>
-<div style="height: 2200px;"></div>
-<div style="height: 500px;background: green;"><a name="content">content</a></div>
+<div style="height: 2200px"></div>
+<div style="height: 500px;background: green;" id="bottom-content"><a name="content">&nbsp;</a></div>
 <script>
     describe("Scrolling", function() {
         it("with random scroll", function (done) {
@@ -58,9 +58,23 @@
             setTimeout(function() {
                 html2canvas(document.querySelector("#scroll-render")).then(function (canvas) {
                     expect($("#scrollable").scrollTop()).to.equal(500);
-                    document.body.appendChild(canvas);
                     expect(canvas.width).to.equal(200);
                     expect(canvas.height).to.equal(200);
+                    validCanvasPixels(canvas);
+                    done();
+                }).catch(function (error) {
+                    done(error);
+                });
+            }, 0);
+        });
+
+
+        it("with window scroll", function (done) {
+            $(window).scrollTop(500);
+            setTimeout(function() {
+                console.log(document.querySelector("#bottom-content").getBoundingClientRect().top);
+                html2canvas(document.querySelector("#bottom-content")).then(function (canvas) {
+                    expect($(window).scrollTop()).to.equal(500);
                     validCanvasPixels(canvas);
                     done();
                 }).catch(function (error) {
