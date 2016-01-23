@@ -37,16 +37,6 @@ module.exports = function(grunt) {
             version: "11",
             platform: "Windows 8.1"
         },
-        safari6: {
-            browserName: "safari",
-            version: "6",
-            platform: "OS X 10.8"
-        },
-        safari7:{
-            browserName: "safari",
-            platform: "OS X 10.9",
-            version: "7"
-        },
         chromeOSX:{
             browserName: "chrome",
             platform: "OS X 10.8",
