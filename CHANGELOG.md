@@ -1,5 +1,24 @@
 ### Changelog ###
 
+v0.5.0-beta4 - 23.1.2016
+ * Fix logger requiring access to window object
+ * Derequire browserify build
+ * Fix rendering of specific elements when window is scrolled and `type` isn't set to `view`
+
+v0.5.0-beta3 - 6.12.2015
+ * Handle color names in linear gradients
+
+v0.5.0-beta2 - 20.10.2015
+ * Remove Promise polyfill (use native or provide it yourself)
+
+v0.5.0-beta1 - 19.10.2015
+ * Fix bug with unmatched color stops in gradients
+ * Fix scrolling issues with iOS
+ * Correctly handle named colors in gradients
+ * Accept matrix3d transforms
+ * Fix transparent colors breaking gradients
+ * Preserve scrolling positions on render
+
 v0.5.0-alpha2 - 3.2.2015
  * Switch to using browserify for building
  * Fix (#517) Chrome stretches background images with 'auto' or single attributes
