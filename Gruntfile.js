@@ -65,7 +65,10 @@ module.exports = function(grunt) {
                     browserifyOptions: {
                         standalone: 'html2canvas'
                     },
-                    banner: meta.banner
+                    banner: meta.banner,
+                    plugin: [
+                        [ "browserify-derequire" ]
+                    ]
                 }
             },
             svg: {
@@ -77,7 +80,10 @@ module.exports = function(grunt) {
                     browserifyOptions: {
                         standalone: 'html2canvas.svg'
                     },
-                    banner: meta.banner
+                    banner: meta.banner,
+                    plugin: [
+                        [ "browserify-derequire" ]
+                    ]
                 }
             }
         },
