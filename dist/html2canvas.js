@@ -5,7 +5,7 @@
   Released under  License
 */
 
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.html2canvas=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.html2canvas=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -516,8 +516,8 @@
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],2:[function(require,module,exports){
-var log = require('./log');
+},{}],2:[function(_dereq_,module,exports){
+var log = _dereq_('./log');
 
 function restoreOwnerScroll(ownerDocument, x, y) {
     if (ownerDocument.defaultView && (x !== ownerDocument.defaultView.pageXOffset || y !== ownerDocument.defaultView.pageYOffset)) {
@@ -622,7 +622,7 @@ module.exports = function(ownerDocument, containerDocument, width, height, optio
     });
 };
 
-},{"./log":13}],3:[function(require,module,exports){
+},{"./log":13}],3:[function(_dereq_,module,exports){
 // http://dev.w3.org/csswg/css-color/
 
 function Color(value) {
@@ -896,16 +896,16 @@ var colors = {
 
 module.exports = Color;
 
-},{}],4:[function(require,module,exports){
-var Support = require('./support');
-var CanvasRenderer = require('./renderers/canvas');
-var ImageLoader = require('./imageloader');
-var NodeParser = require('./nodeparser');
-var NodeContainer = require('./nodecontainer');
-var log = require('./log');
-var utils = require('./utils');
-var createWindowClone = require('./clone');
-var loadUrlDocument = require('./proxy').loadUrlDocument;
+},{}],4:[function(_dereq_,module,exports){
+var Support = _dereq_('./support');
+var CanvasRenderer = _dereq_('./renderers/canvas');
+var ImageLoader = _dereq_('./imageloader');
+var NodeParser = _dereq_('./nodeparser');
+var NodeContainer = _dereq_('./nodecontainer');
+var log = _dereq_('./log');
+var utils = _dereq_('./utils');
+var createWindowClone = _dereq_('./clone');
+var loadUrlDocument = _dereq_('./proxy').loadUrlDocument;
 var getBounds = utils.getBounds;
 
 var html2canvasNodeAttribute = "data-html2canvas-node";
@@ -1051,9 +1051,9 @@ function absoluteUrl(url) {
     return link;
 }
 
-},{"./clone":2,"./imageloader":11,"./log":13,"./nodecontainer":14,"./nodeparser":15,"./proxy":16,"./renderers/canvas":20,"./support":22,"./utils":26}],5:[function(require,module,exports){
-var log = require('./log');
-var smallImage = require('./utils').smallImage;
+},{"./clone":2,"./imageloader":11,"./log":13,"./nodecontainer":14,"./nodeparser":15,"./proxy":16,"./renderers/canvas":20,"./support":22,"./utils":26}],5:[function(_dereq_,module,exports){
+var log = _dereq_('./log');
+var smallImage = _dereq_('./utils').smallImage;
 
 function DummyImageContainer(src) {
     this.src = src;
@@ -1075,8 +1075,8 @@ function DummyImageContainer(src) {
 
 module.exports = DummyImageContainer;
 
-},{"./log":13,"./utils":26}],6:[function(require,module,exports){
-var smallImage = require('./utils').smallImage;
+},{"./log":13,"./utils":26}],6:[function(_dereq_,module,exports){
+var smallImage = _dereq_('./utils').smallImage;
 
 function Font(family, size) {
     var container = document.createElement('div'),
@@ -1129,8 +1129,8 @@ function Font(family, size) {
 
 module.exports = Font;
 
-},{"./utils":26}],7:[function(require,module,exports){
-var Font = require('./font');
+},{"./utils":26}],7:[function(_dereq_,module,exports){
+var Font = _dereq_('./font');
 
 function FontMetrics() {
     this.data = {};
@@ -1145,10 +1145,10 @@ FontMetrics.prototype.getMetrics = function(family, size) {
 
 module.exports = FontMetrics;
 
-},{"./font":6}],8:[function(require,module,exports){
-var utils = require('./utils');
+},{"./font":6}],8:[function(_dereq_,module,exports){
+var utils = _dereq_('./utils');
 var getBounds = utils.getBounds;
-var loadUrlDocument = require('./proxy').loadUrlDocument;
+var loadUrlDocument = _dereq_('./proxy').loadUrlDocument;
 
 function FrameContainer(container, sameOrigin, options) {
     this.image = null;
@@ -1164,7 +1164,7 @@ function FrameContainer(container, sameOrigin, options) {
             resolve(container);
         }
     })).then(function(container) {
-        var html2canvas = require('./core');
+        var html2canvas = _dereq_('./core');
         return html2canvas(container.contentWindow.document.documentElement, {type: 'view', width: container.width, height: container.height, proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer, allowTaint: options.allowTaint, imageTimeout: options.imageTimeout / 2});
     }).then(function(canvas) {
         return self.image = canvas;
@@ -1178,7 +1178,7 @@ FrameContainer.prototype.proxyLoad = function(proxy, bounds, options) {
 
 module.exports = FrameContainer;
 
-},{"./core":4,"./proxy":16,"./utils":26}],9:[function(require,module,exports){
+},{"./core":4,"./proxy":16,"./utils":26}],9:[function(_dereq_,module,exports){
 function GradientContainer(imageData) {
     this.src = imageData.value;
     this.colorStops = [];
@@ -1201,7 +1201,7 @@ GradientContainer.REGEXP_COLORSTOP = /^\s*(rgba?\(\s*\d{1,3},\s*\d{1,3},\s*\d{1,
 
 module.exports = GradientContainer;
 
-},{}],10:[function(require,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 function ImageContainer(src, cors) {
     this.src = src;
     this.image = new Image();
@@ -1222,17 +1222,17 @@ function ImageContainer(src, cors) {
 
 module.exports = ImageContainer;
 
-},{}],11:[function(require,module,exports){
-var log = require('./log');
-var ImageContainer = require('./imagecontainer');
-var DummyImageContainer = require('./dummyimagecontainer');
-var ProxyImageContainer = require('./proxyimagecontainer');
-var FrameContainer = require('./framecontainer');
-var SVGContainer = require('./svgcontainer');
-var SVGNodeContainer = require('./svgnodecontainer');
-var LinearGradientContainer = require('./lineargradientcontainer');
-var WebkitGradientContainer = require('./webkitgradientcontainer');
-var bind = require('./utils').bind;
+},{}],11:[function(_dereq_,module,exports){
+var log = _dereq_('./log');
+var ImageContainer = _dereq_('./imagecontainer');
+var DummyImageContainer = _dereq_('./dummyimagecontainer');
+var ProxyImageContainer = _dereq_('./proxyimagecontainer');
+var FrameContainer = _dereq_('./framecontainer');
+var SVGContainer = _dereq_('./svgcontainer');
+var SVGNodeContainer = _dereq_('./svgnodecontainer');
+var LinearGradientContainer = _dereq_('./lineargradientcontainer');
+var WebkitGradientContainer = _dereq_('./webkitgradientcontainer');
+var bind = _dereq_('./utils').bind;
 
 function ImageLoader(options, support) {
     this.link = null;
@@ -1381,9 +1381,9 @@ ImageLoader.prototype.timeout = function(container, timeout) {
 
 module.exports = ImageLoader;
 
-},{"./dummyimagecontainer":5,"./framecontainer":8,"./imagecontainer":10,"./lineargradientcontainer":12,"./log":13,"./proxyimagecontainer":17,"./svgcontainer":23,"./svgnodecontainer":24,"./utils":26,"./webkitgradientcontainer":27}],12:[function(require,module,exports){
-var GradientContainer = require('./gradientcontainer');
-var Color = require('./color');
+},{"./dummyimagecontainer":5,"./framecontainer":8,"./imagecontainer":10,"./lineargradientcontainer":12,"./log":13,"./proxyimagecontainer":17,"./svgcontainer":23,"./svgnodecontainer":24,"./utils":26,"./webkitgradientcontainer":27}],12:[function(_dereq_,module,exports){
+var GradientContainer = _dereq_('./gradientcontainer');
+var Color = _dereq_('./color');
 
 function LinearGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -1485,7 +1485,7 @@ LinearGradientContainer.REGEXP_DIRECTION = /^\s*(?:to|left|right|top|bottom|cent
 
 module.exports = LinearGradientContainer;
 
-},{"./color":3,"./gradientcontainer":9}],13:[function(require,module,exports){
+},{"./color":3,"./gradientcontainer":9}],13:[function(_dereq_,module,exports){
 var logger = function() {
     if (logger.options.logging && window.console && window.console.log) {
         Function.prototype.bind.call(window.console.log, (window.console)).apply(window.console, [(Date.now() - logger.options.start) + "ms", "html2canvas:"].concat([].slice.call(arguments, 0)));
@@ -1495,9 +1495,9 @@ var logger = function() {
 logger.options = {logging: false};
 module.exports = logger;
 
-},{}],14:[function(require,module,exports){
-var Color = require('./color');
-var utils = require('./utils');
+},{}],14:[function(_dereq_,module,exports){
+var Color = _dereq_('./color');
+var utils = _dereq_('./utils');
 var getBounds = utils.getBounds;
 var parseBackgrounds = utils.parseBackgrounds;
 var offsetBounds = utils.offsetBounds;
@@ -1793,16 +1793,16 @@ function asFloat(str) {
 
 module.exports = NodeContainer;
 
-},{"./color":3,"./utils":26}],15:[function(require,module,exports){
-var log = require('./log');
-var punycode = require('punycode');
-var NodeContainer = require('./nodecontainer');
-var TextContainer = require('./textcontainer');
-var PseudoElementContainer = require('./pseudoelementcontainer');
-var FontMetrics = require('./fontmetrics');
-var Color = require('./color');
-var StackingContext = require('./stackingcontext');
-var utils = require('./utils');
+},{"./color":3,"./utils":26}],15:[function(_dereq_,module,exports){
+var log = _dereq_('./log');
+var punycode = _dereq_('punycode');
+var NodeContainer = _dereq_('./nodecontainer');
+var TextContainer = _dereq_('./textcontainer');
+var PseudoElementContainer = _dereq_('./pseudoelementcontainer');
+var FontMetrics = _dereq_('./fontmetrics');
+var Color = _dereq_('./color');
+var StackingContext = _dereq_('./stackingcontext');
+var utils = _dereq_('./utils');
 var bind = utils.bind;
 var getBounds = utils.getBounds;
 var parseBackgrounds = utils.parseBackgrounds;
@@ -2664,11 +2664,11 @@ function hasUnicode(string) {
 
 module.exports = NodeParser;
 
-},{"./color":3,"./fontmetrics":7,"./log":13,"./nodecontainer":14,"./pseudoelementcontainer":18,"./stackingcontext":21,"./textcontainer":25,"./utils":26,"punycode":1}],16:[function(require,module,exports){
-var XHR = require('./xhr');
-var utils = require('./utils');
-var log = require('./log');
-var createWindowClone = require('./clone');
+},{"./color":3,"./fontmetrics":7,"./log":13,"./nodecontainer":14,"./pseudoelementcontainer":18,"./stackingcontext":21,"./textcontainer":25,"./utils":26,"punycode":1}],16:[function(_dereq_,module,exports){
+var XHR = _dereq_('./xhr');
+var utils = _dereq_('./utils');
+var log = _dereq_('./log');
+var createWindowClone = _dereq_('./clone');
 var decode64 = utils.decode64;
 
 function Proxy(src, proxyUrl, document) {
@@ -2761,8 +2761,8 @@ exports.Proxy = Proxy;
 exports.ProxyURL = ProxyURL;
 exports.loadUrlDocument = loadUrlDocument;
 
-},{"./clone":2,"./log":13,"./utils":26,"./xhr":28}],17:[function(require,module,exports){
-var ProxyURL = require('./proxy').ProxyURL;
+},{"./clone":2,"./log":13,"./utils":26,"./xhr":28}],17:[function(_dereq_,module,exports){
+var ProxyURL = _dereq_('./proxy').ProxyURL;
 
 function ProxyImageContainer(src, proxy) {
     var link = document.createElement("a");
@@ -2784,8 +2784,8 @@ function ProxyImageContainer(src, proxy) {
 
 module.exports = ProxyImageContainer;
 
-},{"./proxy":16}],18:[function(require,module,exports){
-var NodeContainer = require('./nodecontainer');
+},{"./proxy":16}],18:[function(_dereq_,module,exports){
+var NodeContainer = _dereq_('./nodecontainer');
 
 function PseudoElementContainer(node, parent, type) {
     NodeContainer.call(this, node, parent);
@@ -2824,8 +2824,8 @@ PseudoElementContainer.prototype.PSEUDO_HIDE_ELEMENT_CLASS_AFTER = "___html2canv
 
 module.exports = PseudoElementContainer;
 
-},{"./nodecontainer":14}],19:[function(require,module,exports){
-var log = require('./log');
+},{"./nodecontainer":14}],19:[function(_dereq_,module,exports){
+var log = _dereq_('./log');
 
 function Renderer(width, height, images, options, document) {
     this.width = width;
@@ -2934,10 +2934,10 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
 
 module.exports = Renderer;
 
-},{"./log":13}],20:[function(require,module,exports){
-var Renderer = require('../renderer');
-var LinearGradientContainer = require('../lineargradientcontainer');
-var log = require('../log');
+},{"./log":13}],20:[function(_dereq_,module,exports){
+var Renderer = _dereq_('../renderer');
+var LinearGradientContainer = _dereq_('../lineargradientcontainer');
+var log = _dereq_('../log');
 
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
@@ -3117,8 +3117,8 @@ function hasEntries(array) {
 
 module.exports = CanvasRenderer;
 
-},{"../lineargradientcontainer":12,"../log":13,"../renderer":19}],21:[function(require,module,exports){
-var NodeContainer = require('./nodecontainer');
+},{"../lineargradientcontainer":12,"../log":13,"../renderer":19}],21:[function(_dereq_,module,exports){
+var NodeContainer = _dereq_('./nodecontainer');
 
 function StackingContext(hasOwnStacking, opacity, element, parent) {
     NodeContainer.call(this, element, parent);
@@ -3137,7 +3137,7 @@ StackingContext.prototype.getParentStack = function(context) {
 
 module.exports = StackingContext;
 
-},{"./nodecontainer":14}],22:[function(require,module,exports){
+},{"./nodecontainer":14}],22:[function(_dereq_,module,exports){
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
@@ -3190,9 +3190,9 @@ Support.prototype.testSVG = function() {
 
 module.exports = Support;
 
-},{}],23:[function(require,module,exports){
-var XHR = require('./xhr');
-var decode64 = require('./utils').decode64;
+},{}],23:[function(_dereq_,module,exports){
+var XHR = _dereq_('./xhr');
+var decode64 = _dereq_('./utils').decode64;
 
 function SVGContainer(src) {
     this.src = src;
@@ -3244,8 +3244,8 @@ SVGContainer.prototype.decode64 = function(str) {
 
 module.exports = SVGContainer;
 
-},{"./utils":26,"./xhr":28}],24:[function(require,module,exports){
-var SVGContainer = require('./svgcontainer');
+},{"./utils":26,"./xhr":28}],24:[function(_dereq_,module,exports){
+var SVGContainer = _dereq_('./svgcontainer');
 
 function SVGNodeContainer(node, _native) {
     this.src = node;
@@ -3271,8 +3271,8 @@ SVGNodeContainer.prototype = Object.create(SVGContainer.prototype);
 
 module.exports = SVGNodeContainer;
 
-},{"./svgcontainer":23}],25:[function(require,module,exports){
-var NodeContainer = require('./nodecontainer');
+},{"./svgcontainer":23}],25:[function(_dereq_,module,exports){
+var NodeContainer = _dereq_('./nodecontainer');
 
 function TextContainer(node, parent) {
     NodeContainer.call(this, node, parent);
@@ -3306,7 +3306,7 @@ function capitalize(m, p1, p2) {
 
 module.exports = TextContainer;
 
-},{"./nodecontainer":14}],26:[function(require,module,exports){
+},{"./nodecontainer":14}],26:[function(_dereq_,module,exports){
 exports.smallImage = function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 };
@@ -3477,8 +3477,8 @@ exports.parseBackgrounds = function(backgroundImage) {
     return results;
 };
 
-},{}],27:[function(require,module,exports){
-var GradientContainer = require('./gradientcontainer');
+},{}],27:[function(_dereq_,module,exports){
+var GradientContainer = _dereq_('./gradientcontainer');
 
 function WebkitGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -3489,7 +3489,7 @@ WebkitGradientContainer.prototype = Object.create(GradientContainer.prototype);
 
 module.exports = WebkitGradientContainer;
 
-},{"./gradientcontainer":9}],28:[function(require,module,exports){
+},{"./gradientcontainer":9}],28:[function(_dereq_,module,exports){
 function XHR(url) {
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
