@@ -39,7 +39,10 @@ function html2canvas(nodeList, options) {
         });
     }
 
-    var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
+    var node = document.documentElement[0];
+    if (nodeList) {
+        node = (nodeList.length) ? nodeList[0] : nodeList;
+    }
     node.setAttribute(html2canvasNodeAttribute + index, index);
     return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
