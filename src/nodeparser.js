@@ -794,7 +794,8 @@ function isPseudoElement(container) {
 }
 
 function isTextNode(container) {
-    return container.node.nodeType === Node.TEXT_NODE;
+	var parentElement = container.node.parentElement;
+    return container.node.nodeType === Node.TEXT_NODE && !(parentElement.ownerSVGElement || parentElement.tagName.toLowerCase() === "svg");
 }
 
 function zIndexSort(contexts) {
