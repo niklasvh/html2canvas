@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+<head>
+<title>Lists Test</title>
+</head>
+<body>
+	<h1>Ordered And Unordered Lists</h1>
+	<h2>Implemented</h2>
+	<ol>
+		<li>OL Item (default)</li>
+		<li style='list-style-type: decimal'>OL Item (decimal)</li>
+		<li style='list-style-type: upper-alpha'>OL Item (upper-alpha)</li>
+		<li style='list-style-type: lower-alpha'>OL Item (lower-alpha)</li>
+		<li style='list-style-type: upper-roman'>OL Item (upper-roman)</li>
+		<li style='list-style-type: lower-roman'>OL Item (lower-roman)</li>
+		<li style='list-style-type: none'>OL Item (none)</li>
+	</ol>
+	<ul>
+		<li>UL Item (default)</li>
+		<li style='list-style-type: circle'>UL Item (circle)</li>
+		<li style='list-style-type: square'>UL Item (square)</li>
+		<li style='list-style-type: disc'>UL Item (disc)</li>
+		<li style='list-style-type: none'>UL Item (none)</li>
+	</ul>
+
+	<h2>Not Implemented</h2>
+	<pre>
+    upper-latin
+    lower-latin
+    armenian
+    cjk-ideographic
+    decimal-leading-zero
+    georgian  
+    hebrew
+    hiragana
+    hiragana-iroha
+    katakana
+    katakana-iroha
+        </pre>
+
+	<script type="text/javascript" src="../dist/html2canvas.js"></script>
+	<script type="text/javascript">
+        html2canvas(document.body).then(function(canvas) {
+            document.body.appendChild(canvas);
+        });
+    </script>
+</body>
+</html>
