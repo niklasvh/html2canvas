@@ -64,12 +64,58 @@ function LinearGradientContainer(imageData) {
         var colorStopMatch = colorStop.match(GradientContainer.REGEXP_COLORSTOP);
         var value = +colorStopMatch[2];
         var unit = value === 0 ? "%" : colorStopMatch[3]; // treat "0" as "0%"
+        var isTransparent = colorStopMatch[1] === "transparent";
         return {
-            color: new Color(colorStopMatch[1]),
+            color: isTransparent ? colorStopMatch[1] : new Color(colorStopMatch[1]),
             // TODO: support absolute stop positions (e.g., compute gradient line length & convert px to ratio)
             stop: unit === "%" ? value / 100 : null
         };
     });
+
+    // Fix transparent stops based on neighboring colors for smooth and correct gradients
+    for (var i = 0; i < this.colorStops.length; ++i) {
+        var colorStop = this.colorStops[i];
+
+        if (colorStop.color === "transparent") {
+            var previousColor = null;
+
+            if (i > 0) {
+                previousColor = this.colorStops[i - 1].color;
+            }
+
+            var nextColor = null;
+
+            if (i < this.colorStops.length) {
+                nextColor = this.colorStops[i + 1].color;
+            }
+
+            var targetColor = null;
+
+            if (previousColor) {
+                // If we have a color before the transparency, that should the
+                // color of this transparency as well
+                targetColor = previousColor;
+            } else {
+                // Otherwise, the color following the transparency is our target color
+                targetColor = nextColor;
+            }
+
+            // Copy target color setting alpha to 0
+            colorStop.color = new Color([targetColor.r, targetColor.g, targetColor.b, 0]);
+
+            // If this transparency is between 2 non-"transparent" colors then add a
+            // new color stop at the same position but with the color of the following
+            // color for a clean gradient
+            if (previousColor && nextColor && nextColor !== "transparent") {
+                var newColorStop = {
+                    color: new Color([nextColor.r, nextColor.g, nextColor.b, 0]),
+                    stop: colorStop.stop
+                };
+
+                this.colorStops.splice(i + 1, 0, newColorStop);
+            }
+        }
+    }
 
     if (this.colorStops[0].stop === null) {
         this.colorStops[0].stop = 0;
