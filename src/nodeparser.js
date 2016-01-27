@@ -748,10 +748,20 @@ function noLetterSpacing(container) {
 function getBorderRadiusData(container) {
     return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function(side) {
         var value = container.css('border' + side + 'Radius');
+      
         var arr = value.split(" ");
         if (arr.length <= 1) {
             arr[1] = arr[0];
         }
+        //check for percentage radius and get relative values 
+        if(value.indexOf('%')>=0)
+        {
+             var currentVal = parseInt(arr[0]);
+             if(!isNaN(currentVal)){
+                arr[0] = container.bounds.width * currentVal / 100;
+                arr[1] = container.bounds.height * currentVal / 100; 
+             }           
+        }        
         return arr.map(asInt);
     });
 }
