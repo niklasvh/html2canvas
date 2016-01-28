@@ -1,5 +1,5 @@
 /*
-  html2canvas 0.5.0-beta3 <http://html2canvas.hertzen.com>
+  html2canvas 0.5.0-beta4 <http://html2canvas.hertzen.com>
   Copyright (c) 2016 Niklas von Hertzen
 
   Released under  License
@@ -938,15 +938,20 @@ function html2canvas(nodeList, options) {
         });
     }
 
-    var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
-    node.setAttribute(html2canvasNodeAttribute + index, index);
-    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
-        if (typeof(options.onrendered) === "function") {
-            log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
-            options.onrendered(canvas);
-        }
-        return canvas;
-    });
+    if (nodeList === null || nodeList === undefined || nodeList.length === 0) {
+    	console.log("you have selected an empty element. Please make sure your selector is correct and that you are supplying a dom element as your first argument.")
+    } 
+    else {
+	    var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
+	    node.setAttribute(html2canvasNodeAttribute + index, index);
+	    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
+	        if (typeof(options.onrendered) === "function") {
+	            log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
+	            options.onrendered(canvas);
+	        }
+	        return canvas;
+	    });
+    }
 }
 
 html2canvas.CanvasRenderer = CanvasRenderer;
