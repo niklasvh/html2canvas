@@ -71,7 +71,7 @@ Skip lint and tests and simply build from source:
 
 The library has two sets of tests. The first set is a number of qunit tests that check that different values parsed by browsers are correctly converted in html2canvas. To run these tests with grunt you'll need [phantomjs](http://phantomjs.org/).
 
-The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver](https://github.com/niklasvh/webdriver.js). The selenium standalone server (runs on Java) is required for these tests and can be downloaded from [here](http://code.google.com/p/selenium/downloads/list). They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while commiting changes, these should generally not go decrease from the baseline values.
+The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver](https://github.com/niklasvh/webdriver.js). The selenium standalone server (runs on Java) is required for these tests and can be downloaded from [here](http://code.google.com/p/selenium/downloads/list). They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while committing changes, these should generally not go decrease from the baseline values.
 
 Start by downloading the dependencies:
 
