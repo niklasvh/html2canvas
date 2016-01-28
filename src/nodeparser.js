@@ -437,6 +437,20 @@ NodeParser.prototype.paintText = function(container) {
         return punycode.ucs2.encode([character]);
     });
 
+    //For thai langauge
+	textList.forEach(function(word, index) {
+        if (/.*[\u0E30-\u0E3A\u0E47-\u0E4E].*$/.test(word)) {
+            if(textList[index-1] !== ''){
+                //for vowel only 
+                textList[index-1] += word;
+            }else{
+                //for vowel and tone marks
+                textList[index-2] += word;
+            }
+            textList[index] = '';
+        }
+    });
+
     var weight = container.parent.fontWeight();
     var size = container.parent.css('fontSize');
     var family = container.parent.css('fontFamily');
