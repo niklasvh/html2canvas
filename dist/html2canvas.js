@@ -938,7 +938,7 @@ function html2canvas(nodeList, options) {
         });
     }
 
-    if (nodeList === null || nodeList.length === 0) {
+    if (nodeList === null || nodeList === undefined || nodeList.length === 0) {
     	console.log("you have selected an empty element. Please make sure your selector is correct and that you are supplying a dom element as your first argument.")
     } 
     else {
