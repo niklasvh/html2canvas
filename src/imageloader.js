@@ -60,11 +60,11 @@ ImageLoader.prototype.hasImageBackground = function(imageData) {
 ImageLoader.prototype.loadImage = function(imageData) {
     if (imageData.method === "url") {
         var src = imageData.args[0];
-        if (this.isSVG(src) && !this.support.svg && !this.options.allowTaint) {
+        if (this.isSVG(src) && !this.support.svg && !this.options.allowTaint && !this.options.proxy) {
             return new SVGContainer(src);
         } else if (src.match(/data:image\/.*;base64,/i)) {
             return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
-        } else if (this.isSameOrigin(src) || this.options.allowTaint === true || this.isSVG(src)) {
+        } else if (this.isSameOrigin(src) || this.options.allowTaint === true || (this.isSVG(src) && !this.options.proxy)) {
             return new ImageContainer(src, false);
         } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
             return new ImageContainer(src, true);
