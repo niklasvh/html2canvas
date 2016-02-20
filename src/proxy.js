@@ -19,7 +19,7 @@ function Proxy(src, proxyUrl, document) {
 var proxyCount = 0;
 
 function ProxyURL(src, proxyUrl, document) {
-    var supportsCORSImage = ('crossOrigin' in new Image());
+    var supportsCORSImage = (new Image()).crossOrigin;
     var callback = createCallback(supportsCORSImage);
     var url = createProxyUrl(proxyUrl, src, callback);
     return (supportsCORSImage ? Promise.resolve(url) : jsonp(document, url, callback).then(function(response) {
