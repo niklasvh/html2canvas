@@ -8,57 +8,50 @@ function LinearGradientContainer(imageData) {
     var hasDirection = LinearGradientContainer.REGEXP_DIRECTION.test( imageData.args[0] ) ||
         !GradientContainer.REGEXP_COLORSTOP.test( imageData.args[0] );
 
-    if (hasDirection) {
-        imageData.args[0].split(/\s+/).reverse().forEach(function(position, index) {
-            switch(position) {
-            case "left":
-                this.x0 = 0;
-                this.x1 = 1;
-                break;
-            case "top":
+    if (imageData.args[0].indexOf('deg') != -1) {
+              var rad = parseFloat(imageData.args[0].substr(0, imageData.args[0].length - 3)) * (Math.PI / 180);
+              //Finds y start and scales it between 0 and 1
+              this.y0 = (Math.cos(rad) + 1) / 2;
+              //Flips y1
+              this.y1 = 1 - this.y0;
+              //Same as for y0 but flip axis to match with css gradient
+              this.x0 = (-Math.sin(rad) + 1) / 2;
+              this.x1 = 1 - this.x0;
+        }else{
+            if (hasDirection) {
+                imageData.args[0].split(" ").reverse().forEach(function(position) {
+                    switch(position) {
+                    case "left":
+                        this.x0 = 0;
+                        this.x1 = 1;
+                        break;
+                    case "top":
+                        this.y0 = 0;
+                        this.y1 = 1;
+                        break;
+                    case "right":
+                        this.x0 = 1;
+                        this.x1 = 0;
+                        break;
+                    case "bottom":
+                        this.y0 = 1;
+                        this.y1 = 0;
+                        break;
+                    case "to":
+                        var y0 = this.y0;
+                        var x0 = this.x0;
+                        this.y0 = this.y1;
+                        this.x0 = this.x1;
+                        this.x1 = x0;
+                        this.y1 = y0;
+                        break;
+                    }
+                }, this);
+            } else {
                 this.y0 = 0;
                 this.y1 = 1;
-                break;
-            case "right":
-                this.x0 = 1;
-                this.x1 = 0;
-                break;
-            case "bottom":
-                this.y0 = 1;
-                this.y1 = 0;
-                break;
-            case "to":
-                var y0 = this.y0;
-                var x0 = this.x0;
-                this.y0 = this.y1;
-                this.x0 = this.x1;
-                this.x1 = x0;
-                this.y1 = y0;
-                break;
-            case "center":
-                break; // centered by default
-            // Firefox internally converts position keywords to percentages:
-            // http://www.w3.org/TR/2010/WD-CSS2-20101207/colors.html#propdef-background-position
-            default: // percentage or absolute length
-                // TODO: support absolute start point positions (e.g., use bounds to convert px to a ratio)
-                var ratio = parseFloat(position, 10) * 1e-2;
-                if (isNaN(ratio)) { // invalid or unhandled value
-                    break;
-                }
-                if (index === 0) {
-                    this.y0 = ratio;
-                    this.y1 = 1 - this.y0;
-                } else {
-                    this.x0 = ratio;
-                    this.x1 = 1 - this.x0;
-                }
-                break;
             }
-        }, this);
-    } else {
-        this.y0 = 0;
-        this.y1 = 1;
-    }
+        }
 
     this.colorStops = imageData.args.slice(hasDirection ? 1 : 0).map(function(colorStop) {
         var colorStopMatch = colorStop.match(GradientContainer.REGEXP_COLORSTOP);
