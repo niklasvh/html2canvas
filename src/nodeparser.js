@@ -72,7 +72,8 @@ NodeParser.prototype.calculateOverflowClips = function() {
                 container.appendToDOM();
             }
             container.borders = this.parseBorders(container);
-            var clip = (container.css('overflow') === "hidden") ? [container.borders.clip] : [];
+            var clip = (container.css('overflow') === "hidden" ||
+                        container.css('overflow') === "scroll") ? [container.borders.clip] : [];
             var cssClip = container.parseClip();
             if (cssClip && ["absolute", "fixed"].indexOf(container.css('position')) !== -1) {
                 clip.push([["rect",
