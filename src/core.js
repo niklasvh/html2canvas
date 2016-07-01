@@ -27,6 +27,7 @@ function html2canvas(nodeList, options) {
     options.imageTimeout = typeof(options.imageTimeout) === "undefined" ? 10000 : options.imageTimeout;
     options.renderer = typeof(options.renderer) === "function" ? options.renderer : CanvasRenderer;
     options.strict = !!options.strict;
+    options.suppressErrors = !!options.suppressErrors;
 
     if (typeof(nodeList) === "string") {
         if (typeof(options.proxy) !== "string") {
@@ -47,6 +48,11 @@ function html2canvas(nodeList, options) {
             options.onrendered(canvas);
         }
         return canvas;
+    }).catch(function(e) {
+        if (!options.suppressErrors) {
+            console.error(e.stack);
+        }
+        throw e;
     });
 }
 
