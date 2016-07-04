@@ -99,6 +99,22 @@ module.exports = function(ownerDocument, containerDocument, width, height, optio
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         restoreOwnerScroll(ownerDocument, x, y);
         documentClone.replaceChild(documentClone.adoptNode(documentElement), documentClone.documentElement);
+
+	/*
+           1) It seems IE 11 does not get right computed styles when clones a node.
+           2) In documentClone.replaceChild(...) IE 11 does not apply @media instructions.
+              That's can be checked
+                  by alert('ndocumentClone ' + $('.row-fluid [class*="span"]', documentClone).css('float'));
+                  or alert('documentElement ' + $('.row-fluid [class*="span"]', documentElement).css('float'));
+              These both statments shows 'left' for wide screen in Chrome and shows none in IE11 (without dev panel).
+            To fix that we need to re-apply styles somehow. Change the container width works but probably a better
+            way exists. Lets have this in mind.
+	    
+            more about the problem can be found here: 
+            https://stackoverflow.com/questions/31793507/html2canvas-renders-page-with-wrong-layout-in-ie11-whed-devtools-not-opened/31800273#31800273?newreg=44f5be1e6bcc416ca7c9e50ba046f2f8
+         */
+	container.width = width + 1;
+
         documentClone.close();
     });
 };
