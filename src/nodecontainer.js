@@ -203,7 +203,7 @@ NodeContainer.prototype.parseTextShadows = function() {
                 color: new Color(s[0]),
                 offsetX: s[1] ? parseFloat(s[1].replace('px', '')) : 0,
                 offsetY: s[2] ? parseFloat(s[2].replace('px', '')) : 0,
-                blur: s[3] ? s[3].replace('px', '') : 0
+                blur: s[3] ? parseFloat(s[3].replace('px', '')) : 0
             });
         }
     }
