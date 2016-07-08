@@ -100,6 +100,13 @@ CanvasRenderer.prototype.fontShadow = function(color, offsetX, offsetY, blur) {
         .setVariable("shadowBlur", blur);
 };
 
+CanvasRenderer.prototype.renderTextShadow = function(text, bounds, shadows){
+	for(i = 0; i < shadows.length ; i++){
+		this.fontShadow(shadows[i].color, shadows[i].offsetX, shadows[i].offsetY, shadows[i].blur);
+		this.text(text, bounds.left, bounds.bottom);
+	}
+}
+
 CanvasRenderer.prototype.clearShadow = function() {
     this.setVariable("shadowColor", "rgba(0,0,0,0)");
 };
