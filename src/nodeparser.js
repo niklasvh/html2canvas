@@ -443,18 +443,19 @@ NodeParser.prototype.paintText = function(container) {
     var shadows = container.parent.parseTextShadows();
 
     this.renderer.font(container.parent.color('color'), container.parent.css('fontStyle'), container.parent.css('fontVariant'), weight, size, family);
-    if (shadows.length) {
-        // TODO: support multiple text shadows
-        this.renderer.fontShadow(shadows[0].color, shadows[0].offsetX, shadows[0].offsetY, shadows[0].blur);
-    } else {
+    if (!shadows.length) {
         this.renderer.clearShadow();
     }
 
     this.renderer.clip(container.parent.clip, function() {
         textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
             if (bounds) {
-                this.renderer.text(textList[index], bounds.left, bounds.bottom);
-                this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
+				if (shadows.length) {
+					this.renderer.renderTextShadow(textList[index], bounds, shadows);
+				} else {
+					this.renderer.text(textList[index], bounds.left, bounds.bottom);
+				}
+				this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
             }
         }, this);
     }, this);
