@@ -353,6 +353,14 @@ NodeParser.prototype.paintElement = function(container) {
                 log("Error loading <img>", container.node.src);
             }
             break;
+        case "VIDEO":
+            var videoContainer = this.images.getVideo(container.node.videoIndex);
+            if (videoContainer) {
+                this.renderer.renderImage(container, bounds, container.borders, videoContainer);
+            } else {
+                log("Error loading <video>", container.node.src);
+            }
+            break;
         case "CANVAS":
             this.renderer.renderImage(container, bounds, container.borders, {image: container.node});
             break;

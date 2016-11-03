@@ -1,5 +1,6 @@
 var log = require('./log');
 var ImageContainer = require('./imagecontainer');
+var VideoContainer = require('./videocontainer');
 var DummyImageContainer = require('./dummyimagecontainer');
 var ProxyImageContainer = require('./proxyimagecontainer');
 var FrameContainer = require('./framecontainer');
@@ -18,12 +19,19 @@ function ImageLoader(options, support) {
 
 ImageLoader.prototype.findImages = function(nodes) {
     var images = [];
+    var videoIndex = 0;
     nodes.reduce(function(imageNodes, container) {
         switch(container.node.nodeName) {
         case "IMG":
             return imageNodes.concat([{
                 args: [container.node.src],
                 method: "url"
+            }]);
+        case "VIDEO":
+            return imageNodes.concat([{
+                args: [container.node],
+                videoIndex: videoIndex++,
+                method: "VIDEO"
             }]);
         case "svg":
         case "IFRAME":
@@ -81,7 +89,9 @@ ImageLoader.prototype.loadImage = function(imageData) {
         return new SVGNodeContainer(imageData.args[0], this.support.svg);
     } else if (imageData.method === "IFRAME") {
         return new FrameContainer(imageData.args[0], this.isSameOrigin(imageData.args[0].src), this.options);
-    } else {
+    } else if (imageData.method === "VIDEO") {
+        return new VideoContainer(imageData);
+    }  else {
         return new DummyImageContainer(imageData);
     }
 };
@@ -120,6 +130,13 @@ ImageLoader.prototype.get = function(src) {
     var found = null;
     return this.images.some(function(img) {
         return (found = img).src === src;
+    }) ? found : null;
+};
+
+ImageLoader.prototype.getVideo = function(videoIndex) {
+    var found = null;
+    return this.images.some(function(img) {
+        return (found = img).videoIndex === videoIndex;
     }) ? found : null;
 };
 
