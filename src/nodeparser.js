@@ -345,6 +345,14 @@ NodeParser.prototype.paintElement = function(container) {
                 log("Error loading <" + container.node.nodeName + ">", container.node);
             }
             break;
+        case "image":
+            var imageContainer = this.images.get(container.node.href.baseVal);
+            if (imageContainer) {
+                this.renderer.renderImage(container, bounds, container.borders, imageContainer);
+            } else {
+                log("Error loading <image>", container.node.href.baseVal);
+            }
+            break;
         case "IMG":
             var imageContainer = this.images.get(container.node.src);
             if (imageContainer) {

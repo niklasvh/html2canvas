@@ -25,6 +25,11 @@ ImageLoader.prototype.findImages = function(nodes) {
                 args: [container.node.src],
                 method: "url"
             }]);
+        case "image":
+            return imageNodes.concat([{
+                args: [container.node.href.baseVal],
+                method: "url"
+            }]);
         case "svg":
         case "IFRAME":
             return imageNodes.concat([{
