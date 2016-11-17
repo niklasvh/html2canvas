@@ -350,7 +350,7 @@ NodeParser.prototype.paintElement = function(container) {
             if (imageContainer) {
                 this.renderer.renderImage(container, bounds, container.borders, imageContainer);
             } else {
-                log("Error loading <image>", container.node.src);
+                log("Error loading <image>", container.node.href.baseVal);
             }
             break;
         case "IMG":
