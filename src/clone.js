@@ -11,7 +11,17 @@ function cloneCanvasContents(canvas, clonedCanvas) {
         if (clonedCanvas) {
             clonedCanvas.width = canvas.width;
             clonedCanvas.height = canvas.height;
-            clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+            const clonedCanvas2 = document.createElement('canvas');
+            if(!canvas.getContext('2d')){
+                clonedCanvas2.width = canvas.width;
+                clonedCanvas2.height = canvas.height;
+                clonedCanvas2.getContext("2d").drawImage(canvas,0,0);
+                clonedCanvas.getContext("2d").putImageData(clonedCanvas2.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+
+            }
+            else{
+                clonedCanvas.getContext("2d").putImageData(canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+            }
         }
     } catch(e) {
         log("Unable to copy canvas content from", canvas, e);
