@@ -140,10 +140,17 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
 
 CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds, borderLeft, borderTop) {
     var offsetX = Math.round(bounds.left + backgroundPosition.left + borderLeft), offsetY = Math.round(bounds.top + backgroundPosition.top + borderTop);
-    this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
+	/**
+	 * use scale instead of resize image to prevent blurry image
+	 */
+	var scaleX = size.width / imageContainer.image.width, scaleY = size.height / imageContainer.image.height;
+	this.setFillStyle(this.ctx.createPattern(imageContainer.image, "repeat"));
+    //this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
+	this.ctx.save();
     this.ctx.translate(offsetX, offsetY);
+	this.ctx.scale(scaleX, scaleY);
     this.ctx.fill();
-    this.ctx.translate(-offsetX, -offsetY);
+	this.ctx.restore();
 };
 
 CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
