@@ -2546,10 +2546,24 @@ function noLetterSpacing(container) {
 function getBorderRadiusData(container) {
     return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function(side) {
         var value = container.css('border' + side + 'Radius');
+
         var arr = value.split(" ");
         if (arr.length <= 1) {
             arr[1] = arr[0];
         }
+
+        arr = arr.map(function(radius) {
+            if (
+                typeof radius === 'string'
+                && radius.endsWith('%')
+                && container.bounds
+                && container.bounds.height
+            ) {
+                return (parseFloat(radius) / 100) * container.bounds.height;
+            }
+            return radius;
+        });
+
         return arr.map(asInt);
     });
 }
