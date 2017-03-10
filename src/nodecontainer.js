@@ -141,6 +141,8 @@ NodeContainer.prototype.parseBackgroundSize = function(bounds, image, index) {
     } else if (/contain|cover/.test(size[0])) {
         var targetRatio = bounds.width / bounds.height, currentRatio = image.width / image.height;
         return (targetRatio < currentRatio ^ size[0] === 'contain') ?  {width: bounds.height * currentRatio, height: bounds.height} : {width: bounds.width, height: bounds.width / currentRatio};
+    } else if (/auto/.test(size[0]) || /auto/.test(size[1])) {
+        return { width: bounds.width, height: bounds.height };
     } else {
         width = parseInt(size[0], 10);
     }
