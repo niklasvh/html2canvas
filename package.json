@@ -3,7 +3,7 @@
   "name": "html2canvas",
   "description": "Screenshots with JavaScript",
   "main": "dist/html2canvas.js",
-  "version": "0.5.0-beta4",
+  "version": "0.5.1-beta4",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
