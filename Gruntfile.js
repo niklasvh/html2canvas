@@ -177,6 +177,9 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('webdriver', 'Browser render tests', function(browser, test) {
+        if (process.env.TRAVIS_PULL_REQUEST != "false") {
+            return;
+        }
         var selenium = require("./tests/selenium.js");
         var done = this.async();
         var browsers = (browser) ? [grunt.config.get(this.name + "." + browser)] : _.values(grunt.config.get(this.name));
