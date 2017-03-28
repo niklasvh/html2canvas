@@ -69,11 +69,13 @@ _html2canvas.Renderer.Canvas = function(options) {
     newCanvas,
     bounds,
     fstyle,
-    zStack = parsedData.stack;
+    zStack = parsedData.stack,
+    devicePixelRatio = (window.devicePixelRatio && window.devicePixelRatio > 1) ? window.devicePixelRatio : 1;
 
-    canvas.width = canvas.style.width =  options.width || zStack.ctx.width;
-    canvas.height = canvas.style.height = options.height || zStack.ctx.height;
+    canvas.width = canvas.style.width =  options.width || zStack.ctx.width * devicePixelRatio;
+    canvas.height = canvas.style.height = options.height || zStack.ctx.height * devicePixelRatio;
 
+    ctx.scale(devicePixelRatio, devicePixelRatio);
     fstyle = ctx.fillStyle;
     ctx.fillStyle = (Util.isTransparent(parsedData.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -111,11 +113,11 @@ _html2canvas.Renderer.Canvas = function(options) {
         // crop image to the bounds of selected (single) element
         bounds = _html2canvas.Util.Bounds(options.elements[0]);
         newCanvas = document.createElement('canvas');
-        newCanvas.width = Math.ceil(bounds.width);
-        newCanvas.height = Math.ceil(bounds.height);
+        newCanvas.width = Math.ceil(bounds.width * devicePixelRatio);
+        newCanvas.height = Math.ceil(bounds.height * devicePixelRatio);
         ctx = newCanvas.getContext("2d");
 
-		var imgData = canvas.getContext("2d").getImageData(bounds.left, bounds.top, bounds.width, bounds.height);
+		var imgData = canvas.getContext("2d").getImageData(bounds.left * devicePixelRatio, bounds.top * devicePixelRatio, bounds.width * devicePixelRatio, bounds.height * devicePixelRatio);
 		ctx.putImageData(imgData, 0, 0);
 
         canvas = null;
