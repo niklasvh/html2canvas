@@ -1,21 +1,26 @@
 /*
-  html2canvas 0.5.0-beta3 <http://html2canvas.hertzen.com>
-  Copyright (c) 2016 Niklas von Hertzen
+  html2canvas 0.5.0-beta4 <http://html2canvas.hertzen.com>
+  Copyright (c) 2017 Niklas von Hertzen
 
   Released under  License
 */
 
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.html2canvas=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.html2canvas = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
-/*! http://mths.be/punycode v1.2.4 by @mathias */
+/*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
 
 	/** Detect free variables */
-	var freeExports = typeof exports == 'object' && exports;
+	var freeExports = typeof exports == 'object' && exports &&
+		!exports.nodeType && exports;
 	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
+		!module.nodeType && module;
 	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+	if (
+		freeGlobal.global === freeGlobal ||
+		freeGlobal.window === freeGlobal ||
+		freeGlobal.self === freeGlobal
+	) {
 		root = freeGlobal;
 	}
 
@@ -41,8 +46,8 @@
 
 	/** Regular expressions */
 	regexPunycode = /^xn--/,
-	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
 
 	/** Error messages */
 	errors = {
@@ -68,7 +73,7 @@
 	 * @returns {Error} Throws a `RangeError` with the applicable error message.
 	 */
 	function error(type) {
-		throw RangeError(errors[type]);
+		throw new RangeError(errors[type]);
 	}
 
 	/**
@@ -81,23 +86,37 @@
 	 */
 	function map(array, fn) {
 		var length = array.length;
+		var result = [];
 		while (length--) {
-			array[length] = fn(array[length]);
+			result[length] = fn(array[length]);
 		}
-		return array;
+		return result;
 	}
 
 	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings.
+	 * A simple `Array#map`-like wrapper to work with domain name strings or email
+	 * addresses.
 	 * @private
-	 * @param {String} domain The domain name.
+	 * @param {String} domain The domain name or email address.
 	 * @param {Function} callback The function that gets called for every
 	 * character.
 	 * @returns {Array} A new string of characters returned by the callback
 	 * function.
 	 */
 	function mapDomain(string, fn) {
-		return map(string.split(regexSeparators), fn).join('.');
+		var parts = string.split('@');
+		var result = '';
+		if (parts.length > 1) {
+			// In email addresses, only the domain name should be punycoded. Leave
+			// the local part (i.e. everything up to `@`) intact.
+			result = parts[0] + '@';
+			string = parts[1];
+		}
+		// Avoid `split(regex)` for IE8 compatibility. See #17.
+		string = string.replace(regexSeparators, '\x2E');
+		var labels = string.split('.');
+		var encoded = map(labels, fn).join('.');
+		return result + encoded;
 	}
 
 	/**
@@ -107,7 +126,7 @@
 	 * UCS-2 exposes as separate characters) into a single code point,
 	 * matching UTF-16.
 	 * @see `punycode.ucs2.encode`
-	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
 	 * @memberOf punycode.ucs2
 	 * @name decode
 	 * @param {String} string The Unicode input string (UCS-2).
@@ -201,7 +220,7 @@
 
 	/**
 	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * https://tools.ietf.org/html/rfc3492#section-3.4
 	 * @private
 	 */
 	function adapt(delta, numPoints, firstTime) {
@@ -316,8 +335,8 @@
 	}
 
 	/**
-	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
-	 * symbols.
+	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+	 * Punycode string of ASCII-only symbols.
 	 * @memberOf punycode
 	 * @param {String} input The string of Unicode symbols.
 	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
@@ -430,17 +449,18 @@
 	}
 
 	/**
-	 * Converts a Punycode string representing a domain name to Unicode. Only the
-	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it on a string that has already been converted to
-	 * Unicode.
+	 * Converts a Punycode string representing a domain name or an email address
+	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+	 * it doesn't matter if you call it on a string that has already been
+	 * converted to Unicode.
 	 * @memberOf punycode
-	 * @param {String} domain The Punycode domain name to convert to Unicode.
+	 * @param {String} input The Punycoded domain name or email address to
+	 * convert to Unicode.
 	 * @returns {String} The Unicode representation of the given Punycode
 	 * string.
 	 */
-	function toUnicode(domain) {
-		return mapDomain(domain, function(string) {
+	function toUnicode(input) {
+		return mapDomain(input, function(string) {
 			return regexPunycode.test(string)
 				? decode(string.slice(4).toLowerCase())
 				: string;
@@ -448,15 +468,18 @@
 	}
 
 	/**
-	 * Converts a Unicode string representing a domain name to Punycode. Only the
-	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it with a domain that's already in ASCII.
+	 * Converts a Unicode string representing a domain name or an email address to
+	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+	 * i.e. it doesn't matter if you call it with a domain that's already in
+	 * ASCII.
 	 * @memberOf punycode
-	 * @param {String} domain The domain name to convert, as a Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name.
+	 * @param {String} input The domain name or email address to convert, as a
+	 * Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name or
+	 * email address.
 	 */
-	function toASCII(domain) {
-		return mapDomain(domain, function(string) {
+	function toASCII(input) {
+		return mapDomain(input, function(string) {
 			return regexNonASCII.test(string)
 				? 'xn--' + encode(string)
 				: string;
@@ -472,11 +495,11 @@
 		 * @memberOf punycode
 		 * @type String
 		 */
-		'version': '1.2.4',
+		'version': '1.4.1',
 		/**
 		 * An object of methods to convert from JavaScript's internal character
 		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
 		 * @memberOf punycode
 		 * @type Object
 		 */
@@ -501,15 +524,18 @@
 		define('punycode', function() {
 			return punycode;
 		});
-	} else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+	} else if (freeExports && freeModule) {
+		if (module.exports == freeExports) {
+			// in Node.js, io.js, or RingoJS v0.8.0+
 			freeModule.exports = punycode;
-		} else { // in Narwhal or RingoJS v0.7.0-
+		} else {
+			// in Narwhal or RingoJS v0.7.0-
 			for (key in punycode) {
 				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
 			}
 		}
-	} else { // in Rhino or a web browser
+	} else {
+		// in Rhino or a web browser
 		root.punycode = punycode;
 	}
 
@@ -986,8 +1012,8 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
     var bounds = getBounds(node);
-    var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
-    var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
+    var width = options.type === "view" ? windowWidth : bounds.right;
+    var height = options.type === "view" ? windowHeight : bounds.bottom;
     var renderer = new options.renderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
@@ -998,6 +1024,15 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
             canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
         } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
             canvas = renderer.canvas;
+        } else if (options.scale) {
+            var origBounds = {width: options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0};
+            var cropBounds = {};
+            for (var key in origBounds) {
+                if (origBounds.hasOwnProperty(key)) { cropBounds[key] = origBounds[key] * options.scale; }
+            }
+            canvas = crop(renderer.canvas, cropBounds);
+            canvas.style.width = origBounds.width + 'px';
+            canvas.style.height = origBounds.height + 'px';
         } else {
             canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0});
         }
@@ -1740,6 +1775,11 @@ NodeContainer.prototype.parseTransformMatrix = function() {
     return this.transformMatrix;
 };
 
+NodeContainer.prototype.inverseTransform = function() {
+    var transformData = this.parseTransform();
+    return { origin: transformData.origin, matrix: matrixInverse(transformData.matrix) };
+};
+
 NodeContainer.prototype.parseBounds = function() {
     return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
 };
@@ -1779,6 +1819,14 @@ function parseMatrix(match) {
         });
         return [matrix3d[0], matrix3d[1], matrix3d[4], matrix3d[5], matrix3d[12], matrix3d[13]];
     }
+}
+
+function matrixInverse(m) {
+    // This is programmed specifically for transform matrices, which have a fixed structure.
+    var a = m[0], b = m[2], c = m[4], d = m[1], e = m[3], f = m[5];
+    var det = a*e - b*d;
+    var M = [e, -d, -b, a, b*f-c*e, c*d-a*f].map(function(val) { return val/det; });
+    return M;
 }
 
 function isPercentage(value) {
@@ -2126,11 +2174,15 @@ NodeParser.prototype.paintElement = function(container) {
     var bounds = container.parseBounds();
     this.renderer.clip(container.backgroundClip, function() {
         this.renderer.renderBackground(container, bounds, container.borders.borders.map(getWidth));
+    }, this, container);
+
+    this.renderer.mask(bounds, function() {
+        this.renderer.renderShadows(container, bounds);
     }, this);
 
     this.renderer.clip(container.clip, function() {
         this.renderer.renderBorders(container.borders.borders);
-    }, this);
+    }, this, container);
 
     this.renderer.clip(container.backgroundClip, function() {
         switch (container.node.nodeName) {
@@ -2160,7 +2212,7 @@ NodeParser.prototype.paintElement = function(container) {
             this.paintFormValue(container);
             break;
         }
-    }, this);
+    }, this, container);
 };
 
 NodeParser.prototype.paintCheckbox = function(container) {
@@ -2183,7 +2235,7 @@ NodeParser.prototype.paintCheckbox = function(container) {
             this.renderer.font(new Color('#424242'), 'normal', 'normal', 'bold', (size - 3) + "px", 'arial');
             this.renderer.text("\u2714", bounds.left + size / 6, bounds.top + size - 1);
         }
-    }, this);
+    }, this, container);
 };
 
 NodeParser.prototype.paintRadio = function(container) {
@@ -2196,7 +2248,7 @@ NodeParser.prototype.paintRadio = function(container) {
         if (container.node.checked) {
             this.renderer.circle(Math.ceil(bounds.left + size / 4) + 1, Math.ceil(bounds.top + size / 4) + 1, Math.floor(size / 2), new Color('#424242'));
         }
-    }, this);
+    }, this, container);
 };
 
 NodeParser.prototype.paintFormValue = function(container) {
@@ -2231,9 +2283,13 @@ NodeParser.prototype.paintFormValue = function(container) {
 NodeParser.prototype.paintText = function(container) {
     container.applyTextTransform();
     var characters = punycode.ucs2.decode(container.node.data);
-    var textList = (!this.options.letterRendering || noLetterSpacing(container)) && !hasUnicode(container.node.data) ? getWords(characters) : characters.map(function(character) {
+    var wordRendering = (!this.options.letterRendering || noLetterSpacing(container)) && !hasUnicode(container.node.data);
+    var textList = wordRendering ? getWords(characters) : characters.map(function(character) {
         return punycode.ucs2.encode([character]);
     });
+    if (!wordRendering) {
+        container.parent.node.style.fontVariantLigatures = 'none';
+    }
 
     var weight = container.parent.fontWeight();
     var size = container.parent.css('fontSize');
@@ -2255,7 +2311,7 @@ NodeParser.prototype.paintText = function(container) {
                 this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
             }
         }, this);
-    }, this);
+    }, this, container.parent);
 };
 
 NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics) {
@@ -2873,6 +2929,14 @@ Renderer.prototype.renderBackgroundColor = function(container, bounds) {
     }
 };
 
+Renderer.prototype.renderShadows = function(container, bounds) {
+    var boxShadow = container.css('boxShadow');
+    if (boxShadow !== 'none') {
+        var shadows = boxShadow.split(/,(?![^(]*\))/);
+        this.shadow(bounds.left, bounds.top, bounds.width, bounds.height, shadows);
+    }
+};
+
 Renderer.prototype.renderBorders = function(borders) {
     borders.forEach(this.renderBorder, this);
 };
@@ -2944,11 +3008,22 @@ var log = _dereq_('../log');
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
     this.canvas = this.options.canvas || this.document.createElement("canvas");
-    if (!this.options.canvas) {
-        this.canvas.width = width;
-        this.canvas.height = height;
-    }
     this.ctx = this.canvas.getContext("2d");
+    if (!this.options.canvas) {
+        if (this.options.dpi) {
+            this.options.scale = this.options.dpi / 96;   // 1 CSS inch = 96px.
+        }
+        if (this.options.scale) {
+            this.canvas.style.width = width + 'px';
+            this.canvas.style.height = height + 'px';
+            this.canvas.width = Math.floor(width * this.options.scale);
+            this.canvas.height = Math.floor(height * this.options.scale);
+            this.ctx.scale(this.options.scale, this.options.scale);
+        } else {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
+    }
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
@@ -2980,6 +3055,39 @@ CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke,
     this.ctx.stroke();
 };
 
+CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
+    var parseShadow = function(str) {
+        var propertyFilters = { color: /^(#|rgb|hsl|(?!(inset|initial|inherit))\D+)/i, inset: /^inset/i, px: /px$/i };
+        var pxPropertyNames = [ 'x', 'y', 'blur', 'spread' ];
+        var properties = str.split(/ (?![^(]*\))/);
+        var info = {};
+        for (var key in propertyFilters) {
+            info[key] = properties.filter(propertyFilters[key].test.bind(propertyFilters[key]));
+            info[key] = info[key].length === 0 ? null : info[key].length === 1 ? info[key][0] : info[key];
+        }
+        for (var i=0; i<info.px.length; i++) {
+            info[pxPropertyNames[i]] = parseInt(info.px[i]);
+        }
+        return info;
+    };
+    var drawShadow = function(shadow) {
+        var info = parseShadow(shadow);
+        if (!info.inset) {
+            context.shadowOffsetX = info.x;
+            context.shadowOffsetY = info.y;
+            context.shadowColor = info.color;
+            context.shadowBlur = info.blur;
+            context.fill();
+        }
+    };
+    var context = this.setFillStyle('white');
+    context.save();
+    context.beginPath();
+    context.rect(left, top, width, height);
+    shadows.forEach(drawShadow, this);
+    context.restore();
+};
+
 CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.shape(shape);
     this.setFillStyle(color).fill();
@@ -3006,11 +3114,29 @@ CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx
     }
 };
 
-CanvasRenderer.prototype.clip = function(shapes, callback, context) {
+CanvasRenderer.prototype.clip = function(shapes, callback, context, container) {
     this.ctx.save();
-    shapes.filter(hasEntries).forEach(function(shape) {
-        this.shape(shape).clip();
-    }, this);
+    if (container && container.hasTransform()) {
+        this.setTransform(container.inverseTransform());
+        shapes.filter(hasEntries).forEach(function(shape) {
+            this.shape(shape).clip();
+        }, this);
+        this.setTransform(container.parseTransform());
+    } else {
+        shapes.filter(hasEntries).forEach(function(shape) {
+            this.shape(shape).clip();
+        }, this);
+    }
+    callback.call(context);
+    this.ctx.restore();
+};
+
+CanvasRenderer.prototype.mask = function(bounds, callback, context) {
+    var canvasBorderCCW = ["rect", this.canvas.width, 0, -this.canvas.width, this.canvas.height];
+    var boundsCW = ["rect", bounds.left, bounds.top, bounds.width, bounds.height];
+    this.ctx.save();
+    var shape = [canvasBorderCCW, boundsCW];
+    this.shape(shape).clip();
     callback.call(context);
     this.ctx.restore();
 };
@@ -3029,6 +3155,7 @@ CanvasRenderer.prototype.shape = function(shape) {
 };
 
 CanvasRenderer.prototype.font = function(color, style, variant, weight, size, family) {
+    variant = /^(normal|small-caps)$/i.test(variant) ? variant : '';
     this.setFillStyle(color).font = [style, variant, weight, size, family].join(" ").split(",")[0];
 };
 
