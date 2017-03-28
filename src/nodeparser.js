@@ -330,6 +330,10 @@ NodeParser.prototype.paintElement = function(container) {
         this.renderer.renderBackground(container, bounds, container.borders.borders.map(getWidth));
     }, this, container);
 
+    this.renderer.mask(bounds, function() {
+        this.renderer.renderShadows(container, bounds);
+    }, this);
+
     this.renderer.clip(container.clip, function() {
         this.renderer.renderBorders(container.borders.borders);
     }, this, container);

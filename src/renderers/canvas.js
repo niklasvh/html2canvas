@@ -52,6 +52,39 @@ CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke,
     this.ctx.stroke();
 };
 
+CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
+    var parseShadow = function(str) {
+        var propertyFilters = { color: /^(#|rgb|hsl|(?!(inset|initial|inherit))\D+)/i, inset: /^inset/i, px: /px$/i };
+        var pxPropertyNames = [ 'x', 'y', 'blur', 'spread' ];
+        var properties = str.split(/ (?![^(]*\))/);
+        var info = {};
+        for (var key in propertyFilters) {
+            info[key] = properties.filter(propertyFilters[key].test.bind(propertyFilters[key]));
+            info[key] = info[key].length === 0 ? null : info[key].length === 1 ? info[key][0] : info[key];
+        }
+        for (var i=0; i<info.px.length; i++) {
+            info[pxPropertyNames[i]] = parseInt(info.px[i]);
+        }
+        return info;
+    };
+    var drawShadow = function(shadow) {
+        var info = parseShadow(shadow);
+        if (!info.inset) {
+            context.shadowOffsetX = info.x;
+            context.shadowOffsetY = info.y;
+            context.shadowColor = info.color;
+            context.shadowBlur = info.blur;
+            context.fill();
+        }
+    };
+    var context = this.setFillStyle('white');
+    context.save();
+    context.beginPath();
+    context.rect(left, top, width, height);
+    shadows.forEach(drawShadow, this);
+    context.restore();
+};
+
 CanvasRenderer.prototype.drawShape = function(shape, color) {
     this.shape(shape);
     this.setFillStyle(color).fill();
@@ -91,6 +124,16 @@ CanvasRenderer.prototype.clip = function(shapes, callback, context, container) {
             this.shape(shape).clip();
         }, this);
     }
+    callback.call(context);
+    this.ctx.restore();
+};
+
+CanvasRenderer.prototype.mask = function(bounds, callback, context) {
+    var canvasBorderCCW = ["rect", this.canvas.width, 0, -this.canvas.width, this.canvas.height];
+    var boundsCW = ["rect", bounds.left, bounds.top, bounds.width, bounds.height];
+    this.ctx.save();
+    var shape = [canvasBorderCCW, boundsCW];
+    this.shape(shape).clip();
     callback.call(context);
     this.ctx.restore();
 };
