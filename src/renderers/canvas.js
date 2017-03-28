@@ -5,11 +5,22 @@ var log = require('../log');
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
     this.canvas = this.options.canvas || this.document.createElement("canvas");
-    if (!this.options.canvas) {
-        this.canvas.width = width;
-        this.canvas.height = height;
-    }
     this.ctx = this.canvas.getContext("2d");
+    if (!this.options.canvas) {
+        if (this.options.dpi) {
+            this.options.scale = this.options.dpi / 96;   // 1 CSS inch = 96px.
+        }
+        if (this.options.scale) {
+            this.canvas.style.width = width + 'px';
+            this.canvas.style.height = height + 'px';
+            this.canvas.width = Math.floor(width * this.options.scale);
+            this.canvas.height = Math.floor(height * this.options.scale);
+            this.ctx.scale(this.options.scale, this.options.scale);
+        } else {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
+    }
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
