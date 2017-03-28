@@ -240,6 +240,11 @@ NodeContainer.prototype.parseTransformMatrix = function() {
     return this.transformMatrix;
 };
 
+NodeContainer.prototype.inverseTransform = function() {
+    var transformData = this.parseTransform();
+    return { origin: transformData.origin, matrix: matrixInverse(transformData.matrix) };
+};
+
 NodeContainer.prototype.parseBounds = function() {
     return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
 };
@@ -279,6 +284,14 @@ function parseMatrix(match) {
         });
         return [matrix3d[0], matrix3d[1], matrix3d[4], matrix3d[5], matrix3d[12], matrix3d[13]];
     }
+}
+
+function matrixInverse(m) {
+    // This is programmed specifically for transform matrices, which have a fixed structure.
+    var a = m[0], b = m[2], c = m[4], d = m[1], e = m[3], f = m[5];
+    var det = a*e - b*d;
+    var M = [e, -d, -b, a, b*f-c*e, c*d-a*f].map(function(val) { return val/det; });
+    return M;
 }
 
 function isPercentage(value) {
