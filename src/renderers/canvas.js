@@ -52,7 +52,7 @@ CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke,
     this.ctx.stroke();
 };
 
-CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
+CanvasRenderer.prototype.shadow = function(shape, shadows) {
     var parseShadow = function(str) {
         var propertyFilters = { color: /^(#|rgb|hsl|(?!(inset|initial|inherit))\D+)/i, inset: /^inset/i, px: /px$/i };
         var pxPropertyNames = [ 'x', 'y', 'blur', 'spread' ];
@@ -79,8 +79,7 @@ CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
     };
     var context = this.setFillStyle('white');
     context.save();
-    context.beginPath();
-    context.rect(left, top, width, height);
+    this.shape(shape);
     shadows.forEach(drawShadow, this);
     context.restore();
 };
@@ -128,14 +127,14 @@ CanvasRenderer.prototype.clip = function(shapes, callback, context, container) {
     this.ctx.restore();
 };
 
-CanvasRenderer.prototype.mask = function(bounds, callback, context) {
-    var canvasBorderCCW = ["rect", this.canvas.width, 0, -this.canvas.width, this.canvas.height];
-    var boundsCW = ["rect", bounds.left, bounds.top, bounds.width, bounds.height];
-    this.ctx.save();
-    var shape = [canvasBorderCCW, boundsCW];
-    this.shape(shape).clip();
-    callback.call(context);
-    this.ctx.restore();
+CanvasRenderer.prototype.mask = function(shapes, callback, context, container) {
+    var borderClip = shapes[shapes.length-1];
+    if (borderClip && borderClip.length) {
+        var canvasBorderCCW = ["rect", this.canvas.width, 0, -this.canvas.width, this.canvas.height];
+        var maskShape = [canvasBorderCCW].concat(borderClip).concat([borderClip[0]]);
+        shapes = shapes.slice(0,-1).concat([maskShape]);
+    }
+    this.clip(shapes, callback, context, container);
 };
 
 CanvasRenderer.prototype.shape = function(shape) {
