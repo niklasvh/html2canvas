@@ -108,14 +108,14 @@ CanvasRenderer.prototype.clip = function(shapes, callback, context) {
     this.ctx.restore();
 };
 
-CanvasRenderer.prototype.mask = function(shapes, callback, context) {
+CanvasRenderer.prototype.mask = function(shapes, callback, context, container) {
     var borderClip = shapes[shapes.length-1];
     if (borderClip && borderClip.length) {
         var canvasBorderCCW = ["rect", this.canvas.width, 0, -this.canvas.width, this.canvas.height];
         var maskShape = [canvasBorderCCW].concat(borderClip).concat([borderClip[0]]);
         shapes = shapes.slice(0,-1).concat([maskShape]);
     }
-    this.clip(shapes, callback, context);
+    this.clip(shapes, callback, context, container);
 };
 
 CanvasRenderer.prototype.shape = function(shape) {
