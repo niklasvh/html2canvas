@@ -41,7 +41,7 @@ CanvasRenderer.prototype.circleStroke = function(left, top, size, color, stroke,
     this.ctx.stroke();
 };
 
-CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
+CanvasRenderer.prototype.shadow = function(shape, shadows) {
     var parseShadow = function(str) {
         var propertyFilters = { color: /^(#|rgb|hsl|(?!(inset|initial|inherit))\D+)/i, inset: /^inset/i, px: /px$/i };
         var pxPropertyNames = [ 'x', 'y', 'blur', 'spread' ];
@@ -68,8 +68,7 @@ CanvasRenderer.prototype.shadow = function(left, top, width, height, shadows) {
     };
     var context = this.setFillStyle('white');
     context.save();
-    context.beginPath();
-    context.rect(left, top, width, height);
+    this.shape(shape);
     shadows.forEach(drawShadow, this);
     context.restore();
 };
