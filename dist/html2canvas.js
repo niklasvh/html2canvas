@@ -1012,8 +1012,8 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
     var bounds = getBounds(node);
-    var width = options.type === "view" ? windowWidth : bounds.right;
-    var height = options.type === "view" ? windowHeight : bounds.bottom;
+    var width = options.type === "view" ? windowWidth : bounds.right + 1;
+    var height = options.type === "view" ? windowHeight : bounds.bottom + 1;
     var renderer = new options.renderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
