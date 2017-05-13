@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         banner: '/*\n  <%= pkg.title || pkg.name %> <%= pkg.version %>' +
             '<%= pkg.homepage ? " <" + pkg.homepage + ">" : "" %>' + '\n' +
             '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>' +
-            '\n\n  Released under <%= _.pluck(pkg.licenses, "type").join(", ") %> License\n*/\n'
+            '\n\n  Released under <%= pkg.license %> License\n*/\n'
     };
 
     var browsers = {
