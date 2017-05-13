@@ -9,6 +9,10 @@ html2canvas
 
  The script allows you to take "screenshots" of webpages or parts of it, directly on the users browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
 
+> ### Custom build ###
+> This is a custom build by Erik Koopmans, featuring the latest bugfixes and features. All changes here have been submitted as Pull Requests to niklasvh/html2canvas and are awaiting approval. These changes include:
+> **Bugfixes:** [Offscreen rendering](https://github.com/niklasvh/html2canvas/pull/1083), [clipping with CSS transform](https://github.com/niklasvh/html2canvas/pull/1084), and [ligatures](https://github.com/niklasvh/html2canvas/pull/1085).
+> **Features:** [Box-shadows](https://github.com/niklasvh/html2canvas/pull/1086) and [custom resolution/scaling](https://github.com/niklasvh/html2canvas/pull/1087).
 
 ### How does it work? ###
 The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements.
