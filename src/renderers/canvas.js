@@ -150,6 +150,18 @@ CanvasRenderer.prototype.shape = function(shape) {
     return this.ctx;
 };
 
+CanvasRenderer.prototype.path = function(shape) {
+    this.ctx.beginPath();
+    shape.forEach(function(point, index) {
+        if (point[0] === "rect") {
+            this.ctx.rect.apply(this.ctx, point.slice(1));
+        } else {
+            this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        }
+    }, this);
+    return this.ctx;
+};
+
 CanvasRenderer.prototype.font = function(color, style, variant, weight, size, family) {
     variant = /^(normal|small-caps)$/i.test(variant) ? variant : '';
     this.setFillStyle(color).font = [style, variant, weight, size, family].join(" ").split(",")[0];

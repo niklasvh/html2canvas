@@ -58,7 +58,16 @@ Renderer.prototype.renderBorders = function(borders) {
 
 Renderer.prototype.renderBorder = function(data) {
     if (!data.color.isTransparent() && data.args !== null) {
-        this.drawShape(data.args, data.color);
+        if (data.style === 'dashed' || data.style === 'dotted') {
+            var dash = (data.style === 'dashed') ? 3 : data.width;
+            this.ctx.setLineDash([dash]);
+            this.path(data.pathArgs);
+            this.ctx.strokeStyle = data.color;
+            this.ctx.lineWidth = data.width;
+            this.ctx.stroke();
+        } else {
+            this.drawShape(data.args, data.color);
+        }
     }
 };
 
