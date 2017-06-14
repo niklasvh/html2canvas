@@ -1,7 +1,7 @@
 /*
   html2canvas 0.5.0-beta4 <http://html2canvas.hertzen.com>
   Copyright (c) 2017 Niklas von Hertzen
-  2017-05-13 Custom build by Erik Koopmans, featuring latest bugfixes and features
+  2017-06-14 Custom build by Erik Koopmans, featuring latest bugfixes and features
 
   Released under MIT License
 */
@@ -2354,6 +2354,8 @@ NodeParser.prototype.parseBorders = function(container) {
         return {
             width: container.cssInt('border' + side + 'Width'),
             color: colorTransform ? color[colorTransform[0]](colorTransform[1]) : color,
+            style: style,
+            pathArgs: null,
             args: null
         };
     });
@@ -2366,6 +2368,12 @@ NodeParser.prototype.parseBorders = function(container) {
 };
 
 function calculateBorders(borders, nodeBounds, borderPoints, radius) {
+    var pathBounds = {
+        top: nodeBounds.top + borders[0].width/2,
+        right: nodeBounds.right - borders[1].width/2,
+        bottom: nodeBounds.bottom - borders[2].width/2,
+        left: nodeBounds.left + borders[3].width/2
+    };
     return borders.map(function(border, borderSide) {
         if (border.width > 0) {
             var bx = nodeBounds.left;
@@ -2384,6 +2392,11 @@ function calculateBorders(borders, nodeBounds, borderPoints, radius) {
                         c4: [bx + borders[3].width, by + bh]
                     }, radius[0], radius[1],
                     borderPoints.topLeftOuter, borderPoints.topLeftInner, borderPoints.topRightOuter, borderPoints.topRightInner);
+                border.pathArgs = drawSidePath({
+                        c1: [pathBounds.left, pathBounds.top],
+                        c2: [pathBounds.right, pathBounds.top]
+                    }, radius[0], radius[1],
+                    borderPoints.topLeft, borderPoints.topRight);
                 break;
             case 1:
                 // right border
@@ -2397,6 +2410,11 @@ function calculateBorders(borders, nodeBounds, borderPoints, radius) {
                         c4: [bx, by + borders[0].width]
                     }, radius[1], radius[2],
                     borderPoints.topRightOuter, borderPoints.topRightInner, borderPoints.bottomRightOuter, borderPoints.bottomRightInner);
+                border.pathArgs = drawSidePath({
+                        c1: [pathBounds.right, pathBounds.top],
+                        c2: [pathBounds.right, pathBounds.bottom]
+                    }, radius[1], radius[2],
+                    borderPoints.topRight, borderPoints.bottomRight);
                 break;
             case 2:
                 // bottom border
@@ -2409,6 +2427,11 @@ function calculateBorders(borders, nodeBounds, borderPoints, radius) {
                         c4: [bx + bw - borders[3].width, by]
                     }, radius[2], radius[3],
                     borderPoints.bottomRightOuter, borderPoints.bottomRightInner, borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner);
+                border.pathArgs = drawSidePath({
+                        c1: [pathBounds.right, pathBounds.bottom],
+                        c2: [pathBounds.left, pathBounds.bottom]
+                    }, radius[2], radius[3],
+                    borderPoints.bottomRight, borderPoints.bottomLeft);
                 break;
             case 3:
                 // left border
@@ -2420,6 +2443,11 @@ function calculateBorders(borders, nodeBounds, borderPoints, radius) {
                         c4: [bx + bw, by + bh]
                     }, radius[3], radius[0],
                     borderPoints.bottomLeftOuter, borderPoints.bottomLeftInner, borderPoints.topLeftOuter, borderPoints.topLeftInner);
+                border.pathArgs = drawSidePath({
+                        c1: [pathBounds.left, pathBounds.bottom],
+                        c2: [pathBounds.left, pathBounds.top]
+                    }, radius[3], radius[0],
+                    borderPoints.bottomLeft, borderPoints.topLeft);
                 break;
             }
         }
@@ -2486,6 +2514,11 @@ function calculateCurvePoints(bounds, borderRadius, borders) {
         leftHeight = height - blv;
 
     return {
+        topLeft: getCurvePoints(x + borders[3].width/2, y + borders[0].width/2, Math.max(0, tlh - borders[3].width/2), Math.max(0, tlv - borders[0].width/2)).topLeft.subdivide(0.5),
+        topRight: getCurvePoints(x + Math.min(topWidth, width + borders[3].width/2), y + borders[0].width/2, (topWidth > width + borders[3].width/2) ? 0 :trh - borders[3].width/2, trv - borders[0].width/2).topRight.subdivide(0.5),
+        bottomRight: getCurvePoints(x + Math.min(bottomWidth, width - borders[3].width/2), y + Math.min(rightHeight, height + borders[0].width/2), Math.max(0, brh - borders[1].width/2),  brv - borders[2].width/2).bottomRight.subdivide(0.5),
+        bottomLeft: getCurvePoints(x + borders[3].width/2, y + leftHeight, Math.max(0, blh - borders[3].width/2), blv - borders[2].width/2).bottomLeft.subdivide(0.5),
+
         topLeftOuter: getCurvePoints(x, y, tlh, tlv).topLeft.subdivide(0.5),
         topLeftInner: getCurvePoints(x + borders[3].width, y + borders[0].width, Math.max(0, tlh - borders[3].width), Math.max(0, tlv - borders[0].width)).topLeft.subdivide(0.5),
         topRightOuter: getCurvePoints(x + topWidth, y, trh, trv).topRight.subdivide(0.5),
@@ -2553,6 +2586,24 @@ function drawSide(borderData, radius1, radius2, outer1, inner1, outer2, inner2) 
         inner1[1].curveToReversed(borderArgs);
     } else {
         borderArgs.push(["line", borderData.c4[0], borderData.c4[1]]);
+    }
+
+    return borderArgs;
+}
+
+function drawSidePath(borderData, radius1, radius2, curve1, curve2) {
+    var borderArgs = [];
+    if (radius1[0] > 0 || radius1[1] > 0) {
+        borderArgs.push(["line", curve1[1].start.x, curve1[1].start.y]);
+        curve1[1].curveTo(borderArgs);
+    } else {
+        borderArgs.push([ "line", borderData.c1[0], borderData.c1[1]]);
+    }
+    if (radius2[0] > 0 || radius2[1] > 0) {
+        borderArgs.push(["line", curve2[0].start.x, curve2[0].start.y]);
+        curve2[0].curveTo(borderArgs);
+    } else {
+        borderArgs.push([ "line", borderData.c2[0], borderData.c2[1]]);
     }
 
     return borderArgs;
@@ -2944,7 +2995,16 @@ Renderer.prototype.renderBorders = function(borders) {
 
 Renderer.prototype.renderBorder = function(data) {
     if (!data.color.isTransparent() && data.args !== null) {
-        this.drawShape(data.args, data.color);
+        if (data.style === 'dashed' || data.style === 'dotted') {
+            var dash = (data.style === 'dashed') ? 3 : data.width;
+            this.ctx.setLineDash([dash]);
+            this.path(data.pathArgs);
+            this.ctx.strokeStyle = data.color;
+            this.ctx.lineWidth = data.width;
+            this.ctx.stroke();
+        } else {
+            this.drawShape(data.args, data.color);
+        }
     }
 };
 
@@ -3151,6 +3211,18 @@ CanvasRenderer.prototype.shape = function(shape) {
         }
     }, this);
     this.ctx.closePath();
+    return this.ctx;
+};
+
+CanvasRenderer.prototype.path = function(shape) {
+    this.ctx.beginPath();
+    shape.forEach(function(point, index) {
+        if (point[0] === "rect") {
+            this.ctx.rect.apply(this.ctx, point.slice(1));
+        } else {
+            this.ctx[(index === 0) ? "moveTo" : point[0] + "To" ].apply(this.ctx, point.slice(1));
+        }
+    }, this);
     return this.ctx;
 };
 
