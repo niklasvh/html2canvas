@@ -48,11 +48,11 @@ exports.getBounds = function(node) {
         var clientRect = node.getBoundingClientRect();
         var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
         return {
-            top: clientRect.top,
-            bottom: clientRect.bottom || (clientRect.top + clientRect.height),
-            right: clientRect.left + width,
-            left: clientRect.left,
-            width:  width,
+            top   : Math.floor(clientRect.top),
+            bottom: Math.floor(clientRect.bottom || (clientRect.top + clientRect.height)),
+            right : Math.floor(clientRect.left + width),
+            left  : Math.floor(clientRect.left),
+            width : width,
             height: node.offsetHeight == null ? clientRect.height : node.offsetHeight
         };
     }
