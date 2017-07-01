@@ -256,6 +256,34 @@ function parseBackgroundSizePosition(value, element, attribute, index) {
     return value;
 }
 
+function getRadius(radius,attribute,computedCSS){
+  var width = asInt(computedCSS.width) ;
+  var height = asInt(computedCSS.height) ;
+  if ( radius.endsWith('%') ){
+    radius = (asInt(radius) / 100) ;
+    if ( /border(Top|Bottom)/.test(attribute) ){
+      return radius * height;
+    } else if ( /border(Left|Right)/.test(attribute) ){
+      return radius * width;
+    }
+  } else {
+    /*
+      let radius maximum value is half of length 
+    */
+    radius = asInt(radius) ;
+    if ( /border(Top|Bottom)/.test(attribute) ){
+      if ( radius >= height / 2 ) {
+        return height / 2 ;
+      }
+    } else if ( /border(Left|Right)/.test(attribute) ){
+      if ( radius >= width / 2 ) {
+        return width / 2 ;
+      }
+    }
+    return radius ;
+  }
+}
+
 _html2canvas.Util.getCSS = function (element, attribute, index) {
     if (previousElement !== element) {
       computedCSS = document.defaultView.getComputedStyle(element, null);
@@ -270,11 +298,18 @@ _html2canvas.Util.getCSS = function (element, attribute, index) {
       if (arr.length <= 1) {
           arr[1] = arr[0];
       }
+      arr = arr.map(function(radius) {
+        if ( typeof radius === 'string' && attribute.endsWith('Radius') ) {
+          return getRadius(radius,attribute,computedCSS) ;
+        } 
+        return radius;
+      });
       return arr.map(asInt);
     }
 
   return value;
 };
+
 
 _html2canvas.Util.resizeBounds = function( current_width, current_height, target_width, target_height, stretch_mode ){
   var target_ratio = target_width / target_height,
