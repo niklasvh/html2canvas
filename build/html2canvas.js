@@ -55,6 +55,31 @@ _html2canvas.Util.asFloat = function(v) {
     }
     return results;
   };
+
+})();
+
+(function() {
+  var BOX_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g;
+  var BOX_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+  _html2canvas.Util.parseBoxShadow = function (value) {
+    if (!value || value === 'none') {
+      return undefined;
+    }
+
+    var shadows = value.match(BOX_SHADOW_PROPERTY),
+      results = [];
+    for (var i = 0; shadows && (i < shadows.length); i++) {
+      var s = shadows[i].match(BOX_SHADOW_VALUES);
+      results.push({
+        color: s[0],
+        offsetX: s[1] ? s[1].replace('px', '') : 0,
+        offsetY: s[2] ? s[2].replace('px', '') : 0,
+        blur: s[3] ? s[3].replace('px', '') : 0
+      });
+    }
+    return results[0];
+  };
+
 })();
 
 _html2canvas.Util.parseBackgroundImage = function (value) {
@@ -290,7 +315,6 @@ _html2canvas.Util.getCSS = function (element, attribute, index) {
     }
 
     var value = computedCSS[attribute];
-
     if (/^background(Size|Position)$/.test(attribute)) {
         return parseBackgroundSizePosition(value, element, attribute, index);
     } else if (/border(Top|Bottom)(Left|Right)Radius/.test(attribute)) {
@@ -2188,7 +2212,6 @@ _html2canvas.Parse = function (images, options, cb) {
       transform: transform,
       clip: (parentStack && parentStack.clip) ? Util.Extend( {}, parentStack.clip ) : null
     };
-
     setZ(element, stack, parentStack);
 
     // TODO correct overflow for absolute content residing under a static position
@@ -2221,6 +2244,14 @@ _html2canvas.Parse = function (images, options, cb) {
     return bounds;
   }
 
+  function renderShadow(ctx,shadow){
+    ctx.setVariable('shadowColor',shadow.color);
+    ctx.setVariable('shadowBlur',shadow.blur);
+    ctx.setVariable('shadowOffsetX',shadow.offsetX);
+    ctx.setVariable('shadowOffsetY',shadow.offsetY);
+    ctx.fill();
+  }
+
   function renderElement(element, parentStack, ignoreBackground) {
     var transform = getTransform(element, parentStack),
     bounds = getBounds(element, transform),
@@ -2228,12 +2259,16 @@ _html2canvas.Parse = function (images, options, cb) {
     stack = createStack(element, parentStack, bounds, transform),
     borders = stack.borders,
     ctx = stack.ctx,
+    shadow = Util.parseBoxShadow(getCSS(element, "boxShadow")),
     backgroundBounds = getBackgroundBounds(borders, bounds, stack.clip),
     borderData = parseBorders(element, bounds, borders),
     backgroundColor = (ignoreElementsRegExp.test(element.nodeName)) ? "#efefef" : getCSS(element, "backgroundColor");
 
 
     createShape(ctx, borderData.clip);
+    if ( shadow ){
+      renderShadow(ctx,shadow);
+    }
 
     ctx.save();
     ctx.clip();
@@ -2991,6 +3026,7 @@ _html2canvas.Renderer.Canvas = function(options) {
     ctx.fillStyle = (Util.isTransparent(parsedData.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
+
     queue.forEach(function(storageContext) {
       // set common settings for canvas
       ctx.textBaseline = "bottom";
