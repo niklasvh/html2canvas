@@ -1,517 +1,543 @@
 /*
-  html2canvas 0.5.0-beta3 <http://html2canvas.hertzen.com>
+  html2canvas 0.5.0-beta4 <http://html2canvas.hertzen.com>
   Copyright (c) 2016 Niklas von Hertzen
 
   Released under  License
 */
 
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.html2canvas=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.html2canvas = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
-/*! http://mths.be/punycode v1.2.4 by @mathias */
+/*! https://mths.be/punycode v1.4.0 by @mathias */
 ;(function(root) {
 
-	/** Detect free variables */
-	var freeExports = typeof exports == 'object' && exports;
-	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
-	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-		root = freeGlobal;
-	}
+  /** Detect free variables */
+  var freeExports = typeof exports == 'object' && exports &&
+    !exports.nodeType && exports;
+  var freeModule = typeof module == 'object' && module &&
+    !module.nodeType && module;
+  var freeGlobal = typeof global == 'object' && global;
+  if (
+    freeGlobal.global === freeGlobal ||
+    freeGlobal.window === freeGlobal ||
+    freeGlobal.self === freeGlobal
+  ) {
+    root = freeGlobal;
+  }
 
-	/**
-	 * The `punycode` object.
-	 * @name punycode
-	 * @type Object
-	 */
-	var punycode,
+  /**
+   * The `punycode` object.
+   * @name punycode
+   * @type Object
+   */
+  var punycode,
 
-	/** Highest positive signed 32-bit float value */
-	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+  /** Highest positive signed 32-bit float value */
+  maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
 
-	/** Bootstring parameters */
-	base = 36,
-	tMin = 1,
-	tMax = 26,
-	skew = 38,
-	damp = 700,
-	initialBias = 72,
-	initialN = 128, // 0x80
-	delimiter = '-', // '\x2D'
+  /** Bootstring parameters */
+  base = 36,
+  tMin = 1,
+  tMax = 26,
+  skew = 38,
+  damp = 700,
+  initialBias = 72,
+  initialN = 128, // 0x80
+  delimiter = '-', // '\x2D'
 
-	/** Regular expressions */
-	regexPunycode = /^xn--/,
-	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+  /** Regular expressions */
+  regexPunycode = /^xn--/,
+  regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+  regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
 
-	/** Error messages */
-	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
-		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-		'invalid-input': 'Invalid input'
-	},
+  /** Error messages */
+  errors = {
+    'overflow': 'Overflow: input needs wider integers to process',
+    'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+    'invalid-input': 'Invalid input'
+  },
 
-	/** Convenience shortcuts */
-	baseMinusTMin = base - tMin,
-	floor = Math.floor,
-	stringFromCharCode = String.fromCharCode,
+  /** Convenience shortcuts */
+  baseMinusTMin = base - tMin,
+  floor = Math.floor,
+  stringFromCharCode = String.fromCharCode,
 
-	/** Temporary variable */
-	key;
+  /** Temporary variable */
+  key;
 
-	/*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-	/**
-	 * A generic error utility function.
-	 * @private
-	 * @param {String} type The error type.
-	 * @returns {Error} Throws a `RangeError` with the applicable error message.
-	 */
-	function error(type) {
-		throw RangeError(errors[type]);
-	}
+  /**
+   * A generic error utility function.
+   * @private
+   * @param {String} type The error type.
+   * @returns {Error} Throws a `RangeError` with the applicable error message.
+   */
+  function error(type) {
+    throw new RangeError(errors[type]);
+  }
 
-	/**
-	 * A generic `Array#map` utility function.
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} callback The function that gets called for every array
-	 * item.
-	 * @returns {Array} A new array of values returned by the callback function.
-	 */
-	function map(array, fn) {
-		var length = array.length;
-		while (length--) {
-			array[length] = fn(array[length]);
-		}
-		return array;
-	}
+  /**
+   * A generic `Array#map` utility function.
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} callback The function that gets called for every array
+   * item.
+   * @returns {Array} A new array of values returned by the callback function.
+   */
+  function map(array, fn) {
+    var length = array.length;
+    var result = [];
+    while (length--) {
+      result[length] = fn(array[length]);
+    }
+    return result;
+  }
 
-	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings.
-	 * @private
-	 * @param {String} domain The domain name.
-	 * @param {Function} callback The function that gets called for every
-	 * character.
-	 * @returns {Array} A new string of characters returned by the callback
-	 * function.
-	 */
-	function mapDomain(string, fn) {
-		return map(string.split(regexSeparators), fn).join('.');
-	}
+  /**
+   * A simple `Array#map`-like wrapper to work with domain name strings or email
+   * addresses.
+   * @private
+   * @param {String} domain The domain name or email address.
+   * @param {Function} callback The function that gets called for every
+   * character.
+   * @returns {Array} A new string of characters returned by the callback
+   * function.
+   */
+  function mapDomain(string, fn) {
+    var parts = string.split('@');
+    var result = '';
+    if (parts.length > 1) {
+      // In email addresses, only the domain name should be punycoded. Leave
+      // the local part (i.e. everything up to `@`) intact.
+      result = parts[0] + '@';
+      string = parts[1];
+    }
+    // Avoid `split(regex)` for IE8 compatibility. See #17.
+    string = string.replace(regexSeparators, '\x2E');
+    var labels = string.split('.');
+    var encoded = map(labels, fn).join('.');
+    return result + encoded;
+  }
 
-	/**
-	 * Creates an array containing the numeric code points of each Unicode
-	 * character in the string. While JavaScript uses UCS-2 internally,
-	 * this function will convert a pair of surrogate halves (each of which
-	 * UCS-2 exposes as separate characters) into a single code point,
-	 * matching UTF-16.
-	 * @see `punycode.ucs2.encode`
-	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode.ucs2
-	 * @name decode
-	 * @param {String} string The Unicode input string (UCS-2).
-	 * @returns {Array} The new array of code points.
-	 */
-	function ucs2decode(string) {
-		var output = [],
-		    counter = 0,
-		    length = string.length,
-		    value,
-		    extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
-			} else {
-				output.push(value);
-			}
-		}
-		return output;
-	}
+  /**
+   * Creates an array containing the numeric code points of each Unicode
+   * character in the string. While JavaScript uses UCS-2 internally,
+   * this function will convert a pair of surrogate halves (each of which
+   * UCS-2 exposes as separate characters) into a single code point,
+   * matching UTF-16.
+   * @see `punycode.ucs2.encode`
+   * @see <https://mathiasbynens.be/notes/javascript-encoding>
+   * @memberOf punycode.ucs2
+   * @name decode
+   * @param {String} string The Unicode input string (UCS-2).
+   * @returns {Array} The new array of code points.
+   */
+  function ucs2decode(string) {
+    var output = [],
+        counter = 0,
+        length = string.length,
+        value,
+        extra;
+    while (counter < length) {
+      value = string.charCodeAt(counter++);
+      if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+        // high surrogate, and there is a next character
+        extra = string.charCodeAt(counter++);
+        if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+          output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+        } else {
+          // unmatched surrogate; only append this code unit, in case the next
+          // code unit is the high surrogate of a surrogate pair
+          output.push(value);
+          counter--;
+        }
+      } else {
+        output.push(value);
+      }
+    }
+    return output;
+  }
 
-	/**
-	 * Creates a string based on an array of numeric code points.
-	 * @see `punycode.ucs2.decode`
-	 * @memberOf punycode.ucs2
-	 * @name encode
-	 * @param {Array} codePoints The array of numeric code points.
-	 * @returns {String} The new Unicode string (UCS-2).
-	 */
-	function ucs2encode(array) {
-		return map(array, function(value) {
-			var output = '';
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-			return output;
-		}).join('');
-	}
+  /**
+   * Creates a string based on an array of numeric code points.
+   * @see `punycode.ucs2.decode`
+   * @memberOf punycode.ucs2
+   * @name encode
+   * @param {Array} codePoints The array of numeric code points.
+   * @returns {String} The new Unicode string (UCS-2).
+   */
+  function ucs2encode(array) {
+    return map(array, function(value) {
+      var output = '';
+      if (value > 0xFFFF) {
+        value -= 0x10000;
+        output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+        value = 0xDC00 | value & 0x3FF;
+      }
+      output += stringFromCharCode(value);
+      return output;
+    }).join('');
+  }
 
-	/**
-	 * Converts a basic code point into a digit/integer.
-	 * @see `digitToBasic()`
-	 * @private
-	 * @param {Number} codePoint The basic numeric code point value.
-	 * @returns {Number} The numeric value of a basic code point (for use in
-	 * representing integers) in the range `0` to `base - 1`, or `base` if
-	 * the code point does not represent a value.
-	 */
-	function basicToDigit(codePoint) {
-		if (codePoint - 48 < 10) {
-			return codePoint - 22;
-		}
-		if (codePoint - 65 < 26) {
-			return codePoint - 65;
-		}
-		if (codePoint - 97 < 26) {
-			return codePoint - 97;
-		}
-		return base;
-	}
+  /**
+   * Converts a basic code point into a digit/integer.
+   * @see `digitToBasic()`
+   * @private
+   * @param {Number} codePoint The basic numeric code point value.
+   * @returns {Number} The numeric value of a basic code point (for use in
+   * representing integers) in the range `0` to `base - 1`, or `base` if
+   * the code point does not represent a value.
+   */
+  function basicToDigit(codePoint) {
+    if (codePoint - 48 < 10) {
+      return codePoint - 22;
+    }
+    if (codePoint - 65 < 26) {
+      return codePoint - 65;
+    }
+    if (codePoint - 97 < 26) {
+      return codePoint - 97;
+    }
+    return base;
+  }
 
-	/**
-	 * Converts a digit/integer into a basic code point.
-	 * @see `basicToDigit()`
-	 * @private
-	 * @param {Number} digit The numeric value of a basic code point.
-	 * @returns {Number} The basic code point whose value (when used for
-	 * representing integers) is `digit`, which needs to be in the range
-	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-	 * used; else, the lowercase form is used. The behavior is undefined
-	 * if `flag` is non-zero and `digit` has no uppercase form.
-	 */
-	function digitToBasic(digit, flag) {
-		//  0..25 map to ASCII a..z or A..Z
-		// 26..35 map to ASCII 0..9
-		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-	}
+  /**
+   * Converts a digit/integer into a basic code point.
+   * @see `basicToDigit()`
+   * @private
+   * @param {Number} digit The numeric value of a basic code point.
+   * @returns {Number} The basic code point whose value (when used for
+   * representing integers) is `digit`, which needs to be in the range
+   * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+   * used; else, the lowercase form is used. The behavior is undefined
+   * if `flag` is non-zero and `digit` has no uppercase form.
+   */
+  function digitToBasic(digit, flag) {
+    //  0..25 map to ASCII a..z or A..Z
+    // 26..35 map to ASCII 0..9
+    return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+  }
 
-	/**
-	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
-	 * @private
-	 */
-	function adapt(delta, numPoints, firstTime) {
-		var k = 0;
-		delta = firstTime ? floor(delta / damp) : delta >> 1;
-		delta += floor(delta / numPoints);
-		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-			delta = floor(delta / baseMinusTMin);
-		}
-		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-	}
+  /**
+   * Bias adaptation function as per section 3.4 of RFC 3492.
+   * https://tools.ietf.org/html/rfc3492#section-3.4
+   * @private
+   */
+  function adapt(delta, numPoints, firstTime) {
+    var k = 0;
+    delta = firstTime ? floor(delta / damp) : delta >> 1;
+    delta += floor(delta / numPoints);
+    for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+      delta = floor(delta / baseMinusTMin);
+    }
+    return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+  }
 
-	/**
-	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The Punycode string of ASCII-only symbols.
-	 * @returns {String} The resulting string of Unicode symbols.
-	 */
-	function decode(input) {
-		// Don't use UCS-2
-		var output = [],
-		    inputLength = input.length,
-		    out,
-		    i = 0,
-		    n = initialN,
-		    bias = initialBias,
-		    basic,
-		    j,
-		    index,
-		    oldi,
-		    w,
-		    k,
-		    digit,
-		    t,
-		    /** Cached calculation results */
-		    baseMinusT;
+  /**
+   * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+   * symbols.
+   * @memberOf punycode
+   * @param {String} input The Punycode string of ASCII-only symbols.
+   * @returns {String} The resulting string of Unicode symbols.
+   */
+  function decode(input) {
+    // Don't use UCS-2
+    var output = [],
+        inputLength = input.length,
+        out,
+        i = 0,
+        n = initialN,
+        bias = initialBias,
+        basic,
+        j,
+        index,
+        oldi,
+        w,
+        k,
+        digit,
+        t,
+        /** Cached calculation results */
+        baseMinusT;
 
-		// Handle the basic code points: let `basic` be the number of input code
-		// points before the last delimiter, or `0` if there is none, then copy
-		// the first basic code points to the output.
+    // Handle the basic code points: let `basic` be the number of input code
+    // points before the last delimiter, or `0` if there is none, then copy
+    // the first basic code points to the output.
 
-		basic = input.lastIndexOf(delimiter);
-		if (basic < 0) {
-			basic = 0;
-		}
+    basic = input.lastIndexOf(delimiter);
+    if (basic < 0) {
+      basic = 0;
+    }
 
-		for (j = 0; j < basic; ++j) {
-			// if it's not a basic code point
-			if (input.charCodeAt(j) >= 0x80) {
-				error('not-basic');
-			}
-			output.push(input.charCodeAt(j));
-		}
+    for (j = 0; j < basic; ++j) {
+      // if it's not a basic code point
+      if (input.charCodeAt(j) >= 0x80) {
+        error('not-basic');
+      }
+      output.push(input.charCodeAt(j));
+    }
 
-		// Main decoding loop: start just after the last delimiter if any basic code
-		// points were copied; start at the beginning otherwise.
+    // Main decoding loop: start just after the last delimiter if any basic code
+    // points were copied; start at the beginning otherwise.
 
-		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+    for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
 
-			// `index` is the index of the next character to be consumed.
-			// Decode a generalized variable-length integer into `delta`,
-			// which gets added to `i`. The overflow checking is easier
-			// if we increase `i` as we go, then subtract off its starting
-			// value at the end to obtain `delta`.
-			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+      // `index` is the index of the next character to be consumed.
+      // Decode a generalized variable-length integer into `delta`,
+      // which gets added to `i`. The overflow checking is easier
+      // if we increase `i` as we go, then subtract off its starting
+      // value at the end to obtain `delta`.
+      for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
 
-				if (index >= inputLength) {
-					error('invalid-input');
-				}
+        if (index >= inputLength) {
+          error('invalid-input');
+        }
 
-				digit = basicToDigit(input.charCodeAt(index++));
+        digit = basicToDigit(input.charCodeAt(index++));
 
-				if (digit >= base || digit > floor((maxInt - i) / w)) {
-					error('overflow');
-				}
+        if (digit >= base || digit > floor((maxInt - i) / w)) {
+          error('overflow');
+        }
 
-				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+        i += digit * w;
+        t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
 
-				if (digit < t) {
-					break;
-				}
+        if (digit < t) {
+          break;
+        }
 
-				baseMinusT = base - t;
-				if (w > floor(maxInt / baseMinusT)) {
-					error('overflow');
-				}
+        baseMinusT = base - t;
+        if (w > floor(maxInt / baseMinusT)) {
+          error('overflow');
+        }
 
-				w *= baseMinusT;
+        w *= baseMinusT;
 
-			}
+      }
 
-			out = output.length + 1;
-			bias = adapt(i - oldi, out, oldi == 0);
+      out = output.length + 1;
+      bias = adapt(i - oldi, out, oldi == 0);
 
-			// `i` was supposed to wrap around from `out` to `0`,
-			// incrementing `n` each time, so we'll fix that now:
-			if (floor(i / out) > maxInt - n) {
-				error('overflow');
-			}
+      // `i` was supposed to wrap around from `out` to `0`,
+      // incrementing `n` each time, so we'll fix that now:
+      if (floor(i / out) > maxInt - n) {
+        error('overflow');
+      }
 
-			n += floor(i / out);
-			i %= out;
+      n += floor(i / out);
+      i %= out;
 
-			// Insert `n` at position `i` of the output
-			output.splice(i++, 0, n);
+      // Insert `n` at position `i` of the output
+      output.splice(i++, 0, n);
 
-		}
+    }
 
-		return ucs2encode(output);
-	}
+    return ucs2encode(output);
+  }
 
-	/**
-	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The string of Unicode symbols.
-	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-	 */
-	function encode(input) {
-		var n,
-		    delta,
-		    handledCPCount,
-		    basicLength,
-		    bias,
-		    j,
-		    m,
-		    q,
-		    k,
-		    t,
-		    currentValue,
-		    output = [],
-		    /** `inputLength` will hold the number of code points in `input`. */
-		    inputLength,
-		    /** Cached calculation results */
-		    handledCPCountPlusOne,
-		    baseMinusT,
-		    qMinusT;
+  /**
+   * Converts a string of Unicode symbols (e.g. a domain name label) to a
+   * Punycode string of ASCII-only symbols.
+   * @memberOf punycode
+   * @param {String} input The string of Unicode symbols.
+   * @returns {String} The resulting Punycode string of ASCII-only symbols.
+   */
+  function encode(input) {
+    var n,
+        delta,
+        handledCPCount,
+        basicLength,
+        bias,
+        j,
+        m,
+        q,
+        k,
+        t,
+        currentValue,
+        output = [],
+        /** `inputLength` will hold the number of code points in `input`. */
+        inputLength,
+        /** Cached calculation results */
+        handledCPCountPlusOne,
+        baseMinusT,
+        qMinusT;
 
-		// Convert the input in UCS-2 to Unicode
-		input = ucs2decode(input);
+    // Convert the input in UCS-2 to Unicode
+    input = ucs2decode(input);
 
-		// Cache the length
-		inputLength = input.length;
+    // Cache the length
+    inputLength = input.length;
 
-		// Initialize the state
-		n = initialN;
-		delta = 0;
-		bias = initialBias;
+    // Initialize the state
+    n = initialN;
+    delta = 0;
+    bias = initialBias;
 
-		// Handle the basic code points
-		for (j = 0; j < inputLength; ++j) {
-			currentValue = input[j];
-			if (currentValue < 0x80) {
-				output.push(stringFromCharCode(currentValue));
-			}
-		}
+    // Handle the basic code points
+    for (j = 0; j < inputLength; ++j) {
+      currentValue = input[j];
+      if (currentValue < 0x80) {
+        output.push(stringFromCharCode(currentValue));
+      }
+    }
 
-		handledCPCount = basicLength = output.length;
+    handledCPCount = basicLength = output.length;
 
-		// `handledCPCount` is the number of code points that have been handled;
-		// `basicLength` is the number of basic code points.
+    // `handledCPCount` is the number of code points that have been handled;
+    // `basicLength` is the number of basic code points.
 
-		// Finish the basic string - if it is not empty - with a delimiter
-		if (basicLength) {
-			output.push(delimiter);
-		}
+    // Finish the basic string - if it is not empty - with a delimiter
+    if (basicLength) {
+      output.push(delimiter);
+    }
 
-		// Main encoding loop:
-		while (handledCPCount < inputLength) {
+    // Main encoding loop:
+    while (handledCPCount < inputLength) {
 
-			// All non-basic code points < n have been handled already. Find the next
-			// larger one:
-			for (m = maxInt, j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue >= n && currentValue < m) {
-					m = currentValue;
-				}
-			}
+      // All non-basic code points < n have been handled already. Find the next
+      // larger one:
+      for (m = maxInt, j = 0; j < inputLength; ++j) {
+        currentValue = input[j];
+        if (currentValue >= n && currentValue < m) {
+          m = currentValue;
+        }
+      }
 
-			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-			// but guard against overflow
-			handledCPCountPlusOne = handledCPCount + 1;
-			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-				error('overflow');
-			}
+      // Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+      // but guard against overflow
+      handledCPCountPlusOne = handledCPCount + 1;
+      if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+        error('overflow');
+      }
 
-			delta += (m - n) * handledCPCountPlusOne;
-			n = m;
+      delta += (m - n) * handledCPCountPlusOne;
+      n = m;
 
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
+      for (j = 0; j < inputLength; ++j) {
+        currentValue = input[j];
 
-				if (currentValue < n && ++delta > maxInt) {
-					error('overflow');
-				}
+        if (currentValue < n && ++delta > maxInt) {
+          error('overflow');
+        }
 
-				if (currentValue == n) {
-					// Represent delta as a generalized variable-length integer
-					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-						if (q < t) {
-							break;
-						}
-						qMinusT = q - t;
-						baseMinusT = base - t;
-						output.push(
-							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-						);
-						q = floor(qMinusT / baseMinusT);
-					}
+        if (currentValue == n) {
+          // Represent delta as a generalized variable-length integer
+          for (q = delta, k = base; /* no condition */; k += base) {
+            t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+            if (q < t) {
+              break;
+            }
+            qMinusT = q - t;
+            baseMinusT = base - t;
+            output.push(
+              stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+            );
+            q = floor(qMinusT / baseMinusT);
+          }
 
-					output.push(stringFromCharCode(digitToBasic(q, 0)));
-					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-					delta = 0;
-					++handledCPCount;
-				}
-			}
+          output.push(stringFromCharCode(digitToBasic(q, 0)));
+          bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+          delta = 0;
+          ++handledCPCount;
+        }
+      }
 
-			++delta;
-			++n;
+      ++delta;
+      ++n;
 
-		}
-		return output.join('');
-	}
+    }
+    return output.join('');
+  }
 
-	/**
-	 * Converts a Punycode string representing a domain name to Unicode. Only the
-	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it on a string that has already been converted to
-	 * Unicode.
-	 * @memberOf punycode
-	 * @param {String} domain The Punycode domain name to convert to Unicode.
-	 * @returns {String} The Unicode representation of the given Punycode
-	 * string.
-	 */
-	function toUnicode(domain) {
-		return mapDomain(domain, function(string) {
-			return regexPunycode.test(string)
-				? decode(string.slice(4).toLowerCase())
-				: string;
-		});
-	}
+  /**
+   * Converts a Punycode string representing a domain name or an email address
+   * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+   * it doesn't matter if you call it on a string that has already been
+   * converted to Unicode.
+   * @memberOf punycode
+   * @param {String} input The Punycoded domain name or email address to
+   * convert to Unicode.
+   * @returns {String} The Unicode representation of the given Punycode
+   * string.
+   */
+  function toUnicode(input) {
+    return mapDomain(input, function(string) {
+      return regexPunycode.test(string)
+        ? decode(string.slice(4).toLowerCase())
+        : string;
+    });
+  }
 
-	/**
-	 * Converts a Unicode string representing a domain name to Punycode. Only the
-	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it with a domain that's already in ASCII.
-	 * @memberOf punycode
-	 * @param {String} domain The domain name to convert, as a Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name.
-	 */
-	function toASCII(domain) {
-		return mapDomain(domain, function(string) {
-			return regexNonASCII.test(string)
-				? 'xn--' + encode(string)
-				: string;
-		});
-	}
+  /**
+   * Converts a Unicode string representing a domain name or an email address to
+   * Punycode. Only the non-ASCII parts of the domain name will be converted,
+   * i.e. it doesn't matter if you call it with a domain that's already in
+   * ASCII.
+   * @memberOf punycode
+   * @param {String} input The domain name or email address to convert, as a
+   * Unicode string.
+   * @returns {String} The Punycode representation of the given domain name or
+   * email address.
+   */
+  function toASCII(input) {
+    return mapDomain(input, function(string) {
+      return regexNonASCII.test(string)
+        ? 'xn--' + encode(string)
+        : string;
+    });
+  }
 
-	/*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-	/** Define the public API */
-	punycode = {
-		/**
-		 * A string representing the current Punycode.js version number.
-		 * @memberOf punycode
-		 * @type String
-		 */
-		'version': '1.2.4',
-		/**
-		 * An object of methods to convert from JavaScript's internal character
-		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode
-		 * @type Object
-		 */
-		'ucs2': {
-			'decode': ucs2decode,
-			'encode': ucs2encode
-		},
-		'decode': decode,
-		'encode': encode,
-		'toASCII': toASCII,
-		'toUnicode': toUnicode
-	};
+  /** Define the public API */
+  punycode = {
+    /**
+     * A string representing the current Punycode.js version number.
+     * @memberOf punycode
+     * @type String
+     */
+    'version': '1.3.2',
+    /**
+     * An object of methods to convert from JavaScript's internal character
+     * representation (UCS-2) to Unicode code points, and back.
+     * @see <https://mathiasbynens.be/notes/javascript-encoding>
+     * @memberOf punycode
+     * @type Object
+     */
+    'ucs2': {
+      'decode': ucs2decode,
+      'encode': ucs2encode
+    },
+    'decode': decode,
+    'encode': encode,
+    'toASCII': toASCII,
+    'toUnicode': toUnicode
+  };
 
-	/** Expose `punycode` */
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		typeof define == 'function' &&
-		typeof define.amd == 'object' &&
-		define.amd
-	) {
-		define('punycode', function() {
-			return punycode;
-		});
-	} else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
-			freeModule.exports = punycode;
-		} else { // in Narwhal or RingoJS v0.7.0-
-			for (key in punycode) {
-				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
-			}
-		}
-	} else { // in Rhino or a web browser
-		root.punycode = punycode;
-	}
+  /** Expose `punycode` */
+  // Some AMD build optimizers, like r.js, check for specific condition patterns
+  // like the following:
+  if (
+    typeof define == 'function' &&
+    typeof define.amd == 'object' &&
+    define.amd
+  ) {
+    define('punycode', function() {
+      return punycode;
+    });
+  } else if (freeExports && freeModule) {
+    if (module.exports == freeExports) {
+      // in Node.js, io.js, or RingoJS v0.8.0+
+      freeModule.exports = punycode;
+    } else {
+      // in Narwhal or RingoJS v0.7.0-
+      for (key in punycode) {
+        punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+      }
+    }
+  } else {
+    // in Rhino or a web browser
+    root.punycode = punycode;
+  }
 
 }(this));
 
@@ -937,10 +963,9 @@ function html2canvas(nodeList, options) {
             return renderWindow(container.contentWindow.document.documentElement, container, options, width, height);
         });
     }
-
     var node = ((nodeList === undefined) ? [document.documentElement] : ((nodeList.length) ? nodeList : [nodeList]))[0];
     node.setAttribute(html2canvasNodeAttribute + index, index);
-    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index).then(function(canvas) {
+    return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight, index,node).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
             options.onrendered(canvas);
@@ -966,14 +991,14 @@ if (typeof(define) === 'function' && define.amd) {
     });
 }
 
-function renderDocument(document, options, windowWidth, windowHeight, html2canvasIndex) {
+function renderDocument(document, options, windowWidth, windowHeight, html2canvasIndex,originalNode) {
     return createWindowClone(document, document, windowWidth, windowHeight, options, document.defaultView.pageXOffset, document.defaultView.pageYOffset).then(function(container) {
         log("Document cloned");
         var attributeName = html2canvasNodeAttribute + html2canvasIndex;
         var selector = "[" + attributeName + "='" + html2canvasIndex + "']";
-        document.querySelector(selector).removeAttribute(attributeName);
+        originalNode.removeAttribute(attributeName);
         var clonedWindow = container.contentWindow;
-        var node = clonedWindow.document.querySelector(selector);
+        var node = originalNode;
         var oncloneHandler = (typeof(options.onclone) === "function") ? Promise.resolve(options.onclone(clonedWindow.document)) : Promise.resolve(true);
         return oncloneHandler.then(function() {
             return renderWindow(node, container, options, windowWidth, windowHeight);
@@ -992,13 +1017,12 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
-        var canvas;
-
         if (options.type === "view") {
             canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
         } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
             canvas = renderer.canvas;
         } else {
+            log(options,'options');
             canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0});
         }
 
@@ -1026,7 +1050,7 @@ function crop(canvas, bounds) {
     var height = y2-y1;
     log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", width, "height:", height);
     log("Resulting crop with width", bounds.width, "and height", bounds.height, "with x", x1, "and y", y1);
-    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, width, height, bounds.x, bounds.y, width, height);
+    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, width, height, parseInt(bounds.x), parseInt(bounds.y), width, height);
     return croppedCanvas;
 }
 
@@ -1205,6 +1229,7 @@ module.exports = GradientContainer;
 
 },{}],10:[function(_dereq_,module,exports){
 function ImageContainer(src, cors) {
+    log(cors,'cors');
     this.src = src;
     this.image = new Image();
     var self = this;
@@ -1292,7 +1317,7 @@ ImageLoader.prototype.loadImage = function(imageData) {
         } else if (src.match(/data:image\/.*;base64,/i)) {
             return new ImageContainer(src.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ''), false);
         } else if (this.isSameOrigin(src) || this.options.allowTaint === true || this.isSVG(src)) {
-            return new ImageContainer(src, false);
+            return new ImageContainer(src, true);
         } else if (this.support.cors && !this.options.allowTaint && this.options.useCORS) {
             return new ImageContainer(src, true);
         } else if (this.options.proxy) {
@@ -1344,10 +1369,12 @@ ImageLoader.prototype.getPromise = function(container) {
 };
 
 ImageLoader.prototype.get = function(src) {
-    var found = null;
-    return this.images.some(function(img) {
-        return (found = img).src === src;
-    }) ? found : null;
+  var found = null;
+  for(var x in this.images){
+    if(this.images[x].src.trim() == src.trim()){
+      return this.images[x];
+    }
+  }
 };
 
 ImageLoader.prototype.fetch = function(nodes) {
@@ -1541,8 +1568,10 @@ NodeContainer.prototype.getOpacity = function() {
 };
 
 NodeContainer.prototype.assignStack = function(stack) {
+  if(stack){
     this.stack = stack;
     stack.children.push(this);
+  }
 };
 
 NodeContainer.prototype.isElementVisible = function() {
@@ -1833,6 +1862,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.nodes = flatten([parent].concat(this.getChildren(parent)).filter(function(container) {
         return container.visible = container.isElementVisible();
     }).map(this.getPseudoElements, this));
+    log(this.nodes);
     this.fontMetrics = new FontMetrics();
     log("Fetched nodes, total:", this.nodes.length);
     log("Calculate overflow clips");
@@ -1846,6 +1876,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
         log("Sorting stacking contexts");
         this.sortStackingContexts(this.stack);
         this.parse(this.stack);
+        log(this.renderQueue,'renderQueue');
         log("Render queue created with " + this.renderQueue.length + " items");
         return new Promise(bind(function(resolve) {
             if (!options.async) {
@@ -1983,7 +2014,18 @@ NodeParser.prototype.getPseudoElement = function(container, type) {
 NodeParser.prototype.getChildren = function(parentContainer) {
     return flatten([].filter.call(parentContainer.node.childNodes, renderableNode).map(function(node) {
         var container = [node.nodeType === Node.TEXT_NODE ? new TextContainer(node, parentContainer) : new NodeContainer(node, parentContainer)].filter(nonIgnoredElement);
-        return node.nodeType === Node.ELEMENT_NODE && container.length && node.tagName !== "TEXTAREA" ? (container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
+        if(container[0].node.shadowRoot){
+           var shadowElems = container[0].node.shadowRoot.querySelectorAll('*');
+          for(var i=0;i<shadowElems.length;i++){
+              if(shadowElems[i].parentNode === container[0].node.shadowRoot){
+                var shadowContainer = [new NodeContainer(shadowElems[i], parentContainer)].filter(nonIgnoredElement);
+                container = container.concat(NodeParser.prototype.getChildren(shadowContainer[0]));
+              }
+            }
+            return container;
+        }else{
+          return node.nodeType === Node.ELEMENT_NODE && container.length && node.tagName !== "TEXTAREA" ? (container[0] && container[0].isElementVisible() ? container.concat(this.getChildren(container[0])) : []) : container;
+        }
     }, this));
 };
 
@@ -1991,6 +2033,9 @@ NodeParser.prototype.newStackingContext = function(container, hasOwnStacking) {
     var stack = new StackingContext(hasOwnStacking, container.getOpacity(), container.node, container.parent);
     container.cloneTo(stack);
     var parentStack = hasOwnStacking ? stack.getParentStack(this) : stack.parent.stack;
+    if(!parentStack){
+      parentStack = stack;
+    }
     parentStack.contexts.push(stack);
     container.stack = stack;
 };
@@ -2002,7 +2047,10 @@ NodeParser.prototype.createStackingContexts = function() {
         } else if (isElement(container) && ((isPositioned(container) && zIndex0(container)) || isInlineBlock(container) || isFloating(container))) {
             this.newStackingContext(container, false);
         } else {
-            container.assignStack(container.parent.stack);
+          if(!container.parent.stack){
+            this.newStackingContext(container, false);
+          }
+          container.assignStack(container.parent.stack);
         }
     }, this);
 };
@@ -2774,7 +2822,7 @@ function ProxyImageContainer(src, proxy) {
     this.image = new Image();
     var self = this;
     this.promise = new Promise(function(resolve, reject) {
-        self.image.crossOrigin = "Anonymous";
+        self.image.crossOrigin = "anonymous";
         self.image.onload = resolve;
         self.image.onerror = reject;
 
@@ -2843,17 +2891,18 @@ Renderer.prototype.renderImage = function(container, bounds, borderData, imageCo
         paddingRight = container.cssInt('paddingRight'),
         paddingBottom = container.cssInt('paddingBottom'),
         borders = borderData.borders;
-
+        log(imageContainer,'in renderImage');
     var width = bounds.width - (borders[1].width + borders[3].width + paddingLeft + paddingRight);
     var height = bounds.height - (borders[0].width + borders[2].width + paddingTop + paddingBottom);
+
     this.drawImage(
         imageContainer,
         0,
         0,
         imageContainer.image.width || width,
         imageContainer.image.height || height,
-        bounds.left + paddingLeft + borders[3].width,
-        bounds.top + paddingTop + borders[0].width,
+        parseInt(bounds.left + paddingLeft + borders[3].width),
+        parseInt(bounds.top + paddingTop + borders[0].width),
         width,
         height
     );
@@ -2992,6 +3041,7 @@ CanvasRenderer.prototype.taints = function(imageContainer) {
             this.taintCtx.getImageData(0, 0, 1, 1);
             imageContainer.tainted = false;
         } catch(e) {
+            log(e);
             this.taintCtx = document.createElement("canvas").getContext("2d");
             imageContainer.tainted = true;
         }
@@ -3001,9 +3051,23 @@ CanvasRenderer.prototype.taints = function(imageContainer) {
 };
 
 CanvasRenderer.prototype.drawImage = function(imageContainer, sx, sy, sw, sh, dx, dy, dw, dh) {
-    if (!this.taints(imageContainer) || this.options.allowTaint) {
-        this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
-    }
+
+     if (!this.taints(imageContainer) || this.options.allowTaint) {
+        try{
+          log(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
+           //this.ctx.drawImage(imageContainer.image, sx, sy, sw, sh, dx, dy, dw, dh);
+            var image = new Image();
+            image.crossOrigin = "Anonymous";
+            image.src = imageContainer.image.src;
+            var ctx = this.ctx;
+            image.onload = function(){
+              var img = image;
+              ctx.drawImage(img, dx, dy-20, dw, dh);
+            }
+        }catch(e){
+          log(e);
+        }      
+     }
 };
 
 CanvasRenderer.prototype.clip = function(shapes, callback, context) {
@@ -3127,7 +3191,7 @@ function StackingContext(hasOwnStacking, opacity, element, parent) {
     this.ownStacking = hasOwnStacking;
     this.contexts = [];
     this.children = [];
-    this.opacity = (this.parent ? this.parent.stack.opacity : 1) * opacity;
+    this.opacity = (this.parent && this.parent.stack ? this.parent.stack.opacity : 1) * opacity;
 }
 
 StackingContext.prototype = Object.create(NodeContainer.prototype);
