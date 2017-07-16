@@ -152,9 +152,13 @@ CanvasRenderer.prototype.backgroundRepeatShape = function(imageContainer, backgr
 CanvasRenderer.prototype.renderBackgroundRepeat = function(imageContainer, backgroundPosition, size, bounds, borderLeft, borderTop) {
     var offsetX = Math.round(bounds.left + backgroundPosition.left + borderLeft), offsetY = Math.round(bounds.top + backgroundPosition.top + borderTop);
     this.setFillStyle(this.ctx.createPattern(this.resizeImage(imageContainer, size), "repeat"));
+    this.ctx.save();
     this.ctx.translate(offsetX, offsetY);
+    if (this.options.scale) {
+        this.ctx.scale(1/this.options.scale, 1/this.options.scale);
+    }
     this.ctx.fill();
-    this.ctx.translate(-offsetX, -offsetY);
+    this.ctx.restore();
 };
 
 CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, bounds) {
@@ -172,16 +176,22 @@ CanvasRenderer.prototype.renderBackgroundGradient = function(gradientImage, boun
 };
 
 CanvasRenderer.prototype.resizeImage = function(imageContainer, size) {
+    var width = size.width, height = size.height;
+    if (this.options.scale) {
+        width *= this.options.scale;
+        height *= this.options.scale;
+    }
+
     var image = imageContainer.image;
-    if(image.width === size.width && image.height === size.height) {
+    if(image.width === width && image.height === height) {
         return image;
     }
 
     var ctx, canvas = document.createElement('canvas');
-    canvas.width = size.width;
-    canvas.height = size.height;
+    canvas.width = width;
+    canvas.height = height;
     ctx = canvas.getContext("2d");
-    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, size.width, size.height );
+    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height );
     return canvas;
 };
 
