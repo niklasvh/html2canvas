@@ -1,0 +1,102 @@
+/* @flow */
+'use strict';
+
+import {ucs2} from 'punycode';
+import type TextContainer from './TextContainer';
+import {Bounds} from './Bounds';
+import {TEXT_DECORATION} from './parsing/textDecoration';
+
+import FEATURES from './Feature';
+
+const UNICODE = /[^\u0000-\u00ff]/;
+
+const hasUnicodeCharacters = (text: string): boolean => UNICODE.test(text);
+
+const encodeCodePoint = (codePoint: number): string => ucs2.encode([codePoint]);
+
+export class TextBounds {
+    text: string;
+    bounds: Bounds;
+
+    constructor(text: string, bounds: Bounds) {
+        this.text = text;
+        this.bounds = bounds;
+    }
+}
+
+export const parseTextBounds = (textContainer: TextContainer, node: Text): Array<TextBounds> => {
+    const codePoints = ucs2.decode(textContainer.text);
+    const letterRendering =
+        textContainer.parent.style.letterSpacing !== 0 || hasUnicodeCharacters(textContainer.text);
+    const textList = letterRendering ? codePoints.map(encodeCodePoint) : splitWords(codePoints);
+    const length = textList.length;
+    const textBounds = [];
+    let offset = 0;
+    for (let i = 0; i < length; i++) {
+        let text = textList[i];
+        if (
+            textContainer.parent.style.textDecoration !== TEXT_DECORATION.NONE ||
+            text.trim().length > 0
+        ) {
+            if (FEATURES.SUPPORT_RANGE_BOUNDS) {
+                textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
+            }
+        }
+        offset += text.length;
+    }
+    return textBounds;
+
+    /*
+     else if (container.node && typeof container.node.data === 'string') {
+     var replacementNode = container.node.splitText(text.length);
+     var bounds = this.getWrapperBounds(container.node, container.parent.hasTransform());
+     container.node = replacementNode;
+     return bounds;
+     }*/
+};
+
+const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
+    const range = node.ownerDocument.createRange();
+    range.setStart(node, offset);
+    range.setEnd(node, offset + length);
+    return Bounds.fromClientRect(range.getBoundingClientRect());
+};
+
+const splitWords = (codePoints: Array<number>): Array<string> => {
+    const words = [];
+    let i = 0;
+    let onWordBoundary = false;
+    let word;
+    while (codePoints.length) {
+        if (isWordBoundary(codePoints[i]) === onWordBoundary) {
+            word = codePoints.splice(0, i);
+            if (word.length) {
+                words.push(ucs2.encode(word));
+            }
+            onWordBoundary = !onWordBoundary;
+            i = 0;
+        } else {
+            i++;
+        }
+
+        if (i >= codePoints.length) {
+            word = codePoints.splice(0, i);
+            if (word.length) {
+                words.push(ucs2.encode(word));
+            }
+        }
+    }
+    return words;
+};
+
+const isWordBoundary = (characterCode: number): boolean => {
+    return (
+        [
+            32, // <space>
+            13, // \r
+            10, // \n
+            9, // \t
+            45 // -
+        ].indexOf(characterCode) !== -1
+    );
+};
