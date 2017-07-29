@@ -1,3 +1,0 @@
-[submodule "src/fabric"]
-	path = src/fabric
-	url = https://github.com/kangax/fabric.js.git

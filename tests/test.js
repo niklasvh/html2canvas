@@ -4,11 +4,7 @@ var h2cSelector, h2cOptions;
         document.write('<script type="text/javascript" src="' + src + '.js?' + Math.random() + '"></script>');
     }
 
-    ['/node_modules/bluebird/js/browser/bluebird', '/tests/assets/jquery-1.6.2', '/dist/html2canvas'].forEach(appendScript);
-
-    if (typeof(noFabric) === "undefined") {
-        appendScript('/dist/html2canvas.svg');
-    }
+    ['/tests/assets/jquery-1.6.2', '/dist/html2canvas'].forEach(appendScript);
 
     window.onload = function() {
         (function( $ ){
@@ -21,8 +17,7 @@ var h2cSelector, h2cOptions;
                     timeoutTimer = false,
                     timer = date.getTime();
                 options = options || {};
-
-                var promise = html2canvas(this, options);
+                var promise = html2canvas(this[0], options);
                 promise['catch'](function(err) {
                     console.log("html2canvas threw an error", err);
                 });
