@@ -87,8 +87,8 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
     var bounds = getBounds(node);
-    var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
-    var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
+    var width = options.type === "view" ? windowWidth : bounds.right + 1;
+    var height = options.type === "view" ? windowHeight : bounds.bottom + 1;
     var renderer = new options.renderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
@@ -99,6 +99,15 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
             canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
         } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
             canvas = renderer.canvas;
+        } else if (options.scale) {
+            var origBounds = {width: options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0};
+            var cropBounds = {};
+            for (var key in origBounds) {
+                if (origBounds.hasOwnProperty(key)) { cropBounds[key] = origBounds[key] * options.scale; }
+            }
+            canvas = crop(renderer.canvas, cropBounds);
+            canvas.style.width = origBounds.width + 'px';
+            canvas.style.height = origBounds.height + 'px';
         } else {
             canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0});
         }
