@@ -10,7 +10,7 @@ html2canvas
  The script allows you to take "screenshots" of webpages or parts of it, directly on the users browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
 
 
-###How does it work?###
+### How does it work? ###
 The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements.
 
 It does **not require any rendering from the server**, as the whole image is created on the **clients browser**. However, as it is heavily dependent on the browser, this library is *not suitable* to be used in nodejs.
@@ -18,7 +18,7 @@ It doesn't magically circumvent any browser content policy restrictions either, 
 
 The script is still in a **very experimental state**, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made.
 
-###Browser compatibility###
+### Browser compatibility ###
 
 The library should work fine on the following browsers (with `Promise` polyfill):
 
@@ -51,21 +51,17 @@ The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/Ja
 
 The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](https://github.com/niklasvh/html2canvas/blob/master/dist/html2canvas.js).
 
-Clone git repository with submodules:
+Clone git repository:
 
-    $ git clone --recursive git://github.com/niklasvh/html2canvas.git
+    $ git clone git://github.com/niklasvh/html2canvas.git
 
-Install Grunt and uglifyjs:
+Install dependencies:
 
-    $ npm install -g grunt-cli uglify-js
+    $ npm install
 
-Run the full build process (including lint, qunit and webdriver tests):
+Build browser bundle
 
-    $ grunt
-
-Skip lint and tests and simply build from source:
-
-    $ grunt build
+    $ npm run build:browser
 
 ### Running tests ###
 
@@ -77,9 +73,9 @@ Start by downloading the dependencies:
 
     $ npm install
 
-Run qunit tests:
+Run tests:
 
-    $ grunt test
+    $ npm test
 
 ### Examples ###
 
