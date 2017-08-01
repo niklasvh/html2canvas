@@ -10,15 +10,19 @@ import {cloneWindow} from './Clone';
 import Color from './Color';
 
 export type Options = {
-    async: boolean,
-    imageTimeout: number,
-    proxy: string,
-    canvas: HTMLCanvasElement,
-    allowTaint: true,
-    type: string
+    async: ?boolean,
+    allowTaint: ?boolean,
+    canvas: ?HTMLCanvasElement,
+    imageTimeout: ?number,
+    proxy: ?string,
+    removeContainer: ?boolean,
+    type: ?string
 };
 
-const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvasElement> => {
+const html2canvas = (
+    element: HTMLElement,
+    config: Options
+): Promise<HTMLCanvasElement> => {
     const logger = new Logger();
 
     const ownerDocument = element.ownerDocument;
@@ -30,6 +34,25 @@ const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvas
         defaultView.innerHeight
     );
 
+    const defaultOptions = {
+        async: true,
+        allowTaint: false,
+        canvas: ownerDocument.createElement('canvas'),
+        imageTimeout: 10000,
+        proxy: null,
+        removeContainer: true,
+        scale: defaultView.devicePixelRatio,
+        type: null
+    };
+
+    const options = {...defaultOptions, ...config};
+
+    const canvas = options.canvas;
+
+    if (!(canvas instanceof HTMLCanvasElement)) {
+        return Promise.reject(__DEV__ ? `Invalid canvas element provided in options` : '');
+    }
+
     return cloneWindow(
         ownerDocument,
         ownerDocument,
@@ -40,15 +63,12 @@ const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvas
         if (__DEV__) {
             logger.log(`Document cloned`);
         }
-
         const imageLoader = new ImageLoader(options, logger);
         const stack = NodeParser(clonedElement, imageLoader, logger);
-        const canvas = ownerDocument.createElement('canvas');
-        const scale = defaultView.devicePixelRatio;
         const width = window.innerWidth;
         const height = window.innerHeight;
-        canvas.width = Math.floor(width * scale);
-        canvas.height = Math.floor(height * scale);
+        canvas.width = Math.floor(width * options.scale);
+        canvas.height = Math.floor(height * options.scale);
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
 
@@ -56,20 +76,22 @@ const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvas
         const backgroundColor =
             clonedElement === ownerDocument.documentElement
                 ? stack.container.style.background.backgroundColor.isTransparent()
-                  ? ownerDocument.body instanceof HTMLElement
+                  ? ownerDocument.body
                     ? new Color(getComputedStyle(ownerDocument.body).backgroundColor)
                     : null
                   : stack.container.style.background.backgroundColor
                 : null;
 
         return imageLoader.ready().then(imageStore => {
-            if (container.parentNode) {
-                container.parentNode.removeChild(container);
-            } else if (__DEV__) {
-                logger.log(`Cannot detach cloned iframe as it is not in the DOM anymore`);
+            if (options.removeContainer === true) {
+                if (container.parentNode) {
+                    container.parentNode.removeChild(container);
+                } else if (__DEV__) {
+                    logger.log(`Cannot detach cloned iframe as it is not in the DOM anymore`);
+                }
             }
 
-            const renderer = new CanvasRenderer(canvas, {scale, backgroundColor, imageStore});
+            const renderer = new CanvasRenderer(canvas, {scale: options.scale, backgroundColor, imageStore});
             return renderer.render(stack);
         });
     });
