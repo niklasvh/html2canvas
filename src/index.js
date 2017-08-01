@@ -5,7 +5,7 @@ import {NodeParser} from './NodeParser';
 import CanvasRenderer from './CanvasRenderer';
 import Logger from './Logger';
 import ImageLoader from './ImageLoader';
-import {Bounds} from './Bounds';
+import {Bounds, parseDocumentSize} from './Bounds';
 import {cloneWindow} from './Clone';
 import Color from './Color';
 
@@ -62,8 +62,10 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         }
         const imageLoader = new ImageLoader(options, logger);
         const stack = NodeParser(clonedElement, imageLoader, logger);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+        const size =
+            options.type === 'view' ? windowBounds : parseDocumentSize(clonedElement.ownerDocument);
+        const width = size.width;
+        const height = size.height;
         canvas.width = Math.floor(width * options.scale);
         canvas.height = Math.floor(height * options.scale);
         canvas.style.width = `${width}px`;
@@ -71,10 +73,10 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
 
         // http://www.w3.org/TR/css3-background/#special-backgrounds
         const backgroundColor =
-            clonedElement === ownerDocument.documentElement
+            clonedElement === clonedElement.ownerDocument.documentElement
                 ? stack.container.style.background.backgroundColor.isTransparent()
-                  ? ownerDocument.body
-                    ? new Color(getComputedStyle(ownerDocument.body).backgroundColor)
+                  ? clonedElement.ownerDocument.body
+                    ? new Color(getComputedStyle(clonedElement.ownerDocument.body).backgroundColor)
                     : null
                   : stack.container.style.background.backgroundColor
                 : null;
