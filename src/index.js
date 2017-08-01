@@ -19,10 +19,7 @@ export type Options = {
     type: ?string
 };
 
-const html2canvas = (
-    element: HTMLElement,
-    config: Options
-): Promise<HTMLCanvasElement> => {
+const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasElement> => {
     const logger = new Logger();
 
     const ownerDocument = element.ownerDocument;
@@ -91,7 +88,11 @@ const html2canvas = (
                 }
             }
 
-            const renderer = new CanvasRenderer(canvas, {scale: options.scale, backgroundColor, imageStore});
+            const renderer = new CanvasRenderer(canvas, {
+                scale: options.scale,
+                backgroundColor,
+                imageStore
+            });
             return renderer.render(stack);
         });
     });

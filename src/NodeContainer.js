@@ -88,10 +88,15 @@ export default class NodeContainer {
             zIndex: parseZIndex(style.zIndex)
         };
 
+        if (this.isTransformed()) {
+            // getBoundingClientRect provides values post-transform, we want them without the transformation
+            node.style.transform = 'matrix(1,0,0,1,0,0)';
+        }
+
         this.image =
             // $FlowFixMe
             node.tagName === 'IMG' ? imageLoader.loadImage(node.currentSrc || node.src) : null;
-        this.bounds = parseBounds(node, this.isTransformed());
+        this.bounds = parseBounds(node);
         if (__DEV__) {
             this.name = `${node.tagName.toLowerCase()}${node.id
                 ? `#${node.id}`

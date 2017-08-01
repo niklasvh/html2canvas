@@ -3,7 +3,7 @@
 
 import {ucs2} from 'punycode';
 import type TextContainer from './TextContainer';
-import {Bounds} from './Bounds';
+import {Bounds, parseBounds} from './Bounds';
 import {TEXT_DECORATION} from './parsing/textDecoration';
 
 import FEATURES from './Feature';
@@ -40,19 +40,32 @@ export const parseTextBounds = (textContainer: TextContainer, node: Text): Array
         ) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
+            } else {
+                const replacementNode = node.splitText(text.length);
+                textBounds.push(new TextBounds(text, getWrapperBounds(node)));
+                node = replacementNode;
             }
+        } else if (!FEATURES.SUPPORT_RANGE_BOUNDS) {
+            node = node.splitText(text.length);
         }
         offset += text.length;
     }
     return textBounds;
+};
 
-    /*
-     else if (container.node && typeof container.node.data === 'string') {
-     var replacementNode = container.node.splitText(text.length);
-     var bounds = this.getWrapperBounds(container.node, container.parent.hasTransform());
-     container.node = replacementNode;
-     return bounds;
-     }*/
+const getWrapperBounds = (node: Text): Bounds => {
+    const wrapper = node.ownerDocument.createElement('html2canvaswrapper');
+    wrapper.appendChild(node.cloneNode(true));
+    const parentNode = node.parentNode;
+    if (parentNode) {
+        parentNode.replaceChild(wrapper, node);
+        const bounds = parseBounds(wrapper);
+        if (wrapper.firstChild) {
+            parentNode.replaceChild(wrapper.firstChild, wrapper);
+        }
+        return bounds;
+    }
+    return new Bounds(0, 0, 0, 0);
 };
 
 const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
