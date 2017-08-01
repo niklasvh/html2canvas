@@ -35,7 +35,8 @@ const parseNodeTree = (
     stack: StackingContext,
     imageLoader: ImageLoader
 ): void => {
-    node.childNodes.forEach((childNode: Node) => {
+    for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
+        nextNode = childNode.nextSibling;
         if (childNode.nodeType === Node.TEXT_NODE) {
             //$FlowFixMe
             if (childNode.data.trim().length > 0) {
@@ -72,7 +73,7 @@ const parseNodeTree = (
                 }
             }
         }
-    });
+    }
 };
 
 const createsRealStackingContext = (container: NodeContainer, node: HTMLElement): boolean => {

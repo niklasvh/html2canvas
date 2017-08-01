@@ -44,20 +44,8 @@ export class Bounds {
     }
 }
 
-export const parseBounds = (node: HTMLElement, isTransformed: boolean): Bounds => {
-    return isTransformed ? offsetBounds(node) : Bounds.fromClientRect(node.getBoundingClientRect());
-};
-
-const offsetBounds = (node: HTMLElement): Bounds => {
-    // //$FlowFixMe
-    const parent = node.offsetParent ? offsetBounds(node.offsetParent) : {top: 0, left: 0};
-
-    return new Bounds(
-        node.offsetLeft + parent.left,
-        node.offsetTop + parent.top,
-        node.offsetWidth,
-        node.offsetHeight
-    );
+export const parseBounds = (node: HTMLElement): Bounds => {
+    return Bounds.fromClientRect(node.getBoundingClientRect());
 };
 
 export const calculatePaddingBox = (bounds: Bounds, borders: Array<Border>): Bounds => {
