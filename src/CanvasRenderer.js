@@ -132,7 +132,7 @@ export default class CanvasRenderer {
     }
 
     renderBackgroundImage(container: NodeContainer) {
-        container.style.background.backgroundImage.forEach(backgroundImage => {
+        container.style.background.backgroundImage.reverse().forEach(backgroundImage => {
             if (backgroundImage.source.method === 'url' && backgroundImage.source.args.length) {
                 this.renderBackgroundRepeat(container, backgroundImage);
             }
