@@ -78,6 +78,28 @@ export const calculateContentBox = (
     );
 };
 
+export const parseDocumentSize = (document: Document): Bounds => {
+    const body = document.body;
+    const documentElement = document.documentElement;
+
+    if (!body || !documentElement) {
+        throw new Error(__DEV__ ? `Unable to get document size` : '');
+    }
+    const width = Math.max(
+        Math.max(body.scrollWidth, documentElement.scrollWidth),
+        Math.max(body.offsetWidth, documentElement.offsetWidth),
+        Math.max(body.clientWidth, documentElement.clientWidth)
+    );
+
+    const height = Math.max(
+        Math.max(body.scrollHeight, documentElement.scrollHeight),
+        Math.max(body.offsetHeight, documentElement.offsetHeight),
+        Math.max(body.clientHeight, documentElement.clientHeight)
+    );
+
+    return new Bounds(0, 0, width, height);
+};
+
 export const parsePathForBorder = (curves: BoundCurves, borderSide: BorderSide): Path => {
     switch (borderSide) {
         case TOP:
