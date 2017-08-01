@@ -198,7 +198,7 @@ export const parseBackground = (
 };
 
 const parseBackgroundRepeat = (backgroundRepeat: string): BackgroundRepeat => {
-    switch (backgroundRepeat) {
+    switch (backgroundRepeat.trim()) {
         case 'no-repeat':
             return BACKGROUND_REPEAT.NO_REPEAT;
         case 'repeat-x':
