@@ -1,3 +1,5 @@
+/* @flow */
+'use strict';
 import Vector from './Vector';
 
 export default class BezierCurve {

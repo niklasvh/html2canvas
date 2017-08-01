@@ -8,6 +8,7 @@ export default class Logger {
         this.start = Date.now();
     }
 
+    // eslint-disable-next-line flowtype/no-weak-types
     log(...args: any) {
         Function.prototype.bind
             .call(window.console.log, window.console)

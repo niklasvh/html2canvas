@@ -1,3 +1,6 @@
+/* @flow */
+'use strict';
+
 const testRangeBounds = document => {
     const TEST_HEIGHT = 123;
 
@@ -23,6 +26,7 @@ const testRangeBounds = document => {
 };
 
 const FEATURES = {
+    // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_RANGE_BOUNDS() {
         'use strict';
         const value = testRangeBounds(document);

@@ -10,7 +10,6 @@ import Color from './Color';
 export type Options = {
     async: boolean,
     imageTimeout: number,
-    renderer: Function,
     proxy: string,
     canvas: HTMLCanvasElement,
     allowTaint: true
