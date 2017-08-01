@@ -49,10 +49,8 @@ export const parseBounds = (node: HTMLElement, isTransformed: boolean): Bounds =
 };
 
 const offsetBounds = (node: HTMLElement): Bounds => {
-    const parent =
-        node.offsetParent instanceof HTMLElement
-            ? offsetBounds(node.offsetParent)
-            : {top: 0, left: 0};
+    // //$FlowFixMe
+    const parent = node.offsetParent ? offsetBounds(node.offsetParent) : {top: 0, left: 0};
 
     return new Bounds(
         node.offsetLeft + parent.left,

@@ -87,10 +87,10 @@ export default class NodeContainer {
             transform: parseTransform(style),
             zIndex: parseZIndex(style.zIndex)
         };
+
         this.image =
-            node instanceof HTMLImageElement
-                ? imageLoader.loadImage(node.currentSrc || node.src)
-                : null;
+            // $FlowFixMe
+            node.tagName === 'IMG' ? imageLoader.loadImage(node.currentSrc || node.src) : null;
         this.bounds = parseBounds(node, this.isTransformed());
         if (__DEV__) {
             this.name = `${node.tagName.toLowerCase()}${node.id

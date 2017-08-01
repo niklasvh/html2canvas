@@ -36,17 +36,20 @@ const parseNodeTree = (
     imageLoader: ImageLoader
 ): void => {
     node.childNodes.forEach((childNode: Node) => {
-        if (childNode instanceof Text) {
+        if (childNode.nodeType === Node.TEXT_NODE) {
+            //$FlowFixMe
             if (childNode.data.trim().length > 0) {
+                //$FlowFixMe
                 parent.textNodes.push(new TextContainer(childNode, parent));
             }
-        } else if (childNode instanceof HTMLElement) {
+        } else if (childNode.nodeType === Node.ELEMENT_NODE) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-                const container = new NodeContainer(childNode, parent, imageLoader);
+                const childElement = flowRefineToHTMLElement(childNode);
+                const container = new NodeContainer(childElement, parent, imageLoader);
                 if (container.isVisible()) {
                     const treatAsRealStackingContext = createsRealStackingContext(
                         container,
-                        childNode
+                        childElement
                     );
                     if (treatAsRealStackingContext || createsStackingContext(container)) {
                         // for treatAsRealStackingContext:false, any positioned descendants and descendants
@@ -61,10 +64,10 @@ const parseNodeTree = (
                             treatAsRealStackingContext
                         );
                         parentStack.contexts.push(childStack);
-                        parseNodeTree(childNode, container, childStack, imageLoader);
+                        parseNodeTree(childElement, container, childStack, imageLoader);
                     } else {
                         stack.children.push(container);
-                        parseNodeTree(childNode, container, stack, imageLoader);
+                        parseNodeTree(childElement, container, stack, imageLoader);
                     }
                 }
             }
@@ -93,3 +96,6 @@ const isBodyWithTransparentRoot = (container: NodeContainer, node: HTMLElement):
         container.parent.style.background.backgroundColor.isTransparent()
     );
 };
+
+//$FlowFixMe
+const flowRefineToHTMLElement = (node: Node): HTMLElement => node;
