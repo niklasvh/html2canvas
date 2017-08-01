@@ -4,7 +4,8 @@ module.exports = {
     entry: './src/index.js',
     output: {
         filename: './dist/html2canvas.js',
-        library: 'html2canvas'
+        library: 'html2canvas',
+        libraryTarget: 'umd'
     },
     module: {
         loaders: [{
