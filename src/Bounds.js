@@ -15,15 +15,18 @@ const RIGHT = 1;
 const BOTTOM = 2;
 const LEFT = 3;
 
+const H = 0;
+const V = 0;
+
 export type BoundCurves = {
-    topLeftOuter: [BezierCurve, BezierCurve],
-    topLeftInner: [BezierCurve, BezierCurve],
-    topRightOuter: [BezierCurve, BezierCurve],
-    topRightInner: [BezierCurve, BezierCurve],
-    bottomRightOuter: [BezierCurve, BezierCurve],
-    bottomRightInner: [BezierCurve, BezierCurve],
-    bottomLeftOuter: [BezierCurve, BezierCurve],
-    bottomLeftInner: [BezierCurve, BezierCurve]
+    topLeftOuter: BezierCurve | Vector,
+    topLeftInner: BezierCurve | Vector,
+    topRightOuter: BezierCurve | Vector,
+    topRightInner: BezierCurve | Vector,
+    bottomRightOuter: BezierCurve | Vector,
+    bottomRightInner: BezierCurve | Vector,
+    bottomLeftOuter: BezierCurve | Vector,
+    bottomLeftInner: BezierCurve | Vector
 };
 
 export class Bounds {
@@ -123,6 +126,7 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: BorderSide):
                 curves.bottomLeftOuter,
                 curves.bottomLeftInner
             );
+        case LEFT:
         default:
             return createPathFromCurves(
                 curves.bottomLeftOuter,
@@ -134,16 +138,35 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: BorderSide):
 };
 
 const createPathFromCurves = (
-    outer1: [BezierCurve, BezierCurve],
-    inner1: [BezierCurve, BezierCurve],
-    outer2: [BezierCurve, BezierCurve],
-    inner2: [BezierCurve, BezierCurve]
+    outer1: BezierCurve | Vector,
+    inner1: BezierCurve | Vector,
+    outer2: BezierCurve | Vector,
+    inner2: BezierCurve | Vector
 ): Path => {
     const path = [];
-    path.push(outer1[1]);
-    path.push(outer2[0]);
-    path.push(inner2[0].reverse());
-    path.push(inner1[1].reverse());
+    if (outer1 instanceof BezierCurve) {
+        path.push(outer1.subdivide(0.5, false));
+    } else {
+        path.push(outer1);
+    }
+
+    if (outer2 instanceof BezierCurve) {
+        path.push(outer2.subdivide(0.5, true));
+    } else {
+        path.push(outer2);
+    }
+
+    if (inner2 instanceof BezierCurve) {
+        path.push(inner2.subdivide(0.5, true).reverse());
+    } else {
+        path.push(inner2);
+    }
+
+    if (inner1 instanceof BezierCurve) {
+        path.push(inner1.subdivide(0.5, false).reverse());
+    } else {
+        path.push(inner1);
+    }
 
     return path;
 };
@@ -154,22 +177,40 @@ export const parseBoundCurves = (
     borderRadius: Array<BorderRadius>
 ): BoundCurves => {
     // TODO support percentage borderRadius
+    const HALF_WIDTH = bounds.width / 2;
+    const HALF_HEIGHT = bounds.height / 2;
     const tlh =
-        borderRadius[0][0].value < bounds.width / 2 ? borderRadius[0][0].value : bounds.width / 2;
+        borderRadius[CORNER.TOP_LEFT][H].value < HALF_WIDTH
+            ? borderRadius[CORNER.TOP_LEFT][H].value
+            : HALF_WIDTH;
     const tlv =
-        borderRadius[0][1].value < bounds.height / 2 ? borderRadius[0][1].value : bounds.height / 2;
+        borderRadius[CORNER.TOP_LEFT][V].value < HALF_HEIGHT
+            ? borderRadius[CORNER.TOP_LEFT][V].value
+            : HALF_HEIGHT;
     const trh =
-        borderRadius[1][0].value < bounds.width / 2 ? borderRadius[1][0].value : bounds.width / 2;
+        borderRadius[CORNER.TOP_RIGHT][H].value < HALF_WIDTH
+            ? borderRadius[CORNER.TOP_RIGHT][H].value
+            : HALF_WIDTH;
     const trv =
-        borderRadius[1][1].value < bounds.height / 2 ? borderRadius[1][1].value : bounds.height / 2;
+        borderRadius[CORNER.TOP_RIGHT][V].value < HALF_HEIGHT
+            ? borderRadius[CORNER.TOP_RIGHT][V].value
+            : HALF_HEIGHT;
     const brh =
-        borderRadius[2][0].value < bounds.width / 2 ? borderRadius[2][0].value : bounds.width / 2;
+        borderRadius[CORNER.BOTTOM_RIGHT][H].value < HALF_WIDTH
+            ? borderRadius[CORNER.BOTTOM_RIGHT][H].value
+            : HALF_WIDTH;
     const brv =
-        borderRadius[2][1].value < bounds.height / 2 ? borderRadius[2][1].value : bounds.height / 2;
+        borderRadius[CORNER.BOTTOM_RIGHT][V].value < HALF_HEIGHT
+            ? borderRadius[CORNER.BOTTOM_RIGHT][V].value
+            : HALF_HEIGHT;
     const blh =
-        borderRadius[3][0].value < bounds.width / 2 ? borderRadius[3][0].value : bounds.width / 2;
+        borderRadius[CORNER.BOTTOM_LEFT][H].value < HALF_WIDTH
+            ? borderRadius[CORNER.BOTTOM_LEFT][H].value
+            : HALF_WIDTH;
     const blv =
-        borderRadius[3][1].value < bounds.height / 2 ? borderRadius[3][1].value : bounds.height / 2;
+        borderRadius[CORNER.BOTTOM_LEFT][V].value < HALF_HEIGHT
+            ? borderRadius[CORNER.BOTTOM_LEFT][V].value
+            : HALF_HEIGHT;
 
     const topWidth = bounds.width - trh;
     const rightHeight = bounds.height - brv;
@@ -177,58 +218,82 @@ export const parseBoundCurves = (
     const leftHeight = bounds.height - blv;
 
     return {
-        topLeftOuter: getCurvePoints(bounds.left, bounds.top, tlh, tlv, CORNER.TOP_LEFT).subdivide(
-            0.5
-        ),
-        topLeftInner: getCurvePoints(
-            bounds.left + borders[3].borderWidth,
-            bounds.top + borders[0].borderWidth,
-            Math.max(0, tlh - borders[3].borderWidth),
-            Math.max(0, tlv - borders[0].borderWidth),
-            CORNER.TOP_LEFT
-        ).subdivide(0.5),
-        topRightOuter: getCurvePoints(
-            bounds.left + topWidth,
-            bounds.top,
-            trh,
-            trv,
-            CORNER.TOP_RIGHT
-        ).subdivide(0.5),
-        topRightInner: getCurvePoints(
-            bounds.left + Math.min(topWidth, bounds.width + borders[3].borderWidth),
-            bounds.top + borders[0].borderWidth,
-            topWidth > bounds.width + borders[3].borderWidth ? 0 : trh - borders[3].borderWidth,
-            trv - borders[0].borderWidth,
-            CORNER.TOP_RIGHT
-        ).subdivide(0.5),
-        bottomRightOuter: getCurvePoints(
-            bounds.left + bottomWidth,
-            bounds.top + rightHeight,
-            brh,
-            brv,
-            CORNER.BOTTOM_RIGHT
-        ).subdivide(0.5),
-        bottomRightInner: getCurvePoints(
-            bounds.left + Math.min(bottomWidth, bounds.width - borders[3].borderWidth),
-            bounds.top + Math.min(rightHeight, bounds.height + borders[0].borderWidth),
-            Math.max(0, brh - borders[1].borderWidth),
-            brv - borders[2].borderWidth,
-            CORNER.BOTTOM_RIGHT
-        ).subdivide(0.5),
-        bottomLeftOuter: getCurvePoints(
-            bounds.left,
-            bounds.top + leftHeight,
-            blh,
-            blv,
-            CORNER.BOTTOM_LEFT
-        ).subdivide(0.5),
-        bottomLeftInner: getCurvePoints(
-            bounds.left + borders[3].borderWidth,
-            bounds.top + leftHeight,
-            Math.max(0, blh - borders[3].borderWidth),
-            blv - borders[2].borderWidth,
-            CORNER.BOTTOM_LEFT
-        ).subdivide(0.5)
+        topLeftOuter:
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left, bounds.top, tlh, tlv, CORNER.TOP_LEFT)
+                : new Vector(bounds.left, bounds.top),
+        topLeftInner:
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + borders[LEFT].borderWidth,
+                      bounds.top + borders[TOP].borderWidth,
+                      Math.max(0, tlh - borders[LEFT].borderWidth),
+                      Math.max(0, tlv - borders[TOP].borderWidth),
+                      CORNER.TOP_LEFT
+                  )
+                : new Vector(
+                      bounds.left + borders[LEFT].borderWidth,
+                      bounds.top + borders[TOP].borderWidth
+                  ),
+        topRightOuter:
+            trh > 0 || trv > 0
+                ? getCurvePoints(bounds.left + topWidth, bounds.top, trh, trv, CORNER.TOP_RIGHT)
+                : new Vector(bounds.left + bounds.width, bounds.top),
+        topRightInner:
+            trh > 0 || trv > 0
+                ? getCurvePoints(
+                      bounds.left + Math.min(topWidth, bounds.width + borders[LEFT].borderWidth),
+                      bounds.top + borders[TOP].borderWidth,
+                      topWidth > bounds.width + borders[LEFT].borderWidth
+                          ? 0
+                          : trh - borders[LEFT].borderWidth,
+                      trv - borders[TOP].borderWidth,
+                      CORNER.TOP_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - borders[RIGHT].borderWidth,
+                      bounds.top + borders[TOP].borderWidth
+                  ),
+        bottomRightOuter:
+            brh > 0 || brv > 0
+                ? getCurvePoints(
+                      bounds.left + bottomWidth,
+                      bounds.top + rightHeight,
+                      brh,
+                      brv,
+                      CORNER.BOTTOM_RIGHT
+                  )
+                : new Vector(bounds.left + bounds.width, bounds.top + bounds.height),
+        bottomRightInner:
+            brh > 0 || brv > 0
+                ? getCurvePoints(
+                      bounds.left + Math.min(bottomWidth, bounds.width - borders[LEFT].borderWidth),
+                      bounds.top + Math.min(rightHeight, bounds.height + borders[TOP].borderWidth),
+                      Math.max(0, brh - borders[RIGHT].borderWidth),
+                      brv - borders[BOTTOM].borderWidth,
+                      CORNER.BOTTOM_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - borders[RIGHT].borderWidth,
+                      bounds.top + bounds.height - borders[BOTTOM].borderWidth
+                  ),
+        bottomLeftOuter:
+            blh > 0 || blv > 0
+                ? getCurvePoints(bounds.left, bounds.top + leftHeight, blh, blv, CORNER.BOTTOM_LEFT)
+                : new Vector(bounds.left, bounds.top + bounds.height),
+        bottomLeftInner:
+            blh > 0 || blv > 0
+                ? getCurvePoints(
+                      bounds.left + borders[LEFT].borderWidth,
+                      bounds.top + leftHeight,
+                      Math.max(0, blh - borders[LEFT].borderWidth),
+                      blv - borders[BOTTOM].borderWidth,
+                      CORNER.BOTTOM_LEFT
+                  )
+                : new Vector(
+                      bounds.left + borders[LEFT].borderWidth,
+                      bounds.top + bounds.height - borders[BOTTOM].borderWidth
+                  )
     };
 };
 
@@ -276,11 +341,13 @@ const getCurvePoints = (
                 new Vector(x + ox, ym),
                 new Vector(x, ym)
             );
+        case CORNER.BOTTOM_LEFT:
+        default:
+            return new BezierCurve(
+                new Vector(xm, ym),
+                new Vector(xm - ox, ym),
+                new Vector(x, y + oy),
+                new Vector(x, y)
+            );
     }
-    return new BezierCurve(
-        new Vector(xm, ym),
-        new Vector(xm - ox, ym),
-        new Vector(x, y + oy),
-        new Vector(x, y)
-    );
 };

@@ -16,9 +16,12 @@ import type {ImageStore} from './ImageLoader';
 import type StackingContext from './StackingContext';
 
 import {
-    calculateBackgroundSize,
+    BACKGROUND_CLIP,
+    BACKGROUND_ORIGIN,
+    calculateBackgroungPaintingArea,
     calculateBackgroundPosition,
-    calculateBackgroundRepeatPath
+    calculateBackgroundRepeatPath,
+    calculateBackgroundSize
 } from './parsing/background';
 import {BORDER_STYLE} from './parsing/border';
 import {
@@ -98,7 +101,20 @@ export default class CanvasRenderer {
             container.style.borderRadius
         );
 
-        this.renderBackground(container);
+        const backgroungPaintingArea = calculateBackgroungPaintingArea(
+            curvePoints,
+            container.style.background.backgroundClip
+        );
+        this.path(backgroungPaintingArea);
+        if (!container.style.background.backgroundColor.isTransparent()) {
+            this.ctx.fillStyle = container.style.background.backgroundColor.toString();
+            this.ctx.fill();
+        }
+
+        this.ctx.save();
+        this.ctx.clip();
+        this.renderBackgroundImage(container);
+        this.ctx.restore();
         container.style.border.forEach((border, side) => {
             this.renderBorder(border, side, curvePoints);
         });
@@ -110,25 +126,6 @@ export default class CanvasRenderer {
 
     renderText(text: TextBounds) {
         this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
-    }
-
-    renderBackground(container: NodeContainer) {
-        if (container.bounds.height > 0 && container.bounds.width > 0) {
-            this.renderBackgroundColor(container);
-            this.renderBackgroundImage(container);
-        }
-    }
-
-    renderBackgroundColor(container: NodeContainer) {
-        if (!container.style.background.backgroundColor.isTransparent()) {
-            this.rectangle(
-                container.bounds.left,
-                container.bounds.top,
-                container.bounds.width,
-                container.bounds.height,
-                container.style.background.backgroundColor
-            );
-        }
     }
 
     renderBackgroundImage(container: NodeContainer) {
@@ -144,13 +141,33 @@ export default class CanvasRenderer {
         if (image) {
             const bounds = container.bounds;
             const paddingBox = calculatePaddingBox(bounds, container.style.border);
-            const size = calculateBackgroundSize(background, image, bounds);
-            const position = calculateBackgroundPosition(background.position, size, bounds);
-            const path = calculateBackgroundRepeatPath(background, position, size, paddingBox);
+            const backgroundImageSize = calculateBackgroundSize(background, image, bounds);
+
+            // TODO support CONTENT_BOX
+            const backgroundPositioningArea =
+                container.style.background.backgroundOrigin === BACKGROUND_ORIGIN.BORDER_BOX
+                    ? bounds
+                    : paddingBox;
+
+            const position = calculateBackgroundPosition(
+                background.position,
+                backgroundImageSize,
+                backgroundPositioningArea
+            );
+            const path = calculateBackgroundRepeatPath(
+                background,
+                position,
+                backgroundImageSize,
+                backgroundPositioningArea,
+                bounds
+            );
             this.path(path);
             const offsetX = Math.round(paddingBox.left + position.x);
             const offsetY = Math.round(paddingBox.top + position.y);
-            this.ctx.fillStyle = this.ctx.createPattern(this.resizeImage(image, size), 'repeat');
+            this.ctx.fillStyle = this.ctx.createPattern(
+                this.resizeImage(image, backgroundImageSize),
+                'repeat'
+            );
             this.ctx.translate(offsetX, offsetY);
             this.ctx.fill();
             this.ctx.translate(-offsetX, -offsetY);
