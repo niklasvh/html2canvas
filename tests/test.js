@@ -39,10 +39,12 @@ var h2cSelector, h2cOptions;
                     if (window.location.search !== "?selenium") {
                         $canvas.siblings().toggle();
                         $(window).click(function(){
+                            var scrollTop = $(window).scrollTop();
                             $canvas.toggle().siblings().toggle();
                             $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
                             $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
                             throwMessage("Canvas Render " + ($canvas.is(':visible') ? "visible" : "hidden"));
+                            $(window).scrollTop(scrollTop);
                         });
                         $(document.documentElement).css('background', $canvas.is(':visible') ? "none" : "");
                         $(document.body).css('background', $canvas.is(':visible') ? "none" : "");
