@@ -8,6 +8,7 @@ import Color from '../Color';
 import Length from '../Length';
 import Size from '../Size';
 import Vector from '../Vector';
+import {calculateBorderBoxPath, calculatePaddingBoxPath} from '../Bounds';
 
 export type Background = {
     backgroundImage: Array<BackgroundImage>,
@@ -123,20 +124,10 @@ export const calculateBackgroungPaintingArea = (
     // TODO support CONTENT_BOX
     switch (clip) {
         case BACKGROUND_CLIP.BORDER_BOX:
-            return [
-                curves.topLeftOuter,
-                curves.topRightOuter,
-                curves.bottomRightOuter,
-                curves.bottomLeftOuter
-            ];
+            return calculateBorderBoxPath(curves);
         case BACKGROUND_CLIP.PADDING_BOX:
         default:
-            return [
-                curves.topLeftInner,
-                curves.topRightInner,
-                curves.bottomRightInner,
-                curves.bottomLeftInner
-            ];
+            return calculatePaddingBoxPath(curves);
     }
 };
 

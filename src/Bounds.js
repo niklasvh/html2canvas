@@ -171,6 +171,24 @@ const createPathFromCurves = (
     return path;
 };
 
+export const calculateBorderBoxPath = (curves: BoundCurves): Path => {
+    return [
+        curves.topLeftOuter,
+        curves.topRightOuter,
+        curves.bottomRightOuter,
+        curves.bottomLeftOuter
+    ];
+};
+
+export const calculatePaddingBoxPath = (curves: BoundCurves): Path => {
+    return [
+        curves.topLeftInner,
+        curves.topRightInner,
+        curves.bottomRightInner,
+        curves.bottomLeftInner
+    ];
+};
+
 export const parseBoundCurves = (
     bounds: Bounds,
     borders: Array<Border>,

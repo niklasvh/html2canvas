@@ -7,6 +7,7 @@ import type {BorderRadius} from './parsing/borderRadius';
 import type {DisplayBit} from './parsing/display';
 import type {Float} from './parsing/float';
 import type {Font} from './parsing/font';
+import type {Overflow} from './parsing/overflow';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
 import type {TextTransform} from './parsing/textTransform';
@@ -14,7 +15,7 @@ import type {TextDecoration} from './parsing/textDecoration';
 import type {Transform} from './parsing/transform';
 import type {zIndex} from './parsing/zIndex';
 
-import type {Bounds} from './Bounds';
+import type {Bounds, BoundCurves, Path} from './Bounds';
 import type ImageLoader from './ImageLoader';
 
 import type TextContainer from './TextContainer';
@@ -29,6 +30,7 @@ import {parseDisplay, DISPLAY} from './parsing/display';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
 import {parseLetterSpacing} from './parsing/letterSpacing';
+import {parseOverflow, OVERFLOW} from './parsing/overflow';
 import {parsePadding} from './parsing/padding';
 import {parsePosition, POSITION} from './parsing/position';
 import {parseTextDecoration} from './parsing/textDecoration';
@@ -36,7 +38,7 @@ import {parseTextTransform} from './parsing/textTransform';
 import {parseTransform} from './parsing/transform';
 import {parseZIndex} from './parsing/zIndex';
 
-import {parseBounds} from './Bounds';
+import {parseBounds, parseBoundCurves, calculatePaddingBoxPath} from './Bounds';
 
 type StyleDeclaration = {
     background: Background,
@@ -48,6 +50,7 @@ type StyleDeclaration = {
     font: Font,
     letterSpacing: number,
     opacity: number,
+    overflow: Overflow,
     padding: Padding,
     position: Position,
     textDecoration: TextDecoration,
@@ -62,6 +65,7 @@ export default class NodeContainer {
     style: StyleDeclaration;
     textNodes: Array<TextContainer>;
     bounds: Bounds;
+    curvedBounds: BoundCurves;
     image: ?string;
 
     constructor(node: HTMLElement, parent: ?NodeContainer, imageLoader: ImageLoader) {
@@ -80,6 +84,7 @@ export default class NodeContainer {
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
             opacity: parseFloat(style.opacity),
+            overflow: parseOverflow(style.overflow),
             padding: parsePadding(style),
             position: parsePosition(style.position),
             textDecoration: parseTextDecoration(style),
@@ -97,11 +102,26 @@ export default class NodeContainer {
             // $FlowFixMe
             node.tagName === 'IMG' ? imageLoader.loadImage(node.currentSrc || node.src) : null;
         this.bounds = parseBounds(node);
+        this.curvedBounds = parseBoundCurves(
+            this.bounds,
+            this.style.border,
+            this.style.borderRadius
+        );
+
         if (__DEV__) {
             this.name = `${node.tagName.toLowerCase()}${node.id
                 ? `#${node.id}`
                 : ''}${node.className.split(' ').map(s => (s.length ? `.${s}` : '')).join('')}`;
         }
+    }
+    getClipPaths(): Array<Path> {
+        const parentClips = this.parent ? this.parent.getClipPaths() : [];
+        const isClipped =
+            this.style.overflow === OVERFLOW.HIDDEN || this.style.overflow === OVERFLOW.SCROLL;
+
+        return isClipped
+            ? parentClips.concat([calculatePaddingBoxPath(this.curvedBounds)])
+            : parentClips;
     }
     isInFlow(): boolean {
         return this.isRootElement() && !this.isFloating() && !this.isAbsolutelyPositioned();

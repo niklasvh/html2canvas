@@ -16,7 +16,6 @@ import type {ImageStore} from './ImageLoader';
 import type StackingContext from './StackingContext';
 
 import {
-    BACKGROUND_CLIP,
     BACKGROUND_ORIGIN,
     calculateBackgroungPaintingArea,
     calculateBackgroundPosition,
@@ -25,10 +24,10 @@ import {
 } from './parsing/background';
 import {BORDER_STYLE} from './parsing/border';
 import {
-    parseBoundCurves,
     parsePathForBorder,
     calculateContentBox,
-    calculatePaddingBox
+    calculatePaddingBox,
+    calculatePaddingBoxPath
 } from './Bounds';
 
 export type RenderOptions = {
@@ -54,6 +53,15 @@ export default class CanvasRenderer {
     }
 
     renderNodeContent(container: NodeContainer) {
+        this.ctx.save();
+        const clipPaths = container.getClipPaths();
+        if (clipPaths.length) {
+            clipPaths.forEach(path => {
+                this.path(path);
+                this.ctx.clip();
+            });
+        }
+
         if (container.textNodes.length) {
             this.ctx.fillStyle = container.style.color.toString();
             this.ctx.font = [
@@ -92,17 +100,24 @@ export default class CanvasRenderer {
                 );
             }
         }
+
+        this.ctx.restore();
     }
 
     renderNodeBackgroundAndBorders(container: NodeContainer) {
-        const curvePoints = parseBoundCurves(
-            container.bounds,
-            container.style.border,
-            container.style.borderRadius
-        );
+        this.ctx.save();
+        if (container.parent) {
+            const clipPaths = container.parent.getClipPaths();
+            if (clipPaths.length) {
+                clipPaths.forEach(path => {
+                    this.path(path);
+                    this.ctx.clip();
+                });
+            }
+        }
 
         const backgroungPaintingArea = calculateBackgroungPaintingArea(
-            curvePoints,
+            container.curvedBounds,
             container.style.background.backgroundClip
         );
         this.path(backgroungPaintingArea);
@@ -116,8 +131,9 @@ export default class CanvasRenderer {
         this.renderBackgroundImage(container);
         this.ctx.restore();
         container.style.border.forEach((border, side) => {
-            this.renderBorder(border, side, curvePoints);
+            this.renderBorder(border, side, container.curvedBounds);
         });
+        this.ctx.restore();
     }
 
     renderTextNode(textContainer: TextContainer) {
