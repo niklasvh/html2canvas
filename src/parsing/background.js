@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import type {Bounds} from '../Bounds';
+import type {Bounds, BoundCurves, Path} from '../Bounds';
 import type ImageLoader from '../ImageLoader';
 
 import Color from '../Color';
@@ -11,9 +11,13 @@ import Vector from '../Vector';
 
 export type Background = {
     backgroundImage: Array<BackgroundImage>,
-    backgroundColor: Color
+    backgroundClip: BackgroundClip,
+    backgroundColor: Color,
+    backgroundOrigin: BackgroundOrigin
 };
 
+export type BackgroundClip = $Values<typeof BACKGROUND_CLIP>;
+export type BackgroundOrigin = $Values<typeof BACKGROUND_ORIGIN>;
 export type BackgroundRepeat = $Values<typeof BACKGROUND_REPEAT>;
 export type BackgroundSizeTypes = $Values<typeof BACKGROUND_SIZE>;
 
@@ -43,6 +47,14 @@ export const BACKGROUND_SIZE = {
     COVER: 2,
     LENGTH: 3
 };
+
+export const BACKGROUND_CLIP = {
+    BORDER_BOX: 0,
+    PADDING_BOX: 1,
+    CONTENT_BOX: 2
+};
+
+export const BACKGROUND_ORIGIN = BACKGROUND_CLIP;
 
 const AUTO = 'auto';
 
@@ -79,8 +91,8 @@ export const calculateBackgroundSize = (
         const targetRatio = bounds.width / bounds.height;
         const currentRatio = image.width / image.height;
         return targetRatio < currentRatio !== (size[0].size === BACKGROUND_SIZE.COVER)
-            ? new Size(bounds.height * currentRatio, bounds.height)
-            : new Size(bounds.width, bounds.width / currentRatio);
+            ? new Size(bounds.width, bounds.width / currentRatio)
+            : new Size(bounds.height * currentRatio, bounds.height);
     }
 
     if (size[0].value) {
@@ -104,6 +116,30 @@ export const calculateBackgroundSize = (
 
 const AUTO_SIZE = new BackgroundSize(AUTO);
 
+export const calculateBackgroungPaintingArea = (
+    curves: BoundCurves,
+    clip: BackgroundClip
+): Path => {
+    // TODO support CONTENT_BOX
+    switch (clip) {
+        case BACKGROUND_CLIP.BORDER_BOX:
+            return [
+                curves.topLeftOuter,
+                curves.topRightOuter,
+                curves.bottomRightOuter,
+                curves.bottomLeftOuter
+            ];
+        case BACKGROUND_CLIP.PADDING_BOX:
+        default:
+            return [
+                curves.topLeftInner,
+                curves.topRightInner,
+                curves.bottomRightInner,
+                curves.bottomLeftInner
+            ];
+    }
+};
+
 export const calculateBackgroundPosition = (
     position: [Length, Length],
     size: Size,
@@ -119,59 +155,66 @@ export const calculateBackgroundRepeatPath = (
     background: BackgroundImage,
     position: Vector,
     size: Size,
+    backgroundPositioningArea: Bounds,
     bounds: Bounds
 ) => {
     const repeat = background.repeat;
     switch (repeat) {
         case BACKGROUND_REPEAT.REPEAT_X:
             return [
-                new Vector(Math.round(bounds.left), Math.round(bounds.top + position.y)),
                 new Vector(
-                    Math.round(bounds.left + bounds.width),
-                    Math.round(bounds.top + position.y)
+                    Math.round(bounds.left),
+                    Math.round(backgroundPositioningArea.top + position.y)
                 ),
                 new Vector(
                     Math.round(bounds.left + bounds.width),
-                    Math.round(size.height + bounds.top + position.y)
+                    Math.round(backgroundPositioningArea.top + position.y)
+                ),
+                new Vector(
+                    Math.round(bounds.left + bounds.width),
+                    Math.round(size.height + backgroundPositioningArea.top + position.y)
                 ),
                 new Vector(
                     Math.round(bounds.left),
-                    Math.round(size.height + bounds.top + position.y)
+                    Math.round(size.height + backgroundPositioningArea.top + position.y)
                 )
             ];
         case BACKGROUND_REPEAT.REPEAT_Y:
             return [
-                new Vector(Math.round(bounds.left + position.x), Math.round(bounds.top)),
                 new Vector(
-                    Math.round(bounds.left + position.x + size.width),
+                    Math.round(backgroundPositioningArea.left + position.x),
                     Math.round(bounds.top)
                 ),
                 new Vector(
-                    Math.round(bounds.left + position.x + size.width),
+                    Math.round(backgroundPositioningArea.left + position.x + size.width),
+                    Math.round(bounds.top)
+                ),
+                new Vector(
+                    Math.round(backgroundPositioningArea.left + position.x + size.width),
                     Math.round(bounds.height + bounds.top)
                 ),
                 new Vector(
-                    Math.round(bounds.left + position.x),
+                    Math.round(backgroundPositioningArea.left + position.x),
                     Math.round(bounds.height + bounds.top)
                 )
             ];
         case BACKGROUND_REPEAT.NO_REPEAT:
             return [
                 new Vector(
-                    Math.round(bounds.left + position.x),
-                    Math.round(bounds.top + position.y)
+                    Math.round(backgroundPositioningArea.left + position.x),
+                    Math.round(backgroundPositioningArea.top + position.y)
                 ),
                 new Vector(
-                    Math.round(bounds.left + position.x + size.width),
-                    Math.round(bounds.top + position.y)
+                    Math.round(backgroundPositioningArea.left + position.x + size.width),
+                    Math.round(backgroundPositioningArea.top + position.y)
                 ),
                 new Vector(
-                    Math.round(bounds.left + position.x + size.width),
-                    Math.round(bounds.top + position.y + size.height)
+                    Math.round(backgroundPositioningArea.left + position.x + size.width),
+                    Math.round(backgroundPositioningArea.top + position.y + size.height)
                 ),
                 new Vector(
-                    Math.round(bounds.left + position.x),
-                    Math.round(bounds.top + position.y + size.height)
+                    Math.round(backgroundPositioningArea.left + position.x),
+                    Math.round(backgroundPositioningArea.top + position.y + size.height)
                 )
             ];
         default:
@@ -192,9 +235,31 @@ export const parseBackground = (
     imageLoader: ImageLoader
 ): Background => {
     return {
+        backgroundColor: new Color(style.backgroundColor),
         backgroundImage: parseBackgroundImages(style, imageLoader),
-        backgroundColor: new Color(style.backgroundColor)
+        backgroundClip: parseBackgroundClip(style.backgroundClip),
+        backgroundOrigin: parseBackgroundOrigin(style.backgroundOrigin)
     };
+};
+
+const parseBackgroundClip = (backgroundClip: string): BackgroundClip => {
+    switch (backgroundClip) {
+        case 'padding-box':
+            return BACKGROUND_CLIP.PADDING_BOX;
+        case 'content-box':
+            return BACKGROUND_CLIP.CONTENT_BOX;
+    }
+    return BACKGROUND_CLIP.BORDER_BOX;
+};
+
+const parseBackgroundOrigin = (backgroundOrigin: string): BackgroundOrigin => {
+    switch (backgroundOrigin) {
+        case 'padding-box':
+            return BACKGROUND_ORIGIN.PADDING_BOX;
+        case 'content-box':
+            return BACKGROUND_ORIGIN.CONTENT_BOX;
+    }
+    return BACKGROUND_ORIGIN.BORDER_BOX;
 };
 
 const parseBackgroundRepeat = (backgroundRepeat: string): BackgroundRepeat => {
