@@ -51,7 +51,7 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         return Promise.reject(__DEV__ ? `Invalid canvas element provided in options` : '');
     }
 
-    return cloneWindow(
+    const result = cloneWindow(
         ownerDocument,
         ownerDocument,
         windowBounds,
@@ -102,6 +102,14 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
             return renderer.render(stack);
         });
     });
+
+    if (__DEV__) {
+        return result.catch(e => {
+            logger.error(e);
+            throw e;
+        });
+    }
+    return result;
 };
 
 module.exports = html2canvas;

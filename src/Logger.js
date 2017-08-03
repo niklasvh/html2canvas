@@ -17,4 +17,14 @@ export default class Logger {
                 [Date.now() - this.start + 'ms', 'html2canvas:'].concat([].slice.call(args, 0))
             );
     }
+
+    // eslint-disable-next-line flowtype/no-weak-types
+    error(...args: any) {
+        Function.prototype.bind
+            .call(window.console.error, window.console)
+            .apply(
+                window.console,
+                [Date.now() - this.start + 'ms', 'html2canvas:'].concat([].slice.call(args, 0))
+            );
+    }
 }
