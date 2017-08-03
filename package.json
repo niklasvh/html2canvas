@@ -37,7 +37,8 @@
     "webpack": "3.4.1"
   },
   "scripts": {
-    "build": "rimraf dist/ && babel src/ -d dist/npm/",
+    "build": "rimraf dist/ && npm run build:npm && npm run build:browser",
+    "build:npm": "babel src/ -d dist/npm/",
     "build:browser": "webpack",
     "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"src/**/*.js\"",
     "flow": "flow",
