@@ -102,9 +102,7 @@ export default class NodeContainer {
             node.style.transform = 'matrix(1,0,0,1,0,0)';
         }
 
-        this.image =
-            // $FlowFixMe
-            node.tagName === 'IMG' ? imageLoader.loadImage(node.currentSrc || node.src) : null;
+        this.image = getImage(node, imageLoader);
         this.bounds = parseBounds(node);
         this.curvedBounds = parseBoundCurves(
             this.bounds,
@@ -172,3 +170,16 @@ export default class NodeContainer {
         );
     }
 }
+
+const getImage = (node: HTMLElement, imageLoader: ImageLoader): ?string => {
+    switch (node.tagName) {
+        case 'IMG':
+            // $FlowFixMe
+            return imageLoader.loadImage(node.currentSrc || node.src);
+        case 'CANVAS':
+            // $FlowFixMe
+            return imageLoader.loadCanvas(node);
+    }
+
+    return null;
+};
