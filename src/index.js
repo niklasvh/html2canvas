@@ -8,6 +8,7 @@ import ImageLoader from './ImageLoader';
 import {Bounds, parseDocumentSize} from './Bounds';
 import {cloneWindow} from './Clone';
 import Color from './Color';
+import {FontMetrics} from './Font';
 
 export type Options = {
     async: ?boolean,
@@ -62,8 +63,8 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         }
         const imageLoader = new ImageLoader(options, logger);
         const stack = NodeParser(clonedElement, imageLoader, logger);
-        const size =
-            options.type === 'view' ? windowBounds : parseDocumentSize(clonedElement.ownerDocument);
+        const clonedDocument = clonedElement.ownerDocument;
+        const size = options.type === 'view' ? windowBounds : parseDocumentSize(clonedDocument);
         const width = size.width;
         const height = size.height;
         canvas.width = Math.floor(width * options.scale);
@@ -73,10 +74,10 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
 
         // http://www.w3.org/TR/css3-background/#special-backgrounds
         const backgroundColor =
-            clonedElement === clonedElement.ownerDocument.documentElement
+            clonedElement === clonedDocument.documentElement
                 ? stack.container.style.background.backgroundColor.isTransparent()
-                  ? clonedElement.ownerDocument.body
-                    ? new Color(getComputedStyle(clonedElement.ownerDocument.body).backgroundColor)
+                  ? clonedDocument.body
+                    ? new Color(getComputedStyle(clonedDocument.body).backgroundColor)
                     : null
                   : stack.container.style.background.backgroundColor
                 : null;
@@ -90,10 +91,13 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
                 }
             }
 
+            const fontMetrics = new FontMetrics(clonedDocument);
+
             const renderer = new CanvasRenderer(canvas, {
                 scale: options.scale,
                 backgroundColor,
-                imageStore
+                imageStore,
+                fontMetrics
             });
             return renderer.render(stack);
         });
