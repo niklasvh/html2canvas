@@ -83,7 +83,11 @@ export default class ImageLoader {
 
     ready(): Promise<ImageStore> {
         const keys = Object.keys(this.cache);
-        return Promise.all(keys.map(str => this.cache[str])).then(images => {
+        return Promise.all(keys.map(str => this.cache[str].catch(e => {
+            if (__DEV__) {
+                this.logger.log(`Unable to load image`, e);
+            }
+        }))).then(images => {
             if (__DEV__) {
                 this.logger.log('Finished loading images', images);
             }
