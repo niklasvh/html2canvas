@@ -23,6 +23,7 @@ import {
     calculateBackgroundSize
 } from './parsing/background';
 import {BORDER_STYLE} from './parsing/border';
+import {TEXT_DECORATION_LINE} from './parsing/textDecoration';
 import {
     parsePathForBorder,
     calculateContentBox,
@@ -30,10 +31,13 @@ import {
     calculatePaddingBoxPath
 } from './Bounds';
 
+import {FontMetrics} from './Font';
+
 export type RenderOptions = {
     scale: number,
     backgroundColor: ?Color,
-    imageStore: ImageStore
+    imageStore: ImageStore,
+    fontMetrics: FontMetrics
 };
 
 export default class CanvasRenderer {
@@ -142,11 +146,55 @@ export default class CanvasRenderer {
     }
 
     renderTextNode(textContainer: TextContainer) {
-        textContainer.bounds.forEach(this.renderText, this);
+        textContainer.bounds.forEach(text => this.renderText(text, textContainer));
     }
 
-    renderText(text: TextBounds) {
+    renderText(text: TextBounds, textContainer: TextContainer) {
+        const container = textContainer.parent;
+        this.ctx.fillStyle = container.style.color.toString();
         this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+        const textDecoration = container.style.textDecoration;
+        if (textDecoration) {
+            textDecoration.textDecorationLine.forEach(textDecorationLine => {
+                switch (textDecorationLine) {
+                    case TEXT_DECORATION_LINE.UNDERLINE:
+                        // Draws a line at the baseline of the font
+                        // TODO As some browsers display the line as more than 1px if the font-size is big,
+                        // need to take that into account both in position and size
+                        const {baseline} = this.options.fontMetrics.getMetrics(
+                            container.style.font
+                        );
+                        this.rectangle(
+                            text.bounds.left,
+                            Math.round(text.bounds.top + baseline),
+                            text.bounds.width,
+                            1,
+                            textDecoration.textDecorationColor || container.style.color
+                        );
+                        break;
+                    case TEXT_DECORATION_LINE.OVERLINE:
+                        this.rectangle(
+                            text.bounds.left,
+                            Math.round(text.bounds.top),
+                            text.bounds.width,
+                            1,
+                            textDecoration.textDecorationColor || container.style.color
+                        );
+                        break;
+                    case TEXT_DECORATION_LINE.LINE_THROUGH:
+                        // TODO try and find exact position for line-through
+                        const {middle} = this.options.fontMetrics.getMetrics(container.style.font);
+                        this.rectangle(
+                            text.bounds.left,
+                            Math.ceil(text.bounds.top + middle),
+                            text.bounds.width,
+                            1,
+                            textDecoration.textDecorationColor || container.style.color
+                        );
+                        break;
+                }
+            });
+        }
     }
 
     renderBackgroundImage(container: NodeContainer) {
