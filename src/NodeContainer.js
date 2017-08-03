@@ -13,6 +13,7 @@ import type {Position} from './parsing/position';
 import type {TextTransform} from './parsing/textTransform';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {Transform} from './parsing/transform';
+import type {Visibility} from './parsing/visibility';
 import type {zIndex} from './parsing/zIndex';
 
 import type {Bounds, BoundCurves, Path} from './Bounds';
@@ -36,6 +37,7 @@ import {parsePosition, POSITION} from './parsing/position';
 import {parseTextDecoration} from './parsing/textDecoration';
 import {parseTextTransform} from './parsing/textTransform';
 import {parseTransform} from './parsing/transform';
+import {parseVisibility, VISIBILITY} from './parsing/visibility';
 import {parseZIndex} from './parsing/zIndex';
 
 import {parseBounds, parseBoundCurves, calculatePaddingBoxPath} from './Bounds';
@@ -56,6 +58,7 @@ type StyleDeclaration = {
     textDecoration: TextDecoration,
     textTransform: TextTransform,
     transform: Transform,
+    visibility: Visibility,
     zIndex: zIndex
 };
 
@@ -90,6 +93,7 @@ export default class NodeContainer {
             textDecoration: parseTextDecoration(style),
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
+            visibility: parseVisibility(style.visibility),
             zIndex: parseZIndex(style.zIndex)
         };
 
@@ -127,7 +131,11 @@ export default class NodeContainer {
         return this.isRootElement() && !this.isFloating() && !this.isAbsolutelyPositioned();
     }
     isVisible(): boolean {
-        return !contains(this.style.display, DISPLAY.NONE) && this.style.opacity > 0;
+        return (
+            !contains(this.style.display, DISPLAY.NONE) &&
+            this.style.opacity > 0 &&
+            this.style.visibility === VISIBILITY.VISIBLE
+        );
     }
     isAbsolutelyPositioned(): boolean {
         return this.style.position !== POSITION.STATIC && this.style.position !== POSITION.RELATIVE;
