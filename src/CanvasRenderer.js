@@ -12,7 +12,7 @@ import BezierCurve from './BezierCurve';
 
 import type NodeContainer from './NodeContainer';
 import type TextContainer from './TextContainer';
-import type {ImageStore} from './ImageLoader';
+import type {ImageStore, ImageElement} from './ImageLoader';
 import type StackingContext from './StackingContext';
 
 import {
@@ -192,7 +192,7 @@ export default class CanvasRenderer {
         }
     }
 
-    resizeImage(image: HTMLImageElement, size: Size) {
+    resizeImage(image: ImageElement, size: Size) {
         if (image.width === size.width && image.height === size.height) {
             return image;
         }

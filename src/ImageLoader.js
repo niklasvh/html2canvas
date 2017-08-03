@@ -1,11 +1,11 @@
 /* @flow */
 'use strict';
 
-import type NodeContainer from './NodeContainer';
 import type Options from './index';
 import type Logger from './Logger';
 
-type ImageCache = {[string]: Promise<Image>};
+export type ImageElement = Image | HTMLCanvasElement;
+type ImageCache = {[string]: Promise<ImageElement>};
 
 export default class ImageLoader {
     origin: string;
@@ -13,12 +13,14 @@ export default class ImageLoader {
     _link: HTMLAnchorElement;
     cache: ImageCache;
     logger: Logger;
+    _index: number;
 
     constructor(options: Options, logger: Logger) {
         this.options = options;
         this.origin = this.getOrigin(window.location.href);
         this.cache = {};
         this.logger = logger;
+        this._index = 0;
     }
 
     loadImage(src: string): ?string {
@@ -31,6 +33,12 @@ export default class ImageLoader {
         } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
             // TODO proxy
         }
+    }
+
+    loadCanvas(node: HTMLCanvasElement): string {
+        const key = String(this._index++);
+        this.cache[key] = Promise.resolve(node);
+        return key;
     }
 
     isInlineImage(src: string): boolean {
@@ -86,14 +94,14 @@ export default class ImageLoader {
 
 export class ImageStore {
     _keys: Array<string>;
-    _images: Array<HTMLImageElement>;
+    _images: Array<ImageElement>;
 
-    constructor(keys: Array<string>, images: Array<HTMLImageElement>) {
+    constructor(keys: Array<string>, images: Array<ImageElement>) {
         this._keys = keys;
         this._images = images;
     }
 
-    get(key: string): ?HTMLImageElement {
+    get(key: string): ?ImageElement {
         const index = this._keys.indexOf(key);
         return index === -1 ? null : this._images[index];
     }

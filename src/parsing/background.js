@@ -2,7 +2,7 @@
 'use strict';
 
 import type {Bounds, BoundCurves, Path} from '../Bounds';
-import type ImageLoader from '../ImageLoader';
+import type ImageLoader, {ImageElement} from '../ImageLoader';
 
 import Color from '../Color';
 import Length from '../Length';
@@ -82,7 +82,7 @@ class BackgroundSize {
 
 export const calculateBackgroundSize = (
     backgroundImage: BackgroundImage,
-    image: HTMLImageElement,
+    image: ImageElement,
     bounds: Bounds
 ): Size => {
     let width = 0;
