@@ -88,7 +88,9 @@ export default class CanvasRenderer {
                 );
                 const width = typeof image.width === 'number' ? image.width : contentBox.width;
                 const height = typeof image.height === 'number' ? image.height : contentBox.height;
-
+                this.ctx.save();
+                this.path(calculatePaddingBoxPath(container.curvedBounds));
+                this.ctx.clip();
                 this.ctx.drawImage(
                     image,
                     0,
@@ -100,6 +102,7 @@ export default class CanvasRenderer {
                     contentBox.width,
                     contentBox.height
                 );
+                this.ctx.restore();
             }
         }
 
