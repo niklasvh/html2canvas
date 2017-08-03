@@ -5,7 +5,7 @@ import type Options from './index';
 import type Logger from './Logger';
 
 export type ImageElement = Image | HTMLCanvasElement;
-type ImageCache = {[string]: Promise<ImageElement>};
+type ImageCache = {[string]: Promise<?ImageElement>};
 
 export default class ImageLoader {
     origin: string;
@@ -57,11 +57,6 @@ export default class ImageLoader {
             const img = new Image();
             img.onload = () => resolve(img);
             img.onerror = reject;
-            /*
-            if (cors) {
-             img.crossOrigin = 'anonymous';
-            }
-            */
             img.src = src;
             if (img.complete === true) {
                 resolve(img);
@@ -83,11 +78,16 @@ export default class ImageLoader {
 
     ready(): Promise<ImageStore> {
         const keys = Object.keys(this.cache);
-        return Promise.all(keys.map(str => this.cache[str].catch(e => {
-            if (__DEV__) {
-                this.logger.log(`Unable to load image`, e);
-            }
-        }))).then(images => {
+        return Promise.all(
+            keys.map(str =>
+                this.cache[str].catch(e => {
+                    if (__DEV__) {
+                        this.logger.log(`Unable to load image`, e);
+                    }
+                    return null;
+                })
+            )
+        ).then(images => {
             if (__DEV__) {
                 this.logger.log('Finished loading images', images);
             }
@@ -98,9 +98,9 @@ export default class ImageLoader {
 
 export class ImageStore {
     _keys: Array<string>;
-    _images: Array<ImageElement>;
+    _images: Array<?ImageElement>;
 
-    constructor(keys: Array<string>, images: Array<ImageElement>) {
+    constructor(keys: Array<string>, images: Array<?ImageElement>) {
         this._keys = keys;
         this._images = images;
     }
