@@ -105,7 +105,7 @@ const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after')
     );
     if (image) {
         // $FlowFixMe
-        anonymousReplacedElement.src = image[1];
+        anonymousReplacedElement.src = stripQuotes(image[1]);
     } else {
         anonymousReplacedElement.appendChild(node.ownerDocument.createTextNode(content));
     }
