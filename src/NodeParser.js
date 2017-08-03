@@ -14,6 +14,8 @@ export const NodeParser = (
     const container = new NodeContainer(node, null, imageLoader);
     const stack = new StackingContext(container, null, true);
 
+    createPseudoHideStyles(node.ownerDocument);
+
     if (__DEV__) {
         logger.log(`Starting node parsing`);
     }
@@ -28,6 +30,11 @@ export const NodeParser = (
 };
 
 const IGNORED_NODE_NAMES = ['SCRIPT', 'HEAD', 'TITLE', 'OBJECT', 'BR', 'OPTION'];
+const URL_REGEXP = /^url\((.+)\)$/i;
+const PSEUDO_BEFORE = ':before';
+const PSEUDO_AFTER = ':after';
+const PSEUDO_HIDE_ELEMENT_CLASS_BEFORE = '___html2canvas___pseudoelement_before';
+const PSEUDO_HIDE_ELEMENT_CLASS_AFTER = '___html2canvas___pseudoelement_after';
 
 const parseNodeTree = (
     node: HTMLElement,
@@ -46,7 +53,10 @@ const parseNodeTree = (
         } else if (childNode.nodeType === Node.ELEMENT_NODE) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
                 const childElement = flowRefineToHTMLElement(childNode);
+                inlinePseudoElement(childElement, PSEUDO_BEFORE);
+                inlinePseudoElement(childElement, PSEUDO_AFTER);
                 const container = new NodeContainer(childElement, parent, imageLoader);
+
                 if (container.isVisible()) {
                     const treatAsRealStackingContext = createsRealStackingContext(
                         container,
@@ -76,6 +86,43 @@ const parseNodeTree = (
     }
 };
 
+const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after'): void => {
+    const style = node.ownerDocument.defaultView.getComputedStyle(node, pseudoElt);
+    if (
+        !style ||
+        !style.content ||
+        style.content === 'none' ||
+        style.content === '-moz-alt-content' ||
+        style.display === 'none'
+    ) {
+        return;
+    }
+
+    const content = stripQuotes(style.content);
+    const image = content.match(URL_REGEXP);
+    const anonymousReplacedElement = node.ownerDocument.createElement(
+        image ? 'img' : 'html2canvaspseudoelement'
+    );
+    if (image) {
+        // $FlowFixMe
+        anonymousReplacedElement.src = image[1];
+    } else {
+        anonymousReplacedElement.appendChild(node.ownerDocument.createTextNode(content));
+    }
+
+    anonymousReplacedElement.style = style.cssText;
+    anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+    node.className +=
+        pseudoElt === PSEUDO_BEFORE
+            ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
+            : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+    if (pseudoElt === PSEUDO_BEFORE) {
+        node.insertBefore(anonymousReplacedElement, node.firstChild);
+    } else {
+        node.appendChild(anonymousReplacedElement);
+    }
+};
+
 const createsRealStackingContext = (container: NodeContainer, node: HTMLElement): boolean => {
     return (
         container.isRootElement() ||
@@ -100,3 +147,31 @@ const isBodyWithTransparentRoot = (container: NodeContainer, node: HTMLElement):
 
 //$FlowFixMe
 const flowRefineToHTMLElement = (node: Node): HTMLElement => node;
+
+const stripQuotes = (content: string): string => {
+    const first = content.substr(0, 1);
+    return first === content.substr(content.length - 1) && first.match(/['"]/)
+        ? content.substr(1, content.length - 2)
+        : content;
+};
+
+const PSEUDO_HIDE_ELEMENT_STYLE = `{
+    content: "" !important;
+    display: none !important;
+}`;
+
+const createPseudoHideStyles = (document: Document) => {
+    createStyles(
+        document,
+        `.${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}${PSEUDO_BEFORE}${PSEUDO_HIDE_ELEMENT_STYLE}
+         .${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}${PSEUDO_AFTER}${PSEUDO_HIDE_ELEMENT_STYLE}`
+    );
+};
+
+const createStyles = (document: Document, styles) => {
+    const style = document.createElement('style');
+    style.innerHTML = styles;
+    if (document.body) {
+        document.body.appendChild(style);
+    }
+};
