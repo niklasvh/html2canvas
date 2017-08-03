@@ -48,8 +48,10 @@ export default class CanvasRenderer {
     }
 
     renderNode(container: NodeContainer) {
-        this.renderNodeBackgroundAndBorders(container);
-        this.renderNodeContent(container);
+        if (container.isVisible()) {
+            this.renderNodeBackgroundAndBorders(container);
+            this.renderNodeContent(container);
+        }
     }
 
     renderNodeContent(container: NodeContainer) {
@@ -242,69 +244,71 @@ export default class CanvasRenderer {
     }
 
     renderStack(stack: StackingContext) {
-        this.ctx.globalAlpha = stack.getOpacity();
-        const transform = stack.container.style.transform;
-        if (transform !== null) {
-            this.ctx.save();
-            this.ctx.translate(
-                stack.container.bounds.left + transform.transformOrigin[0].value,
-                stack.container.bounds.top + transform.transformOrigin[1].value
-            );
-            this.ctx.transform(
-                transform.transform[0],
-                transform.transform[1],
-                transform.transform[2],
-                transform.transform[3],
-                transform.transform[4],
-                transform.transform[5]
-            );
-            this.ctx.translate(
-                -(stack.container.bounds.left + transform.transformOrigin[0].value),
-                -(stack.container.bounds.top + transform.transformOrigin[1].value)
-            );
-        }
-        const [
-            negativeZIndex,
-            zeroOrAutoZIndexOrTransformedOrOpacity,
-            positiveZIndex,
-            nonPositionedFloats,
-            nonPositionedInlineLevel
-        ] = splitStackingContexts(stack);
-        const [inlineLevel, nonInlineLevel] = splitDescendants(stack);
+        if (stack.container.isVisible()) {
+            this.ctx.globalAlpha = stack.getOpacity();
+            const transform = stack.container.style.transform;
+            if (transform !== null) {
+                this.ctx.save();
+                this.ctx.translate(
+                    stack.container.bounds.left + transform.transformOrigin[0].value,
+                    stack.container.bounds.top + transform.transformOrigin[1].value
+                );
+                this.ctx.transform(
+                    transform.transform[0],
+                    transform.transform[1],
+                    transform.transform[2],
+                    transform.transform[3],
+                    transform.transform[4],
+                    transform.transform[5]
+                );
+                this.ctx.translate(
+                    -(stack.container.bounds.left + transform.transformOrigin[0].value),
+                    -(stack.container.bounds.top + transform.transformOrigin[1].value)
+                );
+            }
+            const [
+                negativeZIndex,
+                zeroOrAutoZIndexOrTransformedOrOpacity,
+                positiveZIndex,
+                nonPositionedFloats,
+                nonPositionedInlineLevel
+            ] = splitStackingContexts(stack);
+            const [inlineLevel, nonInlineLevel] = splitDescendants(stack);
 
-        // https://www.w3.org/TR/css-position-3/#painting-order
-        // 1. the background and borders of the element forming the stacking context.
-        this.renderNodeBackgroundAndBorders(stack.container);
-        // 2. the child stacking contexts with negative stack levels (most negative first).
-        negativeZIndex.sort(sortByZIndex).forEach(this.renderStack, this);
-        // 3. For all its in-flow, non-positioned, block-level descendants in tree order:
-        this.renderNodeContent(stack.container);
-        nonInlineLevel.forEach(this.renderNode, this);
-        // 4. All non-positioned floating descendants, in tree order. For each one of these,
-        // treat the element as if it created a new stacking context, but any positioned descendants and descendants
-        // which actually create a new stacking context should be considered part of the parent stacking context,
-        // not this new one.
-        nonPositionedFloats.forEach(this.renderStack, this);
-        // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
-        nonPositionedInlineLevel.forEach(this.renderStack, this);
-        inlineLevel.forEach(this.renderNode, this);
-        // 6. All positioned, opacity or transform descendants, in tree order that fall into the following categories:
-        //  All positioned descendants with 'z-index: auto' or 'z-index: 0', in tree order.
-        //  For those with 'z-index: auto', treat the element as if it created a new stacking context,
-        //  but any positioned descendants and descendants which actually create a new stacking context should be
-        //  considered part of the parent stacking context, not this new one. For those with 'z-index: 0',
-        //  treat the stacking context generated atomically.
-        //
-        //  All opacity descendants with opacity less than 1
-        //
-        //  All transform descendants with transform other than none
-        zeroOrAutoZIndexOrTransformedOrOpacity.forEach(this.renderStack, this);
-        // 7. Stacking contexts formed by positioned descendants with z-indices greater than or equal to 1 in z-index
-        // order (smallest first) then tree order.
-        positiveZIndex.sort(sortByZIndex).forEach(this.renderStack, this);
+            // https://www.w3.org/TR/css-position-3/#painting-order
+            // 1. the background and borders of the element forming the stacking context.
+            this.renderNodeBackgroundAndBorders(stack.container);
+            // 2. the child stacking contexts with negative stack levels (most negative first).
+            negativeZIndex.sort(sortByZIndex).forEach(this.renderStack, this);
+            // 3. For all its in-flow, non-positioned, block-level descendants in tree order:
+            this.renderNodeContent(stack.container);
+            nonInlineLevel.forEach(this.renderNode, this);
+            // 4. All non-positioned floating descendants, in tree order. For each one of these,
+            // treat the element as if it created a new stacking context, but any positioned descendants and descendants
+            // which actually create a new stacking context should be considered part of the parent stacking context,
+            // not this new one.
+            nonPositionedFloats.forEach(this.renderStack, this);
+            // 5. the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+            nonPositionedInlineLevel.forEach(this.renderStack, this);
+            inlineLevel.forEach(this.renderNode, this);
+            // 6. All positioned, opacity or transform descendants, in tree order that fall into the following categories:
+            //  All positioned descendants with 'z-index: auto' or 'z-index: 0', in tree order.
+            //  For those with 'z-index: auto', treat the element as if it created a new stacking context,
+            //  but any positioned descendants and descendants which actually create a new stacking context should be
+            //  considered part of the parent stacking context, not this new one. For those with 'z-index: 0',
+            //  treat the stacking context generated atomically.
+            //
+            //  All opacity descendants with opacity less than 1
+            //
+            //  All transform descendants with transform other than none
+            zeroOrAutoZIndexOrTransformedOrOpacity.forEach(this.renderStack, this);
+            // 7. Stacking contexts formed by positioned descendants with z-indices greater than or equal to 1 in z-index
+            // order (smallest first) then tree order.
+            positiveZIndex.sort(sortByZIndex).forEach(this.renderStack, this);
 
-        if (transform !== null) {
-            this.ctx.restore();
+            if (transform !== null) {
+                this.ctx.restore();
+            }
         }
     }
 
