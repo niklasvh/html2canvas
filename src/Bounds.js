@@ -194,40 +194,39 @@ export const parseBoundCurves = (
     borders: Array<Border>,
     borderRadius: Array<BorderRadius>
 ): BoundCurves => {
-    // TODO support percentage borderRadius
     const HALF_WIDTH = bounds.width / 2;
     const HALF_HEIGHT = bounds.height / 2;
     const tlh =
-        borderRadius[CORNER.TOP_LEFT][H].value < HALF_WIDTH
-            ? borderRadius[CORNER.TOP_LEFT][H].value
+        borderRadius[CORNER.TOP_LEFT][H].getAbsoluteValue(bounds.width) < HALF_WIDTH
+            ? borderRadius[CORNER.TOP_LEFT][H].getAbsoluteValue(bounds.width)
             : HALF_WIDTH;
     const tlv =
-        borderRadius[CORNER.TOP_LEFT][V].value < HALF_HEIGHT
-            ? borderRadius[CORNER.TOP_LEFT][V].value
+        borderRadius[CORNER.TOP_LEFT][V].getAbsoluteValue(bounds.height) < HALF_HEIGHT
+            ? borderRadius[CORNER.TOP_LEFT][V].getAbsoluteValue(bounds.height)
             : HALF_HEIGHT;
     const trh =
-        borderRadius[CORNER.TOP_RIGHT][H].value < HALF_WIDTH
-            ? borderRadius[CORNER.TOP_RIGHT][H].value
+        borderRadius[CORNER.TOP_RIGHT][H].getAbsoluteValue(bounds.width) < HALF_WIDTH
+            ? borderRadius[CORNER.TOP_RIGHT][H].getAbsoluteValue(bounds.width)
             : HALF_WIDTH;
     const trv =
-        borderRadius[CORNER.TOP_RIGHT][V].value < HALF_HEIGHT
-            ? borderRadius[CORNER.TOP_RIGHT][V].value
+        borderRadius[CORNER.TOP_RIGHT][V].getAbsoluteValue(bounds.height) < HALF_HEIGHT
+            ? borderRadius[CORNER.TOP_RIGHT][V].getAbsoluteValue(bounds.height)
             : HALF_HEIGHT;
     const brh =
-        borderRadius[CORNER.BOTTOM_RIGHT][H].value < HALF_WIDTH
-            ? borderRadius[CORNER.BOTTOM_RIGHT][H].value
+        borderRadius[CORNER.BOTTOM_RIGHT][H].getAbsoluteValue(bounds.width) < HALF_WIDTH
+            ? borderRadius[CORNER.BOTTOM_RIGHT][H].getAbsoluteValue(bounds.width)
             : HALF_WIDTH;
     const brv =
-        borderRadius[CORNER.BOTTOM_RIGHT][V].value < HALF_HEIGHT
-            ? borderRadius[CORNER.BOTTOM_RIGHT][V].value
+        borderRadius[CORNER.BOTTOM_RIGHT][V].getAbsoluteValue(bounds.height) < HALF_HEIGHT
+            ? borderRadius[CORNER.BOTTOM_RIGHT][V].getAbsoluteValue(bounds.height)
             : HALF_HEIGHT;
     const blh =
-        borderRadius[CORNER.BOTTOM_LEFT][H].value < HALF_WIDTH
-            ? borderRadius[CORNER.BOTTOM_LEFT][H].value
+        borderRadius[CORNER.BOTTOM_LEFT][H].getAbsoluteValue(bounds.width) < HALF_WIDTH
+            ? borderRadius[CORNER.BOTTOM_LEFT][H].getAbsoluteValue(bounds.width)
             : HALF_WIDTH;
     const blv =
-        borderRadius[CORNER.BOTTOM_LEFT][V].value < HALF_HEIGHT
-            ? borderRadius[CORNER.BOTTOM_LEFT][V].value
+        borderRadius[CORNER.BOTTOM_LEFT][V].getAbsoluteValue(bounds.height) < HALF_HEIGHT
+            ? borderRadius[CORNER.BOTTOM_LEFT][V].getAbsoluteValue(bounds.height)
             : HALF_HEIGHT;
 
     const topWidth = bounds.width - trh;
