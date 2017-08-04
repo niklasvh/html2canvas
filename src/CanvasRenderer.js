@@ -1,19 +1,30 @@
 /* @flow */
 'use strict';
+
 import type Color from './Color';
-import type Size from './Size';
-import type {Path, BoundCurves} from './Bounds';
-import type {TextBounds} from './TextBounds';
+import type Size from './drawing/Size';
+
 import type {BackgroundImage} from './parsing/background';
 import type {Border, BorderSide} from './parsing/border';
 
-import Vector from './Vector';
-import BezierCurve from './BezierCurve';
-
-import type NodeContainer from './NodeContainer';
-import type TextContainer from './TextContainer';
+import type {Path, BoundCurves} from './Bounds';
 import type {ImageStore, ImageElement} from './ImageLoader';
+import type NodeContainer from './NodeContainer';
 import type StackingContext from './StackingContext';
+import type {TextBounds} from './TextBounds';
+
+import BezierCurve from './drawing/BezierCurve';
+import Circle from './drawing/Circle';
+import Vector from './drawing/Vector';
+
+import {
+    parsePathForBorder,
+    calculateContentBox,
+    calculatePaddingBox,
+    calculatePaddingBoxPath
+} from './Bounds';
+import {FontMetrics} from './Font';
+import TextContainer from './TextContainer';
 
 import {
     BACKGROUND_ORIGIN,
@@ -24,14 +35,6 @@ import {
 } from './parsing/background';
 import {BORDER_STYLE} from './parsing/border';
 import {TEXT_DECORATION_LINE} from './parsing/textDecoration';
-import {
-    parsePathForBorder,
-    calculateContentBox,
-    calculatePaddingBox,
-    calculatePaddingBoxPath
-} from './Bounds';
-
-import {FontMetrics} from './Font';
 
 export type RenderOptions = {
     scale: number,
@@ -68,7 +71,7 @@ export default class CanvasRenderer {
             });
         }
 
-        if (container.textNodes.length) {
+        if (container.childNodes.length) {
             this.ctx.fillStyle = container.style.color.toString();
             this.ctx.font = [
                 container.style.font.fontStyle,
@@ -79,7 +82,14 @@ export default class CanvasRenderer {
             ]
                 .join(' ')
                 .split(',')[0];
-            container.textNodes.forEach(this.renderTextNode, this);
+            container.childNodes.forEach(child => {
+                if (child instanceof TextContainer) {
+                    this.renderTextNode(child);
+                } else {
+                    this.path(child);
+                    this.ctx.fill();
+                }
+            });
         }
 
         if (container.image) {
@@ -267,25 +277,37 @@ export default class CanvasRenderer {
 
     path(path: Path) {
         this.ctx.beginPath();
-        path.forEach((point, index) => {
-            const start = point instanceof Vector ? point : point.start;
-            if (index === 0) {
-                this.ctx.moveTo(start.x, start.y);
-            } else {
-                this.ctx.lineTo(start.x, start.y);
-            }
+        if (path instanceof Circle) {
+            this.ctx.arc(
+                path.x + path.radius,
+                path.y + path.radius,
+                path.radius,
+                0,
+                Math.PI * 2,
+                true
+            );
+        } else {
+            path.forEach((point, index) => {
+                const start = point instanceof Vector ? point : point.start;
+                if (index === 0) {
+                    this.ctx.moveTo(start.x, start.y);
+                } else {
+                    this.ctx.lineTo(start.x, start.y);
+                }
 
-            if (point instanceof BezierCurve) {
-                this.ctx.bezierCurveTo(
-                    point.startControl.x,
-                    point.startControl.y,
-                    point.endControl.x,
-                    point.endControl.y,
-                    point.end.x,
-                    point.end.y
-                );
-            }
-        });
+                if (point instanceof BezierCurve) {
+                    this.ctx.bezierCurveTo(
+                        point.startControl.x,
+                        point.startControl.y,
+                        point.endControl.x,
+                        point.endControl.y,
+                        point.end.x,
+                        point.end.y
+                    );
+                }
+            });
+        }
+
         this.ctx.closePath();
     }
 

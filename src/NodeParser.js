@@ -5,6 +5,7 @@ import type Logger from './Logger';
 import StackingContext from './StackingContext';
 import NodeContainer from './NodeContainer';
 import TextContainer from './TextContainer';
+import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './Input';
 
 export const NodeParser = (
     node: HTMLElement,
@@ -45,17 +46,29 @@ const parseNodeTree = (
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
         nextNode = childNode.nextSibling;
         const defaultView = childNode.ownerDocument.defaultView;
-        if (childNode instanceof defaultView.Text) {
+        if (childNode instanceof defaultView.Text || childNode instanceof Text) {
             if (childNode.data.trim().length > 0) {
-                parent.textNodes.push(new TextContainer(childNode, parent));
+                parent.childNodes.push(TextContainer.fromTextNode(childNode, parent));
             }
-        } else if (childNode instanceof defaultView.HTMLElement) {
+        } else if (
+            childNode instanceof defaultView.HTMLElement ||
+            childNode instanceof HTMLElement
+        ) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
                 inlinePseudoElement(childNode, PSEUDO_BEFORE);
                 inlinePseudoElement(childNode, PSEUDO_AFTER);
                 const container = new NodeContainer(childNode, parent, imageLoader);
-
                 if (container.isVisible()) {
+                    if (childNode.tagName === 'INPUT') {
+                        // $FlowFixMe
+                        inlineInputElement(childNode, container);
+                    } else if (childNode.tagName === 'TEXTAREA') {
+                        // $FlowFixMe
+                        inlineTextAreaElement(childNode, container);
+                    } else if (childNode.tagName === 'SELECT') {
+                        // $FlowFixMe
+                        inlineSelectElement(childNode, container);
+                    }
                     const treatAsRealStackingContext = createsRealStackingContext(
                         container,
                         childNode
@@ -105,7 +118,7 @@ const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after')
         // $FlowFixMe
         anonymousReplacedElement.src = stripQuotes(image[1]);
     } else {
-        anonymousReplacedElement.appendChild(node.ownerDocument.createTextNode(content));
+        anonymousReplacedElement.textContent = content;
     }
 
     anonymousReplacedElement.style = style.cssText;

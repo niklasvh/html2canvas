@@ -41,6 +41,13 @@ import {parseVisibility, VISIBILITY} from './parsing/visibility';
 import {parseZIndex} from './parsing/zIndex';
 
 import {parseBounds, parseBoundCurves, calculatePaddingBoxPath} from './Bounds';
+import {
+    INPUT_BACKGROUND,
+    INPUT_BORDERS,
+    INPUT_COLOR,
+    getInputBorderRadius,
+    reformatInputBounds
+} from './Input';
 
 type StyleDeclaration = {
     background: Background,
@@ -66,22 +73,30 @@ export default class NodeContainer {
     name: ?string;
     parent: ?NodeContainer;
     style: StyleDeclaration;
-    textNodes: Array<TextContainer>;
+    childNodes: Array<TextContainer | Path>;
     bounds: Bounds;
     curvedBounds: BoundCurves;
     image: ?string;
 
     constructor(node: HTMLElement, parent: ?NodeContainer, imageLoader: ImageLoader) {
         this.parent = parent;
-        this.textNodes = [];
-        const style = node.ownerDocument.defaultView.getComputedStyle(node, null);
+        this.childNodes = [];
+        const defaultView = node.ownerDocument.defaultView;
+        const style = defaultView.getComputedStyle(node, null);
         const display = parseDisplay(style.display);
 
+        const IS_INPUT = node.type === 'radio' || node.type === 'checkbox';
+
         this.style = {
-            background: parseBackground(style, imageLoader),
-            border: parseBorder(style),
-            borderRadius: parseBorderRadius(style),
-            color: new Color(style.color),
+            background: IS_INPUT ? INPUT_BACKGROUND : parseBackground(style, imageLoader),
+            border: IS_INPUT ? INPUT_BORDERS : parseBorder(style),
+            borderRadius:
+                (node instanceof defaultView.HTMLInputElement ||
+                    node instanceof HTMLInputElement) &&
+                IS_INPUT
+                    ? getInputBorderRadius(node)
+                    : parseBorderRadius(style),
+            color: IS_INPUT ? INPUT_COLOR : new Color(style.color),
             display: display,
             float: parseCSSFloat(style.float),
             font: parseFont(style),
@@ -103,7 +118,7 @@ export default class NodeContainer {
         }
 
         this.image = getImage(node, imageLoader);
-        this.bounds = parseBounds(node);
+        this.bounds = IS_INPUT ? reformatInputBounds(parseBounds(node)) : parseBounds(node);
         this.curvedBounds = parseBoundCurves(
             this.bounds,
             this.style.border,

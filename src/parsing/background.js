@@ -6,8 +6,8 @@ import type ImageLoader, {ImageElement} from '../ImageLoader';
 
 import Color from '../Color';
 import Length from '../Length';
-import Size from '../Size';
-import Vector from '../Vector';
+import Size from '../drawing/Size';
+import Vector from '../drawing/Vector';
 import {calculateBorderBoxPath, calculatePaddingBoxPath} from '../Bounds';
 
 export type Background = {
