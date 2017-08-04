@@ -44,23 +44,21 @@ const parseNodeTree = (
 ): void => {
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
         nextNode = childNode.nextSibling;
-        if (childNode.nodeType === Node.TEXT_NODE) {
-            //$FlowFixMe
+        const defaultView = childNode.ownerDocument.defaultView;
+        if (childNode instanceof defaultView.Text) {
             if (childNode.data.trim().length > 0) {
-                //$FlowFixMe
                 parent.textNodes.push(new TextContainer(childNode, parent));
             }
-        } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+        } else if (childNode instanceof defaultView.HTMLElement) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-                const childElement = flowRefineToHTMLElement(childNode);
-                inlinePseudoElement(childElement, PSEUDO_BEFORE);
-                inlinePseudoElement(childElement, PSEUDO_AFTER);
-                const container = new NodeContainer(childElement, parent, imageLoader);
+                inlinePseudoElement(childNode, PSEUDO_BEFORE);
+                inlinePseudoElement(childNode, PSEUDO_AFTER);
+                const container = new NodeContainer(childNode, parent, imageLoader);
 
                 if (container.isVisible()) {
                     const treatAsRealStackingContext = createsRealStackingContext(
                         container,
-                        childElement
+                        childNode
                     );
                     if (treatAsRealStackingContext || createsStackingContext(container)) {
                         // for treatAsRealStackingContext:false, any positioned descendants and descendants
@@ -75,10 +73,10 @@ const parseNodeTree = (
                             treatAsRealStackingContext
                         );
                         parentStack.contexts.push(childStack);
-                        parseNodeTree(childElement, container, childStack, imageLoader);
+                        parseNodeTree(childNode, container, childStack, imageLoader);
                     } else {
                         stack.children.push(container);
-                        parseNodeTree(childElement, container, stack, imageLoader);
+                        parseNodeTree(childNode, container, stack, imageLoader);
                     }
                 }
             }
@@ -144,9 +142,6 @@ const isBodyWithTransparentRoot = (container: NodeContainer, node: HTMLElement):
         container.parent.style.background.backgroundColor.isTransparent()
     );
 };
-
-//$FlowFixMe
-const flowRefineToHTMLElement = (node: Node): HTMLElement => node;
 
 const stripQuotes = (content: string): string => {
     const first = content.substr(0, 1);
