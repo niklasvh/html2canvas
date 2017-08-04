@@ -4,7 +4,7 @@ import Length from '../Length';
 
 const SIDES = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
 
-export type BorderRadius = Array<Length>;
+export type BorderRadius = [Length, Length];
 
 export const parseBorderRadius = (style: CSSStyleDeclaration): Array<BorderRadius> => {
     return SIDES.map(side => {
