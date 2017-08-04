@@ -12,10 +12,15 @@ export default class TextContainer {
     parent: NodeContainer;
     bounds: Array<TextBounds>;
 
-    constructor(node: Text, parent: NodeContainer) {
-        this.text = transform(node.data, parent.style.textTransform);
+    constructor(text: string, parent: NodeContainer, bounds: Array<TextBounds>) {
+        this.text = text;
         this.parent = parent;
-        this.bounds = parseTextBounds(this, node);
+        this.bounds = bounds;
+    }
+
+    static fromTextNode(node: Text, parent: NodeContainer) {
+        const text = transform(node.data, parent.style.textTransform);
+        return new TextContainer(text, parent, parseTextBounds(text, parent, node));
     }
 }
 

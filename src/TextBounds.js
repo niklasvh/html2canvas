@@ -2,7 +2,7 @@
 'use strict';
 
 import {ucs2} from 'punycode';
-import type TextContainer from './TextContainer';
+import type NodeContainer from './NodeContainer';
 import {Bounds, parseBounds} from './Bounds';
 import {TEXT_DECORATION} from './parsing/textDecoration';
 
@@ -24,20 +24,20 @@ export class TextBounds {
     }
 }
 
-export const parseTextBounds = (textContainer: TextContainer, node: Text): Array<TextBounds> => {
-    const codePoints = ucs2.decode(textContainer.text);
-    const letterRendering =
-        textContainer.parent.style.letterSpacing !== 0 || hasUnicodeCharacters(textContainer.text);
+export const parseTextBounds = (
+    value: string,
+    parent: NodeContainer,
+    node: Text
+): Array<TextBounds> => {
+    const codePoints = ucs2.decode(value);
+    const letterRendering = parent.style.letterSpacing !== 0 || hasUnicodeCharacters(value);
     const textList = letterRendering ? codePoints.map(encodeCodePoint) : splitWords(codePoints);
     const length = textList.length;
     const textBounds = [];
     let offset = 0;
     for (let i = 0; i < length; i++) {
         let text = textList[i];
-        if (
-            textContainer.parent.style.textDecoration !== TEXT_DECORATION.NONE ||
-            text.trim().length > 0
-        ) {
+        if (parent.style.textDecoration !== TEXT_DECORATION.NONE || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
             } else {
