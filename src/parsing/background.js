@@ -335,7 +335,7 @@ const parseBackgroundImage = (image: string, imageLoader: ImageLoader): Array<Ba
             }
 
             if (definition) {
-                args.push(definition);
+                args.push(definition.trim());
             }
 
             const prefix_i = method.indexOf('-', 1) + 1;
@@ -402,7 +402,7 @@ const parseBackgroundImage = (image: string, imageLoader: ImageLoader): Array<Ba
                     return;
                 } else if (mode === 1) {
                     if (numParen === 0 && !method.match(/^url$/i)) {
-                        args.push(definition);
+                        args.push(definition.trim());
                         definition = '';
                         return;
                     }

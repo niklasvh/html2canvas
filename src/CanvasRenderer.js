@@ -24,6 +24,7 @@ import {
     calculatePaddingBoxPath
 } from './Bounds';
 import {FontMetrics} from './Font';
+import {parseGradient} from './Gradient';
 import TextContainer from './TextContainer';
 
 import {
@@ -211,6 +212,24 @@ export default class CanvasRenderer {
         container.style.background.backgroundImage.reverse().forEach(backgroundImage => {
             if (backgroundImage.source.method === 'url' && backgroundImage.source.args.length) {
                 this.renderBackgroundRepeat(container, backgroundImage);
+            } else {
+                const gradient = parseGradient(backgroundImage.source, container.bounds);
+                if (gradient) {
+                    const bounds = container.bounds;
+                    const grad = this.ctx.createLinearGradient(
+                        bounds.left + gradient.direction.x1,
+                        bounds.top + gradient.direction.y1,
+                        bounds.left + gradient.direction.x0,
+                        bounds.top + gradient.direction.y0
+                    );
+
+                    gradient.colorStops.forEach(colorStop => {
+                        grad.addColorStop(colorStop.stop, colorStop.color.toString());
+                    });
+
+                    this.ctx.fillStyle = grad;
+                    this.ctx.fillRect(bounds.left, bounds.top, bounds.width, bounds.height);
+                }
             }
         });
     }
