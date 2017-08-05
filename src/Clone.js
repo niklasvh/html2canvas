@@ -128,14 +128,17 @@ export const cloneWindow = (
                         if (
                             /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
                             (cloneWindow.scrollY !== bounds.top ||
-                            cloneWindow.scrollX !== bounds.left)
+                                cloneWindow.scrollX !== bounds.left)
                         ) {
                             documentClone.documentElement.style.top = -bounds.top + 'px';
                             documentClone.documentElement.style.left = -bounds.left + 'px';
                             documentClone.documentElement.style.position = 'absolute';
                         }
                     }
-                    if (referenceElementSearch[1] instanceof cloneWindow.HTMLElement || referenceElementSearch[1] instanceof HTMLElement) {
+                    if (
+                        referenceElementSearch[1] instanceof cloneWindow.HTMLElement ||
+                        referenceElementSearch[1] instanceof HTMLElement
+                    ) {
                         resolve([cloneIframeContainer, referenceElementSearch[1]]);
                     } else {
                         reject(
