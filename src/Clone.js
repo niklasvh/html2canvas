@@ -111,30 +111,31 @@ export const cloneWindow = (
         );
     }
     return new Promise((resolve, reject) => {
-        const documentClone = cloneIframeContainer.contentWindow.document;
+        let cloneWindow = cloneIframeContainer.contentWindow;
+        const documentClone = cloneWindow.document;
 
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
          if window url is about:blank, we can assign the url to current by writing onto the document
          */
-        cloneIframeContainer.contentWindow.onload = cloneIframeContainer.onload = () => {
+        cloneWindow.onload = cloneIframeContainer.onload = () => {
             console.log('iframe load');
             const interval = setInterval(() => {
                 if (documentClone.body.childNodes.length > 0) {
                     scrolledElements.forEach(initNode);
                     clearInterval(interval);
                     if (options.type === 'view') {
-                        cloneIframeContainer.contentWindow.scrollTo(bounds.left, bounds.top);
+                        cloneWindow.scrollTo(bounds.left, bounds.top);
                         if (
                             /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
-                            (cloneIframeContainer.contentWindow.scrollY !== bounds.top ||
-                                cloneIframeContainer.contentWindow.scrollX !== bounds.left)
+                            (cloneWindow.scrollY !== bounds.top ||
+                            cloneWindow.scrollX !== bounds.left)
                         ) {
                             documentClone.documentElement.style.top = -bounds.top + 'px';
                             documentClone.documentElement.style.left = -bounds.left + 'px';
                             documentClone.documentElement.style.position = 'absolute';
                         }
                     }
-                    if (referenceElementSearch[1] instanceof HTMLElement) {
+                    if (referenceElementSearch[1] instanceof cloneWindow.HTMLElement || referenceElementSearch[1] instanceof HTMLElement) {
                         resolve([cloneIframeContainer, referenceElementSearch[1]]);
                     } else {
                         reject(
