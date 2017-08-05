@@ -127,7 +127,16 @@ const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after')
         anonymousReplacedElement.textContent = content;
     }
 
-    anonymousReplacedElement.style = style.cssText;
+    if (style.cssText) {
+        anonymousReplacedElement.style = style.cssText;
+    } else {
+        // Edge does not provide value for cssText
+        for (let i = style.length - 1; i >= 0; i--) {
+            const property = style.item(i);
+            anonymousReplacedElement.style.setProperty(property, style.getPropertyValue(property));
+        }
+    }
+
     anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
     node.className +=
         pseudoElt === PSEUDO_BEFORE
