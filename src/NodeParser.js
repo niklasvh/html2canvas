@@ -69,6 +69,8 @@ const parseNodeTree = (
                         // $FlowFixMe
                         inlineSelectElement(childNode, container);
                     }
+
+                    const SHOULD_TRAVERSE_CHILDREN = childNode.tagName !== 'TEXTAREA';
                     const treatAsRealStackingContext = createsRealStackingContext(
                         container,
                         childNode
@@ -86,10 +88,14 @@ const parseNodeTree = (
                             treatAsRealStackingContext
                         );
                         parentStack.contexts.push(childStack);
-                        parseNodeTree(childNode, container, childStack, imageLoader);
+                        if (SHOULD_TRAVERSE_CHILDREN) {
+                            parseNodeTree(childNode, container, childStack, imageLoader);
+                        }
                     } else {
                         stack.children.push(container);
-                        parseNodeTree(childNode, container, stack, imageLoader);
+                        if (SHOULD_TRAVERSE_CHILDREN) {
+                            parseNodeTree(childNode, container, stack, imageLoader);
+                        }
                     }
                 }
             }
