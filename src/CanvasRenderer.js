@@ -6,6 +6,7 @@ import type Size from './drawing/Size';
 
 import type {BackgroundImage} from './parsing/background';
 import type {Border, BorderSide} from './parsing/border';
+import type {TextShadow} from './parsing/textShadow';
 
 import type {Path, BoundCurves} from './Bounds';
 import type {ImageStore, ImageElement} from './ImageLoader';
@@ -163,7 +164,23 @@ export default class CanvasRenderer {
     renderText(text: TextBounds, textContainer: TextContainer) {
         const container = textContainer.parent;
         this.ctx.fillStyle = container.style.color.toString();
-        this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+        if (container.style.textShadow && text.text.trim().length) {
+            container.style.textShadow.slice(0).reverse().forEach(textShadow => {
+                this.ctx.shadowColor = textShadow.color.toString();
+                this.ctx.shadowOffsetX = textShadow.offsetX * this.options.scale;
+                this.ctx.shadowOffsetY = textShadow.offsetY * this.options.scale;
+                this.ctx.shadowBlur = textShadow.blur;
+
+                this.ctx.fillText(
+                    text.text,
+                    text.bounds.left,
+                    text.bounds.top + text.bounds.height
+                );
+            });
+        } else {
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+        }
+
         const textDecoration = container.style.textDecoration;
         if (textDecoration) {
             textDecoration.textDecorationLine.forEach(textDecorationLine => {

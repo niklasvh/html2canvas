@@ -10,6 +10,7 @@ import type {Font} from './parsing/font';
 import type {Overflow} from './parsing/overflow';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
+import type {TextShadow} from './parsing/textShadow';
 import type {TextTransform} from './parsing/textTransform';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {Transform} from './parsing/transform';
@@ -35,6 +36,7 @@ import {parseOverflow, OVERFLOW} from './parsing/overflow';
 import {parsePadding} from './parsing/padding';
 import {parsePosition, POSITION} from './parsing/position';
 import {parseTextDecoration} from './parsing/textDecoration';
+import {parseTextShadow} from './parsing/textShadow';
 import {parseTextTransform} from './parsing/textTransform';
 import {parseTransform} from './parsing/transform';
 import {parseVisibility, VISIBILITY} from './parsing/visibility';
@@ -63,6 +65,7 @@ type StyleDeclaration = {
     padding: Padding,
     position: Position,
     textDecoration: TextDecoration,
+    textShadow: Array<TextShadow> | null,
     textTransform: TextTransform,
     transform: Transform,
     visibility: Visibility,
@@ -106,6 +109,7 @@ export default class NodeContainer {
             padding: parsePadding(style),
             position: parsePosition(style.position),
             textDecoration: parseTextDecoration(style),
+            textShadow: parseTextShadow(style.textShadow),
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
             visibility: parseVisibility(style.visibility),
