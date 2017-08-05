@@ -16,12 +16,22 @@
                 border:1px solid #000;
             }
 
+            .horizontal {
+                width: auto !important;
+                height: auto !important;
+            }
+
             .medium div{
-                width:200px;
+                width:210px;
                 height:200px;
                 float:left;
                 margin:10px;
                 border:1px solid #000;
+            }
+
+            .medium .horizontal div{
+                width:200px;
+                height:100px;
             }
 
             .small, .medium{
@@ -110,15 +120,46 @@
             }
 
             .linearGradient8 {
-                background: linear-gradient(to top left, #fff 0%, #00263c 100%);
+                background: linear-gradient(to bottom left, #fff 0%, #00263c 100%);
             }
+
             .linearGradient9 {
-                background: linear-gradient(to top left, white 0%, black 100%);
+                background: linear-gradient(to bottom left, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
             }
 
             .linearGradient10 {
                 background: linear-gradient(to left top, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
             }
+
+            .linearGradient11 {
+                background: linear-gradient(to bottom right, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient12 {
+                background: linear-gradient(to top right, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient13 {
+                background: linear-gradient(to top left, white 0%, black 100%);
+            }
+
+            .linearGradient14 {
+                background: linear-gradient(-375.5grad, yellow, blue, red 60%, blue);
+            }
+
+            .linearGradient15 {
+                background: linear-gradient(-375.5turn, yellow, red 60%, blue);
+            }
+
+            .linearGradient16 {
+                background: linear-gradient(-375.5rad, yellow, orange, red 60%, blue);
+            }
+
+            .linearGradient17 {
+                background: linear-gradient(-375.5deg, yellow, red 60%, blue);
+                width: 800px !important;
+            }
+
         </style>
 
     </head>
@@ -134,6 +175,19 @@
             <div class="linearGradient8">&nbsp;</div>
             <div class="linearGradient9">&nbsp;</div>
             <div class="linearGradient10">&nbsp;</div>
+            <div class="linearGradient11">&nbsp;</div>
+            <div class="linearGradient12">&nbsp;</div>
+            <div class="horizontal">
+                <div class="linearGradient9">&nbsp;</div>
+                <div class="linearGradient10">&nbsp;</div>
+                <div class="linearGradient11">&nbsp;</div>
+                <div class="linearGradient12">&nbsp;</div>
+            </div>
+            <div class="linearGradient13">&nbsp;</div>
+            <div class="linearGradient14">&nbsp;</div>
+            <div class="linearGradient15">&nbsp;</div>
+            <div class="linearGradient16">&nbsp;</div>
+            <div class="linearGradient17">&nbsp;</div>
         </div>
     </body>
 </html>
