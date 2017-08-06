@@ -17,7 +17,10 @@ export type Options = {
     imageTimeout: ?number,
     proxy: ?string,
     removeContainer: ?boolean,
-    type: ?string
+    scale: number,
+    type: ?string,
+    windowWidth: number,
+    windowHeight: number
 };
 
 const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasElement> => {
@@ -25,12 +28,6 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
 
     const ownerDocument = element.ownerDocument;
     const defaultView = ownerDocument.defaultView;
-    const windowBounds = new Bounds(
-        defaultView.pageXOffset,
-        defaultView.pageYOffset,
-        defaultView.innerWidth,
-        defaultView.innerHeight
-    );
 
     const defaultOptions = {
         async: true,
@@ -39,11 +36,20 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         imageTimeout: 10000,
         proxy: null,
         removeContainer: true,
-        scale: defaultView.devicePixelRatio,
-        type: null
+        scale: defaultView.devicePixelRatio || 1,
+        type: null,
+        windowWidth: defaultView.innerWidth,
+        windowHeight: defaultView.innerHeight
     };
 
     const options = {...defaultOptions, ...config};
+
+    const windowBounds = new Bounds(
+        defaultView.pageXOffset,
+        defaultView.pageYOffset,
+        options.windowWidth,
+        options.windowHeight
+    );
 
     const canvas = options.canvas;
 
@@ -61,7 +67,12 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         if (__DEV__) {
             logger.log(`Document cloned`);
         }
-        const imageLoader = new ImageLoader(options, logger);
+
+        const imageLoader = new ImageLoader(
+            options,
+            logger,
+            clonedElement.ownerDocument.defaultView
+        );
         const stack = NodeParser(clonedElement, imageLoader, logger);
         const clonedDocument = clonedElement.ownerDocument;
         const size = options.type === 'view' ? windowBounds : parseDocumentSize(clonedDocument);
@@ -92,7 +103,9 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
             }
 
             const fontMetrics = new FontMetrics(clonedDocument);
-
+            if (__DEV__) {
+                logger.log(`Starting renderer`);
+            }
             const renderer = new CanvasRenderer(canvas, {
                 scale: options.scale,
                 backgroundColor,

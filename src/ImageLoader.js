@@ -14,9 +14,11 @@ export default class ImageLoader {
     cache: ImageCache;
     logger: Logger;
     _index: number;
+    _window: WindowProxy;
 
-    constructor(options: Options, logger: Logger) {
+    constructor(options: Options, logger: Logger, window: WindowProxy) {
         this.options = options;
+        this._window = window;
         this.origin = this.getOrigin(window.location.href);
         this.cache = {};
         this.logger = logger;
@@ -70,7 +72,7 @@ export default class ImageLoader {
     }
 
     getOrigin(url: string): string {
-        const link = this._link || (this._link = document.createElement('a'));
+        const link = this._link || (this._link = this._window.document.createElement('a'));
         link.href = url;
         link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
         return link.protocol + link.hostname + link.port;
