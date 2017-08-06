@@ -9,25 +9,41 @@ const banner =
 Copyright (c) ${(new Date()).getFullYear()} ${pkg.author.name} <${pkg.author.url}>
 Released under ${pkg.license} License`;
 
-module.exports = {
-    entry: './src/index.js',
-    output: {
-        filename: './dist/html2canvas.js',
-        library: 'html2canvas',
-        libraryTarget: 'umd'
-    },
-    module: {
-        loaders: [{
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader'
-        }]
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            '__DEV__': true,
-            '__VERSION__': JSON.stringify(pkg.version)
-        }),
-        new webpack.BannerPlugin(banner)
-    ]
+const plugins = [
+    new webpack.DefinePlugin({
+        '__DEV__': true,
+        '__VERSION__': JSON.stringify(pkg.version)
+    }),
+    new webpack.BannerPlugin(banner)
+];
+
+const modules = {
+    loaders: [{
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
+    }]
 };
+
+module.exports = [
+    {
+        entry: './src/index.js',
+        output: {
+            filename: './dist/html2canvas.js',
+            library: 'html2canvas',
+            libraryTarget: 'umd'
+        },
+        module: modules,
+        plugins
+    },
+    {
+        entry: './src/renderer/RefTestRenderer.js',
+        output: {
+            filename: './dist/RefTestRenderer.js',
+            library: 'RefTestRenderer',
+            libraryTarget: 'umd'
+        },
+        module: modules,
+        plugins
+    }
+];

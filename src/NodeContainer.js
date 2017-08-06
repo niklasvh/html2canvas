@@ -17,9 +17,9 @@ import type {Transform} from './parsing/transform';
 import type {Visibility} from './parsing/visibility';
 import type {zIndex} from './parsing/zIndex';
 
-import type {Bounds, BoundCurves, Path} from './Bounds';
+import type {Bounds, BoundCurves} from './Bounds';
 import type ImageLoader from './ImageLoader';
-
+import type {Path} from './drawing/Path';
 import type TextContainer from './TextContainer';
 
 import Color from './Color';
@@ -64,7 +64,7 @@ type StyleDeclaration = {
     overflow: Overflow,
     padding: Padding,
     position: Position,
-    textDecoration: TextDecoration,
+    textDecoration: TextDecoration | null,
     textShadow: Array<TextShadow> | null,
     textTransform: TextTransform,
     transform: Transform,

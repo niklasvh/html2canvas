@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
-
-import type {Bounds, BoundCurves, Path} from '../Bounds';
+import type {Path} from '../drawing/Path';
+import type {Bounds, BoundCurves} from '../Bounds';
 import type ImageLoader, {ImageElement} from '../ImageLoader';
 
 import Color from '../Color';
