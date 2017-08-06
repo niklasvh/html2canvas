@@ -31,10 +31,11 @@ const parseTransformOrigin = (origin: string): TransformOrigin => {
     return [values[0], values[1]];
 };
 
-const parseTransformMatrix = (transform: string): Matrix | null => {
-    if (transform === 'none') {
+const parseTransformMatrix = (transform: ?string): Matrix | null => {
+    if (transform === 'none' || typeof(transform) !== 'string') {
         return null;
     }
+
     const match = transform.match(MATRIX);
     if (match) {
         if (match[1] === 'matrix') {
