@@ -14,7 +14,7 @@ const TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){3})/g;
 const TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
 
 export const parseTextShadow = (textShadow: ?string): Array<TextShadow> | null => {
-    if (textShadow === 'none' || typeof(textShadow) !== 'string') {
+    if (textShadow === 'none' || typeof textShadow !== 'string') {
         return null;
     }
 
