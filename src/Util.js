@@ -5,7 +5,7 @@ export const contains = (bit: number, value: number): boolean => (bit & value) !
 
 export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): void => {
     if (style.cssText) {
-        target.style = style.cssText;
+        target.style.cssText = style.cssText;
     } else {
         // Edge does not provide value for cssText
         for (let i = style.length - 1; i >= 0; i--) {
