@@ -29,7 +29,7 @@ export type TextDecoration = {
     textDecorationLine: Array<TextDecorationLine>,
     textDecorationStyle: TextDecorationStyle,
     textDecorationColor: Color | null
-} | null;
+};
 
 const parseLine = (line: string): TextDecorationLine => {
     switch (line) {
@@ -65,7 +65,7 @@ const parseTextDecorationStyle = (style: string): TextDecorationStyle => {
     return TEXT_DECORATION_STYLE.SOLID;
 };
 
-export const parseTextDecoration = (style: CSSStyleDeclaration): TextDecoration => {
+export const parseTextDecoration = (style: CSSStyleDeclaration): TextDecoration | null => {
     const textDecorationLine = parseTextDecorationLine(
         style.textDecorationLine ? style.textDecorationLine : style.textDecoration
     );

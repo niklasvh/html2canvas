@@ -1,12 +1,16 @@
 /* @flow */
 'use strict';
+import type {Drawable} from './Path';
+import {PATH} from './Path';
 
-export default class Circle {
+export default class Circle implements Drawable<2> {
+    type: 2;
     x: number;
     y: number;
     radius: number;
 
     constructor(x: number, y: number, radius: number) {
+        this.type = PATH.CIRCLE;
         this.x = x;
         this.y = y;
         this.radius = radius;

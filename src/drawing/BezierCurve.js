@@ -1,18 +1,22 @@
 /* @flow */
 'use strict';
+import type {Drawable} from './Path';
+import {PATH} from './Path';
 import Vector from './Vector';
 
 const lerp = (a: Vector, b: Vector, t: number): Vector => {
     return new Vector(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
 };
 
-export default class BezierCurve {
+export default class BezierCurve implements Drawable<1> {
+    type: 1;
     start: Vector;
     startControl: Vector;
     endControl: Vector;
     end: Vector;
 
     constructor(start: Vector, startControl: Vector, endControl: Vector, end: Vector) {
+        this.type = PATH.BEZIER_CURVE;
         this.start = start;
         this.startControl = startControl;
         this.endControl = endControl;

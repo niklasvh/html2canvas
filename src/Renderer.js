@@ -2,6 +2,7 @@
 'use strict';
 
 import type Color from './Color';
+import type {Path} from './drawing/Path';
 import type Size from './drawing/Size';
 import type Logger from './Logger';
 
@@ -12,7 +13,7 @@ import type {TextDecoration} from './parsing/textDecoration';
 import type {TextShadow} from './parsing/textShadow';
 import type {Matrix} from './parsing/transform';
 
-import type {Path, BoundCurves} from './Bounds';
+import type {BoundCurves} from './Bounds';
 import type {Gradient} from './Gradient';
 import type {ImageStore, ImageElement} from './ImageLoader';
 import type NodeContainer from './NodeContainer';
@@ -49,7 +50,7 @@ export type RenderOptions = {
     height: number
 };
 
-export interface RenderTarget {
+export interface RenderTarget<Output> {
     clip(clipPaths: Array<Path>, callback: () => void): void,
 
     drawImage(image: ImageElement, source: Bounds, destination: Bounds): void,
@@ -58,9 +59,11 @@ export interface RenderTarget {
 
     fill(color: Color): void,
 
-    getTarget(): Promise<HTMLCanvasElement>,
+    getTarget(): Promise<Output>,
 
     rectangle(x: number, y: number, width: number, height: number, color: Color): void,
+
+    render(options: RenderOptions): void,
 
     renderLinearGradient(bounds: Bounds, gradient: Gradient): void,
 
@@ -76,7 +79,7 @@ export interface RenderTarget {
         textBounds: Array<TextBounds>,
         color: Color,
         font: Font,
-        textDecoration: TextDecoration,
+        textDecoration: TextDecoration | null,
         textShadows: Array<TextShadow> | null
     ): void,
 
@@ -86,12 +89,14 @@ export interface RenderTarget {
 }
 
 export default class Renderer {
-    target: RenderTarget;
+    target: RenderTarget<*>;
     options: RenderOptions;
+    _opacity: ?number;
 
-    constructor(target: RenderTarget, options: RenderOptions) {
+    constructor(target: RenderTarget<*>, options: RenderOptions) {
         this.target = target;
         this.options = options;
+        target.render(options);
     }
 
     renderNode(container: NodeContainer) {
@@ -102,7 +107,7 @@ export default class Renderer {
     }
 
     renderNodeContent(container: NodeContainer) {
-        this.target.clip(container.getClipPaths(), () => {
+        const callback = () => {
             if (container.childNodes.length) {
                 container.childNodes.forEach(child => {
                     if (child instanceof TextContainer) {
@@ -136,11 +141,17 @@ export default class Renderer {
                     });
                 }
             }
-        });
+        };
+        const paths = container.getClipPaths();
+        if (paths.length) {
+            this.target.clip(paths, callback);
+        } else {
+            callback();
+        }
     }
 
     renderNodeBackgroundAndBorders(container: NodeContainer) {
-        this.target.clip(container.parent ? container.parent.getClipPaths() : [], () => {
+        const callback = () => {
             const backgroundPaintingArea = calculateBackgroungPaintingArea(
                 container.curvedBounds,
                 container.style.background.backgroundClip
@@ -156,7 +167,14 @@ export default class Renderer {
             container.style.border.forEach((border, side) => {
                 this.renderBorder(border, side, container.curvedBounds);
             });
-        });
+        };
+
+        const paths = container.parent ? container.parent.getClipPaths() : [];
+        if (paths.length) {
+            this.target.clip(paths, callback);
+        } else {
+            callback();
+        }
     }
 
     renderBackgroundImage(container: NodeContainer) {
@@ -213,7 +231,12 @@ export default class Renderer {
 
     renderStack(stack: StackingContext) {
         if (stack.container.isVisible()) {
-            this.target.setOpacity(stack.getOpacity());
+            const opacity = stack.getOpacity();
+            if (opacity !== this._opacity) {
+                this.target.setOpacity(stack.getOpacity());
+                this._opacity = opacity;
+            }
+
             const transform = stack.container.style.transform;
             if (transform !== null) {
                 this.target.transform(
@@ -270,7 +293,7 @@ export default class Renderer {
         positiveZIndex.sort(sortByZIndex).forEach(this.renderStack, this);
     }
 
-    render(stack: StackingContext): Promise<HTMLCanvasElement> {
+    render(stack: StackingContext): Promise<*> {
         if (this.options.backgroundColor) {
             this.target.rectangle(
                 0,

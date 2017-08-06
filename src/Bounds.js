@@ -4,12 +4,10 @@
 import type {Border, BorderSide} from './parsing/border';
 import type {BorderRadius} from './parsing/borderRadius';
 import type {Padding} from './parsing/padding';
-import type Circle from './drawing/Circle';
+import type {Path} from './drawing/Path';
 
 import Vector from './drawing/Vector';
 import BezierCurve from './drawing/BezierCurve';
-
-export type Path = Array<Vector | BezierCurve> | Circle;
 
 const TOP = 0;
 const RIGHT = 1;

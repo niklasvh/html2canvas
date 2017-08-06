@@ -2,8 +2,8 @@
 'use strict';
 
 import type {RenderTarget, RenderOptions} from '../Renderer';
-
 import type Color from '../Color';
+import type {Path} from '../drawing/Path';
 import type Size from '../drawing/Size';
 
 import type {Font} from '../parsing/font';
@@ -11,26 +11,30 @@ import type {TextDecoration} from '../parsing/textDecoration';
 import type {TextShadow} from '../parsing/textShadow';
 import type {Matrix} from '../parsing/transform';
 
-import type {Path, Bounds} from '../Bounds';
+import type {Bounds} from '../Bounds';
 import type {ImageElement} from '../ImageLoader';
 import type {Gradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
-import BezierCurve from '../drawing/BezierCurve';
-import Circle from '../drawing/Circle';
-import Vector from '../drawing/Vector';
-
+import {PATH} from '../drawing/Path';
 import {TEXT_DECORATION_LINE} from '../parsing/textDecoration';
 
-export default class CanvasRenderer implements RenderTarget {
+export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     options: RenderOptions;
 
-    constructor(canvas: HTMLCanvasElement, options: RenderOptions) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
+    constructor(canvas: ?HTMLCanvasElement) {
+        this.canvas = canvas ? canvas : document.createElement('canvas');
+    }
+
+    render(options: RenderOptions) {
+        this.ctx = this.canvas.getContext('2d');
         this.options = options;
+        this.canvas.width = Math.floor(options.width * options.scale);
+        this.canvas.height = Math.floor(options.height * options.scale);
+        this.canvas.style.width = `${options.width}px`;
+        this.canvas.style.height = `${options.height}px`;
 
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.textBaseline = 'bottom';
@@ -84,25 +88,16 @@ export default class CanvasRenderer implements RenderTarget {
 
     path(path: Path) {
         this.ctx.beginPath();
-        if (path instanceof Circle) {
-            this.ctx.arc(
-                path.x + path.radius,
-                path.y + path.radius,
-                path.radius,
-                0,
-                Math.PI * 2,
-                true
-            );
-        } else {
+        if (Array.isArray(path)) {
             path.forEach((point, index) => {
-                const start = point instanceof Vector ? point : point.start;
+                const start = point.type === PATH.VECTOR ? point : point.start;
                 if (index === 0) {
                     this.ctx.moveTo(start.x, start.y);
                 } else {
                     this.ctx.lineTo(start.x, start.y);
                 }
 
-                if (point instanceof BezierCurve) {
+                if (point.type === PATH.BEZIER_CURVE) {
                     this.ctx.bezierCurveTo(
                         point.startControl.x,
                         point.startControl.y,
@@ -113,6 +108,15 @@ export default class CanvasRenderer implements RenderTarget {
                     );
                 }
             });
+        } else {
+            this.ctx.arc(
+                path.x + path.radius,
+                path.y + path.radius,
+                path.radius,
+                0,
+                Math.PI * 2,
+                true
+            );
         }
 
         this.ctx.closePath();
@@ -157,7 +161,7 @@ export default class CanvasRenderer implements RenderTarget {
         textBounds: Array<TextBounds>,
         color: Color,
         font: Font,
-        textDecoration: TextDecoration,
+        textDecoration: TextDecoration | null,
         textShadows: Array<TextShadow> | null
     ) {
         this.ctx.font = [

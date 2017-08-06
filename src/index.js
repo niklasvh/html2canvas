@@ -1,6 +1,8 @@
 /* @flow */
 'use strict';
 
+import type {RenderTarget} from './Renderer';
+
 import {NodeParser} from './NodeParser';
 import Renderer from './Renderer';
 import CanvasRenderer from './renderer/CanvasRenderer';
@@ -19,12 +21,13 @@ export type Options = {
     proxy: ?string,
     removeContainer: ?boolean,
     scale: number,
+    target: RenderTarget<*> | Array<RenderTarget<*>>,
     type: ?string,
     windowWidth: number,
     windowHeight: number
 };
 
-const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasElement> => {
+const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
     if (typeof console === 'object' && typeof console.log === 'function') {
         console.log(`html2canvas ${__VERSION__}`);
     }
@@ -37,11 +40,11 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
     const defaultOptions = {
         async: true,
         allowTaint: false,
-        canvas: ownerDocument.createElement('canvas'),
         imageTimeout: 10000,
         proxy: null,
         removeContainer: true,
         scale: defaultView.devicePixelRatio || 1,
+        target: new CanvasRenderer(config.canvas),
         type: null,
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight
@@ -55,12 +58,6 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         options.windowWidth,
         options.windowHeight
     );
-
-    const canvas = options.canvas;
-
-    if (!(canvas instanceof HTMLCanvasElement)) {
-        return Promise.reject(__DEV__ ? `Invalid canvas element provided in options` : '');
-    }
 
     const result = cloneWindow(
         ownerDocument,
@@ -83,10 +80,6 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
         const size = options.type === 'view' ? windowBounds : parseDocumentSize(clonedDocument);
         const width = size.width;
         const height = size.height;
-        canvas.width = Math.floor(width * options.scale);
-        canvas.height = Math.floor(height * options.scale);
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
 
         // http://www.w3.org/TR/css3-background/#special-backgrounds
         const backgroundColor =
@@ -121,10 +114,18 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
                 width,
                 height
             };
-            const canvasTarget = new CanvasRenderer(canvas, renderOptions);
 
-            const renderer = new Renderer(canvasTarget, renderOptions);
-            return renderer.render(stack);
+            if (Array.isArray(options.target)) {
+                return Promise.all(
+                    options.target.map(target => {
+                        const renderer = new Renderer(target, renderOptions);
+                        return renderer.render(stack);
+                    })
+                );
+            } else {
+                const renderer = new Renderer(options.target, renderOptions);
+                return renderer.render(stack);
+            }
         });
     });
 
@@ -136,5 +137,7 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
     }
     return result;
 };
+
+html2canvas.CanvasRenderer = CanvasRenderer;
 
 module.exports = html2canvas;
