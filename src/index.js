@@ -24,6 +24,10 @@ export type Options = {
 };
 
 const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasElement> => {
+    if (typeof console === 'object' && typeof console.log === 'function') {
+        console.log(`html2canvas ${__VERSION__}`);
+    }
+
     const logger = new Logger();
 
     const ownerDocument = element.ownerDocument;
