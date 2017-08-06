@@ -32,7 +32,7 @@ const parseTransformOrigin = (origin: string): TransformOrigin => {
 };
 
 const parseTransformMatrix = (transform: ?string): Matrix | null => {
-    if (transform === 'none' || typeof(transform) !== 'string') {
+    if (transform === 'none' || typeof transform !== 'string') {
         return null;
     }
 
