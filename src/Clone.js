@@ -118,7 +118,6 @@ export const cloneWindow = (
          if window url is about:blank, we can assign the url to current by writing onto the document
          */
         cloneWindow.onload = cloneIframeContainer.onload = () => {
-            console.log('iframe load');
             const interval = setInterval(() => {
                 if (documentClone.body.childNodes.length > 0) {
                     scrolledElements.forEach(initNode);
