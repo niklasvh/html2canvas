@@ -27,7 +27,10 @@ export type Gradient = {
     colorStops: Array<ColorStop>
 };
 
-export const parseGradient = ({args, method, prefix}: BackgroundSource, bounds: Bounds) => {
+export const parseGradient = (
+    {args, method, prefix}: BackgroundSource,
+    bounds: Bounds
+): ?Gradient => {
     if (method === 'linear-gradient') {
         return parseLinearGradient(args, bounds);
     }

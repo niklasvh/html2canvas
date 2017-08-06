@@ -25,13 +25,11 @@ export const TEXT_DECORATION_LINE = {
 export type TextDecorationStyle = $Values<typeof TEXT_DECORATION_STYLE>;
 export type TextDecorationLine = $Values<typeof TEXT_DECORATION_LINE>;
 type TextDecorationLineType = Array<TextDecorationLine> | null;
-export type TextDecoration =
-    | {
-          textDecorationLine: Array<TextDecorationLine>,
-          textDecorationStyle: TextDecorationStyle,
-          textDecorationColor: Color | null
-      }
-    | $Values<typeof TEXT_DECORATION>;
+export type TextDecoration = {
+    textDecorationLine: Array<TextDecorationLine>,
+    textDecorationStyle: TextDecorationStyle,
+    textDecorationColor: Color | null
+} | null;
 
 const parseLine = (line: string): TextDecorationLine => {
     switch (line) {
