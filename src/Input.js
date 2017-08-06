@@ -11,6 +11,7 @@ import Color from './Color';
 import Length from './Length';
 import {Bounds} from './Bounds';
 import {TextBounds} from './TextBounds';
+import {copyCSSStyles} from './Util';
 
 export const INPUT_COLOR = new Color([42, 42, 42]);
 const INPUT_BORDER_COLOR = new Color([165, 165, 165]);
@@ -108,7 +109,7 @@ const inlineFormElement = (value: string, node: HTMLElement, container: NodeCont
     const body = node.ownerDocument.body;
     if (value.length > 0 && body) {
         const wrapper = node.ownerDocument.createElement('html2canvaswrapper');
-        wrapper.style = node.ownerDocument.defaultView.getComputedStyle(node, null).cssText;
+        copyCSSStyles(node.ownerDocument.defaultView.getComputedStyle(node, null), wrapper);
         wrapper.style.position = 'fixed';
         wrapper.style.left = `${container.bounds.left}px`;
         wrapper.style.top = `${container.bounds.top}px`;

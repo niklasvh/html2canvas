@@ -6,21 +6,21 @@ import StackingContext from './StackingContext';
 import NodeContainer from './NodeContainer';
 import TextContainer from './TextContainer';
 import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './Input';
+import {copyCSSStyles} from './Util';
 
 export const NodeParser = (
     node: HTMLElement,
     imageLoader: ImageLoader,
     logger: Logger
 ): StackingContext => {
-    const container = new NodeContainer(node, null, imageLoader);
-    const stack = new StackingContext(container, null, true);
-
-    createPseudoHideStyles(node.ownerDocument);
-
     if (__DEV__) {
         logger.log(`Starting node parsing`);
     }
 
+    const container = new NodeContainer(node, null, imageLoader);
+    const stack = new StackingContext(container, null, true);
+
+    createPseudoHideStyles(node.ownerDocument);
     parseNodeTree(node, container, stack, imageLoader);
 
     if (__DEV__) {
@@ -127,15 +127,7 @@ const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after')
         anonymousReplacedElement.textContent = content;
     }
 
-    if (style.cssText) {
-        anonymousReplacedElement.style = style.cssText;
-    } else {
-        // Edge does not provide value for cssText
-        for (let i = style.length - 1; i >= 0; i--) {
-            const property = style.item(i);
-            anonymousReplacedElement.style.setProperty(property, style.getPropertyValue(property));
-        }
-    }
+    copyCSSStyles(style, anonymousReplacedElement);
 
     anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
     node.className +=
