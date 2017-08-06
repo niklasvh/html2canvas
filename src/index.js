@@ -2,7 +2,8 @@
 'use strict';
 
 import {NodeParser} from './NodeParser';
-import CanvasRenderer from './CanvasRenderer';
+import Renderer from './Renderer';
+import CanvasRenderer from './renderer/CanvasRenderer';
 import Logger from './Logger';
 import ImageLoader from './ImageLoader';
 import {Bounds, parseDocumentSize} from './Bounds';
@@ -110,12 +111,19 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<HTMLCanvasE
             if (__DEV__) {
                 logger.log(`Starting renderer`);
             }
-            const renderer = new CanvasRenderer(canvas, {
-                scale: options.scale,
+
+            const renderOptions = {
                 backgroundColor,
+                fontMetrics,
                 imageStore,
-                fontMetrics
-            });
+                logger,
+                scale: options.scale,
+                width,
+                height
+            };
+            const canvasTarget = new CanvasRenderer(canvas, renderOptions);
+
+            const renderer = new Renderer(canvasTarget, renderOptions);
             return renderer.render(stack);
         });
     });
