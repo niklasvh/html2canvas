@@ -1,0 +1,266 @@
+Window: [800, 1231]
+Rectangle: [0, 0, 800, 1231] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 700 32px Times New Roman
+  [8, 22]: <h1>
+  [86, 22]: text
+  [138, 22]: -
+  [148, 22]: decoration
+Text: rgb(0,0,0) normal normal 700 24px Times New Roman
+  [8, 889]: <h2>
+  [67, 889]: text
+  [105, 889]: -
+  [113, 889]: transform
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 936]: text
+  [72, 936]: -
+  [77, 936]: transform:none;
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 955]: Text
+  [76, 955]: -
+  [82, 955]: Transform:
+  [157, 955]: Capitalize;
+  [230, 955]: (Including
+  [301, 955]: Foreign
+  [355, 955]: Characters
+  [427, 955]: Such
+  [463, 955]: As
+  [485, 955]: Öaäå)
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 974]: TEXT
+  [88, 974]: -
+  [93, 974]: TRANSFORM:UPPERCASE;
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 992]: text
+  [72, 992]: -
+  [77, 992]: transform:lowercase;
+Text: rgb(0,0,0) normal normal 700 18.72px Times New Roman
+  [8, 1030]: <h3>
+  [54, 1030]: misc
+  [95, 1030]: text
+  [130, 1030]: alignments
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 1070]: word
+  [81, 1070]: -
+  [86, 1070]: spacing:5px;
+  [177, 1070]: (as
+  [205, 1070]: each
+  [243, 1070]: letter
+  [285, 1070]: is
+  [304, 1070]: rendered
+  [370, 1070]: individually,
+  [459, 1070]: the
+  [487, 1070]: bounds
+  [542, 1070]: will
+  [576, 1070]: always
+  [630, 1070]: be
+  [654, 1070]: correct)
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 1097]: line
+  [72, 1097]: -
+  [77, 1097]: height:35px;
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 1132]: (same
+  [90, 1132]: goes
+  [124, 1132]: for
+  [146, 1132]: line
+  [170, 1132]: -
+  [176, 1132]: height)
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [48, 1159]: l
+  [58, 1159]: e
+  [70, 1159]: t
+  [79, 1159]: t
+  [88, 1159]: e
+  [100, 1159]: r
+  [110, 1159]: -
+  [121, 1159]: s
+  [132, 1159]: p
+  [145, 1159]: a
+  [157, 1159]: c
+  [169, 1159]: i
+  [179, 1159]: n
+  [192, 1159]: g
+  [205, 1159]: :
+  [214, 1159]: 5
+  [227, 1159]: p
+  [240, 1159]: x
+  [253, 1159]: ;
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [162, 1178]: text
+  [186, 1178]: -
+  [192, 1178]: align:right;width:300px;
+Text: rgb(0,0,0) normal small-caps 400 16px Times New Roman
+  [48, 1196]: font
+  [79, 1196]: -
+  [84, 1196]: variant:small
+  [180, 1196]: -
+  [186, 1196]: caps;
+Text: rgb(0,0,0) normal normal 700 24px Arial
+  [8, 100]: Arial
+Text: rgb(0,0,0) normal normal 400 14px Arial
+  [48, 147]: text
+  [70, 147]: -
+  [75, 147]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) underline
+  [48, 163]: text
+  [70, 163]: -
+  [75, 163]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) overline
+  [48, 179]: text
+  [70, 179]: -
+  [75, 179]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) line-through
+  [48, 195]: text
+  [70, 195]: -
+  [75, 195]: decoration:line
+  [166, 195]: -
+  [171, 195]: through;
+Text: rgb(0,0,0) normal normal 400 18px Arial
+  [48, 229]: text
+  [77, 229]: -
+  [83, 229]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) underline
+  [48, 250]: text
+  [77, 250]: -
+  [83, 250]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) overline
+  [48, 270]: text
+  [77, 270]: -
+  [83, 270]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) line-through
+  [48, 291]: text
+  [77, 291]: -
+  [83, 291]: decoration:line
+  [200, 291]: -
+  [206, 291]: through;
+Text: rgb(0,0,0) normal normal 400 24px Arial
+  [48, 336]: text
+  [87, 336]: -
+  [95, 336]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) underline
+  [48, 364]: text
+  [87, 364]: -
+  [95, 364]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) overline
+  [48, 392]: text
+  [87, 392]: -
+  [95, 392]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) line-through
+  [48, 419]: text
+  [87, 419]: -
+  [95, 419]: decoration:line
+  [251, 419]: -
+  [259, 419]: through;
+Text: rgb(0,0,0) normal normal 700 24px Verdana
+  [347, 99]: Verdana
+Text: rgb(0,0,0) normal normal 400 14px Verdana
+  [387, 148]: text
+  [414, 148]: -
+  [420, 148]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) underline
+  [387, 165]: text
+  [414, 165]: -
+  [420, 165]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) overline
+  [387, 182]: text
+  [414, 182]: -
+  [420, 182]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) line-through
+  [387, 199]: text
+  [414, 199]: -
+  [420, 199]: decoration:line
+  [526, 199]: -
+  [532, 199]: through;
+Text: rgb(0,0,0) normal normal 400 18px Verdana
+  [387, 234]: text
+  [422, 234]: -
+  [430, 234]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) underline
+  [387, 255]: text
+  [422, 255]: -
+  [430, 255]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) overline
+  [387, 277]: text
+  [422, 277]: -
+  [430, 277]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) line-through
+  [387, 298]: text
+  [422, 298]: -
+  [430, 298]: decoration:line
+  [565, 298]: -
+  [573, 298]: through;
+Text: rgb(0,0,0) normal normal 400 24px Verdana
+  [387, 344]: text
+  [434, 344]: -
+  [445, 344]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) underline
+  [387, 373]: text
+  [434, 373]: -
+  [445, 373]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) overline
+  [387, 402]: text
+  [434, 402]: -
+  [445, 402]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) line-through
+  [387, 432]: text
+  [434, 432]: -
+  [445, 432]: decoration:line
+  [624, 432]: -
+  [636, 432]: through;
+Text: rgb(0,0,0) normal normal 700 24px Tahoma
+  [8, 505]: Tahoma
+Text: rgb(0,0,0) normal normal 400 14px Tahoma
+  [48, 553]: text
+  [72, 553]: -
+  [77, 553]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) underline
+  [48, 570]: text
+  [72, 570]: -
+  [77, 570]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) overline
+  [48, 587]: text
+  [72, 587]: -
+  [77, 587]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) line-through
+  [48, 604]: text
+  [72, 604]: -
+  [77, 604]: decoration:line
+  [168, 604]: -
+  [173, 604]: through;
+Text: rgb(0,0,0) normal normal 400 18px Tahoma
+  [48, 639]: text
+  [78, 639]: -
+  [85, 639]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) underline
+  [48, 660]: text
+  [78, 660]: -
+  [85, 660]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) overline
+  [48, 682]: text
+  [78, 682]: -
+  [85, 682]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) line-through
+  [48, 703]: text
+  [78, 703]: -
+  [85, 703]: decoration:line
+  [202, 703]: -
+  [209, 703]: through;
+Text: rgb(0,0,0) normal normal 400 24px Tahoma
+  [48, 749]: text
+  [88, 749]: -
+  [97, 749]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) underline
+  [48, 778]: text
+  [88, 778]: -
+  [97, 778]: decoration:underline;
+Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) overline
+  [48, 807]: text
+  [88, 807]: -
+  [97, 807]: decoration:overline;
+Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) line-through
+  [48, 835]: text
+  [88, 835]: -
+  [97, 835]: decoration:line
+  [254, 835]: -
+  [263, 835]: through;

@@ -45,5 +45,15 @@ module.exports = [
         },
         module: modules,
         plugins
+    },
+    {
+        entry: './tests/testrunner.js',
+        output: {
+            filename: './build/testrunner.js',
+            library: 'testrunner',
+            libraryTarget: 'umd'
+        },
+        module: modules,
+        plugins
     }
 ];

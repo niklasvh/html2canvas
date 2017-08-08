@@ -39,7 +39,7 @@ export const parseBorder = (style: CSSStyleDeclaration): Array<Border> => {
     return SIDES.map(side => {
         const borderColor = new Color(style.getPropertyValue(`border-${side}-color`));
         const borderStyle = parseBorderStyle(style.getPropertyValue(`border-${side}-style`));
-        const borderWidth = parseInt(style.getPropertyValue(`border-${side}-width`), 10);
+        const borderWidth = parseFloat(style.getPropertyValue(`border-${side}-width`));
         return {
             borderColor,
             borderStyle,

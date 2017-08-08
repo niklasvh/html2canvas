@@ -3,15 +3,20 @@ var NodeContainer = html2canvas.NodeContainer;
 describe('Borders', function() {
     $('#borders div').each(function(i, node) {
         it($(this).attr('style'), function() {
-            ["borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"].forEach(function(prop) {
+            [
+                'borderTopWidth',
+                'borderRightWidth',
+                'borderBottomWidth',
+                'borderLeftWidth'
+            ].forEach(function(prop) {
                 var result = $(node).css(prop);
                 // older IE's don't necessarily return px even with jQuery
-                if (result === "thin") {
-                    result = "1px";
-                } else if (result === "medium") {
-                    result = "3px";
-                } else if (result === "thick") {
-                    result = "5px";
+                if (result === 'thin') {
+                    result = '1px';
+                } else if (result === 'medium') {
+                    result = '3px';
+                } else if (result === 'thick') {
+                    result = '5px';
                 }
                 var container = new NodeContainer(node, null);
                 expect(container.css(prop)).to.be(result);
@@ -23,10 +28,10 @@ describe('Borders', function() {
 describe('Padding', function() {
     $('#padding div').each(function(i, node) {
         it($(this).attr('style'), function() {
-            ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft"].forEach(function(prop) {
+            ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'].forEach(function(prop) {
                 var container = new NodeContainer(node, null);
                 var result = container.css(prop);
-                expect(result).to.contain("px");
+                expect(result).to.contain('px');
                 expect(result, $(node).css(prop));
             });
         });
@@ -36,20 +41,25 @@ describe('Padding', function() {
 describe('Background-position', function() {
     $('#backgroundPosition div').each(function(i, node) {
         it($(this).attr('style'), function() {
-            var prop = "backgroundPosition";
-            var img =  new Image();
+            var prop = 'backgroundPosition';
+            var img = new Image();
             img.width = 50;
             img.height = 50;
 
             var container = new NodeContainer(node, null);
             var item = container.css(prop),
-                backgroundPosition = container.parseBackgroundPosition(html2canvas.utils.getBounds(node), img),
-                split = (window.getComputedStyle) ? $(node).css(prop).split(" ") : [$(node).css(prop+"X"), $(node).css(prop+"Y")];
+                backgroundPosition = container.parseBackgroundPosition(
+                    html2canvas.utils.getBounds(node),
+                    img
+                ),
+                split = window.getComputedStyle
+                    ? $(node).css(prop).split(' ')
+                    : [$(node).css(prop + 'X'), $(node).css(prop + 'Y')];
 
             var testEl = $('<div />').css({
-                'position': 'absolute',
-                'left': split[0],
-                'top': split[1]
+                position: 'absolute',
+                left: split[0],
+                top: split[1]
             });
 
             testEl.appendTo(node);
@@ -158,8 +168,11 @@ describe('Background-image', function() {
         {
             prefix: '',
             method: 'url',
-            value: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)',
-            args: ['data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'],
+            value:
+                'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)',
+            args: [
+                'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+            ],
             image: null
         },
         'data url'
@@ -171,7 +184,7 @@ describe('Background-image', function() {
             prefix: '',
             method: 'linear-gradient',
             value: 'linear-gradient(red,black)',
-            args: ['red','black'],
+            args: ['red', 'black'],
             image: null
         },
         'linear-gradient'
@@ -195,26 +208,34 @@ describe('Background-image', function() {
             prefix: '-webkit-',
             method: 'linear-gradient',
             value: '-webkit-linear-gradient(red,black)',
-            args: ['red','black'],
+            args: ['red', 'black'],
             image: null
         },
         'prefixed linear-gradient'
     );
 
     test_parse_background_image(
-        'linear-gradient(red,black), url(test), url("test"),\n none, ', [
-            { prefix: '', method: 'linear-gradient', value: 'linear-gradient(red,black)', args: ['red','black'], image: null },
-            { prefix: '', method: 'url', value: 'url(test)', args: ['test'], image: null  },
-            { prefix: '', method: 'url', value: 'url("test")', args: ['test'], image: null  },
-            { prefix: '', method: 'none', value: 'none', args: [], image: null }
+        'linear-gradient(red,black), url(test), url("test"),\n none, ',
+        [
+            {
+                prefix: '',
+                method: 'linear-gradient',
+                value: 'linear-gradient(red,black)',
+                args: ['red', 'black'],
+                image: null
+            },
+            {prefix: '', method: 'url', value: 'url(test)', args: ['test'], image: null},
+            {prefix: '', method: 'url', value: 'url("test")', args: ['test'], image: null},
+            {prefix: '', method: 'none', value: 'none', args: [], image: null}
         ],
         'multiple backgrounds'
     );
 
-
     function test_parse_background_image(value, expected, name) {
         it(name, function() {
-            expect(html2canvas.utils.parseBackgrounds(value)).to.eql(Array.isArray(expected) ? expected : [expected]);
+            expect(html2canvas.utils.parseBackgrounds(value)).to.eql(
+                Array.isArray(expected) ? expected : [expected]
+            );
         });
     }
 });

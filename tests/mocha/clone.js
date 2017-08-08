@@ -1,1 +1,1 @@
-document.querySelector("#block").className += "class";
+document.querySelector('#block').className += 'class';

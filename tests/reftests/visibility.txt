@@ -1,0 +1,25 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 790, y: 10) > Vector(x: 10, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 8) > Vector(x: 792, y: 178) > Vector(x: 790, y: 176) > Vector(x: 790, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 178) > Vector(x: 8, y: 178) > Vector(x: 10, y: 176) > Vector(x: 790, y: 176))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 178) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 176))
+Text: rgb(0,0,0) normal normal 700 32px Times New Roman
+  [10, 32]: Display:none
+  [198, 32]: and
+  [257, 32]: visible:hidden
+  [457, 32]: tests
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 89) > Vector(x: 790, y: 89) > Vector(x: 788, y: 91) > Vector(x: 12, y: 91))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 89) > Vector(x: 790, y: 112) > Vector(x: 788, y: 110) > Vector(x: 788, y: 91))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 112) > Vector(x: 10, y: 112) > Vector(x: 12, y: 110) > Vector(x: 788, y: 110))
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 112) > Vector(x: 10, y: 89) > Vector(x: 12, y: 91) > Vector(x: 12, y: 110))
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [12, 92]: This
+  [44, 92]: should
+  [91, 92]: be
+  [110, 92]: visible
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 143) > Vector(x: 790, y: 143) > Vector(x: 789, y: 144) > Vector(x: 11, y: 144))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 143) > Vector(x: 790, y: 145) > Vector(x: 789, y: 144) > Vector(x: 789, y: 144))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 145) > Vector(x: 10, y: 145) > Vector(x: 11, y: 144) > Vector(x: 789, y: 144))
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 145) > Vector(x: 10, y: 143) > Vector(x: 11, y: 144) > Vector(x: 11, y: 144))

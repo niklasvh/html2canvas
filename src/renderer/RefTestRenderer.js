@@ -1,5 +1,6 @@
 /* @flow */
 'use strict';
+import {parse} from 'url';
 
 import type {RenderTarget, RenderOptions} from '../Renderer';
 import type Color from '../Color';
@@ -33,10 +34,11 @@ class RefTestRenderer implements RenderTarget<string> {
         this.indent = 0;
         this.lines = [];
         options.logger.log(`RefTest renderer initialized`);
+        this.writeLine(`Window: [${options.width}, ${options.height}]`);
     }
 
     clip(clipPaths: Array<Path>, callback: () => void) {
-        this.writeLine(`Clip ${clipPaths.map(this.formatPath, this).join(', ')}`);
+        this.writeLine(`Clip: ${clipPaths.map(this.formatPath, this).join(' | ')}`);
         this.indent += 2;
         callback();
         this.indent -= 2;
@@ -44,18 +46,18 @@ class RefTestRenderer implements RenderTarget<string> {
 
     drawImage(image: ImageElement, source: Bounds, destination: Bounds) {
         this.writeLine(
-            `Draw image ${this.formatImage(image)} (source: ${this.formatBounds(
+            `Draw image: ${this.formatImage(image)} (source: ${this.formatBounds(
                 source
-            )} (destination: ${this.formatBounds(source)})`
+            )}) (destination: ${this.formatBounds(source)})`
         );
     }
 
     drawShape(path: Path, color: Color) {
-        this.writeLine(`Shape ${color.toString()} ${this.formatPath(path)}`);
+        this.writeLine(`Shape: ${color.toString()} ${this.formatPath(path)}`);
     }
 
     fill(color: Color) {
-        this.writeLine(`Fill ${color.toString()}`);
+        this.writeLine(`Fill: ${color.toString()}`);
     }
 
     getTarget(): Promise<string> {
@@ -64,7 +66,7 @@ class RefTestRenderer implements RenderTarget<string> {
 
     rectangle(x: number, y: number, width: number, height: number, color: Color) {
         const list = [x, y, width, height].map(v => Math.round(v)).join(', ');
-        this.writeLine(`Rectangle [${list}] ${color.toString()}`);
+        this.writeLine(`Rectangle: [${list}] ${color.toString()}`);
     }
 
     formatBounds(bounds: Bounds): string {
@@ -73,8 +75,10 @@ class RefTestRenderer implements RenderTarget<string> {
     }
 
     formatImage(image: ImageElement): string {
-        // $FlowFixMe
-        return image.tagName === 'CANVAS' ? 'Canvas' : `Image src="${image.src}"`;
+        return image.tagName === 'CANVAS'
+            ? 'Canvas'
+            : // $FlowFixMe
+              `Image ("${parse(image.src).pathname.substring(0, 100)}")`;
     }
 
     formatPath(path: Path): string {
@@ -86,7 +90,7 @@ class RefTestRenderer implements RenderTarget<string> {
         const string = path
             .map(v => {
                 if (v.type === PATH.VECTOR) {
-                    return `Vector(x: ${Math.round(v.x)}, y: ${Math.round(v.y)}))`;
+                    return `Vector(x: ${Math.round(v.x)}, y: ${Math.round(v.y)})`;
                 }
                 if (v.type === PATH.BEZIER_CURVE) {
                     const values = [
@@ -102,7 +106,7 @@ class RefTestRenderer implements RenderTarget<string> {
                     return `BezierCurve(${values.join(', ')})`;
                 }
             })
-            .join(', ');
+            .join(' > ');
         return `Path (${string})`;
     }
 
@@ -114,12 +118,14 @@ class RefTestRenderer implements RenderTarget<string> {
             `y1: ${Math.round(gradient.direction.y1)}`
         ];
 
-        const stops = gradient.colorStops.map(stop => `${stop.color.toString()} ${stop.stop}px`);
+        const stops = gradient.colorStops.map(
+            stop => `${stop.color.toString()} ${Math.round(stop.stop * 100) / 100}`
+        );
 
         this.writeLine(
-            `${this.formatBounds(bounds)} linear-gradient(${direction.join(', ')} ${stops.join(
+            `Gradient: ${this.formatBounds(bounds)} linear-gradient(${direction.join(
                 ', '
-            )})`
+            )} ${stops.join(', ')})`
         );
     }
 
@@ -131,7 +137,7 @@ class RefTestRenderer implements RenderTarget<string> {
         offsetY: number
     ) {
         this.writeLine(
-            `Repeat ${this.formatImage(
+            `Repeat: ${this.formatImage(
                 image
             )} [${offsetX}, ${offsetY}] Size (${imageSize.width}, ${imageSize.height}) ${this.formatPath(
                 path
@@ -151,7 +157,7 @@ class RefTestRenderer implements RenderTarget<string> {
             font.fontVariant,
             font.fontWeight,
             font.fontSize,
-            font.fontFamily
+            font.fontFamily.replace(/"/g, '')
         ]
             .join(' ')
             .split(',')[0];
@@ -167,7 +173,7 @@ class RefTestRenderer implements RenderTarget<string> {
             : '';
 
         this.writeLine(
-            `Text ${color.toString()} ${fontString}${shadowString}${textDecorationString}`
+            `Text: ${color.toString()} ${fontString}${shadowString}${textDecorationString}`
         );
 
         this.indent += 2;
@@ -231,18 +237,22 @@ class RefTestRenderer implements RenderTarget<string> {
     }
 
     setOpacity(opacity: number) {
-        this.writeLine(`Opacity ${opacity}`);
+        this.writeLine(`Opacity: ${opacity}`);
     }
 
     transform(offsetX: number, offsetY: number, matrix: Matrix, callback: () => void) {
-        this.writeLine(`Transform (${offsetX}, ${offsetY}) [${matrix.join(', ')}]`);
+        this.writeLine(
+            `Transform: (${Math.round(offsetX)}, ${Math.round(offsetY)}) [${matrix
+                .map(v => Math.round(v * 100) / 100)
+                .join(', ')}]`
+        );
         this.indent += 2;
         callback();
         this.indent -= 2;
     }
 
     writeLine(text: string) {
-        this.lines.push(`${new Array(this.indent).join(' ')}${text}`);
+        this.lines.push(`${new Array(this.indent + 1).join(' ')}${text}`);
     }
 }
 

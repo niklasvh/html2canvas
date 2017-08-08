@@ -10,7 +10,7 @@ import Logger from './Logger';
 import ImageLoader from './ImageLoader';
 import {Bounds, parseDocumentSize} from './Bounds';
 import {cloneWindow} from './Clone';
-import Color from './Color';
+import Color, {TRANSPARENT} from './Color';
 import {FontMetrics} from './Font';
 
 export type Options = {
@@ -24,7 +24,9 @@ export type Options = {
     target: RenderTarget<*> | Array<RenderTarget<*>>,
     type: ?string,
     windowWidth: number,
-    windowHeight: number
+    windowHeight: number,
+    offsetX: number,
+    offsetY: number
 };
 
 const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
@@ -47,14 +49,16 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
         target: new CanvasRenderer(config.canvas),
         type: null,
         windowWidth: defaultView.innerWidth,
-        windowHeight: defaultView.innerHeight
+        windowHeight: defaultView.innerHeight,
+        offsetX: defaultView.pageXOffset,
+        offsetY: defaultView.pageYOffset
     };
 
     const options = {...defaultOptions, ...config};
 
     const windowBounds = new Bounds(
-        defaultView.pageXOffset,
-        defaultView.pageYOffset,
+        options.offsetX,
+        options.offsetY,
         options.windowWidth,
         options.windowHeight
     );
@@ -90,6 +94,10 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
                     : null
                   : stack.container.style.background.backgroundColor
                 : null;
+
+        if (backgroundColor === stack.container.style.background.backgroundColor) {
+            stack.container.style.background.backgroundColor = TRANSPARENT;
+        }
 
         return imageLoader.ready().then(imageStore => {
             if (options.removeContainer === true) {

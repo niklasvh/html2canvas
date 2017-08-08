@@ -1,0 +1,88 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [8, 8]: Fontawesome
+  [101, 8]: icons
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [92, 98]: fa
+  [104, 98]: -
+  [110, 98]: 5x
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 35) > Vector(x: 792, y: 35) > Vector(x: 791, y: 36) > Vector(x: 9, y: 36))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 35) > Vector(x: 792, y: 37) > Vector(x: 791, y: 36) > Vector(x: 791, y: 36))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 37) > Vector(x: 8, y: 37) > Vector(x: 9, y: 36) > Vector(x: 791, y: 36))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 37) > Vector(x: 8, y: 35) > Vector(x: 9, y: 36) > Vector(x: 9, y: 36))
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [55, 242]: fa
+  [67, 242]: -
+  [72, 242]: twitter
+  [118, 242]: on
+  [138, 242]: fa
+  [151, 242]: -
+  [156, 242]: square
+  [198, 242]: -
+  [203, 242]: o
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [55, 285]: fa
+  [67, 285]: -
+  [72, 285]: flag
+  [101, 285]: on
+  [121, 285]: fa
+  [134, 285]: -
+  [139, 285]: circle
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [55, 328]: fa
+  [67, 328]: -
+  [72, 328]: terminal
+  [130, 328]: on
+  [150, 328]: fa
+  [162, 328]: -
+  [168, 328]: square
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [55, 371]: fa
+  [67, 371]: -
+  [72, 371]: ban
+  [100, 371]: on
+  [120, 371]: fa
+  [132, 371]: -
+  [137, 371]: camera
+Text: rgb(0,0,0) normal normal 400 80px FontAwesome
+  [8, 44]: 
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [42, 141]: List
+  [71, 141]: icons
+Text: rgb(0,0,0) normal normal 400 16px FontAwesome
+  [18, 143]: 
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [42, 160]: can
+  [69, 160]: be
+  [87, 160]: used
+Text: rgb(0,0,0) normal normal 400 16px FontAwesome
+  [18, 162]: 
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [42, 179]: as
+  [59, 179]: bullets
+Transform: (24, 186) [0.99, 0.16, -0.16, 0.99, 0, 0]
+  Text: rgb(0,0,0) normal normal 400 16px FontAwesome
+    [17, 180]: 
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [42, 198]: in
+  [59, 198]: lists
+Text: rgb(0,0,0) normal normal 400 16px FontAwesome
+  [18, 199]: 
+Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
+  [13, 232]: 
+Text: rgb(0,0,0) normal normal 400 21.3333px FontAwesome
+  [19, 242]: 
+Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
+  [11, 274]: 
+Text: rgb(255,255,255) normal normal 400 21.3333px FontAwesome
+  [19, 285]: 
+Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
+  [11, 317]: 
+Text: rgb(255,255,255) normal normal 400 21.3333px FontAwesome
+  [19, 328]: 
+Text: rgb(0,0,0) normal normal 400 21.3333px FontAwesome
+  [18, 370]: 
+Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
+  [11, 360]: 
