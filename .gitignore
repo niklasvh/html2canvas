@@ -1,4 +1,5 @@
 /dist
+/build
 /nbproject/
 image.jpg
 /.project
@@ -11,3 +12,5 @@ node_modules/
 .idea/
 .DS_Store
 npm-debug.log
+debug.log
+tests/reftests.js

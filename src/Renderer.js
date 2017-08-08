@@ -151,34 +151,48 @@ export default class Renderer {
     }
 
     renderNodeBackgroundAndBorders(container: NodeContainer) {
+        const HAS_BACKGROUND =
+            !container.style.background.backgroundColor.isTransparent() ||
+            container.style.background.backgroundImage.length;
+
+        const renderableBorders = container.style.border.filter(
+            border =>
+                border.borderStyle !== BORDER_STYLE.NONE && !border.borderColor.isTransparent()
+        );
+
         const callback = () => {
             const backgroundPaintingArea = calculateBackgroungPaintingArea(
                 container.curvedBounds,
                 container.style.background.backgroundClip
             );
-            this.target.clip([backgroundPaintingArea], () => {
-                if (!container.style.background.backgroundColor.isTransparent()) {
-                    this.target.fill(container.style.background.backgroundColor);
-                }
 
-                this.renderBackgroundImage(container);
-            });
+            if (HAS_BACKGROUND) {
+                this.target.clip([backgroundPaintingArea], () => {
+                    if (!container.style.background.backgroundColor.isTransparent()) {
+                        this.target.fill(container.style.background.backgroundColor);
+                    }
 
-            container.style.border.forEach((border, side) => {
+                    this.renderBackgroundImage(container);
+                });
+            }
+
+            renderableBorders.forEach((border, side) => {
                 this.renderBorder(border, side, container.curvedBounds);
             });
         };
 
-        const paths = container.parent ? container.parent.getClipPaths() : [];
-        if (paths.length) {
-            this.target.clip(paths, callback);
-        } else {
-            callback();
+        if (HAS_BACKGROUND || renderableBorders.length) {
+            const paths = container.parent ? container.parent.getClipPaths() : [];
+            if (paths.length) {
+                this.target.clip(paths, callback);
+            } else {
+                callback();
+            }
         }
     }
 
     renderBackgroundImage(container: NodeContainer) {
-        container.style.background.backgroundImage.reverse().forEach(backgroundImage => {
+        container.style.background.backgroundImage.slice(0).reverse().forEach(backgroundImage => {
             if (backgroundImage.source.method === 'url' && backgroundImage.source.args.length) {
                 this.renderBackgroundRepeat(container, backgroundImage);
             } else {
@@ -224,9 +238,7 @@ export default class Renderer {
     }
 
     renderBorder(border: Border, side: BorderSide, curvePoints: BoundCurves) {
-        if (border.borderStyle !== BORDER_STYLE.NONE && !border.borderColor.isTransparent()) {
-            this.target.drawShape(parsePathForBorder(curvePoints, side), border.borderColor);
-        }
+        this.target.drawShape(parsePathForBorder(curvePoints, side), border.borderColor);
     }
 
     renderStack(stack: StackingContext) {

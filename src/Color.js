@@ -247,3 +247,5 @@ const NAMED_COLORS = {
     yellow: [255, 255, 0, null],
     yellowgreen: [154, 205, 50, null]
 };
+
+export const TRANSPARENT = new Color([0, 0, 0, 0]);

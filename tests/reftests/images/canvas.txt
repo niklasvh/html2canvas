@@ -1,0 +1,5 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 708, y: 8) > Vector(x: 708, y: 308) > Vector(x: 8, y: 308))
+  Draw image: Canvas (source: [0, 0, 300, 150]) (destination: [0, 0, 300, 150])

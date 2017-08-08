@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+    <title>Test runner</title>
+</head>
+<body>
+<div id="mocha"></div>
+<script src="/node_modules/mocha/mocha.js"></script>
+<script>
+    mocha.setup('bdd');
+</script>
+<script src="/build/testrunner.js"></script>
+<script>
+    mocha.run();
+</script>
+</body>
+</html>

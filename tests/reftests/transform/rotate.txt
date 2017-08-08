@@ -1,0 +1,12 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Transform: (208, 110) [0.71, -0.71, 0.71, 0.71, 0, 0]
+  Clip: Path (Vector(x: 108, y: 8) > Vector(x: 308, y: 8) > Vector(x: 308, y: 208) > Vector(x: 108, y: 208))
+    Draw image: Image ("/tests/assets/image.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])
+Transform: (667, 110) [0, 1, -1, 0, 0, 0]
+  Clip: Path (Vector(x: 642, y: 8) > Vector(x: 692, y: 8) > Vector(x: 692, y: 208) > Vector(x: 642, y: 208))
+    Draw image: Image ("/tests/assets/image2.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])
+Transform: (158, 360) [0.71, 0.71, -0.71, 0.71, 0, 0]
+  Clip: Path (Vector(x: 108, y: 258) > Vector(x: 208, y: 258) > Vector(x: 208, y: 458) > Vector(x: 108, y: 458))
+    Draw image: Image ("/tests/assets/image.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])

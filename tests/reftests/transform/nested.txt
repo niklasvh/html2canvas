@@ -1,0 +1,42 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 108) > Vector(x: 649, y: 108) > Vector(x: 649, y: 157) > Vector(x: 8, y: 157))
+  Fill: rgb(205,92,92)
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [8, 124]: First
+  [41, 124]: level
+  [76, 124]: content
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [568, 124]: ,
+  [576, 124]: ending
+  [624, 124]: first
+Clip: Path (Vector(x: 653, y: 123) > Vector(x: 749, y: 123) > Vector(x: 749, y: 142) > Vector(x: 653, y: 142))
+  Fill: rgb(188,143,143)
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [653, 124]: something
+  [724, 124]: else
+Transform: (348, 132) [0.99, 0.13, -0.13, 0.99, 0, 0]
+  Clip: Path (Vector(x: 128, y: 108) > Vector(x: 568, y: 108) > Vector(x: 568, y: 157) > Vector(x: 128, y: 157))
+    Fill: rgb(143,188,143)
+  Shape: rgb(255,0,0) Path (Vector(x: 128, y: 108) > Vector(x: 568, y: 108) > Vector(x: 553, y: 123) > Vector(x: 143, y: 123))
+  Shape: rgb(255,0,0) Path (Vector(x: 568, y: 108) > Vector(x: 568, y: 157) > Vector(x: 553, y: 142) > Vector(x: 553, y: 123))
+  Shape: rgb(255,0,0) Path (Vector(x: 568, y: 157) > Vector(x: 128, y: 157) > Vector(x: 143, y: 142) > Vector(x: 553, y: 142))
+  Shape: rgb(255,0,0) Path (Vector(x: 128, y: 157) > Vector(x: 128, y: 108) > Vector(x: 143, y: 123) > Vector(x: 143, y: 142))
+  Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+    [143, 123]: with
+    [175, 123]: second
+    [224, 123]: level
+    [258, 123]: content
+  Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+    [453, 123]: ,
+    [461, 123]: ending
+    [509, 123]: second
+  Transform: (381, 132) [0.33, -0.94, 0.94, 0.33, 0, 0]
+    Clip: Path (Vector(x: 310, y: 123) > Vector(x: 453, y: 123) > Vector(x: 453, y: 142) > Vector(x: 310, y: 142))
+      Fill: rgb(95,158,160)
+    Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+      [310, 123]: and
+      [337, 123]: third
+      [371, 123]: level
+      [406, 123]: content

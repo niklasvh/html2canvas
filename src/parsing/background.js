@@ -350,11 +350,13 @@ const parseBackgroundImage = (image: string, imageLoader: ImageLoader): Array<Ba
                 const key = imageLoader.loadImage(args[0]);
                 args = key ? [key] : [];
             }
-            results.push({
-                prefix,
-                method,
-                args
-            });
+            if (method !== 'none') {
+                results.push({
+                    prefix,
+                    method,
+                    args
+                });
+            }
         }
         args = [];
         method = definition = '';

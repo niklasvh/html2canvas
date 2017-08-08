@@ -7,7 +7,7 @@
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
-    "url": "http://hertzen.com"
+    "url": "https://hertzen.com"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -28,24 +28,40 @@
     "babel-preset-es2015": "6.24.1",
     "babel-preset-flow": "6.23.0",
     "base64-arraybuffer": "0.1.5",
+    "chai": "4.1.1",
+    "chromeless": "^1.2.0",
     "eslint": "4.2.0",
     "eslint-plugin-flowtype": "2.35.0",
     "eslint-plugin-prettier": "2.1.2",
+    "express": "4.15.4",
     "flow-bin": "0.50.0",
+    "glob": "7.1.2",
+    "jquery": "3.2.1",
+    "karma": "1.7.0",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-edge-launcher": "0.4.1",
+    "karma-firefox-launcher": "1.0.1",
+    "karma-ie-launcher": "1.0.0",
+    "karma-mocha": "1.3.0",
+    "mocha": "3.5.0",
     "prettier": "1.5.3",
+    "promise-polyfill": "6.0.2",
     "rimraf": "2.6.1",
+    "slash": "1.0.0",
     "webpack": "3.4.1"
   },
   "scripts": {
     "build": "rimraf dist/ && npm run build:npm && npm run build:browser",
     "build:npm": "babel src/ -d dist/npm/",
     "build:browser": "webpack",
-    "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"src/**/*.js\"",
+    "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"{src,tests,scripts}/**/*.js\"",
     "flow": "flow",
     "lint": "eslint src/**",
-    "test": "npm run flow && npm run lint"
+    "test": "npm run flow && npm run lint",
+    "karma": "karma start karma.conf.js",
+    "watch": "webpack --progress --colors --watch"
   },
-  "homepage": "http://html2canvas.hertzen.com",
+  "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
     "punycode": "2.1.0"

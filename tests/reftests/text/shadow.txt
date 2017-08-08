@@ -1,0 +1,88 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [8, 8]: Some
+  [48, 8]: text
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [271, 8]: followed
+  [332, 8]: by
+  [352, 8]: more
+  [388, 8]: text
+  [416, 8]: without
+  [469, 8]: shadow.
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [653, 8]: and
+  [680, 8]: some
+  [718, 8]: more
+  [754, 8]: text
+  [8, 27]: without
+  [61, 27]: shadow
+Text: rgb(255,255,255) normal normal 400 24px Georgia Shadows: (rgb(0,0,0) 1px 1px 2px, rgb(0,0,255) 0px 0px 24px)
+  [8, 180]: Sed
+  [53, 180]: ut
+  [80, 180]: perspiciatis
+  [208, 180]: unde
+  [268, 180]: omnis
+  [339, 180]: iste
+  [382, 180]: natus
+  [446, 180]: error
+  [506, 180]: sit
+  [538, 180]: voluptatem
+  [8, 207]: accusantium
+  [148, 207]: doloremque
+  [282, 207]: laudantium,
+  [418, 207]: totam
+  [486, 207]: rem
+  [534, 207]: aperiam,
+  [634, 207]: eaque
+  [702, 207]: ipsa
+  [8, 234]: quae
+  [65, 234]: ab
+  [96, 234]: illo
+  [136, 234]: inventore.
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman Shadows: (rgb(0,0,0) 0px -2px 0px)
+  [8, 286]: Sed
+  [36, 286]: ut
+  [52, 286]: perspiciatis
+  [129, 286]: unde
+  [164, 286]: omnis
+  [208, 286]: iste
+  [234, 286]: natus
+  [272, 286]: error
+  [307, 286]: sit
+  [326, 286]: voluptatem
+  [402, 286]: accusantium
+  [486, 286]: doloremque
+  [566, 286]: laudantium,
+  [646, 286]: totam
+  [686, 286]: rem
+  [715, 286]: aperiam,
+  [8, 305]: eaque
+  [49, 305]: ipsa
+  [79, 305]: quae
+  [113, 305]: ab
+  [132, 305]: illo
+  [158, 305]: inventore.
+Text: rgb(0,0,0) normal normal 400 16px Times New Roman Shadows: (rgb(136,136,136) 1px 1px 3px)
+  [76, 8]: followed
+  [137, 8]: by
+  [157, 8]: text
+  [185, 8]: with
+  [218, 8]: shadow
+Text: rgb(0,0,0) normal normal 700 16px Times New Roman Shadows: (rgb(0,0,0) 1px 1px 2px, rgb(0,0,255) 0px 0px 16px)
+  [525, 8]: Multi
+  [567, 8]: text
+  [597, 8]: shadow
+Text: rgba(0,0,0,0) normal normal 400 48px Times New Roman Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px)
+  [8, 46]: testing
+  [148, 46]: with
+  [245, 46]: transparent
+Text: rgba(0,255,0,0.5) normal normal 700 48px Times New Roman Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px) solid rgba(0,255,0,0.5) underline
+  [470, 46]: testing
+  [606, 46]:  
+  [618, 46]: with
+  [709, 46]:  
+  [8, 102]: low
+  [80, 102]:  
+  [92, 102]: opacity
