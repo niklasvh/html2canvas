@@ -82,7 +82,12 @@ export default class NodeContainer {
     image: ?string;
     index: number;
 
-    constructor(node: HTMLElement, parent: ?NodeContainer, imageLoader: ImageLoader, index: number) {
+    constructor(
+        node: HTMLElement,
+        parent: ?NodeContainer,
+        imageLoader: ImageLoader,
+        index: number
+    ) {
         this.parent = parent;
         this.index = index;
         this.childNodes = [];

@@ -40,9 +40,14 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                 promise.then(function(output) {
                     var canvas = Array.isArray(targets) ? output[0] : output;
                     if (Array.isArray(targets)) {
-                        console.log(output[1].split('\n').map(function(line, i) {
-                            return (i + 1) + ':' + line;
-                        }).join('\n'));
+                        console.log(
+                            output[1]
+                                .split('\n')
+                                .map(function(line, i) {
+                                    return i + 1 + ':' + line;
+                                })
+                                .join('\n')
+                        );
                     }
                     var $canvas = $(canvas),
                         finishTime = new Date();
