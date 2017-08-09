@@ -1,88 +1,88 @@
 Window: [800, 600]
 Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [8, 8]: Some
-  [48, 8]: text
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [271, 8]: followed
-  [332, 8]: by
-  [352, 8]: more
-  [388, 8]: text
-  [416, 8]: without
-  [469, 8]: shadow.
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [653, 8]: and
-  [680, 8]: some
-  [718, 8]: more
-  [754, 8]: text
-  [8, 27]: without
-  [61, 27]: shadow
+  [54, 8]: text
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [292, 8]: followed
+  [355, 8]: by
+  [376, 8]: more
+  [417, 8]: text
+  [447, 8]: without
+  [502, 8]: shadow.
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [704, 8]: and
+  [736, 8]: some
+  [8, 26]: more
+  [49, 26]: text
+  [79, 26]: without
+  [134, 26]: shadow
 Text: rgb(255,255,255) normal normal 400 24px Georgia Shadows: (rgb(0,0,0) 1px 1px 2px, rgb(0,0,255) 0px 0px 24px)
-  [8, 180]: Sed
-  [53, 180]: ut
-  [80, 180]: perspiciatis
-  [208, 180]: unde
-  [268, 180]: omnis
-  [339, 180]: iste
-  [382, 180]: natus
-  [446, 180]: error
-  [506, 180]: sit
-  [538, 180]: voluptatem
-  [8, 207]: accusantium
-  [148, 207]: doloremque
-  [282, 207]: laudantium,
-  [418, 207]: totam
-  [486, 207]: rem
-  [534, 207]: aperiam,
-  [634, 207]: eaque
-  [702, 207]: ipsa
-  [8, 234]: quae
-  [65, 234]: ab
-  [96, 234]: illo
-  [136, 234]: inventore.
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman Shadows: (rgb(0,0,0) 0px -2px 0px)
-  [8, 286]: Sed
-  [36, 286]: ut
-  [52, 286]: perspiciatis
-  [129, 286]: unde
-  [164, 286]: omnis
-  [208, 286]: iste
-  [234, 286]: natus
-  [272, 286]: error
-  [307, 286]: sit
-  [326, 286]: voluptatem
-  [402, 286]: accusantium
-  [486, 286]: doloremque
-  [566, 286]: laudantium,
-  [646, 286]: totam
-  [686, 286]: rem
-  [715, 286]: aperiam,
-  [8, 305]: eaque
-  [49, 305]: ipsa
-  [79, 305]: quae
-  [113, 305]: ab
-  [132, 305]: illo
-  [158, 305]: inventore.
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman Shadows: (rgb(136,136,136) 1px 1px 3px)
-  [76, 8]: followed
-  [137, 8]: by
-  [157, 8]: text
-  [185, 8]: with
-  [218, 8]: shadow
-Text: rgb(0,0,0) normal normal 700 16px Times New Roman Shadows: (rgb(0,0,0) 1px 1px 2px, rgb(0,0,255) 0px 0px 16px)
-  [525, 8]: Multi
-  [567, 8]: text
-  [597, 8]: shadow
-Text: rgba(0,0,0,0) normal normal 400 48px Times New Roman Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px)
-  [8, 46]: testing
-  [148, 46]: with
-  [245, 46]: transparent
-Text: rgba(0,255,0,0.5) normal normal 700 48px Times New Roman Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px) solid rgba(0,255,0,0.5) underline
-  [470, 46]: testing
-  [606, 46]:  
-  [618, 46]: with
-  [709, 46]:  
-  [8, 102]: low
-  [80, 102]:  
-  [92, 102]: opacity
+  [8, 178]: Sed
+  [53, 178]: ut
+  [80, 178]: perspiciatis
+  [208, 178]: unde
+  [268, 178]: omnis
+  [339, 178]: iste
+  [382, 178]: natus
+  [446, 178]: error
+  [506, 178]: sit
+  [538, 178]: voluptatem
+  [8, 206]: accusantium
+  [148, 206]: doloremque
+  [282, 206]: laudantium,
+  [418, 206]: totam
+  [486, 206]: rem
+  [534, 206]: aperiam,
+  [634, 206]: eaque
+  [702, 206]: ipsa
+  [8, 233]: quae
+  [65, 233]: ab
+  [96, 233]: illo
+  [136, 233]: inventore.
+Text: rgb(0,0,0) normal normal 400 16px Arial Shadows: (rgb(0,0,0) 0px -2px 0px)
+  [8, 284]: Sed
+  [41, 284]: ut
+  [59, 284]: perspiciatis
+  [143, 284]: unde
+  [183, 284]: omnis
+  [230, 284]: iste
+  [260, 284]: natus
+  [303, 284]: error
+  [342, 284]: sit
+  [362, 284]: voluptatem
+  [445, 284]: accusantium
+  [539, 284]: doloremque
+  [628, 284]: laudantium,
+  [715, 284]: totam
+  [760, 284]: rem
+  [8, 302]: aperiam,
+  [75, 302]: eaque
+  [124, 302]: ipsa
+  [158, 302]: quae
+  [198, 302]: ab
+  [220, 302]: illo
+  [244, 302]: inventore.
+Text: rgb(0,0,0) normal normal 400 16px Arial Shadows: (rgb(136,136,136) 1px 1px 3px)
+  [84, 8]: followed
+  [148, 8]: by
+  [169, 8]: text
+  [199, 8]: with
+  [232, 8]: shadow
+Text: rgb(0,0,0) normal normal 700 16px Arial Shadows: (rgb(0,0,0) 1px 1px 2px, rgb(0,0,255) 0px 0px 16px)
+  [566, 8]: Multi
+  [607, 8]: text
+  [640, 8]: shadow
+Text: rgba(0,0,0,0) normal normal 400 48px Arial Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px)
+  [8, 45]: testing
+  [163, 45]: with
+  [262, 45]: transparent
+Text: rgba(0,255,0,0.5) normal normal 700 48px Arial Shadows: (rgb(0,0,255) 0px 0px 5px, rgb(255,0,0) 2px 2px 0px) solid rgba(0,255,0,0.5) underline
+  [518, 45]: testing
+  [675, 45]:  
+  [688, 45]: with
+  [784, 45]:  
+  [8, 100]: low
+  [88, 100]:  
+  [101, 100]: opacity

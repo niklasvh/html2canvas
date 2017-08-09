@@ -17,11 +17,13 @@ export const NodeParser = (
         logger.log(`Starting node parsing`);
     }
 
-    const container = new NodeContainer(node, null, imageLoader);
+    let index = 0;
+
+    const container = new NodeContainer(node, null, imageLoader, index++);
     const stack = new StackingContext(container, null, true);
 
     createPseudoHideStyles(node.ownerDocument);
-    parseNodeTree(node, container, stack, imageLoader);
+    parseNodeTree(node, container, stack, imageLoader, index);
 
     if (__DEV__) {
         logger.log(`Finished parsing node tree`);
@@ -41,7 +43,8 @@ const parseNodeTree = (
     node: HTMLElement,
     parent: NodeContainer,
     stack: StackingContext,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader,
+    index: number
 ): void => {
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
         nextNode = childNode.nextSibling;
@@ -57,7 +60,7 @@ const parseNodeTree = (
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
                 inlinePseudoElement(childNode, PSEUDO_BEFORE);
                 inlinePseudoElement(childNode, PSEUDO_AFTER);
-                const container = new NodeContainer(childNode, parent, imageLoader);
+                const container = new NodeContainer(childNode, parent, imageLoader, index++);
                 if (container.isVisible()) {
                     if (childNode.tagName === 'INPUT') {
                         // $FlowFixMe
@@ -89,12 +92,12 @@ const parseNodeTree = (
                         );
                         parentStack.contexts.push(childStack);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, childStack, imageLoader);
+                            parseNodeTree(childNode, container, childStack, imageLoader, index);
                         }
                     } else {
                         stack.children.push(container);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, stack, imageLoader);
+                            parseNodeTree(childNode, container, stack, imageLoader, index);
                         }
                     }
                 }

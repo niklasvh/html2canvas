@@ -80,9 +80,11 @@ export default class NodeContainer {
     bounds: Bounds;
     curvedBounds: BoundCurves;
     image: ?string;
+    index: number;
 
-    constructor(node: HTMLElement, parent: ?NodeContainer, imageLoader: ImageLoader) {
+    constructor(node: HTMLElement, parent: ?NodeContainer, imageLoader: ImageLoader, index: number) {
         this.parent = parent;
+        this.index = index;
         this.childNodes = [];
         const defaultView = node.ownerDocument.defaultView;
         const style = defaultView.getComputedStyle(node, null);

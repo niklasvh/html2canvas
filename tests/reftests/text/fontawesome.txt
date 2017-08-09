@@ -1,88 +1,88 @@
 Window: [800, 600]
 Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [8, 8]: Fontawesome
-  [101, 8]: icons
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [92, 98]: fa
-  [104, 98]: -
-  [110, 98]: 5x
-Shape: rgb(0,0,0) Path (Vector(x: 8, y: 35) > Vector(x: 792, y: 35) > Vector(x: 791, y: 36) > Vector(x: 9, y: 36))
-Shape: rgb(0,0,0) Path (Vector(x: 792, y: 35) > Vector(x: 792, y: 37) > Vector(x: 791, y: 36) > Vector(x: 791, y: 36))
-Shape: rgb(0,0,0) Path (Vector(x: 792, y: 37) > Vector(x: 8, y: 37) > Vector(x: 9, y: 36) > Vector(x: 791, y: 36))
-Shape: rgb(0,0,0) Path (Vector(x: 8, y: 37) > Vector(x: 8, y: 35) > Vector(x: 9, y: 36) > Vector(x: 9, y: 36))
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [55, 242]: fa
-  [67, 242]: -
-  [72, 242]: twitter
-  [118, 242]: on
-  [138, 242]: fa
-  [151, 242]: -
-  [156, 242]: square
-  [198, 242]: -
-  [203, 242]: o
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [55, 285]: fa
-  [67, 285]: -
-  [72, 285]: flag
-  [101, 285]: on
-  [121, 285]: fa
-  [134, 285]: -
-  [139, 285]: circle
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [55, 328]: fa
-  [67, 328]: -
-  [72, 328]: terminal
-  [130, 328]: on
-  [150, 328]: fa
-  [162, 328]: -
-  [168, 328]: square
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [55, 371]: fa
-  [67, 371]: -
-  [72, 371]: ban
-  [100, 371]: on
-  [120, 371]: fa
-  [132, 371]: -
-  [137, 371]: camera
+  [113, 8]: icons
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [92, 97]: fa
+  [106, 97]: -
+  [111, 97]: 5x
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 34) > Vector(x: 792, y: 34) > Vector(x: 791, y: 35) > Vector(x: 9, y: 35))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 34) > Vector(x: 792, y: 36) > Vector(x: 791, y: 35) > Vector(x: 791, y: 35))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 36) > Vector(x: 8, y: 36) > Vector(x: 9, y: 35) > Vector(x: 791, y: 35))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 36) > Vector(x: 8, y: 34) > Vector(x: 9, y: 35) > Vector(x: 9, y: 35))
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [55, 239]: fa
+  [68, 239]: -
+  [74, 239]: twitter
+  [121, 239]: on
+  [143, 239]: fa
+  [156, 239]: -
+  [162, 239]: square
+  [211, 239]: -
+  [216, 239]: o
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [55, 282]: fa
+  [68, 282]: -
+  [74, 282]: flag
+  [104, 282]: on
+  [126, 282]: fa
+  [140, 282]: -
+  [145, 282]: circle
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [55, 325]: fa
+  [68, 325]: -
+  [74, 325]: terminal
+  [135, 325]: on
+  [157, 325]: fa
+  [171, 325]: -
+  [176, 325]: square
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [55, 368]: fa
+  [68, 368]: -
+  [74, 368]: ban
+  [105, 368]: on
+  [127, 368]: fa
+  [140, 368]: -
+  [146, 368]: camera
 Text: rgb(0,0,0) normal normal 400 80px FontAwesome
-  [8, 44]: 
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [42, 141]: List
-  [71, 141]: icons
+  [8, 43]: 
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [42, 140]: List
+  [71, 140]: icons
 Text: rgb(0,0,0) normal normal 400 16px FontAwesome
-  [18, 143]: 
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [42, 160]: can
-  [69, 160]: be
-  [87, 160]: used
+  [18, 142]: 
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [42, 158]: can
+  [73, 158]: be
+  [95, 158]: used
 Text: rgb(0,0,0) normal normal 400 16px FontAwesome
-  [18, 162]: 
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [42, 179]: as
-  [59, 179]: bullets
-Transform: (24, 186) [0.99, 0.16, -0.16, 0.99, 0, 0]
+  [18, 160]: 
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [42, 176]: as
+  [63, 176]: bullets
+Transform: (24, 182) [0.97, 0.26, -0.26, 0.97, 0, 0]
   Text: rgb(0,0,0) normal normal 400 16px FontAwesome
-    [17, 180]: 
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [42, 198]: in
-  [59, 198]: lists
+    [16, 177]: 
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [42, 194]: in
+  [59, 194]: lists
 Text: rgb(0,0,0) normal normal 400 16px FontAwesome
-  [18, 199]: 
+  [18, 196]: 
 Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
-  [13, 232]: 
+  [13, 228]: 
 Text: rgb(0,0,0) normal normal 400 21.3333px FontAwesome
-  [19, 242]: 
+  [19, 238]: 
 Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
-  [11, 274]: 
+  [11, 270]: 
 Text: rgb(255,255,255) normal normal 400 21.3333px FontAwesome
-  [19, 285]: 
+  [19, 281]: 
 Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
-  [11, 317]: 
+  [11, 313]: 
 Text: rgb(255,255,255) normal normal 400 21.3333px FontAwesome
-  [19, 328]: 
+  [19, 324]: 
 Text: rgb(0,0,0) normal normal 400 21.3333px FontAwesome
-  [18, 370]: 
+  [18, 366]: 
 Text: rgb(0,0,0) normal normal 400 42.6667px FontAwesome
-  [11, 360]: 
+  [11, 356]: 

@@ -395,5 +395,6 @@ const sortByZIndex = (a: StackingContext, b: StackingContext): number => {
     } else if (a.container.style.zIndex.order < b.container.style.zIndex.order) {
         return -1;
     }
-    return 0;
+
+    return a.container.index > b.container.index ? 1 : -1;
 };

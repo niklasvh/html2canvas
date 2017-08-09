@@ -177,8 +177,8 @@ const assertPath = (result, expected, desc) => {
                                             break;
 
                                         case 'Transform':
-                                            expect(RESULT.x).to.be.closeTo(args.x, 5, `${desc} x`);
-                                            expect(RESULT.y).to.be.closeTo(args.y, 5, `${desc} y`);
+                                            expect(RESULT.x).to.be.closeTo(args.x, 10, `${desc} x`);
+                                            expect(RESULT.y).to.be.closeTo(args.y, 10, `${desc} y`);
                                             expect(RESULT.matrix).to.equal(
                                                 args.matrix,
                                                 `${desc} matrix`
@@ -186,8 +186,8 @@ const assertPath = (result, expected, desc) => {
                                             break;
 
                                         case 'Repeat':
-                                            expect(RESULT.x).to.be.closeTo(args.x, 5, `${desc} x`);
-                                            expect(RESULT.y).to.be.closeTo(args.y, 5, `${desc} y`);
+                                            expect(RESULT.x).to.be.closeTo(args.x, 10, `${desc} x`);
+                                            expect(RESULT.y).to.be.closeTo(args.y, 10, `${desc} y`);
                                             expect(RESULT.width).to.equal(
                                                 args.width,
                                                 `${desc} width`
@@ -204,8 +204,8 @@ const assertPath = (result, expected, desc) => {
                                             break;
 
                                         case 'Gradient':
-                                            expect(RESULT.x).to.be.closeTo(args.x, 5, `${desc} x`);
-                                            expect(RESULT.y).to.be.closeTo(args.y, 5, `${desc} y`);
+                                            expect(RESULT.x).to.be.closeTo(args.x, 10, `${desc} x`);
+                                            expect(RESULT.y).to.be.closeTo(args.y, 10, `${desc} y`);
                                             expect(RESULT.x0).to.be.closeTo(
                                                 args.x0,
                                                 5,

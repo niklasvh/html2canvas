@@ -52,15 +52,6 @@ Text: rgb(0,0,0) normal normal 400 12px Arial
 Text: rgb(0,0,0) normal normal 700 12px Arial
   [92, 74]: LEVEL
   [134, 74]: #2
-Clip: Path (Vector(x: 197, y: 169) > Vector(x: 306, y: 169) > Vector(x: 306, y: 186) > Vector(x: 197, y: 186))
-  Fill: rgb(221,221,255)
-Shape: rgb(0,0,153) Path (Vector(x: 197, y: 169) > Vector(x: 306, y: 169) > Vector(x: 304, y: 171) > Vector(x: 199, y: 171))
-Shape: rgb(0,0,153) Path (Vector(x: 306, y: 169) > Vector(x: 306, y: 186) > Vector(x: 304, y: 184) > Vector(x: 304, y: 171))
-Shape: rgb(0,0,153) Path (Vector(x: 306, y: 186) > Vector(x: 197, y: 186) > Vector(x: 199, y: 184) > Vector(x: 304, y: 184))
-Shape: rgb(0,0,153) Path (Vector(x: 197, y: 186) > Vector(x: 197, y: 169) > Vector(x: 199, y: 171) > Vector(x: 199, y: 184))
-Text: rgb(0,0,0) normal normal 700 12px Arial
-  [204, 171]: LEVEL
-  [246, 171]: #3
 Clip: Path (Vector(x: 197, y: 81) > Vector(x: 306, y: 81) > Vector(x: 306, y: 98) > Vector(x: 197, y: 98))
   Fill: rgb(221,221,255)
 Shape: rgb(0,0,153) Path (Vector(x: 197, y: 81) > Vector(x: 306, y: 81) > Vector(x: 304, y: 83) > Vector(x: 199, y: 83))
@@ -70,6 +61,15 @@ Shape: rgb(0,0,153) Path (Vector(x: 197, y: 98) > Vector(x: 197, y: 81) > Vector
 Text: rgb(0,0,0) normal normal 700 12px Arial
   [204, 83]: LEVEL
   [246, 83]: #3
+Clip: Path (Vector(x: 197, y: 98) > Vector(x: 306, y: 98) > Vector(x: 306, y: 116) > Vector(x: 197, y: 116))
+  Fill: rgb(221,221,255)
+Shape: rgb(0,0,153) Path (Vector(x: 197, y: 98) > Vector(x: 306, y: 98) > Vector(x: 304, y: 100) > Vector(x: 199, y: 100))
+Shape: rgb(0,0,153) Path (Vector(x: 306, y: 98) > Vector(x: 306, y: 116) > Vector(x: 304, y: 114) > Vector(x: 304, y: 100))
+Shape: rgb(0,0,153) Path (Vector(x: 306, y: 116) > Vector(x: 197, y: 116) > Vector(x: 199, y: 114) > Vector(x: 304, y: 114))
+Shape: rgb(0,0,153) Path (Vector(x: 197, y: 116) > Vector(x: 197, y: 98) > Vector(x: 199, y: 100) > Vector(x: 199, y: 114))
+Text: rgb(0,0,0) normal normal 700 12px Arial
+  [204, 100]: LEVEL
+  [246, 100]: #3
 Clip: Path (Vector(x: 197, y: 116) > Vector(x: 306, y: 116) > Vector(x: 306, y: 134) > Vector(x: 197, y: 134))
   Fill: rgb(221,221,255)
 Shape: rgb(0,0,153) Path (Vector(x: 197, y: 116) > Vector(x: 306, y: 116) > Vector(x: 304, y: 118) > Vector(x: 199, y: 118))
@@ -97,15 +97,15 @@ Shape: rgb(0,0,153) Path (Vector(x: 197, y: 169) > Vector(x: 197, y: 151) > Vect
 Text: rgb(0,0,0) normal normal 700 12px Arial
   [204, 153]: LEVEL
   [246, 153]: #3
-Clip: Path (Vector(x: 197, y: 98) > Vector(x: 306, y: 98) > Vector(x: 306, y: 116) > Vector(x: 197, y: 116))
+Clip: Path (Vector(x: 197, y: 169) > Vector(x: 306, y: 169) > Vector(x: 306, y: 186) > Vector(x: 197, y: 186))
   Fill: rgb(221,221,255)
-Shape: rgb(0,0,153) Path (Vector(x: 197, y: 98) > Vector(x: 306, y: 98) > Vector(x: 304, y: 100) > Vector(x: 199, y: 100))
-Shape: rgb(0,0,153) Path (Vector(x: 306, y: 98) > Vector(x: 306, y: 116) > Vector(x: 304, y: 114) > Vector(x: 304, y: 100))
-Shape: rgb(0,0,153) Path (Vector(x: 306, y: 116) > Vector(x: 197, y: 116) > Vector(x: 199, y: 114) > Vector(x: 304, y: 114))
-Shape: rgb(0,0,153) Path (Vector(x: 197, y: 116) > Vector(x: 197, y: 98) > Vector(x: 199, y: 100) > Vector(x: 199, y: 114))
+Shape: rgb(0,0,153) Path (Vector(x: 197, y: 169) > Vector(x: 306, y: 169) > Vector(x: 304, y: 171) > Vector(x: 199, y: 171))
+Shape: rgb(0,0,153) Path (Vector(x: 306, y: 169) > Vector(x: 306, y: 186) > Vector(x: 304, y: 184) > Vector(x: 304, y: 171))
+Shape: rgb(0,0,153) Path (Vector(x: 306, y: 186) > Vector(x: 197, y: 186) > Vector(x: 199, y: 184) > Vector(x: 304, y: 184))
+Shape: rgb(0,0,153) Path (Vector(x: 197, y: 186) > Vector(x: 197, y: 169) > Vector(x: 199, y: 171) > Vector(x: 199, y: 184))
 Text: rgb(0,0,0) normal normal 700 12px Arial
-  [204, 100]: LEVEL
-  [246, 100]: #3
+  [204, 171]: LEVEL
+  [246, 171]: #3
 Clip: Path (Vector(x: 197, y: 186) > Vector(x: 306, y: 186) > Vector(x: 306, y: 204) > Vector(x: 197, y: 204))
   Fill: rgb(221,221,255)
 Shape: rgb(0,0,153) Path (Vector(x: 197, y: 186) > Vector(x: 306, y: 186) > Vector(x: 304, y: 188) > Vector(x: 199, y: 188))
