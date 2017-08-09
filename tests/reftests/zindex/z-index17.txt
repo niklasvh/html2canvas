@@ -5,9 +5,9 @@ Clip: Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 792, y: 8) > V
   Fill: rgb(238,130,238)
 Clip: Path (Vector(x: 0, y: 0) > Vector(x: 800, y: 0) > Vector(x: 800, y: 100) > Vector(x: 0, y: 100))
   Fill: rgb(85,107,47)
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [0, 0]: fixed
-  [37, 0]: z
-  [44, 0]: -
-  [49, 0]: index
-  [89, 0]: 10
+  [38, 0]: z
+  [46, 0]: -
+  [52, 0]: index
+  [94, 0]: 10

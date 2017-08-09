@@ -1,31 +1,31 @@
 Window: [800, 600]
 Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [8, 16]: This
-  [40, 16]: text
-  [68, 16]: will
-  [97, 16]: be
-  [116, 16]: beneath
-  [170, 16]: everything.
+  [43, 16]: text
+  [73, 16]: will
+  [100, 16]: be
+  [122, 16]: beneath
+  [184, 16]: everything.
 Clip: Path (Vector(x: 192, y: 192) > Vector(x: 480, y: 192) > Vector(x: 480, y: 480) > Vector(x: 192, y: 480))
   Draw image: Image ("/tests/assets/image.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [192, 192]: This
-  [224, 192]: text
-  [252, 192]: will
-  [281, 192]: underlay
-  [341, 192]: text1,
-  [381, 192]: but
-  [406, 192]: overlay
-  [458, 192]: the
-  [192, 211]: butterfly
-  [251, 211]: image
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
+  [227, 192]: text
+  [257, 192]: will
+  [284, 192]: underlay
+  [349, 192]: text1,
+  [393, 192]: but
+  [420, 192]: overlay
+  [192, 210]: the
+  [219, 210]: butterfly
+  [280, 210]: image
+Text: rgb(0,0,0) normal normal 400 16px Arial
   [192, 192]: This
-  [224, 192]: text
-  [252, 192]: will
-  [281, 192]: overlay
-  [333, 192]: the
-  [357, 192]: butterfly
-  [416, 192]: image.
+  [227, 192]: text
+  [257, 192]: will
+  [284, 192]: overlay
+  [340, 192]: the
+  [366, 192]: butterfly
+  [428, 192]: image.
