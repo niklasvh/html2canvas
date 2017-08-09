@@ -62,9 +62,8 @@ Text: rgb(0,0,0) normal normal 400 16px FontAwesome
 Text: rgb(0,0,0) normal normal 400 16px Arial
   [42, 176]: as
   [63, 176]: bullets
-Transform: (24, 182) [0.97, 0.26, -0.26, 0.97, 0, 0]
-  Text: rgb(0,0,0) normal normal 400 16px FontAwesome
-    [16, 177]: 
+Text: rgb(0,0,0) normal normal 400 16px FontAwesome
+  [18, 178]: 
 Text: rgb(0,0,0) normal normal 400 16px Arial
   [42, 194]: in
   [59, 194]: lists
