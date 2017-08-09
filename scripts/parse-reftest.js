@@ -1,5 +1,5 @@
-const ACTION = /^\s*(\w+ ?\w*):\s+(.+)$/;
-const TEXT = /^\s*\[(-?\d+), (-?\d+)\]:\s+(.+)$/;
+const ACTION = /^\s*(\w+ ?\w*):\s+(.+)/;
+const TEXT = /^\s*\[(-?\d+), (-?\d+)\]:\s+(.+)/;
 const WINDOW_SIZE = /^\[(-?\d+), (-?\d+)\]$/;
 const RECTANGLE = /^\[(-?\d+), (-?\d+), (-?\d+), (-?\d+)\]\s+(.+)$/;
 const REPEAT = /^Image\s+\("(.+)"\)\s+\[(-?\d+), (-?\d+)\]\s+Size\s+\((-?\d+), (-?\d+)\)\s+(.+)$/;
