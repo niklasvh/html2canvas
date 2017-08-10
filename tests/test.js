@@ -65,21 +65,24 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                         .appendTo(document.body);
                     if (!CI) {
                         $canvas.siblings().toggle();
-                        $(window).click(function() {
-                            var scrollTop = $(window).scrollTop();
-                            $canvas.toggle().siblings().toggle();
-                            $(document.documentElement).css(
-                                'background',
-                                $canvas.is(':visible') ? 'none' : ''
-                            );
-                            $(document.body).css(
-                                'background',
-                                $canvas.is(':visible') ? 'none' : ''
-                            );
-                            throwMessage(
-                                'Canvas Render ' + ($canvas.is(':visible') ? 'visible' : 'hidden')
-                            );
-                            $(window).scrollTop(scrollTop);
+                        $(window).click(function(event) {
+                            if (event.button === 0) {
+                                var scrollTop = $(window).scrollTop();
+                                $canvas.toggle().siblings().toggle();
+                                $(document.documentElement).css(
+                                    'background',
+                                    $canvas.is(':visible') ? 'none' : ''
+                                );
+                                $(document.body).css(
+                                    'background',
+                                    $canvas.is(':visible') ? 'none' : ''
+                                );
+                                throwMessage(
+                                    'Canvas Render ' +
+                                        ($canvas.is(':visible') ? 'visible' : 'hidden')
+                                );
+                                $(window).scrollTop(scrollTop);
+                            }
                         });
                         $(document.documentElement).css(
                             'background',
