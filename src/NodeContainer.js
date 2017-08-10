@@ -122,7 +122,7 @@ export default class NodeContainer {
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
             visibility: parseVisibility(style.visibility),
-            zIndex: position !== POSITION.STATIC ? parseZIndex(style.zIndex) : 0
+            zIndex: parseZIndex(position !== POSITION.STATIC ? style.zIndex : 'auto')
         };
 
         if (this.isTransformed()) {
