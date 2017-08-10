@@ -119,7 +119,7 @@ class RefTestRenderer implements RenderTarget<string> {
         ];
 
         const stops = gradient.colorStops.map(
-            stop => `${stop.color.toString()} ${Math.round(stop.stop * 100) / 100}`
+            stop => `${stop.color.toString()} ${Math.ceil(stop.stop * 100) / 100}`
         );
 
         this.writeLine(
