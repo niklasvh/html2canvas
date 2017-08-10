@@ -7,6 +7,11 @@ const slash = require('slash');
 const parseRefTest = require('./parse-reftest');
 const outputPath = 'tests/reftests.js';
 
+const ignoredTests = [
+    '/tests/reftests/background/radial-gradient.html',
+    '/tests/reftests/text/chinese.html'
+];
+
 glob(
     '../tests/reftests/**/*.html',
     {
@@ -21,10 +26,16 @@ glob(
 
         const testList = files.reduce((acc, filename) => {
             const refTestFilename = path.resolve(__dirname, filename.replace(/\.html$/, '.txt'));
-            console.log(refTestFilename);
-            acc[`/${slash(path.relative('../', filename))}`] = fs.existsSync(refTestFilename)
-                ? parseRefTest(fs.readFileSync(refTestFilename).toString())
-                : null;
+            const name = `/${slash(path.relative('../', filename))}`;
+            if (ignoredTests.indexOf(name) === -1) {
+                console.log(name);
+                acc[name] = fs.existsSync(refTestFilename)
+                    ? parseRefTest(fs.readFileSync(refTestFilename).toString())
+                    : null;
+            } else {
+                console.log(`IGNORED: ${name}`);
+            }
+
 
             return acc;
         }, {});
