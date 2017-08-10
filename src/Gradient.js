@@ -8,7 +8,9 @@ import Color from './Color';
 import Length, {LENGTH_TYPE} from './Length';
 
 const SIDE_OR_CORNER = /^(to )?(left|top|right|bottom)( (left|top|right|bottom))?$/i;
+const PERCENTAGE_ANGLES = /^([+-]?\d*\.?\d+)% ([+-]?\d*\.?\d+)%$/i;
 const ENDS_WITH_LENGTH = /(px)|%|( 0)$/i;
+const FROM_TO = /^(from|to)\((.+)\)$/i;
 
 export type Direction = {
     x0: number,
@@ -33,18 +35,32 @@ export const parseGradient = (
 ): ?Gradient => {
     if (method === 'linear-gradient') {
         return parseLinearGradient(args, bounds);
+    } else if (method === 'gradient' && args[0] === 'linear') {
+        // TODO handle correct angle
+        return parseLinearGradient(
+            ['to bottom'].concat(
+                args
+                    .slice(3)
+                    .map(color => color.match(FROM_TO))
+                    .filter(v => v !== null)
+                    // $FlowFixMe
+                    .map(v => v[2])
+            ),
+            bounds
+        );
     }
-
-    // TODO: webkit-gradient syntax
 };
 
 const parseLinearGradient = (args: Array<string>, bounds: Bounds): Gradient => {
     const angle = parseAngle(args[0]);
-    const HAS_DIRECTION = SIDE_OR_CORNER.test(args[0]) || angle !== null;
+    const HAS_SIDE_OR_CORNER = SIDE_OR_CORNER.test(args[0]);
+    const HAS_DIRECTION = HAS_SIDE_OR_CORNER || angle !== null || PERCENTAGE_ANGLES.test(args[0]);
     const direction = HAS_DIRECTION
         ? angle !== null
           ? calculateGradientDirection(angle, bounds)
-          : parseSideOrCorner(args[0], bounds)
+          : HAS_SIDE_OR_CORNER
+            ? parseSideOrCorner(args[0], bounds)
+            : parsePercentageAngle(args[0], bounds)
         : calculateGradientDirection(Math.PI, bounds);
     const colorStops = [];
     const firstColorStopIndex = HAS_DIRECTION ? 1 : 0;
@@ -165,4 +181,11 @@ const parseSideOrCorner = (side: string, bounds: Bounds): Direction => {
         default:
             return calculateGradientDirection(Math.PI, bounds);
     }
+};
+
+const parsePercentageAngle = (angle: string, bounds: Bounds): Direction => {
+    const [left, top] = angle.split(' ').map(parseFloat);
+    const ratio = left / 100 * bounds.width / (top / 100 * bounds.height);
+
+    return calculateGradientDirection(Math.atan(isNaN(ratio) ? 1 : ratio) + Math.PI / 2, bounds);
 };
