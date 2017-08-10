@@ -97,6 +97,8 @@ export default class NodeContainer {
 
         const IS_INPUT = node.type === 'radio' || node.type === 'checkbox';
 
+        const position = parsePosition(style.position);
+
         this.style = {
             background: IS_INPUT ? INPUT_BACKGROUND : parseBackground(style, imageLoader),
             border: IS_INPUT ? INPUT_BORDERS : parseBorder(style),
@@ -114,13 +116,13 @@ export default class NodeContainer {
             opacity: parseFloat(style.opacity),
             overflow: parseOverflow(style.overflow),
             padding: parsePadding(style),
-            position: parsePosition(style.position),
+            position: position,
             textDecoration: parseTextDecoration(style),
             textShadow: parseTextShadow(style.textShadow),
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
             visibility: parseVisibility(style.visibility),
-            zIndex: parseZIndex(style.zIndex)
+            zIndex: position !== POSITION.STATIC ? parseZIndex(style.zIndex) : 0
         };
 
         if (this.isTransformed()) {
