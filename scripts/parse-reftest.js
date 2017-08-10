@@ -49,7 +49,8 @@ function parseRefTest(txt) {
                 action: 'T',
                 x: parseInt(text[1], 10),
                 y: parseInt(text[2], 10),
-                text: text[3]
+                text: text[3],
+                line: i + 1
             };
         }
         const args = parseAction[2];
