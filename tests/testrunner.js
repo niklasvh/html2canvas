@@ -188,12 +188,14 @@ const assertPath = (result, expected, desc) => {
                                         case 'Repeat':
                                             expect(RESULT.x).to.be.closeTo(args.x, 10, `${desc} x`);
                                             expect(RESULT.y).to.be.closeTo(args.y, 10, `${desc} y`);
-                                            expect(RESULT.width).to.equal(
+                                            expect(RESULT.width).to.be.closeTo(
                                                 args.width,
+                                                3,
                                                 `${desc} width`
                                             );
-                                            expect(RESULT.height).to.equal(
+                                            expect(RESULT.height).to.be.closeTo(
                                                 args.height,
+                                                3,
                                                 `${desc} height`
                                             );
                                             expect(RESULT.imageSrc).to.equal(

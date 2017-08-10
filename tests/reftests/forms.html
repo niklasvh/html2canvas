@@ -8,6 +8,14 @@
             input[type="radio"], input[type="checkbox"] {
                 margin: 10px;
                 display: inline-block;
+                height: 20px;
+
+            }
+            input[type="text"], input[type="password"], textarea, select {
+                height: 20px;
+                padding: 2px;
+                border-width: 2px;
+                width: 150px;
             }
         </style>
 
@@ -23,7 +31,6 @@
 
         <input type="text" value="textbox" style="padding:10px;" />
         <input type="text" value="textbox" style="padding:10px;text-align:right;" />
-        <hr />
         <select>
             <option value="1">Value 1</option>
             <option value="2">Value 2</option>
@@ -42,7 +49,6 @@
             <option value="2" selected>Value 2 with something else</option>
             <option value="3">Value 3</option>
         </select>
-        <hr />
         <input type="submit" value="Submit" />
         <input type="Button" value="Button" />
         <input type="Reset" value="Reset" />
@@ -52,14 +58,12 @@
         <input type="Button" value="Button" style="width:200px;height:50px;"  />
         <input type="Reset" value="Reset" style="width:200px;height:50px;text-align:left;"  />
 
-        <hr />
 
         <textarea>  </textarea>
         <textarea style="border-width:10px;"></textarea>
 
                 <textarea> text </textarea>
         <textarea style="border-width:10px;">text</textarea>
-        <hr />
         <input type="radio" value="radio1" />
         <input type="radio" value="radio2" style="transform:scale(3)" />
         <input type="RADIO" value="radio3" checked />

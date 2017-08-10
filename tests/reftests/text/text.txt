@@ -1,266 +1,266 @@
-Window: [800, 1231]
-Rectangle: [0, 0, 800, 1231] rgba(0,0,0,0)
+Window: [800, 1046]
+Rectangle: [0, 0, 800, 1046] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 700 32px Times New Roman
-  [8, 22]: <h1>
-  [86, 22]: text
-  [138, 22]: -
-  [148, 22]: decoration
-Text: rgb(0,0,0) normal normal 700 24px Times New Roman
-  [8, 889]: <h2>
-  [67, 889]: text
-  [105, 889]: -
-  [113, 889]: transform
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 936]: text
-  [72, 936]: -
-  [77, 936]: transform:none;
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 955]: Text
-  [76, 955]: -
-  [82, 955]: Transform:
-  [157, 955]: Capitalize;
-  [230, 955]: (Including
-  [301, 955]: Foreign
-  [355, 955]: Characters
-  [427, 955]: Such
-  [463, 955]: As
-  [485, 955]: Öaäå)
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 974]: TEXT
-  [88, 974]: -
-  [93, 974]: TRANSFORM:UPPERCASE;
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 992]: text
-  [72, 992]: -
-  [77, 992]: transform:lowercase;
-Text: rgb(0,0,0) normal normal 700 18.72px Times New Roman
-  [8, 1030]: <h3>
-  [54, 1030]: misc
-  [95, 1030]: text
-  [130, 1030]: alignments
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 1070]: word
-  [81, 1070]: -
-  [86, 1070]: spacing:5px;
-  [177, 1070]: (as
-  [205, 1070]: each
-  [243, 1070]: letter
-  [285, 1070]: is
-  [304, 1070]: rendered
-  [370, 1070]: individually,
-  [459, 1070]: the
-  [487, 1070]: bounds
-  [542, 1070]: will
-  [576, 1070]: always
-  [630, 1070]: be
-  [654, 1070]: correct)
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 1097]: line
-  [72, 1097]: -
-  [77, 1097]: height:35px;
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 1132]: (same
-  [90, 1132]: goes
-  [124, 1132]: for
-  [146, 1132]: line
-  [170, 1132]: -
-  [176, 1132]: height)
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [48, 1159]: l
-  [58, 1159]: e
-  [70, 1159]: t
-  [79, 1159]: t
-  [88, 1159]: e
-  [100, 1159]: r
-  [110, 1159]: -
-  [121, 1159]: s
-  [132, 1159]: p
-  [145, 1159]: a
-  [157, 1159]: c
-  [169, 1159]: i
-  [179, 1159]: n
-  [192, 1159]: g
-  [205, 1159]: :
-  [214, 1159]: 5
-  [227, 1159]: p
-  [240, 1159]: x
-  [253, 1159]: ;
-Text: rgb(0,0,0) normal normal 400 16px Times New Roman
-  [162, 1178]: text
-  [186, 1178]: -
-  [192, 1178]: align:right;width:300px;
-Text: rgb(0,0,0) normal small-caps 400 16px Times New Roman
-  [48, 1196]: font
-  [79, 1196]: -
-  [84, 1196]: variant:small
-  [180, 1196]: -
-  [186, 1196]: caps;
+Text: rgb(0,0,0) normal normal 700 36px Arial
+  [8, 20]: <h1>
+  [102, 20]: text
+  [166, 20]: -
+  [178, 20]: decoration
 Text: rgb(0,0,0) normal normal 700 24px Arial
-  [8, 100]: Arial
+  [8, 722]: <h2>
+  [71, 722]: text
+  [113, 722]: -
+  [121, 722]: transform
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 768]: text
+  [74, 768]: -
+  [79, 768]: transform:none;
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 786]: Text
+  [77, 786]: -
+  [83, 786]: Transform:
+  [164, 786]: Capitalize;
+  [243, 786]: (Including
+  [317, 786]: Foreign
+  [376, 786]: Characters
+  [458, 786]: Such
+  [499, 786]: As
+  [522, 786]: Öaäå)
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 804]: TEXT
+  [88, 804]: -
+  [93, 804]: TRANSFORM:UPPERCASE;
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 822]: text
+  [74, 822]: -
+  [79, 822]: transform:lowercase;
+Text: rgb(0,0,0) normal normal 700 16px Arial
+  [8, 855]: <h3>
+  [50, 855]: misc
+  [91, 855]: text
+  [124, 855]: alignments
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 888]: word
+  [83, 888]: -
+  [88, 888]: spacing:5px;
+  [187, 888]: (as
+  [219, 888]: each
+  [263, 888]: letter
+  [308, 888]: is
+  [329, 888]: rendered
+  [403, 888]: individually,
+  [494, 888]: the
+  [525, 888]: bounds
+  [587, 888]: will
+  [619, 888]: always
+  [677, 888]: be
+  [704, 888]: correct)
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 914]: line
+  [73, 914]: -
+  [78, 914]: height:35px;
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 949]: (same
+  [97, 949]: goes
+  [136, 949]: for
+  [159, 949]: line
+  [184, 949]: -
+  [189, 949]: height)
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [48, 975]: l
+  [56, 975]: e
+  [70, 975]: t
+  [80, 975]: t
+  [89, 975]: e
+  [103, 975]: r
+  [114, 975]: -
+  [124, 975]: s
+  [137, 975]: p
+  [151, 975]: a
+  [165, 975]: c
+  [178, 975]: i
+  [186, 975]: n
+  [200, 975]: g
+  [214, 975]: :
+  [224, 975]: 5
+  [237, 975]: p
+  [251, 975]: x
+  [264, 975]: ;
+Text: rgb(0,0,0) normal normal 400 16px Arial
+  [153, 993]: text
+  [179, 993]: -
+  [184, 993]: align:right;width:300px;
+Text: rgb(0,0,0) normal small-caps 400 16px Arial
+  [48, 1011]: font
+  [84, 1011]: -
+  [89, 1011]: variant:small
+  [194, 1011]: -
+  [200, 1011]: caps;
+Text: rgb(0,0,0) normal normal 700 24px Arial
+  [8, 99]: Arial
 Text: rgb(0,0,0) normal normal 400 14px Arial
-  [48, 147]: text
-  [70, 147]: -
-  [75, 147]: decoration:none;
+  [48, 140]: text
+  [70, 140]: -
+  [75, 140]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) underline
-  [48, 163]: text
-  [70, 163]: -
-  [75, 163]: decoration:underline;
+  [48, 148]: text
+  [70, 148]: -
+  [75, 148]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) overline
-  [48, 179]: text
-  [70, 179]: -
-  [75, 179]: decoration:overline;
+  [48, 156]: text
+  [70, 156]: -
+  [75, 156]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 14px Arial solid rgb(0,0,0) line-through
-  [48, 195]: text
-  [70, 195]: -
-  [75, 195]: decoration:line
-  [166, 195]: -
-  [171, 195]: through;
+  [48, 164]: text
+  [70, 164]: -
+  [75, 164]: decoration:line
+  [166, 164]: -
+  [171, 164]: through;
 Text: rgb(0,0,0) normal normal 400 18px Arial
-  [48, 229]: text
-  [77, 229]: -
-  [83, 229]: decoration:none;
+  [48, 192]: text
+  [77, 192]: -
+  [83, 192]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) underline
-  [48, 250]: text
-  [77, 250]: -
-  [83, 250]: decoration:underline;
+  [48, 208]: text
+  [77, 208]: -
+  [83, 208]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) overline
-  [48, 270]: text
-  [77, 270]: -
-  [83, 270]: decoration:overline;
+  [48, 224]: text
+  [77, 224]: -
+  [83, 224]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 18px Arial solid rgb(0,0,0) line-through
-  [48, 291]: text
-  [77, 291]: -
-  [83, 291]: decoration:line
-  [200, 291]: -
-  [206, 291]: through;
+  [48, 240]: text
+  [77, 240]: -
+  [83, 240]: decoration:line
+  [200, 240]: -
+  [206, 240]: through;
 Text: rgb(0,0,0) normal normal 400 24px Arial
-  [48, 336]: text
-  [87, 336]: -
-  [95, 336]: decoration:none;
+  [48, 280]: text
+  [87, 280]: -
+  [95, 280]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) underline
-  [48, 364]: text
-  [87, 364]: -
-  [95, 364]: decoration:underline;
+  [48, 304]: text
+  [87, 304]: -
+  [95, 304]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) overline
-  [48, 392]: text
-  [87, 392]: -
-  [95, 392]: decoration:overline;
+  [48, 328]: text
+  [87, 328]: -
+  [95, 328]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 24px Arial solid rgb(0,0,0) line-through
-  [48, 419]: text
-  [87, 419]: -
-  [95, 419]: decoration:line
-  [251, 419]: -
-  [259, 419]: through;
+  [48, 352]: text
+  [87, 352]: -
+  [95, 352]: decoration:line
+  [251, 352]: -
+  [259, 352]: through;
 Text: rgb(0,0,0) normal normal 700 24px Verdana
-  [347, 99]: Verdana
+  [347, 97]: Verdana
 Text: rgb(0,0,0) normal normal 400 14px Verdana
+  [387, 140]: text
+  [414, 140]: -
+  [420, 140]: decoration:none;
+Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) underline
   [387, 148]: text
   [414, 148]: -
-  [420, 148]: decoration:none;
-Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) underline
-  [387, 165]: text
-  [414, 165]: -
-  [420, 165]: decoration:underline;
+  [420, 148]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) overline
-  [387, 182]: text
-  [414, 182]: -
-  [420, 182]: decoration:overline;
+  [387, 156]: text
+  [414, 156]: -
+  [420, 156]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 14px Verdana solid rgb(0,0,0) line-through
-  [387, 199]: text
-  [414, 199]: -
-  [420, 199]: decoration:line
-  [526, 199]: -
-  [532, 199]: through;
+  [387, 164]: text
+  [414, 164]: -
+  [420, 164]: decoration:line
+  [526, 164]: -
+  [532, 164]: through;
 Text: rgb(0,0,0) normal normal 400 18px Verdana
-  [387, 234]: text
-  [422, 234]: -
-  [430, 234]: decoration:none;
+  [387, 191]: text
+  [422, 191]: -
+  [430, 191]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) underline
-  [387, 255]: text
-  [422, 255]: -
-  [430, 255]: decoration:underline;
+  [387, 207]: text
+  [422, 207]: -
+  [430, 207]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) overline
-  [387, 277]: text
-  [422, 277]: -
-  [430, 277]: decoration:overline;
+  [387, 223]: text
+  [422, 223]: -
+  [430, 223]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 18px Verdana solid rgb(0,0,0) line-through
-  [387, 298]: text
-  [422, 298]: -
-  [430, 298]: decoration:line
-  [565, 298]: -
-  [573, 298]: through;
+  [387, 239]: text
+  [422, 239]: -
+  [430, 239]: decoration:line
+  [565, 239]: -
+  [573, 239]: through;
 Text: rgb(0,0,0) normal normal 400 24px Verdana
-  [387, 344]: text
-  [434, 344]: -
-  [445, 344]: decoration:none;
+  [387, 279]: text
+  [434, 279]: -
+  [445, 279]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) underline
-  [387, 373]: text
-  [434, 373]: -
-  [445, 373]: decoration:underline;
+  [387, 303]: text
+  [434, 303]: -
+  [445, 303]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) overline
-  [387, 402]: text
-  [434, 402]: -
-  [445, 402]: decoration:overline;
+  [387, 327]: text
+  [434, 327]: -
+  [445, 327]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 24px Verdana solid rgb(0,0,0) line-through
-  [387, 432]: text
-  [434, 432]: -
-  [445, 432]: decoration:line
-  [624, 432]: -
-  [636, 432]: through;
+  [387, 351]: text
+  [434, 351]: -
+  [445, 351]: decoration:line
+  [624, 351]: -
+  [636, 351]: through;
 Text: rgb(0,0,0) normal normal 700 24px Tahoma
-  [8, 505]: Tahoma
+  [8, 420]: Tahoma
 Text: rgb(0,0,0) normal normal 400 14px Tahoma
-  [48, 553]: text
-  [72, 553]: -
-  [77, 553]: decoration:none;
+  [48, 462]: text
+  [72, 462]: -
+  [77, 462]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) underline
-  [48, 570]: text
-  [72, 570]: -
-  [77, 570]: decoration:underline;
+  [48, 470]: text
+  [72, 470]: -
+  [77, 470]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) overline
-  [48, 587]: text
-  [72, 587]: -
-  [77, 587]: decoration:overline;
+  [48, 478]: text
+  [72, 478]: -
+  [77, 478]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 14px Tahoma solid rgb(0,0,0) line-through
-  [48, 604]: text
-  [72, 604]: -
-  [77, 604]: decoration:line
-  [168, 604]: -
-  [173, 604]: through;
+  [48, 486]: text
+  [72, 486]: -
+  [77, 486]: decoration:line
+  [168, 486]: -
+  [173, 486]: through;
 Text: rgb(0,0,0) normal normal 400 18px Tahoma
-  [48, 639]: text
-  [78, 639]: -
-  [85, 639]: decoration:none;
+  [48, 513]: text
+  [78, 513]: -
+  [85, 513]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) underline
-  [48, 660]: text
-  [78, 660]: -
-  [85, 660]: decoration:underline;
+  [48, 529]: text
+  [78, 529]: -
+  [85, 529]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) overline
-  [48, 682]: text
-  [78, 682]: -
-  [85, 682]: decoration:overline;
+  [48, 545]: text
+  [78, 545]: -
+  [85, 545]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 18px Tahoma solid rgb(0,0,0) line-through
-  [48, 703]: text
-  [78, 703]: -
-  [85, 703]: decoration:line
-  [202, 703]: -
-  [209, 703]: through;
+  [48, 561]: text
+  [78, 561]: -
+  [85, 561]: decoration:line
+  [202, 561]: -
+  [209, 561]: through;
 Text: rgb(0,0,0) normal normal 400 24px Tahoma
-  [48, 749]: text
-  [88, 749]: -
-  [97, 749]: decoration:none;
+  [48, 602]: text
+  [88, 602]: -
+  [97, 602]: decoration:none;
 Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) underline
-  [48, 778]: text
-  [88, 778]: -
-  [97, 778]: decoration:underline;
+  [48, 626]: text
+  [88, 626]: -
+  [97, 626]: decoration:underline;
 Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) overline
-  [48, 807]: text
-  [88, 807]: -
-  [97, 807]: decoration:overline;
+  [48, 650]: text
+  [88, 650]: -
+  [97, 650]: decoration:overline;
 Text: rgb(0,0,0) normal normal 400 24px Tahoma solid rgb(0,0,0) line-through
-  [48, 835]: text
-  [88, 835]: -
-  [97, 835]: decoration:line
-  [254, 835]: -
-  [263, 835]: through;
+  [48, 674]: text
+  [88, 674]: -
+  [97, 674]: decoration:line
+  [254, 674]: -
+  [263, 674]: through;
