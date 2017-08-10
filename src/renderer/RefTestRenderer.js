@@ -137,11 +137,11 @@ class RefTestRenderer implements RenderTarget<string> {
         offsetY: number
     ) {
         this.writeLine(
-            `Repeat: ${this.formatImage(
-                image
-            )} [${offsetX}, ${offsetY}] Size (${imageSize.width}, ${imageSize.height}) ${this.formatPath(
-                path
-            )}`
+            `Repeat: ${this.formatImage(image)} [${Math.round(offsetX)}, ${Math.round(
+                offsetY
+            )}] Size (${Math.round(imageSize.width)}, ${Math.round(
+                imageSize.height
+            )}) ${this.formatPath(path)}`
         );
     }
 
