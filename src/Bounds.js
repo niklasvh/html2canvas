@@ -15,7 +15,7 @@ const BOTTOM = 2;
 const LEFT = 3;
 
 const H = 0;
-const V = 0;
+const V = 1;
 
 export type BoundCurves = {
     topLeftOuter: BezierCurve | Vector,
