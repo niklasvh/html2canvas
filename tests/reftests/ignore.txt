@@ -1,0 +1,5 @@
+/tests/reftests/background/radial-gradient.html
+/tests/reftests/text/chinese.html
+[Edge]/tests/reftests/acid2.html
+[Edge]/tests/reftests/pseudoelements.html
+[Edge]/tests/reftests/text/multiple.html
