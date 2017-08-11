@@ -24,9 +24,6 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
             : new html2canvas.CanvasRenderer();
         (function($) {
             $.fn.html2canvas = function(options) {
-                if (options && options.profile && window.console && window.console.profile && !CI) {
-                    window.console.profile();
-                }
                 var date = new Date(),
                     $message = null,
                     timeoutTimer = false,
@@ -52,9 +49,6 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                     var $canvas = $(canvas),
                         finishTime = new Date();
 
-                    if (options && options.profile && window.console && window.console.profileEnd) {
-                        window.console.profileEnd();
-                    }
                     $canvas
                         .addClass('html2canvas')
                         .css({
@@ -153,7 +147,6 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                 $.extend(
                     {
                         logging: true,
-                        profile: true,
                         proxy: 'http://localhost:8082',
                         useCORS: false,
                         removeContainer: false,
