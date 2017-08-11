@@ -72,6 +72,8 @@ type StyleDeclaration = {
     zIndex: zIndex
 };
 
+const INPUT_TAGS = ['INPUT', 'TEXTAREA', 'SELECT'];
+
 export default class NodeContainer {
     name: ?string;
     parent: ?NodeContainer;
@@ -114,7 +116,10 @@ export default class NodeContainer {
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
             opacity: parseFloat(style.opacity),
-            overflow: parseOverflow(style.overflow),
+            overflow:
+                INPUT_TAGS.indexOf(node.tagName) === -1
+                    ? parseOverflow(style.overflow)
+                    : OVERFLOW.HIDDEN,
             padding: parsePadding(style),
             position: position,
             textDecoration: parseTextDecoration(style),
