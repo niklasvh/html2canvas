@@ -10,7 +10,7 @@ app.use('/', express.static(path.resolve(__dirname, '../')));
 const listener = app.listen(0, () => {
     async function run() {
         const chromeless = new Chromeless();
-        const tests = Object.keys(reftests);
+        const tests = Object.keys(reftests.testList);
         let i = 0;
         while (tests[i]) {
             const filename = tests[i];
