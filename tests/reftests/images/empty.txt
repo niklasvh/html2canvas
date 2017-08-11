@@ -1,7 +1,7 @@
 Window: [800, 600]
 Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16px Arial
+Text: rgb(0,0,0) normal normal 400 16 Arial
   [8, 8]: Image
   [57, 8]: without
   [112, 8]: src
@@ -9,7 +9,7 @@ Text: rgb(0,0,0) normal normal 400 16px Arial
   [204, 8]: should
   [256, 8]: not
   [283, 8]: crash:
-Text: rgb(0,0,0) normal normal 400 16px Arial
+Text: rgb(0,0,0) normal normal 400 16 Arial
   [8, 78]: Image
   [57, 78]: with
   [90, 78]: broken
