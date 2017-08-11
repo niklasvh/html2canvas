@@ -135,6 +135,17 @@ export default class NodeContainer {
             node.style.transform = 'matrix(1,0,0,1,0,0)';
         }
 
+        // TODO move bound retrieval for all nodes to a later stage?
+        if (node.tagName === 'IMG') {
+            node.addEventListener('load', () => {
+                this.bounds = parseBounds(node);
+                this.curvedBounds = parseBoundCurves(
+                    this.bounds,
+                    this.style.border,
+                    this.style.borderRadius
+                );
+            });
+        }
         this.image = getImage(node, imageLoader);
         this.bounds = IS_INPUT ? reformatInputBounds(parseBounds(node)) : parseBounds(node);
         this.curvedBounds = parseBoundCurves(
