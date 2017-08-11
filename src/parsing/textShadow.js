@@ -10,33 +10,85 @@ export type TextShadow = {
     blur: number
 };
 
-const TEXT_SHADOW_PROPERTY = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){3})/g;
-const TEXT_SHADOW_VALUES = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+const NUMBER = /^([+-]|\d|\.)$/i;
 
 export const parseTextShadow = (textShadow: ?string): Array<TextShadow> | null => {
     if (textShadow === 'none' || typeof textShadow !== 'string') {
         return null;
     }
 
-    const shadows = textShadow.match(TEXT_SHADOW_PROPERTY);
+    let currentValue = '';
+    let isLength = false;
+    const values = [];
+    const shadows = [];
+    let numParens = 0;
+    let color = null;
 
-    if (!shadows) {
-        return null;
-    }
+    const appendValue = () => {
+        if (currentValue.length) {
+            if (isLength) {
+                values.push(parseFloat(currentValue));
+            } else {
+                color = new Color(currentValue);
+            }
+        }
+        isLength = false;
+        currentValue = '';
+    };
 
-    const shadowList = [];
-
-    for (let i = 0; i < shadows.length; i++) {
-        const shadow = shadows[i].match(TEXT_SHADOW_VALUES);
-        if (shadow) {
-            shadowList.push({
-                color: new Color(shadow[0]),
-                offsetX: shadow[1] ? parseFloat(shadow[1].replace('px', '')) : 0,
-                offsetY: shadow[2] ? parseFloat(shadow[2].replace('px', '')) : 0,
-                blur: shadow[3] ? parseFloat(shadow[3].replace('px', '')) : 0
+    const appendShadow = () => {
+        if (values.length && color !== null) {
+            shadows.push({
+                color,
+                offsetX: values[0] || 0,
+                offsetY: values[1] || 0,
+                blur: values[2] || 0
             });
+        }
+        values.splice(0, values.length);
+        color = null;
+    };
+
+    for (let i = 0; i < textShadow.length; i++) {
+        const c = textShadow[i];
+        switch (c) {
+            case '(':
+                currentValue += c;
+                numParens++;
+                break;
+            case ')':
+                currentValue += c;
+                numParens--;
+                break;
+            case ',':
+                if (numParens === 0) {
+                    appendValue();
+                    appendShadow();
+                } else {
+                    currentValue += c;
+                }
+                break;
+            case ' ':
+                if (numParens === 0) {
+                    appendValue();
+                } else {
+                    currentValue += c;
+                }
+                break;
+            default:
+                if (currentValue.length === 0 && NUMBER.test(c)) {
+                    isLength = true;
+                }
+                currentValue += c;
         }
     }
 
-    return shadowList;
+    appendValue();
+    appendShadow();
+
+    if (shadows.length === 0) {
+        return null;
+    }
+
+    return shadows;
 };
