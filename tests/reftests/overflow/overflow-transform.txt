@@ -7,7 +7,7 @@ Shape: rgb(0,0,0) Path (Vector(x: 312, y: 312) > Vector(x: 8, y: 312) > Vector(x
 Shape: rgb(0,0,0) Path (Vector(x: 8, y: 312) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 310))
 Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
 Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [10, 26]: Le
     [32, 26]: Lorem
     [82, 26]: Ipsum

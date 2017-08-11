@@ -1,7 +1,7 @@
 Window: [800, 632]
 Rectangle: [0, 0, 800, 632] rgba(0,0,0,0)
 Opacity: 1
-Text: rgb(0,0,0) normal normal 700 32px Arial
+Text: rgb(0,0,0) normal normal 700 32 Arial
   [8, 10]: Overflow:
   [164, 10]: visible
 Clip: Path (Vector(x: 8, y: 48) > Vector(x: 320, y: 48) > Vector(x: 320, y: 260) > Vector(x: 8, y: 260))
@@ -10,7 +10,7 @@ Shape: rgb(0,0,0) Path (Vector(x: 8, y: 48) > Vector(x: 320, y: 48) > Vector(x: 
 Shape: rgb(0,0,0) Path (Vector(x: 320, y: 48) > Vector(x: 320, y: 260) > Vector(x: 314, y: 254) > Vector(x: 314, y: 54))
 Shape: rgb(0,0,0) Path (Vector(x: 320, y: 260) > Vector(x: 8, y: 260) > Vector(x: 14, y: 254) > Vector(x: 314, y: 254))
 Shape: rgb(0,0,0) Path (Vector(x: 8, y: 260) > Vector(x: 8, y: 48) > Vector(x: 14, y: 54) > Vector(x: 14, y: 254))
-Text: rgb(0,0,0) normal normal 400 16px Arial
+Text: rgb(0,0,0) normal normal 400 16 Arial
   [14, 54]: Lorem
   [64, 54]: Ipsum
   [112, 54]: is
@@ -95,13 +95,13 @@ Text: rgb(0,0,0) normal normal 400 16px Arial
   [209, 255]: publishing
   [14, 272]: software
   [79, 272]: like
-Text: rgb(0,0,0) normal normal 400 16px Arial
+Text: rgb(0,0,0) normal normal 400 16 Arial
   [245, 272]: including
   [14, 289]: versions
   [78, 289]: of
   [96, 289]: Lorem
   [146, 289]: Ipsum.
-Text: rgb(0,0,0) normal normal 700 32px Arial
+Text: rgb(0,0,0) normal normal 700 32 Arial
   [8, 322]: Overflow:
   [164, 322]: hidden
 Clip: Path (Vector(x: 8, y: 360) > Vector(x: 320, y: 360) > Vector(x: 320, y: 572) > Vector(x: 8, y: 572))
@@ -111,7 +111,7 @@ Shape: rgb(0,0,0) Path (Vector(x: 320, y: 360) > Vector(x: 320, y: 572) > Vector
 Shape: rgb(0,0,0) Path (Vector(x: 320, y: 572) > Vector(x: 8, y: 572) > Vector(x: 14, y: 566) > Vector(x: 314, y: 566))
 Shape: rgb(0,0,0) Path (Vector(x: 8, y: 572) > Vector(x: 8, y: 360) > Vector(x: 14, y: 366) > Vector(x: 14, y: 566))
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [14, 366]: Lorem
     [64, 366]: Ipsum
     [112, 366]: is
@@ -182,14 +182,14 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
     [95, 534]: the
     [122, 534]: release
     [178, 534]: of
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [14, 825]: Letraset
     [76, 825]: sheets
     [128, 825]: containing
     [205, 825]: Lorem
     [255, 825]: Ipsum
     [14, 903]: passages,
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [171, 903]: and
     [202, 903]: more
     [243, 903]: recently
@@ -198,7 +198,7 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
     [107, 920]: publishing
     [184, 920]: software
     [249, 920]: like
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [152, 937]: including
     [220, 937]: versions
     [284, 937]: of
@@ -212,12 +212,12 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
   Shape: rgb(0,0,0) Path (Vector(x: 314, y: 766) > Vector(x: 14, y: 766) > Vector(x: 14, y: 761) > Vector(x: 314, y: 761))
   Shape: rgb(0,0,0) Path (Vector(x: 14, y: 766) > Vector(x: 14, y: 551) > Vector(x: 14, y: 561) > Vector(x: 14, y: 761))
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [14, 560]: a
 Clip: Path (BezierCurve(x0: 480, y0: 416, x1: 636, y1: 360, cx0: 480, cy0: 385, cx1: 550, cy1: 360) > BezierCurve(x0: 636, y0: 360, x1: 792, y1: 416, cx0: 722, cy0: 360, cx1: 792, cy1: 385) > BezierCurve(x0: 792, y0: 416, x1: 636, y1: 472, cx0: 792, cy0: 447, cx1: 722, cy1: 472) > BezierCurve(x0: 636, y0: 472, x1: 480, y1: 416, cx0: 550, cy0: 472, cx1: 480, cy1: 447))
   Fill: rgb(204,204,204)
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [486, 366]: Lorem
     [536, 366]: Ipsum
     [584, 366]: is
@@ -288,14 +288,14 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
     [567, 534]: the
     [594, 534]: release
     [650, 534]: of
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [486, 825]: Letraset
     [548, 825]: sheets
     [600, 825]: containing
     [677, 825]: Lorem
     [727, 825]: Ipsum
     [486, 903]: passages,
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [643, 903]: and
     [674, 903]: more
     [715, 903]: recently
@@ -304,7 +304,7 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
     [579, 920]: publishing
     [656, 920]: software
     [721, 920]: like
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [624, 937]: including
     [692, 937]: versions
     [756, 937]: of
@@ -318,23 +318,23 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
   Shape: rgb(0,0,0) Path (Vector(x: 786, y: 766) > Vector(x: 486, y: 766) > Vector(x: 486, y: 761) > Vector(x: 786, y: 761))
   Shape: rgb(0,0,0) Path (Vector(x: 486, y: 766) > Vector(x: 486, y: 551) > Vector(x: 486, y: 561) > Vector(x: 486, y: 761))
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [486, 560]: a
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
   Clip: Path (Vector(x: 563, y: 843) > Vector(x: 638, y: 843) > Vector(x: 638, y: 918) > Vector(x: 563, y: 918))
     Draw image: Image ("/tests/assets/image.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 700 16px Arial
+  Text: rgb(0,0,0) normal normal 700 16 Arial
     [486, 937]: Aldus
     [535, 937]: PageMaker
-Text: rgb(0,0,0) normal normal 700 16px Arial
+Text: rgb(0,0,0) normal normal 700 16 Arial
   [107, 272]: Aldus
   [156, 272]: PageMaker
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
   Clip: Path (Vector(x: 91, y: 843) > Vector(x: 166, y: 843) > Vector(x: 166, y: 918) > Vector(x: 91, y: 918))
     Draw image: Image ("/tests/assets/image.jpg") (source: [0, 0, 75, 75]) (destination: [0, 0, 75, 75])
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 700 16px Arial
+  Text: rgb(0,0,0) normal normal 700 16 Arial
     [14, 937]: Aldus
     [63, 937]: PageMaker
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
@@ -345,7 +345,7 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
   Shape: rgb(0,0,0) Path (Vector(x: 798, y: 1183) > Vector(x: 486, y: 1183) > Vector(x: 492, y: 1177) > Vector(x: 792, y: 1177))
   Shape: rgb(0,0,0) Path (Vector(x: 486, y: 1183) > Vector(x: 486, y: 971) > Vector(x: 492, y: 977) > Vector(x: 492, y: 1177))
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [492, 1027]: Lorem
     [542, 1027]: Ipsum
     [590, 1027]: is
@@ -430,14 +430,14 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
     [687, 1229]: publishing
     [492, 1245]: software
     [557, 1245]: like
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [723, 1245]: including
     [492, 1262]: versions
     [556, 1262]: of
     [574, 1262]: Lorem
     [624, 1262]: Ipsum.
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 400 16px Arial solid rgb(0,0,0) underline
+  Text: rgb(0,0,0) normal normal 400 16 Arial solid rgb(0,0,0) underline
     [492, 977]: position:relative
     [603, 977]:  
     [608, 977]: within
@@ -448,7 +448,7 @@ Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, 
     [778, 976]:  
     [492, 993]: element
 Clip: Path (BezierCurve(x0: 486, y0: 416, x1: 636, y1: 366, cx0: 486, cy0: 388, cx1: 553, cy1: 366) > BezierCurve(x0: 636, y0: 366, x1: 786, y1: 416, cx0: 719, cy0: 366, cx1: 786, cy1: 388) > BezierCurve(x0: 786, y0: 416, x1: 636, y1: 466, cx0: 786, cy0: 444, cx1: 719, cy1: 466) > BezierCurve(x0: 636, y0: 466, x1: 486, y1: 416, cx0: 553, cy0: 466, cx1: 486, cy1: 444))
-  Text: rgb(0,0,0) normal normal 700 16px Arial
+  Text: rgb(0,0,0) normal normal 700 16 Arial
     [585, 1245]: Aldus
     [634, 1245]: PageMaker
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
@@ -459,7 +459,7 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
   Shape: rgb(0,0,0) Path (Vector(x: 326, y: 1183) > Vector(x: 14, y: 1183) > Vector(x: 20, y: 1177) > Vector(x: 320, y: 1177))
   Shape: rgb(0,0,0) Path (Vector(x: 14, y: 1183) > Vector(x: 14, y: 971) > Vector(x: 20, y: 977) > Vector(x: 20, y: 1177))
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [20, 1027]: Lorem
     [70, 1027]: Ipsum
     [118, 1027]: is
@@ -544,14 +544,14 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
     [215, 1229]: publishing
     [20, 1245]: software
     [85, 1245]: like
-  Text: rgb(0,0,0) normal normal 400 16px Arial
+  Text: rgb(0,0,0) normal normal 400 16 Arial
     [251, 1245]: including
     [20, 1262]: versions
     [84, 1262]: of
     [102, 1262]: Lorem
     [152, 1262]: Ipsum.
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 400 16px Arial solid rgb(0,0,0) underline
+  Text: rgb(0,0,0) normal normal 400 16 Arial solid rgb(0,0,0) underline
     [20, 977]: position:relative
     [131, 977]:  
     [136, 977]: within
@@ -562,6 +562,6 @@ Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 5
     [306, 976]:  
     [20, 993]: element
 Clip: Path (Vector(x: 14, y: 366) > Vector(x: 314, y: 366) > Vector(x: 314, y: 566) > Vector(x: 14, y: 566))
-  Text: rgb(0,0,0) normal normal 700 16px Arial
+  Text: rgb(0,0,0) normal normal 700 16 Arial
     [113, 1245]: Aldus
     [162, 1245]: PageMaker

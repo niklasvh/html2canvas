@@ -156,7 +156,7 @@ class RefTestRenderer implements RenderTarget<string> {
             font.fontStyle,
             font.fontVariant,
             font.fontWeight,
-            font.fontSize,
+            parseInt(font.fontSize, 10),
             font.fontFamily.replace(/"/g, '')
         ]
             .join(' ')

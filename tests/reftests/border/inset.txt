@@ -37,3 +37,4 @@ Shape: rgb(0,0,0) Path (Vector(x: 8, y: 568) > Vector(x: 308, y: 568) > Vector(x
 Shape: rgb(0,0,0) Path (Vector(x: 308, y: 568) > Vector(x: 308, y: 685) > Vector(x: 258, y: 635) > Vector(x: 258, y: 618))
 Shape: rgb(0,0,0) Path (Vector(x: 308, y: 685) > Vector(x: 8, y: 685) > Vector(x: 58, y: 635) > Vector(x: 258, y: 635))
 Shape: rgb(0,0,0) Path (Vector(x: 8, y: 685) > Vector(x: 8, y: 568) > Vector(x: 58, y: 618) > Vector(x: 58, y: 635))
+Clip: Path (Vector(x: 58, y: 618) > Vector(x: 258, y: 618) > Vector(x: 258, y: 635) > Vector(x: 58, y: 635))

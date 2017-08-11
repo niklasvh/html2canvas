@@ -5,17 +5,28 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="../test.js"></script>
         <style>
+            body, html {
+                margin: 0;
+            }
             input[type="radio"], input[type="checkbox"] {
                 margin: 10px;
                 display: inline-block;
                 height: 20px;
-
+                border-color: #000;
+                font-family: Arial;
+                font-size: 10px;
+                vertical-align: top;
             }
-            input[type="text"], input[type="password"], textarea, select {
+            input[type="text"], input[type="password"], input[type="submit"], input[type="reset"], input[type="button"], button, textarea, select {
                 height: 20px;
                 padding: 2px;
                 border-width: 2px;
                 width: 150px;
+                border-color: #000;
+                font-family: Arial;
+                font-size: 16px;
+                background-color: #fff;
+                color: #000;
             }
         </style>
 
@@ -80,6 +91,6 @@
         <input type="checkbox" value="checkbox6" style="width: 200px;" />
         <input type="checkbox" value="checkbox6" style="width: 200px; height: 200px;" />
         <input type="checkbox" value="checkbox6" style="width: 200px; height: 200px;" checked />
-        <div style="position: absolute; width: 10px; height: 10px; border:1px solid rgb(165,165,165); border-radius: 3px; background: rgb(222,222,222)"></div>
+        <div style="width: 10px; height: 10px; border:1px solid rgb(165,165,165); border-radius: 3px; background: rgb(222,222,222)"></div>
     </body>
 </html>
