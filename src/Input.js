@@ -7,6 +7,7 @@ import {BACKGROUND_CLIP, BACKGROUND_ORIGIN} from './parsing/background';
 import {BORDER_STYLE} from './parsing/border';
 
 import Circle from './drawing/Circle';
+import Vector from './drawing/Vector';
 import Color from './Color';
 import Length from './Length';
 import {Bounds} from './Bounds';
@@ -55,21 +56,38 @@ export const inlineInputElement = (node: HTMLInputElement, container: NodeContai
     if (node.type === 'radio' || node.type === 'checkbox') {
         if (node.checked) {
             const size = Math.min(container.bounds.width, container.bounds.height);
-            // TODO draw checkmark with Path Array<Vector>
-            container.style.font.fontSize = `${size - 3}px`;
             container.childNodes.push(
                 node.type === 'checkbox'
-                    ? new TextContainer('\u2714', container, [
-                          new TextBounds(
-                              '\u2714',
-                              new Bounds(
-                                  container.bounds.left + size / 6,
-                                  container.bounds.top + size - 1,
-                                  0,
-                                  0
-                              )
+                    ? [
+                          new Vector(
+                              container.bounds.left + size * 0.39363,
+                              container.bounds.top + size * 0.79
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.16,
+                              container.bounds.top + size * 0.5549
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.27347,
+                              container.bounds.top + size * 0.44071
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.39694,
+                              container.bounds.top + size * 0.5649
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.72983,
+                              container.bounds.top + size * 0.23
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.84,
+                              container.bounds.top + size * 0.34085
+                          ),
+                          new Vector(
+                              container.bounds.left + size * 0.39363,
+                              container.bounds.top + size * 0.79
                           )
-                      ])
+                      ]
                     : new Circle(
                           container.bounds.left + size / 4,
                           container.bounds.top + size / 4,
@@ -78,7 +96,7 @@ export const inlineInputElement = (node: HTMLInputElement, container: NodeContai
             );
         }
     } else {
-        inlineFormElement(getInputValue(node), node, container);
+        inlineFormElement(getInputValue(node), node, container, false);
     }
 };
 
@@ -86,12 +104,12 @@ export const inlineTextAreaElement = (
     node: HTMLTextAreaElement,
     container: NodeContainer
 ): void => {
-    inlineFormElement(node.value, node, container);
+    inlineFormElement(node.value, node, container, true);
 };
 
 export const inlineSelectElement = (node: HTMLSelectElement, container: NodeContainer): void => {
     const option = node.options[node.selectedIndex || 0];
-    inlineFormElement(option ? option.text || '' : '', node, container);
+    inlineFormElement(option ? option.text || '' : '', node, container, false);
 };
 
 export const reformatInputBounds = (bounds: Bounds): Bounds => {
@@ -105,7 +123,12 @@ export const reformatInputBounds = (bounds: Bounds): Bounds => {
     return bounds;
 };
 
-const inlineFormElement = (value: string, node: HTMLElement, container: NodeContainer): void => {
+const inlineFormElement = (
+    value: string,
+    node: HTMLElement,
+    container: NodeContainer,
+    allowLinebreak: boolean
+): void => {
     const body = node.ownerDocument.body;
     if (value.length > 0 && body) {
         const wrapper = node.ownerDocument.createElement('html2canvaswrapper');
@@ -113,6 +136,9 @@ const inlineFormElement = (value: string, node: HTMLElement, container: NodeCont
         wrapper.style.position = 'fixed';
         wrapper.style.left = `${container.bounds.left}px`;
         wrapper.style.top = `${container.bounds.top}px`;
+        if (!allowLinebreak) {
+            wrapper.style.whiteSpace = 'nowrap';
+        }
         const text = node.ownerDocument.createTextNode(value);
         wrapper.appendChild(text);
         body.appendChild(wrapper);
