@@ -43,6 +43,7 @@
     "karma-firefox-launcher": "1.0.1",
     "karma-ie-launcher": "1.0.0",
     "karma-mocha": "1.3.0",
+    "karma-sauce-launcher": "1.1.0",
     "mocha": "3.5.0",
     "prettier": "1.5.3",
     "promise-polyfill": "6.0.2",
@@ -57,8 +58,8 @@
     "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"{src,tests,scripts}/**/*.js\"",
     "flow": "flow",
     "lint": "eslint src/**",
-    "test": "npm run flow && npm run lint && karma start --single-run --browsers Chrome",
-    "karma": "karma start karma.conf.js",
+    "test": "npm run flow && npm run lint && npm run karma",
+    "karma": "karma start --single-run",
     "watch": "webpack --progress --colors --watch"
   },
   "homepage": "https://html2canvas.hertzen.com",
