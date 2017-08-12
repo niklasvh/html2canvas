@@ -2,8 +2,30 @@
 // Generated on Sat Aug 05 2017 23:42:26 GMT+0800 (Malay Peninsula Standard Time)
 
 const port = 9876;
-
 module.exports = function(config) {
+    const slLaunchers = (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) ? {} : {
+        sl_beta_chrome: {
+            base: 'SauceLabs',
+            browserName: 'chrome',
+            platform: 'Windows 10',
+            version: 'beta'
+        },
+        sl_stable_firefox: {
+            base: 'SauceLabs',
+            browserName: 'firefox',
+            platform: 'Windows 10'
+        }
+    };
+
+    const customLaunchers = Object.assign({}, slLaunchers, {
+        stable_chrome: {
+            base: 'Chrome'
+        },
+        stable_firefox: {
+            base: 'Firefox'
+        }
+    });
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -38,8 +60,7 @@ module.exports = function(config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress'],
-
+        reporters: ['dots', 'saucelabs'],
 
         // web server port
         port,
@@ -60,37 +81,18 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'Chrome',
-            'Firefox',
-            'IE9',
-            'IE10',
-            'IE11',
-            'Edge'
-        ],
+        browsers: Object.keys(customLaunchers),
 
 
-        customLaunchers: {
-            IE9: {
-                base: 'IE',
-                'x-ua-compatible': 'IE=EmulateIE9'
-            },
-            IE10: {
-                base: 'IE',
-                'x-ua-compatible': 'IE=EmulateIE10'
-            },
-            IE11: {
-                base: 'IE'
-            }
-        },
+        customLaunchers,
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false,
+        singleRun: true,
 
         // Concurrency level
         // how many browser should be started simultaneous
-        concurrency: Infinity,
+        concurrency: 5,
 
         proxies: {
             '/dist': `http://localhost:${port}/base/dist`,
@@ -106,6 +108,6 @@ module.exports = function(config) {
             }
         },
 
-        browserNoActivityTimeout: 30000
+        browserNoActivityTimeout: 120000
     })
 };
