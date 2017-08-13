@@ -59,19 +59,30 @@ export default class ImageLoader {
         if (__DEV__) {
             this.logger.log(`Added image ${key.substring(0, 256)}`);
         }
-        this.cache[key] = new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
 
-            img.onerror = reject;
-            img.src = src;
-            if (img.complete === true) {
-                // Inline XML images may fail to parse, throwing an Error later on
-                setTimeout(() => {
-                    resolve(img);
-                }, 500);
-            }
-        });
+        const imageLoadHandler = (supportsDataImages: boolean): Promise<Image> => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
+                if (!supportsDataImages) {
+                    img.crossOrigin = 'anonymous';
+                }
+
+                img.onerror = reject;
+                img.src = src;
+                if (img.complete === true) {
+                    // Inline XML images may fail to parse, throwing an Error later on
+                    setTimeout(() => {
+                        resolve(img);
+                    }, 500);
+                }
+            });
+        };
+
+        this.cache[key] = isInlineImage(src)
+            ? FEATURES.SUPPORT_BASE64_DRAWING.then(imageLoadHandler)
+            : imageLoadHandler(true);
         return key;
     }
 
@@ -122,9 +133,9 @@ export class ImageStore {
 }
 
 const INLINE_SVG = /^data:image\/svg\+xml/i;
-const INLINE_IMG = /^data:image\/.*;base64,/i;
+const INLINE_BASE64 = /^data:image\/.*;base64,/i;
 
-const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
+const isInlineImage = (src: string): boolean => INLINE_BASE64.test(src);
 
 const isSVG = (src: string): boolean =>
     src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
