@@ -3,7 +3,7 @@ import parseRefTest from '../scripts/parse-reftest';
 import reftests from './reftests';
 import querystring from 'querystring';
 
-const DOWNLOAD_REFTESTS = true;
+const DOWNLOAD_REFTESTS = false;
 const query = querystring.parse(location.search.replace(/^\?/, ''));
 
 const downloadResult = (filename, data) => {
@@ -126,7 +126,7 @@ const assertPath = (result, expected, desc) => {
 
                                 const delta = 10;
 
-                                if (REFTEST) {
+                                if (REFTEST && query.refTest === 'true') {
                                     const RESULTS = parseRefTest(result);
                                     REFTEST.forEach(({action, line, ...args}, i) => {
                                         const RESULT = RESULTS[i];
