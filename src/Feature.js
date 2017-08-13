@@ -25,12 +25,33 @@ const testRangeBounds = document => {
     return false;
 };
 
+const testSVG = document => {
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'></svg>`;
+
+    try {
+        ctx.drawImage(img, 0, 0);
+        canvas.toDataURL();
+    } catch (e) {
+        return false;
+    }
+    return true;
+};
+
 const FEATURES = {
     // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_RANGE_BOUNDS() {
         'use strict';
         const value = testRangeBounds(document);
         Object.defineProperty(FEATURES, 'SUPPORT_RANGE_BOUNDS', {value});
+        return value;
+    },
+    get SUPPORT_SVG_DRAWING() {
+        'use strict';
+        const value = testSVG(document);
+        Object.defineProperty(FEATURES, 'SUPPORT_SVG_DRAWING', {value});
         return value;
     }
 };

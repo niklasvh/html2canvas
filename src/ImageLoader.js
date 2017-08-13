@@ -7,6 +7,8 @@ import type Logger from './Logger';
 export type ImageElement = Image | HTMLCanvasElement;
 type ImageCache = {[string]: Promise<?ImageElement>};
 
+import FEATURES from './Feature';
+
 export default class ImageLoader {
     origin: string;
     options: Options;
@@ -30,10 +32,20 @@ export default class ImageLoader {
             return src;
         }
 
-        if (this.options.allowTaint === true || this.isInlineImage(src) || this.isSameOrigin(src)) {
-            return this.addImage(src, src);
-        } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
-            // TODO proxy
+        if (isSVG(src)) {
+            if (this.options.allowTaint === true || FEATURES.SUPPORT_SVG_DRAWING) {
+                return this.addImage(src, src);
+            }
+        } else {
+            if (
+                this.options.allowTaint === true ||
+                isInlineImage(src) ||
+                this.isSameOrigin(src)
+            ) {
+                return this.addImage(src, src);
+            } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
+                // TODO proxy
+            }
         }
     }
 
@@ -41,10 +53,6 @@ export default class ImageLoader {
         const key = String(this._index++);
         this.cache[key] = Promise.resolve(node);
         return key;
-    }
-
-    isInlineImage(src: string): boolean {
-        return /data:image\/.*;base64,/i.test(src);
     }
 
     hasImageInCache(key: string): boolean {
@@ -112,3 +120,11 @@ export class ImageStore {
         return index === -1 ? null : this._images[index];
     }
 }
+
+const INLINE_SVG = /^data:image\/svg\+xml/i;
+const INLINE_IMG = /^data:image\/.*;base64,/i;
+
+const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
+
+const isSVG = (src: string): boolean =>
+    src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
