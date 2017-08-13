@@ -46,6 +46,10 @@ const parseNodeTree = (
     imageLoader: ImageLoader,
     index: number
 ): void => {
+    if (__DEV__ && index > 50000) {
+        throw new Error(`Recursion error while parsing node tree`);
+    }
+
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
         nextNode = childNode.nextSibling;
         const defaultView = childNode.ownerDocument.defaultView;

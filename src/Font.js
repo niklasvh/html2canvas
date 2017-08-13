@@ -4,8 +4,7 @@
 import type {Font} from './parsing/font';
 
 const SAMPLE_TEXT = 'Hidden Text';
-const SMALL_IMAGE =
-    'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+import {SMALL_IMAGE} from './Util';
 
 export class FontMetrics {
     _data: {};
