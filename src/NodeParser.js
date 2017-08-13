@@ -102,6 +102,28 @@ const parseNodeTree = (
                     }
                 }
             }
+        } else if (
+            childNode instanceof defaultView.SVGSVGElement ||
+            childNode instanceof SVGSVGElement
+        ) {
+            const container = new NodeContainer(childNode, parent, imageLoader, index++);
+            const treatAsRealStackingContext = createsRealStackingContext(container, childNode);
+            if (treatAsRealStackingContext || createsStackingContext(container)) {
+                // for treatAsRealStackingContext:false, any positioned descendants and descendants
+                // which actually create a new stacking context should be considered part of the parent stacking context
+                const parentStack =
+                    treatAsRealStackingContext || container.isPositioned()
+                        ? stack.getRealParentStackingContext()
+                        : stack;
+                const childStack = new StackingContext(
+                    container,
+                    parentStack,
+                    treatAsRealStackingContext
+                );
+                parentStack.contexts.push(childStack);
+            } else {
+                stack.children.push(container);
+            }
         }
     }
 };
@@ -144,7 +166,10 @@ const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after')
     }
 };
 
-const createsRealStackingContext = (container: NodeContainer, node: HTMLElement): boolean => {
+const createsRealStackingContext = (
+    container: NodeContainer,
+    node: HTMLElement | SVGSVGElement
+): boolean => {
     return (
         container.isRootElement() ||
         container.isPositionedWithZIndex() ||
@@ -158,7 +183,10 @@ const createsStackingContext = (container: NodeContainer): boolean => {
     return container.isPositioned() || container.isFloating();
 };
 
-const isBodyWithTransparentRoot = (container: NodeContainer, node: HTMLElement): boolean => {
+const isBodyWithTransparentRoot = (
+    container: NodeContainer,
+    node: HTMLElement | SVGSVGElement
+): boolean => {
     return (
         node.nodeName === 'BODY' &&
         container.parent instanceof NodeContainer &&

@@ -85,7 +85,7 @@ export default class NodeContainer {
     index: number;
 
     constructor(
-        node: HTMLElement,
+        node: HTMLElement | SVGSVGElement,
         parent: ?NodeContainer,
         imageLoader: ImageLoader,
         index: number
@@ -157,7 +157,11 @@ export default class NodeContainer {
         if (__DEV__) {
             this.name = `${node.tagName.toLowerCase()}${node.id
                 ? `#${node.id}`
-                : ''}${node.className.split(' ').map(s => (s.length ? `.${s}` : '')).join('')}`;
+                : ''}${node.className
+                .toString()
+                .split(' ')
+                .map(s => (s.length ? `.${s}` : ''))
+                .join('')}`;
         }
     }
     getClipPaths(): Array<Path> {
@@ -215,7 +219,16 @@ export default class NodeContainer {
     }
 }
 
-const getImage = (node: HTMLElement, imageLoader: ImageLoader): ?string => {
+const getImage = (node: HTMLElement | SVGSVGElement, imageLoader: ImageLoader): ?string => {
+    if (
+        node instanceof node.ownerDocument.defaultView.SVGSVGElement ||
+        node instanceof SVGSVGElement
+    ) {
+        const s = new XMLSerializer();
+        return imageLoader.loadImage(
+            `data:image/svg+xml,${encodeURIComponent(s.serializeToString(node))}`
+        );
+    }
     switch (node.tagName) {
         case 'IMG':
             // $FlowFixMe
