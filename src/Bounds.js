@@ -46,7 +46,7 @@ export class Bounds {
     }
 }
 
-export const parseBounds = (node: HTMLElement): Bounds => {
+export const parseBounds = (node: HTMLElement | SVGSVGElement): Bounds => {
     return Bounds.fromClientRect(node.getBoundingClientRect());
 };
 
