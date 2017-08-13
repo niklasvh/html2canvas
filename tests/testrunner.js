@@ -95,14 +95,18 @@ const assertPath = (result, expected, desc) => {
                         testContainer.src = url + '?selenium&run=false&reftest&' + Math.random();
                         if (hasHistoryApi) {
                             // Chrome does not resolve relative background urls correctly inside of a nested iframe
-                            history.replaceState(null, '', url);
+                            try {
+                                history.replaceState(null, '', url);
+                            } catch (e) {}
                         }
 
                         document.body.appendChild(testContainer);
                     });
                     after(() => {
                         if (hasHistoryApi) {
-                            history.replaceState(null, '', testRunnerUrl);
+                            try {
+                                history.replaceState(null, '', testRunnerUrl);
+                            } catch (e) {}
                         }
                         document.body.removeChild(testContainer);
                     });
