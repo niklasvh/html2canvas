@@ -48,6 +48,7 @@ const FEATURES = {
         Object.defineProperty(FEATURES, 'SUPPORT_RANGE_BOUNDS', {value});
         return value;
     },
+    // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_SVG_DRAWING() {
         'use strict';
         const value = testSVG(document);

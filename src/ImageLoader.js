@@ -37,11 +37,7 @@ export default class ImageLoader {
                 return this.addImage(src, src);
             }
         } else {
-            if (
-                this.options.allowTaint === true ||
-                isInlineImage(src) ||
-                this.isSameOrigin(src)
-            ) {
+            if (this.options.allowTaint === true || isInlineImage(src) || this.isSameOrigin(src)) {
                 return this.addImage(src, src);
             } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
                 // TODO proxy
@@ -66,10 +62,14 @@ export default class ImageLoader {
         this.cache[key] = new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => resolve(img);
+
             img.onerror = reject;
             img.src = src;
             if (img.complete === true) {
-                resolve(img);
+                // Inline XML images may fail to parse, throwing an Error later on
+                setTimeout(() => {
+                    resolve(img);
+                }, 500);
             }
         });
         return key;
