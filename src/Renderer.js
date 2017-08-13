@@ -133,12 +133,23 @@ export default class Renderer {
                         container.style.padding,
                         container.style.border
                     );
-                    const width = typeof image.width === 'number' ? image.width : contentBox.width;
+                    const width =
+                        typeof image.width === 'number' && image.width > 0
+                            ? image.width
+                            : contentBox.width;
                     const height =
-                        typeof image.height === 'number' ? image.height : contentBox.height;
-                    this.target.clip([calculatePaddingBoxPath(container.curvedBounds)], () => {
-                        this.target.drawImage(image, new Bounds(0, 0, width, height), contentBox);
-                    });
+                        typeof image.height === 'number' && image.height > 0
+                            ? image.height
+                            : contentBox.height;
+                    if (width > 0 && height > 0) {
+                        this.target.clip([calculatePaddingBoxPath(container.curvedBounds)], () => {
+                            this.target.drawImage(
+                                image,
+                                new Bounds(0, 0, width, height),
+                                contentBox
+                            );
+                        });
+                    }
                 }
             }
         };
