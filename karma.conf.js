@@ -33,11 +33,51 @@ module.exports = function(config) {
             version: '11.0',
             platform: 'Windows 7'
         },
-        sl_edge: {
+        sl_edge_15: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
             version: '15.15063',
             platform: 'Windows 10'
+        },
+        sl_edge_14: {
+            base: 'SauceLabs',
+            browserName: 'MicrosoftEdge',
+            version: '14.14393',
+            platform: 'Windows 10'
+        },
+        sl_safari: {
+            base: 'SauceLabs',
+            browserName: 'safari',
+            version: '10.0',
+            platform: 'macOS 10.12'
+        },
+        'sl_android_4.4': {
+            base: 'SauceLabs',
+            browserName: 'Browser',
+            platform: 'Android',
+            version: '4.4',
+            device: 'Android Emulator',
+        },
+        'sl_ios_10.3_safari': {
+            base: 'SauceLabs',
+            browserName: 'Safari',
+            platform: 'iOS',
+            version: '10.3',
+            device: 'iPhone 7 Plus Simulator'
+        },
+        'sl_ios_9.3_safari': {
+            base: 'SauceLabs',
+            browserName: 'Safari',
+            platform: 'iOS',
+            version: '9.3',
+            device: 'iPhone 6 Plus Simulator'
+        },
+        'sl_ios_8.4_safari': {
+            base: 'SauceLabs',
+            browserName: 'Safari',
+            platform: 'iOS',
+            version: '8.4',
+            device: 'iPhone 5s Simulator'
         }
     };
 
@@ -49,6 +89,16 @@ module.exports = function(config) {
             base: 'Firefox'
         }
     });
+
+    /*
+     'sl_opera_12.15': {
+     base: 'SauceLabs',
+     browserName: 'opera',
+     platform: 'Linux',
+     version: '12.15'
+     },
+     */
+
 
     config.set({
 
@@ -84,7 +134,7 @@ module.exports = function(config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['dots', 'saucelabs'],
+        reporters: ['progress', 'saucelabs'],
 
         // web server port
         port,
@@ -132,6 +182,10 @@ module.exports = function(config) {
             }
         },
 
-        browserNoActivityTimeout: 120000
+        captureTimeout: 300000,
+
+        browserDisconnectTimeout: 60000,
+
+        browserNoActivityTimeout: 1200000
     })
 };
