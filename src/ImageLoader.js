@@ -80,9 +80,11 @@ export default class ImageLoader {
             });
         };
 
-        this.cache[key] = isInlineImage(src)
-            ? FEATURES.SUPPORT_BASE64_DRAWING.then(imageLoadHandler)
-            : imageLoadHandler(true);
+        this.cache[key] =
+            isInlineImage(src) && !isSVG(src)
+                // $FlowFixMe
+                ? FEATURES.SUPPORT_BASE64_DRAWING(src).then(imageLoadHandler)
+                : imageLoadHandler(true);
         return key;
     }
 
