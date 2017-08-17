@@ -1,16 +1,15 @@
 /* @flow */
 'use strict';
-import type ImageLoader from './ImageLoader';
+import type ImageLoader, {ImageElement} from './ImageLoader';
 import type Logger from './Logger';
 import StackingContext from './StackingContext';
 import NodeContainer from './NodeContainer';
 import TextContainer from './TextContainer';
 import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './Input';
-import {copyCSSStyles} from './Util';
 
 export const NodeParser = (
     node: HTMLElement,
-    imageLoader: ImageLoader,
+    imageLoader: ImageLoader<ImageElement>,
     logger: Logger
 ): StackingContext => {
     if (__DEV__) {
@@ -22,7 +21,6 @@ export const NodeParser = (
     const container = new NodeContainer(node, null, imageLoader, index++);
     const stack = new StackingContext(container, null, true);
 
-    createPseudoHideStyles(node.ownerDocument);
     parseNodeTree(node, container, stack, imageLoader, index);
 
     if (__DEV__) {
@@ -33,17 +31,12 @@ export const NodeParser = (
 };
 
 const IGNORED_NODE_NAMES = ['SCRIPT', 'HEAD', 'TITLE', 'OBJECT', 'BR', 'OPTION'];
-const URL_REGEXP = /^url\((.+)\)$/i;
-const PSEUDO_BEFORE = ':before';
-const PSEUDO_AFTER = ':after';
-const PSEUDO_HIDE_ELEMENT_CLASS_BEFORE = '___html2canvas___pseudoelement_before';
-const PSEUDO_HIDE_ELEMENT_CLASS_AFTER = '___html2canvas___pseudoelement_after';
 
 const parseNodeTree = (
     node: HTMLElement,
     parent: NodeContainer,
     stack: StackingContext,
-    imageLoader: ImageLoader,
+    imageLoader: ImageLoader<ImageElement>,
     index: number
 ): void => {
     if (__DEV__ && index > 50000) {
@@ -62,8 +55,6 @@ const parseNodeTree = (
             childNode instanceof HTMLElement
         ) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-                inlinePseudoElement(childNode, PSEUDO_BEFORE);
-                inlinePseudoElement(childNode, PSEUDO_AFTER);
                 const container = new NodeContainer(childNode, parent, imageLoader, index++);
                 if (container.isVisible()) {
                     if (childNode.tagName === 'INPUT') {
@@ -132,44 +123,6 @@ const parseNodeTree = (
     }
 };
 
-const inlinePseudoElement = (node: HTMLElement, pseudoElt: ':before' | ':after'): void => {
-    const style = node.ownerDocument.defaultView.getComputedStyle(node, pseudoElt);
-    if (
-        !style ||
-        !style.content ||
-        style.content === 'none' ||
-        style.content === '-moz-alt-content' ||
-        style.display === 'none'
-    ) {
-        return;
-    }
-
-    const content = stripQuotes(style.content);
-    const image = content.match(URL_REGEXP);
-    const anonymousReplacedElement = node.ownerDocument.createElement(
-        image ? 'img' : 'html2canvaspseudoelement'
-    );
-    if (image) {
-        // $FlowFixMe
-        anonymousReplacedElement.src = stripQuotes(image[1]);
-    } else {
-        anonymousReplacedElement.textContent = content;
-    }
-
-    copyCSSStyles(style, anonymousReplacedElement);
-
-    anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
-    node.className +=
-        pseudoElt === PSEUDO_BEFORE
-            ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
-            : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
-    if (pseudoElt === PSEUDO_BEFORE) {
-        node.insertBefore(anonymousReplacedElement, node.firstChild);
-    } else {
-        node.appendChild(anonymousReplacedElement);
-    }
-};
-
 const createsRealStackingContext = (
     container: NodeContainer,
     node: HTMLElement | SVGSVGElement
@@ -196,32 +149,4 @@ const isBodyWithTransparentRoot = (
         container.parent instanceof NodeContainer &&
         container.parent.style.background.backgroundColor.isTransparent()
     );
-};
-
-const stripQuotes = (content: string): string => {
-    const first = content.substr(0, 1);
-    return first === content.substr(content.length - 1) && first.match(/['"]/)
-        ? content.substr(1, content.length - 2)
-        : content;
-};
-
-const PSEUDO_HIDE_ELEMENT_STYLE = `{
-    content: "" !important;
-    display: none !important;
-}`;
-
-const createPseudoHideStyles = (document: Document) => {
-    createStyles(
-        document,
-        `.${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}${PSEUDO_BEFORE}${PSEUDO_HIDE_ELEMENT_STYLE}
-         .${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}${PSEUDO_AFTER}${PSEUDO_HIDE_ELEMENT_STYLE}`
-    );
-};
-
-const createStyles = (document: Document, styles) => {
-    const style = document.createElement('style');
-    style.innerHTML = styles;
-    if (document.body) {
-        document.body.appendChild(style);
-    }
 };

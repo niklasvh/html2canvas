@@ -7,3 +7,5 @@ declare class SVGSVGElement extends Element {
 
     getPresentationAttribute(name: string): any;
 }
+
+declare class HTMLBodyElement extends HTMLElement {}

@@ -2,6 +2,127 @@
 'use strict';
 import type {Bounds} from './Bounds';
 import type {Options} from './index';
+import type Logger from './Logger';
+
+import ImageLoader from './ImageLoader';
+import {copyCSSStyles} from './Util';
+import {parseBackgroundImage} from './parsing/background';
+
+export class DocumentCloner {
+    scrolledElements: Array<[HTMLElement, number, number]>;
+    referenceElement: HTMLElement;
+    clonedReferenceElement: HTMLElement;
+    documentElement: HTMLElement;
+    imageLoader: ImageLoader<string>;
+    logger: Logger;
+    inlineImages: boolean;
+    copyStyles: boolean;
+
+    constructor(element: HTMLElement, options: Options, logger: Logger) {
+        this.referenceElement = element;
+        this.scrolledElements = [];
+        this.copyStyles = true;
+        this.inlineImages = true;
+        this.logger = logger;
+        this.imageLoader = new ImageLoader(options, logger, window);
+        // $FlowFixMe
+        this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
+    }
+
+    inlineAllImages(node: ?HTMLElement) {
+        if (this.inlineImages && node) {
+            const style = node.style;
+            Promise.all(
+                parseBackgroundImage(style.backgroundImage).map(backgroundImage => {
+                    if (backgroundImage.method === 'url') {
+                        return this.imageLoader
+                            .inlineImage(backgroundImage.args[0])
+                            .then(src => (src ? `url("${src}")` : 'none'));
+                    }
+                    return Promise.resolve(
+                        `${backgroundImage.prefix}${backgroundImage.method}(${backgroundImage.args.join(
+                            ','
+                        )})`
+                    );
+                })
+            ).then(backgroundImages => {
+                if (backgroundImages.length > 1) {
+                    // TODO Multiple backgrounds somehow broken in Chrome
+                    style.backgroundColor = '';
+                }
+                style.backgroundImage = backgroundImages.join(',');
+            });
+
+            if (node instanceof HTMLImageElement) {
+                this.imageLoader.inlineImage(node.src).then(src => {
+                    if (src && node instanceof HTMLImageElement) {
+                        node.src = src;
+                    }
+                });
+            }
+        }
+    }
+
+    createElementClone(node: Node) {
+        if (this.copyStyles && node instanceof HTMLCanvasElement) {
+            const img = node.ownerDocument.createElement('img');
+            try {
+                img.src = node.toDataURL();
+                return img;
+            } catch (e) {
+                this.logger.log(`Unable to clone canvas contents, canvas is tainted`);
+            }
+        }
+
+        return node.cloneNode(false);
+    }
+
+    cloneNode(node: Node): Node {
+        const clone =
+            node.nodeType === Node.TEXT_NODE
+                ? document.createTextNode(node.nodeValue)
+                : this.createElementClone(node);
+
+        if (this.referenceElement === node && clone instanceof HTMLElement) {
+            this.clonedReferenceElement = clone;
+        }
+
+        if (clone instanceof HTMLBodyElement) {
+            createPseudoHideStyles(clone);
+        }
+
+        for (let child = node.firstChild; child; child = child.nextSibling) {
+            if (child.nodeType !== Node.ELEMENT_NODE || child.nodeName !== 'SCRIPT') {
+                clone.appendChild(this.cloneNode(child));
+            }
+        }
+        if (node instanceof HTMLElement && clone instanceof HTMLElement) {
+            this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_BEFORE));
+            this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_AFTER));
+            if (this.copyStyles) {
+                copyCSSStyles(node.ownerDocument.defaultView.getComputedStyle(node), clone);
+            }
+            this.inlineAllImages(clone);
+            if (node.scrollTop !== 0 || node.scrollLeft !== 0) {
+                this.scrolledElements.push([node, node.scrollLeft, node.scrollTop]);
+            }
+            switch (node.nodeName) {
+                case 'CANVAS':
+                    if (!this.copyStyles) {
+                        // $FlowFixMe
+                        cloneCanvasContents(node, clone);
+                    }
+                    break;
+                case 'TEXTAREA':
+                case 'SELECT':
+                    // $FlowFixMe
+                    clone.value = node.value;
+                    break;
+            }
+        }
+        return clone;
+    }
+}
 
 const restoreOwnerScroll = (ownerDocument: Document, x: number, y: number) => {
     if (
@@ -28,44 +149,80 @@ const cloneCanvasContents = (canvas: HTMLCanvasElement, clonedCanvas: HTMLCanvas
     } catch (e) {}
 };
 
-const cloneNode = (
-    node: Node,
-    referenceElement: [HTMLElement, ?HTMLElement],
-    scrolledElements: Array<[HTMLElement, number, number]>
-) => {
-    const clone =
-        node.nodeType === Node.TEXT_NODE
-            ? document.createTextNode(node.nodeValue)
-            : node.cloneNode(false);
-
-    if (referenceElement[0] === node && clone instanceof HTMLElement) {
-        referenceElement[1] = clone;
+const inlinePseudoElement = (
+    node: HTMLElement,
+    clone: HTMLElement,
+    pseudoElt: ':before' | ':after'
+): ?HTMLElement => {
+    const style = node.ownerDocument.defaultView.getComputedStyle(node, pseudoElt);
+    if (
+        !style ||
+        !style.content ||
+        style.content === 'none' ||
+        style.content === '-moz-alt-content' ||
+        style.display === 'none'
+    ) {
+        return;
     }
 
-    for (let child = node.firstChild; child; child = child.nextSibling) {
-        if (child.nodeType !== Node.ELEMENT_NODE || child.nodeName !== 'SCRIPT') {
-            clone.appendChild(cloneNode(child, referenceElement, scrolledElements));
-        }
+    const content = stripQuotes(style.content);
+    const image = content.match(URL_REGEXP);
+    const anonymousReplacedElement = clone.ownerDocument.createElement(
+        image ? 'img' : 'html2canvaspseudoelement'
+    );
+    if (image) {
+        // $FlowFixMe
+        anonymousReplacedElement.src = stripQuotes(image[1]);
+    } else {
+        anonymousReplacedElement.textContent = content;
     }
 
-    if (node instanceof HTMLElement) {
-        if (node.scrollTop !== 0 || node.scrollLeft !== 0) {
-            scrolledElements.push([node, node.scrollLeft, node.scrollTop]);
-        }
-        switch (node.nodeName) {
-            case 'CANVAS':
-                // $FlowFixMe
-                cloneCanvasContents(node, clone);
-                break;
-            case 'TEXTAREA':
-            case 'SELECT':
-                // $FlowFixMe
-                clone.value = node.value;
-                break;
-        }
+    copyCSSStyles(style, anonymousReplacedElement);
+
+    anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+    clone.className +=
+        pseudoElt === PSEUDO_BEFORE
+            ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
+            : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+    if (pseudoElt === PSEUDO_BEFORE) {
+        clone.insertBefore(anonymousReplacedElement, clone.firstChild);
+    } else {
+        clone.appendChild(anonymousReplacedElement);
     }
 
-    return clone;
+    return anonymousReplacedElement;
+};
+
+const stripQuotes = (content: string): string => {
+    const first = content.substr(0, 1);
+    return first === content.substr(content.length - 1) && first.match(/['"]/)
+        ? content.substr(1, content.length - 2)
+        : content;
+};
+
+const URL_REGEXP = /^url\((.+)\)$/i;
+const PSEUDO_BEFORE = ':before';
+const PSEUDO_AFTER = ':after';
+const PSEUDO_HIDE_ELEMENT_CLASS_BEFORE = '___html2canvas___pseudoelement_before';
+const PSEUDO_HIDE_ELEMENT_CLASS_AFTER = '___html2canvas___pseudoelement_after';
+
+const PSEUDO_HIDE_ELEMENT_STYLE = `{
+    content: "" !important;
+    display: none !important;
+}`;
+
+const createPseudoHideStyles = (body: HTMLElement) => {
+    createStyles(
+        body,
+        `.${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}${PSEUDO_BEFORE}${PSEUDO_HIDE_ELEMENT_STYLE}
+         .${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}${PSEUDO_AFTER}${PSEUDO_HIDE_ELEMENT_STYLE}`
+    );
+};
+
+const createStyles = (body: HTMLElement, styles) => {
+    const style = body.ownerDocument.createElement('style');
+    style.innerHTML = styles;
+    body.appendChild(style);
 };
 
 const initNode = ([element, x, y]: [HTMLElement, number, number]) => {
@@ -74,24 +231,13 @@ const initNode = ([element, x, y]: [HTMLElement, number, number]) => {
 };
 
 export const cloneWindow = (
-    documentToBeCloned: Document,
     ownerDocument: Document,
     bounds: Bounds,
     referenceElement: HTMLElement,
-    options: Options
+    options: Options,
+    logger: Logger
 ): Promise<[HTMLIFrameElement, HTMLElement]> => {
-    const scrolledElements = [];
-    const referenceElementSearch = [referenceElement, null];
-    if (!(documentToBeCloned.documentElement instanceof HTMLElement)) {
-        return Promise.reject(__DEV__ ? `Invalid document provided for cloning` : '');
-    }
-
-    const documentElement = cloneNode(
-        documentToBeCloned.documentElement,
-        referenceElementSearch,
-        scrolledElements
-    );
-
+    const cloner = new DocumentCloner(referenceElement, options, logger);
     const cloneIframeContainer = ownerDocument.createElement('iframe');
 
     cloneIframeContainer.className = 'html2canvas-container';
@@ -120,7 +266,7 @@ export const cloneWindow = (
         cloneWindow.onload = cloneIframeContainer.onload = () => {
             const interval = setInterval(() => {
                 if (documentClone.body.childNodes.length > 0) {
-                    scrolledElements.forEach(initNode);
+                    cloner.scrolledElements.forEach(initNode);
                     clearInterval(interval);
                     if (options.type === 'view') {
                         cloneWindow.scrollTo(bounds.left, bounds.top);
@@ -135,10 +281,10 @@ export const cloneWindow = (
                         }
                     }
                     if (
-                        referenceElementSearch[1] instanceof cloneWindow.HTMLElement ||
-                        referenceElementSearch[1] instanceof HTMLElement
+                        cloner.clonedReferenceElement instanceof cloneWindow.HTMLElement ||
+                        cloner.clonedReferenceElement instanceof HTMLElement
                     ) {
-                        resolve([cloneIframeContainer, referenceElementSearch[1]]);
+                        resolve([cloneIframeContainer, cloner.clonedReferenceElement]);
                     } else {
                         reject(
                             __DEV__
@@ -153,9 +299,9 @@ export const cloneWindow = (
         documentClone.open();
         documentClone.write('<!DOCTYPE html><html></html>');
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
-        restoreOwnerScroll(documentToBeCloned, bounds.left, bounds.top);
+        restoreOwnerScroll(referenceElement.ownerDocument, bounds.left, bounds.top);
         documentClone.replaceChild(
-            documentClone.adoptNode(documentElement),
+            documentClone.adoptNode(cloner.documentElement),
             documentClone.documentElement
         );
         documentClone.close();

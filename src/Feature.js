@@ -71,6 +71,34 @@ const testSVG = document => {
     return true;
 };
 
+const testForeignObject = document => {
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><foreignObject><div></div></foreignObject></svg>`;
+
+    return new Promise(resolve => {
+        const onload = () => {
+            try {
+                ctx.drawImage(img, 0, 0);
+                canvas.toDataURL();
+            } catch (e) {
+                return resolve(false);
+            }
+
+            return resolve(true);
+        };
+
+        img.onload = onload;
+
+        if (img.complete === true) {
+            setTimeout(() => {
+                onload();
+            }, 50);
+        }
+    });
+};
+
 const FEATURES = {
     // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_RANGE_BOUNDS() {
@@ -94,6 +122,13 @@ const FEATURES = {
             Object.defineProperty(FEATURES, 'SUPPORT_BASE64_DRAWING', {value: () => value});
             return value;
         };
+    },
+    // $FlowFixMe - get/set properties not yet supported
+    get SUPPORT_FOREIGNOBJECT_DRAWING() {
+        'use strict';
+        const value = testForeignObject(document);
+        Object.defineProperty(FEATURES, 'SUPPORT_FOREIGNOBJECT_DRAWING', {value});
+        return value;
     }
 };
 
