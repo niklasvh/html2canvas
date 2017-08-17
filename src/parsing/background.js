@@ -223,7 +223,7 @@ export const calculateBackgroundRepeatPath = (
 
 export const parseBackground = (
     style: CSSStyleDeclaration,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader<ImageElement>
 ): Background => {
     return {
         backgroundColor: new Color(style.backgroundColor),
@@ -276,12 +276,17 @@ const parseBackgroundRepeat = (backgroundRepeat: string): BackgroundRepeat => {
 
 const parseBackgroundImages = (
     style: CSSStyleDeclaration,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader<ImageElement>
 ): Array<BackgroundImage> => {
     const sources: Array<BackgroundSource> = parseBackgroundImage(
-        style.backgroundImage,
-        imageLoader
-    );
+        style.backgroundImage
+    ).map(backgroundImage => {
+        if (backgroundImage.method === 'url') {
+            const key = imageLoader.loadImage(backgroundImage.args[0]);
+            backgroundImage.args = key ? [key] : [];
+        }
+        return backgroundImage;
+    });
     const positions = style.backgroundPosition.split(',');
     const repeats = style.backgroundRepeat.split(',');
     const sizes = style.backgroundSize.split(',');
@@ -318,7 +323,7 @@ const parseBackgoundPosition = (position: string): Length => {
     return new Length(position);
 };
 
-const parseBackgroundImage = (image: string, imageLoader: ImageLoader): Array<BackgroundSource> => {
+export const parseBackgroundImage = (image: string): Array<BackgroundSource> => {
     const whitespace = /^\s$/;
     const results = [];
 
@@ -346,10 +351,6 @@ const parseBackgroundImage = (image: string, imageLoader: ImageLoader): Array<Ba
                 method = method.substr(prefix_i);
             }
             method = method.toLowerCase();
-            if (method === 'url') {
-                const key = imageLoader.loadImage(args[0]);
-                args = key ? [key] : [];
-            }
             if (method !== 'none') {
                 results.push({
                     prefix,

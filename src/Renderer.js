@@ -43,7 +43,7 @@ import {BORDER_STYLE} from './parsing/border';
 export type RenderOptions = {
     scale: number,
     backgroundColor: ?Color,
-    imageStore: ImageStore,
+    imageStore: ImageStore<ImageElement>,
     fontMetrics: FontMetrics,
     logger: Logger,
     width: number,

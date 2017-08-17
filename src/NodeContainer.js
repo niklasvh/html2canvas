@@ -18,7 +18,7 @@ import type {Visibility} from './parsing/visibility';
 import type {zIndex} from './parsing/zIndex';
 
 import type {Bounds, BoundCurves} from './Bounds';
-import type ImageLoader from './ImageLoader';
+import type ImageLoader, {ImageElement} from './ImageLoader';
 import type {Path} from './drawing/Path';
 import type TextContainer from './TextContainer';
 
@@ -87,7 +87,7 @@ export default class NodeContainer {
     constructor(
         node: HTMLElement | SVGSVGElement,
         parent: ?NodeContainer,
-        imageLoader: ImageLoader,
+        imageLoader: ImageLoader<ImageElement>,
         index: number
     ) {
         this.parent = parent;
@@ -219,7 +219,10 @@ export default class NodeContainer {
     }
 }
 
-const getImage = (node: HTMLElement | SVGSVGElement, imageLoader: ImageLoader): ?string => {
+const getImage = (
+    node: HTMLElement | SVGSVGElement,
+    imageLoader: ImageLoader<ImageElement>
+): ?string => {
     if (
         node instanceof node.ownerDocument.defaultView.SVGSVGElement ||
         node instanceof SVGSVGElement

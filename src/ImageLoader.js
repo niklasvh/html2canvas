@@ -5,15 +5,16 @@ import type Options from './index';
 import type Logger from './Logger';
 
 export type ImageElement = Image | HTMLCanvasElement;
-type ImageCache = {[string]: Promise<?ImageElement>};
+type ImageCache<T> = {[string]: Promise<T>};
 
 import FEATURES from './Feature';
 
-export default class ImageLoader {
+// $FlowFixMe
+export default class ImageLoader<T> {
     origin: string;
     options: Options;
     _link: HTMLAnchorElement;
-    cache: ImageCache;
+    cache: ImageCache<T>;
     logger: Logger;
     _index: number;
     _window: WindowProxy;
@@ -45,6 +46,46 @@ export default class ImageLoader {
         }
     }
 
+    inlineImage(src: string): Promise<string> {
+        if (isInlineImage(src)) {
+            return Promise.resolve(src);
+        }
+        if (this.hasImageInCache(src)) {
+            return this.cache[src];
+        }
+        // TODO proxy
+        return this.xhrImage(src);
+    }
+
+    xhrImage(src: string): Promise<string> {
+        this.cache[src] = new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status !== 200) {
+                        reject(`Failed to fetch image ${src} with status code ${xhr.status}`);
+                    } else {
+                        const reader = new FileReader();
+                        // $FlowFixMe
+                        reader.addEventListener('load', () => resolve(reader.result), false);
+                        // $FlowFixMe
+                        reader.addEventListener('error', e => reject(e), false);
+                        reader.readAsDataURL(xhr.response);
+                    }
+                }
+            };
+            xhr.ontimeout = () => reject(`Timed out fetching ${src}`);
+            xhr.responseType = 'blob';
+            if (this.options.imageTimeout) {
+                xhr.timeout = this.options.imageTimeout;
+            }
+            xhr.open('GET', src, true);
+            xhr.send();
+        });
+
+        return this.cache[src];
+    }
+
     loadCanvas(node: HTMLCanvasElement): string {
         const key = String(this._index++);
         this.cache[key] = Promise.resolve(node);
@@ -60,8 +101,8 @@ export default class ImageLoader {
             this.logger.log(`Added image ${key.substring(0, 256)}`);
         }
 
-        const imageLoadHandler = (supportsDataImages: boolean): Promise<Image> => {
-            return new Promise((resolve, reject) => {
+        const imageLoadHandler = (supportsDataImages: boolean): Promise<Image> =>
+            new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = () => resolve(img);
                 //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
@@ -78,7 +119,6 @@ export default class ImageLoader {
                     }, 500);
                 }
             });
-        };
 
         this.cache[key] =
             isInlineImage(src) && !isSVG(src)
@@ -99,7 +139,7 @@ export default class ImageLoader {
         return link.protocol + link.hostname + link.port;
     }
 
-    ready(): Promise<ImageStore> {
+    ready(): Promise<ImageStore<T>> {
         const keys = Object.keys(this.cache);
         return Promise.all(
             keys.map(str =>
@@ -112,23 +152,23 @@ export default class ImageLoader {
             )
         ).then(images => {
             if (__DEV__) {
-                this.logger.log('Finished loading images', images);
+                this.logger.log(`Finished loading ${images.length} images`, images);
             }
             return new ImageStore(keys, images);
         });
     }
 }
 
-export class ImageStore {
+export class ImageStore<T> {
     _keys: Array<string>;
-    _images: Array<?ImageElement>;
+    _images: Array<?T>;
 
-    constructor(keys: Array<string>, images: Array<?ImageElement>) {
+    constructor(keys: Array<string>, images: Array<?T>) {
         this._keys = keys;
         this._images = images;
     }
 
-    get(key: string): ?ImageElement {
+    get(key: string): ?T {
         const index = this._keys.indexOf(key);
         return index === -1 ? null : this._images[index];
     }
