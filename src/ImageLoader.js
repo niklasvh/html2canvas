@@ -38,7 +38,7 @@ export default class ImageLoader<T> {
                 return this.addImage(src, src);
             }
         } else {
-            if (this.options.allowTaint === true || isInlineImage(src) || this.isSameOrigin(src)) {
+            if (this.options.allowTaint === true || isInlineBase64Image(src) || this.isSameOrigin(src)) {
                 return this.addImage(src, src);
             } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
                 // TODO proxy
@@ -121,7 +121,7 @@ export default class ImageLoader<T> {
             });
 
         this.cache[key] =
-            isInlineImage(src) && !isSVG(src)
+            isInlineBase64Image(src) && !isSVG(src)
                 ? // $FlowFixMe
                   FEATURES.SUPPORT_BASE64_DRAWING(src).then(imageLoadHandler)
                 : imageLoadHandler(true);
@@ -176,8 +176,10 @@ export class ImageStore<T> {
 
 const INLINE_SVG = /^data:image\/svg\+xml/i;
 const INLINE_BASE64 = /^data:image\/.*;base64,/i;
+const INLINE_IMG = /^data:image\/.*/i;
 
-const isInlineImage = (src: string): boolean => INLINE_BASE64.test(src);
+const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
+const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
 
 const isSVG = (src: string): boolean =>
     src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
