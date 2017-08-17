@@ -113,13 +113,9 @@ const assertPath = (result, expected, desc) => {
                     it('Should render untainted canvas', () => {
                         return testContainer.contentWindow
                             .html2canvas(testContainer.contentWindow.document.documentElement, {
-                                removeContainer: true,
-                                target: [
-                                    new testContainer.contentWindow.html2canvas.CanvasRenderer(),
-                                    new testContainer.contentWindow.RefTestRenderer()
-                                ]
+                                removeContainer: true
                             })
-                            .then(([canvas, result]) => {
+                            .then((canvas) => {
                                 try {
                                     canvas
                                         .getContext('2d')
