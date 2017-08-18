@@ -78,10 +78,12 @@ export default class ImageLoader<T> {
                     }
                 }
             };
-            xhr.ontimeout = () => reject(`Timed out fetching ${src}`);
             xhr.responseType = 'blob';
             if (this.options.imageTimeout) {
-                xhr.timeout = this.options.imageTimeout;
+                const timeout = this.options.imageTimeout;
+                xhr.timeout = timeout;
+                xhr.ontimeout = () =>
+                    reject(__DEV__ ? `Timed out (${timeout}ms) fetching ${src}` : '');
             }
             xhr.open('GET', src, true);
             xhr.send();
@@ -121,6 +123,13 @@ export default class ImageLoader<T> {
                     setTimeout(() => {
                         resolve(img);
                     }, 500);
+                }
+                if (this.options.imageTimeout) {
+                    const timeout = this.options.imageTimeout;
+                    setTimeout(
+                        () => reject(__DEV__ ? `Timed out (${timeout}ms) fetching ${src}` : ''),
+                        timeout
+                    );
                 }
             });
 
