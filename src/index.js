@@ -19,7 +19,7 @@ export type Options = {
     async: ?boolean,
     allowTaint: ?boolean,
     canvas: ?HTMLCanvasElement,
-    imageTimeout: ?number,
+    imageTimeout: number,
     proxy: ?string,
     removeContainer: ?boolean,
     scale: number,
