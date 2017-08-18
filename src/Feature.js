@@ -47,6 +47,7 @@ const testBase64 = (document: Document, src: string): Promise<boolean> => {
         };
 
         img.onload = onload;
+        img.onerror = () => resolve(false);
 
         if (img.complete === true) {
             setTimeout(() => {
@@ -90,6 +91,7 @@ const testForeignObject = document => {
         };
 
         img.onload = onload;
+        img.onerror = () => resolve(false);
 
         if (img.complete === true) {
             setTimeout(() => {
