@@ -93,7 +93,9 @@ export class DocumentCloner {
 
         for (let child = node.firstChild; child; child = child.nextSibling) {
             if (child.nodeType !== Node.ELEMENT_NODE || child.nodeName !== 'SCRIPT') {
-                clone.appendChild(this.cloneNode(child));
+                if (!this.copyStyles || child.nodeName !== 'STYLE') {
+                    clone.appendChild(this.cloneNode(child));
+                }
             }
         }
         if (node instanceof HTMLElement && clone instanceof HTMLElement) {

@@ -44,6 +44,8 @@ export default class ForeignObjectRenderer {
                 resolve(this.canvas);
             };
 
+            img.onerror = reject;
+
             img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
                 new XMLSerializer().serializeToString(svg)
             )}`;
