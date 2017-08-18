@@ -18,11 +18,11 @@ export class DocumentCloner {
     inlineImages: boolean;
     copyStyles: boolean;
 
-    constructor(element: HTMLElement, options: Options, logger: Logger) {
+    constructor(element: HTMLElement, options: Options, logger: Logger, copyInline: boolean) {
         this.referenceElement = element;
         this.scrolledElements = [];
-        this.copyStyles = true;
-        this.inlineImages = true;
+        this.copyStyles = copyInline;
+        this.inlineImages = copyInline;
         this.logger = logger;
         this.imageLoader = new ImageLoader(options, logger, window);
         // $FlowFixMe
@@ -237,7 +237,7 @@ export const cloneWindow = (
     options: Options,
     logger: Logger
 ): Promise<[HTMLIFrameElement, HTMLElement]> => {
-    const cloner = new DocumentCloner(referenceElement, options, logger);
+    const cloner = new DocumentCloner(referenceElement, options, logger, false);
     const cloneIframeContainer = ownerDocument.createElement('iframe');
 
     cloneIframeContainer.className = 'html2canvas-container';

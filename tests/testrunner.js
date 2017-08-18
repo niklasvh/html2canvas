@@ -115,7 +115,7 @@ const assertPath = (result, expected, desc) => {
                             .html2canvas(testContainer.contentWindow.document.documentElement, {
                                 removeContainer: true
                             })
-                            .then((canvas) => {
+                            .then(canvas => {
                                 try {
                                     canvas
                                         .getContext('2d')

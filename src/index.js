@@ -23,7 +23,7 @@ export type Options = {
     proxy: ?string,
     removeContainer: ?boolean,
     scale: number,
-    target: RenderTarget<*> | Array<RenderTarget<*>>,
+    target: RenderTarget<*>,
     type: ?string,
     windowWidth: number,
     windowHeight: number,
@@ -98,7 +98,7 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
                               scale: options.scale
                           });
                       });
-                  })(new DocumentCloner(element, options, logger))
+                  })(new DocumentCloner(element, options, logger, true))
                 : cloneWindow(
                       ownerDocument,
                       windowBounds,
