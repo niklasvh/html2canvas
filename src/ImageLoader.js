@@ -38,7 +38,11 @@ export default class ImageLoader<T> {
                 return this.addImage(src, src);
             }
         } else {
-            if (this.options.allowTaint === true || isInlineBase64Image(src) || this.isSameOrigin(src)) {
+            if (
+                this.options.allowTaint === true ||
+                isInlineBase64Image(src) ||
+                this.isSameOrigin(src)
+            ) {
                 return this.addImage(src, src);
             } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
                 // TODO proxy
