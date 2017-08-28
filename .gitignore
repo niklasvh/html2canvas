@@ -14,3 +14,4 @@ node_modules/
 npm-debug.log
 debug.log
 tests/reftests.js
+*.log

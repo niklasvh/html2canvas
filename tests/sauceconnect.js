@@ -4,7 +4,12 @@ sauceConnectLauncher(
     {
         username: process.env.SAUCE_USERNAME,
         accessKey: process.env.SAUCE_ACCESS_KEY,
-        logger: console.log
+        logger: console.log,
+        // Log output from the `sc` process to stdout?
+        verbose: true,
+
+        // Enable verbose debugging (optional)
+        verboseDebugging: true
     },
     err => {
         if (err) {

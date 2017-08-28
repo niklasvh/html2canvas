@@ -18,6 +18,7 @@ import Color, {TRANSPARENT} from './Color';
 export type Options = {
     async: ?boolean,
     allowTaint: ?boolean,
+    backgroundColor: string,
     canvas: ?HTMLCanvasElement,
     imageTimeout: number,
     proxy: ?string,
@@ -71,14 +72,18 @@ const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
     const documentBackgroundColor = ownerDocument.documentElement
         ? new Color(getComputedStyle(ownerDocument.documentElement).backgroundColor)
         : TRANSPARENT;
+    const bodyBackgroundColor = ownerDocument.body
+        ? new Color(getComputedStyle(ownerDocument.body).backgroundColor)
+        : TRANSPARENT;
+
     const backgroundColor =
         element === ownerDocument.documentElement
             ? documentBackgroundColor.isTransparent()
-              ? ownerDocument.body
-                ? new Color(getComputedStyle(ownerDocument.body).backgroundColor)
-                : null
+              ? bodyBackgroundColor.isTransparent()
+                ? options.backgroundColor ? new Color(options.backgroundColor) : null
+                : bodyBackgroundColor
               : documentBackgroundColor
-            : null;
+            : options.backgroundColor ? new Color(options.backgroundColor) : null;
 
     // $FlowFixMe
     const result = Feature.SUPPORT_FOREIGNOBJECT_DRAWING.then(
