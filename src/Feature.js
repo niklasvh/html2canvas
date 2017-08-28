@@ -75,8 +75,15 @@ const testSVG = document => {
 const testForeignObject = document => {
     const img = new Image();
     const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
     const ctx = canvas.getContext('2d');
-    img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><foreignObject><div></div></foreignObject></svg>`;
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, 1, 1);
+
+    img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><foreignObject><img src="${encodeURIComponent(
+        canvas.toDataURL()
+    )}" /></foreignObject></svg>`;
 
     return new Promise(resolve => {
         const onload = () => {

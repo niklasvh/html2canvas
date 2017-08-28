@@ -2,6 +2,8 @@ import {expect} from 'chai';
 import parseRefTest from '../scripts/parse-reftest';
 import reftests from './reftests';
 import querystring from 'querystring';
+import platform from 'platform';
+import Promise from 'promise-polyfill';
 
 const DOWNLOAD_REFTESTS = false;
 const query = querystring.parse(location.search.replace(/^\?/, ''));
@@ -78,7 +80,7 @@ const assertPath = (result, expected, desc) => {
             })
             .forEach(url => {
                 describe(url, function() {
-                    this.timeout(30000);
+                    this.timeout(60000);
                     const windowWidth = 800;
                     const windowHeight = 600;
                     const testContainer = document.createElement('iframe');
@@ -113,7 +115,8 @@ const assertPath = (result, expected, desc) => {
                     it('Should render untainted canvas', () => {
                         return testContainer.contentWindow
                             .html2canvas(testContainer.contentWindow.document.documentElement, {
-                                removeContainer: true
+                                removeContainer: true,
+                                backgroundColor: '#ffffff'
                             })
                             .then(canvas => {
                                 try {
@@ -328,6 +331,80 @@ const assertPath = (result, expected, desc) => {
                                             .slice(url.lastIndexOf('/') + 1)
                                             .replace(/\.html$/i, '.txt'),
                                         result
+                                    );
+                                }
+
+                                // window.__karma__
+                                if (false) {
+                                    const MAX_CHUNK_SIZE = 75000;
+
+                                    const sendScreenshot = (tries, body, url) => {
+                                        return new Promise((resolve, reject) => {
+                                            const xhr = new XMLHttpRequest();
+
+                                            xhr.onload = () => {
+                                                if (
+                                                    typeof xhr.status !== 'number' ||
+                                                    xhr.status === 200
+                                                ) {
+                                                    resolve();
+                                                } else {
+                                                    reject(
+                                                        `Failed to send screenshot with status ${xhr.status}`
+                                                    );
+                                                }
+                                            };
+                                            //   xhr.onerror = reject;
+
+                                            xhr.open('POST', url, true);
+                                            xhr.send(body);
+                                        }).catch(e => {
+                                            if (tries > 0) {
+                                                // Older edge browsers and some safari browsers have issues sending large xhr through saucetunnel
+                                                const data = canvas.toDataURL();
+                                                const totalCount = Math.ceil(
+                                                    data.length / MAX_CHUNK_SIZE
+                                                );
+                                                return Promise.all(
+                                                    Array.apply(
+                                                        null,
+                                                        Array(totalCount)
+                                                    ).map((x, part) =>
+                                                        sendScreenshot(
+                                                            0,
+                                                            JSON.stringify({
+                                                                screenshot: data.substr(
+                                                                    part * MAX_CHUNK_SIZE,
+                                                                    MAX_CHUNK_SIZE
+                                                                ),
+                                                                part,
+                                                                totalCount,
+                                                                test: url,
+                                                                platform: {
+                                                                    name: platform.name,
+                                                                    version: platform.version
+                                                                }
+                                                            }),
+                                                            '/screenshot/chunk'
+                                                        )
+                                                    )
+                                                );
+                                            }
+
+                                            return Promise.reject(e);
+                                        });
+                                    };
+                                    return sendScreenshot(
+                                        1,
+                                        JSON.stringify({
+                                            screenshot: canvas.toDataURL(),
+                                            test: url,
+                                            platform: {
+                                                name: platform.name,
+                                                version: platform.version
+                                            }
+                                        }),
+                                        '/screenshot'
                                     );
                                 }
                             });

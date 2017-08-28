@@ -10,10 +10,11 @@ module.exports = function(config) {
             platform: 'Windows 10',
             version: 'beta'
         },
-        sl_stable_firefox: {
+        sl_beta_firefox: {
             base: 'SauceLabs',
             browserName: 'firefox',
-            platform: 'Windows 10'
+            platform: 'Windows 8.1',
+            version: 'beta'
         },
         sl_ie9: {
             base: 'SauceLabs',
@@ -90,16 +91,6 @@ module.exports = function(config) {
         }
     });
 
-    /*
-     'sl_opera_12.15': {
-     base: 'SauceLabs',
-     browserName: 'opera',
-     platform: 'Linux',
-     version: '12.15'
-     },
-     */
-
-
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -173,6 +164,7 @@ module.exports = function(config) {
             '/node_modules': `http://localhost:${port}/base/node_modules`,
             '/tests': `http://localhost:${port}/base/tests`,
             '/assets': `http://localhost:${port}/base/tests/assets`,
+            '/screenshot': `http://localhost:8081/screenshot`,
         },
 
         client: {
