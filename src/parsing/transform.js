@@ -14,23 +14,44 @@ export type Transform = {
 const MATRIX = /(matrix|matrix3d)\((.+)\)/;
 
 export const parseTransform = (style: CSSStyleDeclaration): Transform => {
-    // TODO get prefixed values
-    const transform = parseTransformMatrix(style.transform);
+    const transform = parseTransformMatrix(
+        style.transform ||
+            style.webkitTransform ||
+            style.mozTransform ||
+            // $FlowFixMe
+            style.msTransform ||
+            // $FlowFixMe
+            style.oTransform
+    );
     if (transform === null) {
         return null;
     }
 
     return {
         transform,
-        transformOrigin: parseTransformOrigin(style.transformOrigin)
+        transformOrigin: parseTransformOrigin(
+            style.transformOrigin ||
+                style.webkitTransformOrigin ||
+                style.mozTransformOrigin ||
+                // $FlowFixMe
+                style.msTransformOrigin ||
+                // $FlowFixMe
+                style.oTransformOrigin
+        )
     };
 };
 
-const parseTransformOrigin = (origin: string): TransformOrigin => {
+// $FlowFixMe
+const parseTransformOrigin = (origin: ?string): TransformOrigin => {
+    if (typeof origin !== 'string') {
+        const v = new Length('0');
+        return [v, v];
+    }
     const values = origin.split(' ').map(Length.create);
     return [values[0], values[1]];
 };
 
+// $FlowFixMe
 const parseTransformMatrix = (transform: ?string): Matrix | null => {
     if (transform === 'none' || typeof transform !== 'string') {
         return null;
