@@ -3,7 +3,7 @@
 
 export const contains = (bit: number, value: number): boolean => (bit & value) !== 0;
 
-export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): void => {
+export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): HTMLElement => {
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
@@ -12,6 +12,7 @@ export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): 
             target.style.setProperty(property, style.getPropertyValue(property));
         }
     }
+    return target;
 };
 
 export const SMALL_IMAGE =

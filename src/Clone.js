@@ -37,7 +37,7 @@ export class DocumentCloner {
                     if (backgroundImage.method === 'url') {
                         return this.imageLoader
                             .inlineImage(backgroundImage.args[0])
-                            .then(src => (src ? `url("${src}")` : 'none'));
+                            .then(img => (img ? `url("${img.src}")` : 'none'));
                     }
                     return Promise.resolve(
                         `${backgroundImage.prefix}${backgroundImage.method}(${backgroundImage.args.join(
@@ -54,9 +54,12 @@ export class DocumentCloner {
             });
 
             if (node instanceof HTMLImageElement) {
-                this.imageLoader.inlineImage(node.src).then(src => {
-                    if (src && node instanceof HTMLImageElement) {
-                        node.src = src;
+                this.imageLoader.inlineImage(node.src).then(img => {
+                    if (img && node instanceof HTMLImageElement && node.parentNode) {
+                        node.parentNode.replaceChild(
+                            copyCSSStyles(node.style, img.cloneNode(false)),
+                            node
+                        );
                     }
                 });
             }

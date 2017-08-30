@@ -163,8 +163,7 @@ module.exports = function(config) {
             '/dist': `http://localhost:${port}/base/dist`,
             '/node_modules': `http://localhost:${port}/base/node_modules`,
             '/tests': `http://localhost:${port}/base/tests`,
-            '/assets': `http://localhost:${port}/base/tests/assets`,
-            '/screenshot': `http://localhost:8081/screenshot`,
+            '/assets': `http://localhost:${port}/base/tests/assets`
         },
 
         client: {

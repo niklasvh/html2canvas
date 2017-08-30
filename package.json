@@ -31,6 +31,7 @@
     "body-parser": "1.17.2",
     "chai": "4.1.1",
     "chromeless": "^1.2.0",
+    "cors": "2.8.4",
     "eslint": "4.2.0",
     "eslint-plugin-flowtype": "2.35.0",
     "eslint-plugin-prettier": "2.1.2",
@@ -62,7 +63,7 @@
     "flow": "flow",
     "lint": "eslint src/**",
     "test": "npm run flow && npm run lint && npm run karma",
-    "karma": "karma start",
+    "karma": "node karma",
     "watch": "webpack --progress --colors --watch"
   },
   "homepage": "https://html2canvas.hertzen.com",

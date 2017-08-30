@@ -50,9 +50,9 @@ export default class ImageLoader<T> {
         }
     }
 
-    inlineImage(src: string): Promise<string> {
+    inlineImage(src: string): Promise<Image> {
         if (isInlineImage(src)) {
-            return Promise.resolve(src);
+            return loadImage(src, this.options.imageTimeout || 0);
         }
         if (this.hasImageInCache(src)) {
             return this.cache[src];
@@ -61,7 +61,7 @@ export default class ImageLoader<T> {
         return this.xhrImage(src);
     }
 
-    xhrImage(src: string): Promise<string> {
+    xhrImage(src: string): Promise<Image> {
         this.cache[src] = new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onreadystatechange = () => {
@@ -87,7 +87,7 @@ export default class ImageLoader<T> {
             }
             xhr.open('GET', src, true);
             xhr.send();
-        });
+        }).then(src => loadImage(src, this.options.imageTimeout || 0));
 
         return this.cache[src];
     }
@@ -196,3 +196,24 @@ const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
 
 const isSVG = (src: string): boolean =>
     src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
+
+const loadImage = (src: string, timeout: number) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+        if (img.complete === true) {
+            // Inline XML images may fail to parse, throwing an Error later on
+            setTimeout(() => {
+                resolve(img);
+            }, 500);
+        }
+        if (timeout) {
+            setTimeout(
+                () => reject(__DEV__ ? `Timed out (${timeout}ms) loading image` : ''),
+                timeout
+            );
+        }
+    });
+};
