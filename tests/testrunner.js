@@ -81,6 +81,7 @@ const assertPath = (result, expected, desc) => {
             .forEach(url => {
                 describe(url, function() {
                     this.timeout(60000);
+                    this.retries(2);
                     const windowWidth = 800;
                     const windowHeight = 600;
                     const testContainer = document.createElement('iframe');
@@ -334,13 +335,15 @@ const assertPath = (result, expected, desc) => {
                                     );
                                 }
 
-                                // window.__karma__
-                                if (false) {
+                                if (window.__karma__) {
                                     const MAX_CHUNK_SIZE = 75000;
 
-                                    const sendScreenshot = (tries, body, url) => {
+                                    const sendScreenshot = (tries, body, server) => {
                                         return new Promise((resolve, reject) => {
-                                            const xhr = new XMLHttpRequest();
+                                            const xhr =
+                                                'withCredentials' in new XMLHttpRequest()
+                                                    ? new XMLHttpRequest()
+                                                    : new XDomainRequest();
 
                                             xhr.onload = () => {
                                                 if (
@@ -354,9 +357,9 @@ const assertPath = (result, expected, desc) => {
                                                     );
                                                 }
                                             };
-                                            //   xhr.onerror = reject;
+                                            xhr.onerror = reject;
 
-                                            xhr.open('POST', url, true);
+                                            xhr.open('POST', server, true);
                                             xhr.send(body);
                                         }).catch(e => {
                                             if (tries > 0) {
@@ -385,7 +388,7 @@ const assertPath = (result, expected, desc) => {
                                                                     version: platform.version
                                                                 }
                                                             }),
-                                                            '/screenshot/chunk'
+                                                            'http://localhost:8081/screenshot/chunk'
                                                         )
                                                     )
                                                 );
@@ -404,7 +407,7 @@ const assertPath = (result, expected, desc) => {
                                                 version: platform.version
                                             }
                                         }),
-                                        '/screenshot'
+                                        'http://localhost:8081/screenshot'
                                     );
                                 }
                             });

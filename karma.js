@@ -1,10 +1,27 @@
+const Server = require('karma').Server;
+const cfg = require('karma').config;
 const path = require('path');
+const karmaConfig = cfg.parseConfig(path.resolve('./karma.conf.js'));
+const server = new Server(karmaConfig, (exitCode) => {
+    console.log('Karma has exited with ' + exitCode);
+    process.exit(exitCode)
+});
+
 const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const filenamifyUrl = require('filenamify-url');
 
 const app = express();
+app.use(cors());
+app.use(function(req, res, next) {
+    // IE9 doesn't set headers for cross-domain ajax requests
+    if(typeof(req.headers['content-type']) === 'undefined'){
+        req.headers['content-type'] = "application/json";
+    }
+    next();
+});
 app.use(
     bodyParser.json({
         limit: '15mb',
@@ -20,7 +37,7 @@ const writeScreenshot = (buffer, body) => {
         {replacement: '-'}
     )}!${body.platform.name}-${body.platform.version}.png`;
 
-    fs.writeFileSync(path.resolve(__dirname, '../tests/results/', filename), buffer);
+    fs.writeFileSync(path.resolve(__dirname, './tests/results/', filename), buffer);
 };
 
 app.post('/screenshot', (req, res) => {
@@ -65,5 +82,7 @@ app.use((error, req, res, next) => {
 });
 
 const listener = app.listen(8081, () => {
-    console.log(listener.address().port);
+    server.start();
 });
+
+
