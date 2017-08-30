@@ -61,7 +61,7 @@ Install dependencies:
 
 Build browser bundle
 
-    $ npm run build:browser
+    $ npm run build
 
 ### Running tests ###
 
