@@ -32,7 +32,7 @@ export type Options = {
     offsetY: number
 };
 
-const html2canvas = (element: HTMLElement, config: Options): Promise<*> => {
+const html2canvas = (element: HTMLElement, config: Options = {}): Promise<*> => {
     if (typeof console === 'object' && typeof console.log === 'function') {
         console.log(`html2canvas ${__VERSION__}`);
     }
