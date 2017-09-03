@@ -13,9 +13,31 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const filenamifyUrl = require('filenamify-url');
 
+const CORS_PORT = 8081;
+const corsApp = express();
+corsApp.use(cors());
+corsApp.use('/', express.static(path.resolve(__dirname)));
+corsApp.use((error, req, res, next) => {
+    console.error(error);
+    next();
+});
+
+process.on('uncaughtException', (err) => {
+    if(err.errno === 'EADDRINUSE') {
+        console.warn(err);
+    } else {
+        console.log(err);
+        process.exit(1);
+    }
+});
+
+corsApp.listen(CORS_PORT, () => {
+    console.log(`CORS server running on port ${CORS_PORT}`);
+});
+
 const app = express();
 app.use(cors());
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     // IE9 doesn't set headers for cross-domain ajax requests
     if(typeof(req.headers['content-type']) === 'undefined'){
         req.headers['content-type'] = "application/json";
@@ -81,7 +103,7 @@ app.use((error, req, res, next) => {
     next();
 });
 
-const listener = app.listen(8081, () => {
+const listener = app.listen(8000, () => {
     server.start();
 });
 
