@@ -1,6 +1,8 @@
 /* @flow */
 'use strict';
 
+import {createForeignObjectSVG, loadSerializedSVG} from './renderer/ForeignObjectRenderer';
+
 const testRangeBounds = document => {
     const TEST_HEIGHT = 123;
 
@@ -72,40 +74,45 @@ const testSVG = document => {
     return true;
 };
 
+const isGreenPixel = data => data[0] === 0 && data[1] === 255 && data[2] === 0 && data[3] === 255;
+
 const testForeignObject = document => {
-    const img = new Image();
     const canvas = document.createElement('canvas');
-    canvas.width = 1;
-    canvas.height = 1;
+    const size = 100;
+    canvas.width = size;
+    canvas.height = size;
     const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgb(0, 255, 0)';
+    ctx.fillRect(0, 0, size, size);
+
+    const img = new Image();
+    const greenImageSrc = canvas.toDataURL();
+    img.src = greenImageSrc;
+    const svg = createForeignObjectSVG(size, size, img);
     ctx.fillStyle = 'red';
-    ctx.fillRect(0, 0, 1, 1);
+    ctx.fillRect(0, 0, size, size);
 
-    img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><foreignObject><img src="${encodeURIComponent(
-        canvas.toDataURL()
-    )}" /></foreignObject></svg>`;
+    return loadSerializedSVG(svg)
+        .then(img => {
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(0, 0, size, size).data;
+            ctx.fillStyle = 'red';
+            ctx.fillRect(0, 0, size, size);
 
-    return new Promise(resolve => {
-        const onload = () => {
-            try {
-                ctx.drawImage(img, 0, 0);
-                canvas.toDataURL();
-            } catch (e) {
-                return resolve(false);
-            }
-
-            return resolve(true);
-        };
-
-        img.onload = onload;
-        img.onerror = () => resolve(false);
-
-        if (img.complete === true) {
-            setTimeout(() => {
-                onload();
-            }, 50);
-        }
-    });
+            const node = document.createElement('div');
+            node.style.backgroundImage = `url(${greenImageSrc})`;
+            node.style.height = `${size}px`;
+            // Firefox 55 does not render inline <img /> tags
+            return isGreenPixel(data)
+                ? loadSerializedSVG(createForeignObjectSVG(size, size, node))
+                : Promise.reject(false);
+        })
+        .then(img => {
+            ctx.drawImage(img, 0, 0);
+            // Edge does not render background-images
+            return isGreenPixel(ctx.getImageData(0, 0, size, size).data);
+        })
+        .catch(e => false);
 };
 
 const FEATURES = {
