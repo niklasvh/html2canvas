@@ -52,6 +52,7 @@
     "prettier": "1.5.3",
     "promise-polyfill": "6.0.2",
     "rimraf": "2.6.1",
+    "serve-index": "1.9.0",
     "slash": "1.0.0",
     "webpack": "3.4.1"
   },
@@ -64,7 +65,8 @@
     "lint": "eslint src/**",
     "test": "npm run flow && npm run lint && npm run karma",
     "karma": "node karma",
-    "watch": "webpack --progress --colors --watch"
+    "watch": "webpack --progress --colors --watch",
+    "start": "node tests/server"
   },
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",

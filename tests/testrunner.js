@@ -117,7 +117,8 @@ const assertPath = (result, expected, desc) => {
                         return testContainer.contentWindow
                             .html2canvas(testContainer.contentWindow.document.documentElement, {
                                 removeContainer: true,
-                                backgroundColor: '#ffffff'
+                                backgroundColor: '#ffffff',
+                                ...(testContainer.contentWindow.h2cOptions || {})
                             })
                             .then(canvas => {
                                 try {
@@ -388,7 +389,7 @@ const assertPath = (result, expected, desc) => {
                                                                     version: platform.version
                                                                 }
                                                             }),
-                                                            'http://localhost:8081/screenshot/chunk'
+                                                            'http://localhost:8000/screenshot/chunk'
                                                         )
                                                     )
                                                 );
@@ -407,7 +408,7 @@ const assertPath = (result, expected, desc) => {
                                                 version: platform.version
                                             }
                                         }),
-                                        'http://localhost:8081/screenshot'
+                                        'http://localhost:8000/screenshot'
                                     );
                                 }
                             });
