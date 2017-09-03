@@ -35,7 +35,7 @@ export default class ImageLoader<T> {
 
         if (isSVG(src)) {
             if (this.options.allowTaint === true || FEATURES.SUPPORT_SVG_DRAWING) {
-                return this.addImage(src, src);
+                return this.addImage(src, src, false);
             }
         } else {
             if (
@@ -43,9 +43,13 @@ export default class ImageLoader<T> {
                 isInlineBase64Image(src) ||
                 this.isSameOrigin(src)
             ) {
-                return this.addImage(src, src);
-            } else if (typeof this.options.proxy === 'string' && !this.isSameOrigin(src)) {
-                // TODO proxy
+                return this.addImage(src, src, false);
+            } else if (!this.isSameOrigin(src)) {
+                if (typeof this.options.proxy === 'string') {
+                    // TODO proxy
+                } else if (this.options.useCORS === true && FEATURES.SUPPORT_CORS_IMAGES) {
+                    return this.addImage(src, src, true);
+                }
             }
         }
     }
@@ -102,7 +106,7 @@ export default class ImageLoader<T> {
         return typeof this.cache[key] !== 'undefined';
     }
 
-    addImage(key: string, src: string): string {
+    addImage(key: string, src: string, useCORS: boolean): string {
         if (__DEV__) {
             this.logger.log(`Added image ${key.substring(0, 256)}`);
         }
@@ -112,7 +116,7 @@ export default class ImageLoader<T> {
                 const img = new Image();
                 img.onload = () => resolve(img);
                 //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
-                if (!supportsDataImages) {
+                if (!supportsDataImages || useCORS) {
                     img.crossOrigin = 'anonymous';
                 }
 
@@ -127,7 +131,12 @@ export default class ImageLoader<T> {
                 if (this.options.imageTimeout) {
                     const timeout = this.options.imageTimeout;
                     setTimeout(
-                        () => reject(__DEV__ ? `Timed out (${timeout}ms) fetching ${src}` : ''),
+                        () =>
+                            reject(
+                                __DEV__
+                                    ? `Timed out (${timeout}ms) fetching ${src.substring(0, 256)}`
+                                    : ''
+                            ),
                         timeout
                     );
                 }

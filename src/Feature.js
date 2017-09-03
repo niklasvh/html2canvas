@@ -59,6 +59,10 @@ const testBase64 = (document: Document, src: string): Promise<boolean> => {
     });
 };
 
+const testCORS = () => {
+    return typeof new Image().crossOrigin !== 'undefined';
+};
+
 const testSVG = document => {
     const img = new Image();
     const canvas = document.createElement('canvas');
@@ -144,6 +148,13 @@ const FEATURES = {
         'use strict';
         const value = testForeignObject(document);
         Object.defineProperty(FEATURES, 'SUPPORT_FOREIGNOBJECT_DRAWING', {value});
+        return value;
+    },
+    // $FlowFixMe - get/set properties not yet supported
+    get SUPPORT_CORS_IMAGES() {
+        'use strict';
+        const value = testCORS();
+        Object.defineProperty(FEATURES, 'SUPPORT_CORS_IMAGES', {value});
         return value;
     }
 };
