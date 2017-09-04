@@ -1,7 +1,7 @@
 html2canvas
 ===========
 
-[Homepage](http://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest) | [Donate](https://www.gittip.com/niklasvh/)
+[Homepage](https://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest) | [Donate](https://www.gittip.com/niklasvh/)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/niklasvh/html2canvas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Build Status](https://travis-ci.org/niklasvh/html2canvas.png)](https://travis-ci.org/niklasvh/html2canvas)
 
@@ -49,7 +49,7 @@ The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/Ja
 
 ### Building ###
 
-The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](https://github.com/niklasvh/html2canvas/blob/master/dist/html2canvas.js).
+You can download ready builds [here](https://github.com/niklasvh/html2canvas/releases).
 
 Clone git repository:
 
@@ -79,7 +79,7 @@ Run tests:
 
 ### Examples ###
 
-For more information and examples, please visit the [homepage](http://html2canvas.hertzen.com) or try the [test console](http://html2canvas.hertzen.com/screenshots.html).
+For more information and examples, please visit the [homepage](https://html2canvas.hertzen.com) or try the [test console](http://html2canvas.hertzen.com/screenshots.html).
 
 ### Contributing ###
 
