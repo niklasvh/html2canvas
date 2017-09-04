@@ -118,6 +118,7 @@ const assertPath = (result, expected, desc) => {
                             .html2canvas(testContainer.contentWindow.document.documentElement, {
                                 removeContainer: true,
                                 backgroundColor: '#ffffff',
+                                proxy: 'http://localhost:8081/proxy',
                                 ...(testContainer.contentWindow.h2cOptions || {})
                             })
                             .then(canvas => {

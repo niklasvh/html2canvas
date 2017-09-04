@@ -8,6 +8,7 @@ export type ImageElement = Image | HTMLCanvasElement;
 type ImageCache<T> = {[string]: Promise<T>};
 
 import FEATURES from './Feature';
+import {Proxy} from './Proxy';
 
 // $FlowFixMe
 export default class ImageLoader<T> {
@@ -46,7 +47,10 @@ export default class ImageLoader<T> {
                 return this.addImage(src, src, false);
             } else if (!this.isSameOrigin(src)) {
                 if (typeof this.options.proxy === 'string') {
-                    // TODO proxy
+                    this.cache[src] = Proxy(src, this.options).then(src =>
+                        loadImage(src, this.options.imageTimeout || 0)
+                    );
+                    return src;
                 } else if (this.options.useCORS === true && FEATURES.SUPPORT_CORS_IMAGES) {
                     return this.addImage(src, src, true);
                 }
@@ -61,7 +65,12 @@ export default class ImageLoader<T> {
         if (this.hasImageInCache(src)) {
             return this.cache[src];
         }
-        // TODO proxy
+        if (!this.isSameOrigin(src) && typeof this.options.proxy === 'string') {
+            return (this.cache[src] = Proxy(src, this.options).then(src =>
+                loadImage(src, this.options.imageTimeout || 0)
+            ));
+        }
+
         return this.xhrImage(src);
     }
 
@@ -71,7 +80,12 @@ export default class ImageLoader<T> {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status !== 200) {
-                        reject(`Failed to fetch image ${src} with status code ${xhr.status}`);
+                        reject(
+                            `Failed to fetch image ${src.substring(
+                                0,
+                                256
+                            )} with status code ${xhr.status}`
+                        );
                     } else {
                         const reader = new FileReader();
                         // $FlowFixMe
@@ -87,7 +101,9 @@ export default class ImageLoader<T> {
                 const timeout = this.options.imageTimeout;
                 xhr.timeout = timeout;
                 xhr.ontimeout = () =>
-                    reject(__DEV__ ? `Timed out (${timeout}ms) fetching ${src}` : '');
+                    reject(
+                        __DEV__ ? `Timed out (${timeout}ms) fetching ${src.substring(0, 256)}` : ''
+                    );
             }
             xhr.open('GET', src, true);
             xhr.send();
