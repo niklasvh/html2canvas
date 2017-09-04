@@ -59,9 +59,9 @@ const testBase64 = (document: Document, src: string): Promise<boolean> => {
     });
 };
 
-const testCORS = () => {
-    return typeof new Image().crossOrigin !== 'undefined';
-};
+const testCORS = () => typeof new Image().crossOrigin !== 'undefined';
+
+const testResponseType = () => typeof new XMLHttpRequest().responseType === 'string';
 
 const testSVG = document => {
     const img = new Image();
@@ -155,6 +155,20 @@ const FEATURES = {
         'use strict';
         const value = testCORS();
         Object.defineProperty(FEATURES, 'SUPPORT_CORS_IMAGES', {value});
+        return value;
+    },
+    // $FlowFixMe - get/set properties not yet supported
+    get SUPPORT_RESPONSE_TYPE() {
+        'use strict';
+        const value = testResponseType();
+        Object.defineProperty(FEATURES, 'SUPPORT_RESPONSE_TYPE', {value});
+        return value;
+    },
+    // $FlowFixMe - get/set properties not yet supported
+    get SUPPORT_CORS_XHR() {
+        'use strict';
+        const value = 'withCredentials' in new XMLHttpRequest();
+        Object.defineProperty(FEATURES, 'SUPPORT_CORS_XHR', {value});
         return value;
     }
 };

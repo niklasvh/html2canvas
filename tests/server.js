@@ -5,6 +5,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 const config = require('../webpack.config');
 const serveIndex = require('serve-index');
+const proxy = require('html2canvas-proxy');
 
 const PORT = 8080;
 const CORS_PORT = 8081;
@@ -17,8 +18,9 @@ app.listen(PORT, () => {
 });
 
 const corsApp = express();
-corsApp.use(cors());
-corsApp.use('/', express.static(path.resolve(__dirname, '../')));
+corsApp.use('/proxy', proxy());
+corsApp.use('/cors', cors(), express.static(path.resolve(__dirname, '../')));
+corsApp.use('/', express.static(path.resolve(__dirname, '.')));
 corsApp.listen(CORS_PORT, () => {
     console.log(`CORS server running on port ${CORS_PORT}`);
 });

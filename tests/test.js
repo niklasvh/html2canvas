@@ -6,7 +6,14 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
 (function(document, window) {
     function appendScript(src) {
         document.write(
-            '<script type="text/javascript" src="' + src + '.js?' + Math.random() + '"></script>'
+            '<script type="text/javascript" src="' +
+                window.location.protocol +
+                '//' +
+                window.location.host +
+                src +
+                '.js?' +
+                Math.random() +
+                '"></script>'
         );
     }
 
@@ -147,7 +154,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                 $.extend(
                     {
                         logging: true,
-                        proxy: 'http://localhost:8082',
+                        proxy: 'http://localhost:8081/proxy',
                         useCORS: false,
                         removeContainer: false,
                         target: targets

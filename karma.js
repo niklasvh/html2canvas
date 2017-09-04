@@ -1,6 +1,7 @@
 const Server = require('karma').Server;
 const cfg = require('karma').config;
 const path = require('path');
+const proxy = require('html2canvas-proxy');
 const karmaConfig = cfg.parseConfig(path.resolve('./karma.conf.js'));
 const server = new Server(karmaConfig, (exitCode) => {
     console.log('Karma has exited with ' + exitCode);
@@ -15,8 +16,9 @@ const filenamifyUrl = require('filenamify-url');
 
 const CORS_PORT = 8081;
 const corsApp = express();
-corsApp.use(cors());
-corsApp.use('/', express.static(path.resolve(__dirname)));
+corsApp.use('/proxy', proxy());
+corsApp.use('/cors', cors(), express.static(path.resolve(__dirname)));
+corsApp.use('/', express.static(path.resolve(__dirname, '/tests')));
 corsApp.use((error, req, res, next) => {
     console.error(error);
     next();
