@@ -85,7 +85,7 @@ describe('Text-shadow', function() {
                 expect(shadows[0].offsetX).to.equal(i);
                 expect(shadows[0].offsetY).to.equal(i);
                 if (i < 2) {
-                    expect(shadows[0].color.toString()).to.equal('rgba(0,0,0,0)');
+                    expect(['rgb(0,0,0)', 'rgba(0,0,0,0)']).to.contain(shadows[0].color.toString());
                 } else if (i % 2 === 0) {
                     expect(shadows[0].color.toString()).to.equal('rgb(2,2,2)');
                 } else {
