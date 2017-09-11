@@ -239,6 +239,13 @@ const getImage = (
         case 'CANVAS':
             // $FlowFixMe
             return imageLoader.loadCanvas(node);
+        case 'DIV':
+            const iframeKey = node.getAttribute('data-html2canvas-internal-iframe-key');
+            if (iframeKey) {
+                console.log('ok');
+                return iframeKey;
+            }
+            break;
     }
 
     return null;

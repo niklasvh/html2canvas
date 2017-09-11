@@ -3,27 +3,39 @@
 import type {Bounds} from './Bounds';
 import type {Options} from './index';
 import type Logger from './Logger';
+import type {ImageElement} from './ImageLoader';
 
 import ImageLoader from './ImageLoader';
 import {copyCSSStyles} from './Util';
 import {parseBackgroundImage} from './parsing/background';
+import CanvasRenderer from './renderer/CanvasRenderer';
 
 export class DocumentCloner {
     scrolledElements: Array<[HTMLElement, number, number]>;
     referenceElement: HTMLElement;
     clonedReferenceElement: HTMLElement;
     documentElement: HTMLElement;
-    imageLoader: ImageLoader<string>;
+    imageLoader: ImageLoader<*>;
     logger: Logger;
+    options: Options;
     inlineImages: boolean;
     copyStyles: boolean;
+    renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>;
 
-    constructor(element: HTMLElement, options: Options, logger: Logger, copyInline: boolean) {
+    constructor(
+        element: HTMLElement,
+        options: Options,
+        logger: Logger,
+        copyInline: boolean,
+        renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
+    ) {
         this.referenceElement = element;
         this.scrolledElements = [];
         this.copyStyles = copyInline;
         this.inlineImages = copyInline;
         this.logger = logger;
+        this.options = options;
+        this.renderer = renderer;
         this.imageLoader = new ImageLoader(options, logger, window);
         // $FlowFixMe
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
@@ -90,6 +102,51 @@ export class DocumentCloner {
             }
         }
 
+        if (node instanceof HTMLIFrameElement) {
+            const tempIframe = node.cloneNode(false);
+            const iframeKey = generateIframeKey();
+            tempIframe.setAttribute('data-html2canvas-internal-iframe-key', iframeKey);
+
+            this.imageLoader.cache[iframeKey] = getIframeDocumentElement(node, this.options)
+                .then(documentElement => {
+                    return this.renderer(
+                        documentElement,
+                        {
+                            async: this.options.async,
+                            allowTaint: this.options.allowTaint,
+                            backgroundColor: '#ffffff',
+                            canvas: null,
+                            imageTimeout: this.options.imageTimeout,
+                            proxy: this.options.proxy,
+                            removeContainer: this.options.removeContainer,
+                            scale: this.options.scale,
+                            target: new CanvasRenderer(),
+                            type: 'view',
+                            windowWidth: documentElement.ownerDocument.defaultView.innerWidth,
+                            windowHeight: documentElement.ownerDocument.defaultView.innerHeight,
+                            offsetX: documentElement.ownerDocument.defaultView.pageXOffset,
+                            offsetY: documentElement.ownerDocument.defaultView.pageYOffset
+                        },
+                        this.logger.child(iframeKey)
+                    );
+                })
+                .then(canvas => {
+                    const iframeCanvas = document.createElement('img');
+                    iframeCanvas.src = canvas.toDataURL();
+                    if (tempIframe.parentNode) {
+                        tempIframe.parentNode.replaceChild(
+                            copyCSSStyles(
+                                node.ownerDocument.defaultView.getComputedStyle(node),
+                                iframeCanvas
+                            ),
+                            tempIframe
+                        );
+                    }
+                    return canvas;
+                });
+            return tempIframe;
+        }
+
         return node.cloneNode(false);
     }
 
@@ -99,11 +156,13 @@ export class DocumentCloner {
                 ? document.createTextNode(node.nodeValue)
                 : this.createElementClone(node);
 
-        if (this.referenceElement === node && clone instanceof HTMLElement) {
+        const window = node.ownerDocument.defaultView;
+
+        if (this.referenceElement === node && clone instanceof window.HTMLElement) {
             this.clonedReferenceElement = clone;
         }
 
-        if (clone instanceof HTMLBodyElement) {
+        if (clone instanceof window.HTMLBodyElement) {
             createPseudoHideStyles(clone);
         }
 
@@ -114,10 +173,10 @@ export class DocumentCloner {
                 }
             }
         }
-        if (node instanceof HTMLElement && clone instanceof HTMLElement) {
+        if (node instanceof window.HTMLElement && clone instanceof window.HTMLElement) {
             this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_BEFORE));
             this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_AFTER));
-            if (this.copyStyles) {
+            if (this.copyStyles && !(node instanceof HTMLIFrameElement)) {
                 copyCSSStyles(node.ownerDocument.defaultView.getComputedStyle(node), clone);
             }
             this.inlineAllImages(clone);
@@ -127,13 +186,11 @@ export class DocumentCloner {
             switch (node.nodeName) {
                 case 'CANVAS':
                     if (!this.copyStyles) {
-                        // $FlowFixMe
                         cloneCanvasContents(node, clone);
                     }
                     break;
                 case 'TEXTAREA':
                 case 'SELECT':
-                    // $FlowFixMe
                     clone.value = node.value;
                     break;
             }
@@ -248,14 +305,29 @@ const initNode = ([element, x, y]: [HTMLElement, number, number]) => {
     element.scrollTop = y;
 };
 
+const generateIframeKey = (): string =>
+    Math.ceil(Date.now() + Math.random() * 10000000).toString(16);
+
+const getIframeDocumentElement = (
+    node: HTMLIFrameElement,
+    options: Options
+): Promise<HTMLElement> => {
+    try {
+        return Promise.resolve(node.contentWindow.document.documentElement);
+    } catch (e) {
+        return Promise.reject();
+    }
+};
+
 export const cloneWindow = (
     ownerDocument: Document,
     bounds: Bounds,
     referenceElement: HTMLElement,
     options: Options,
-    logger: Logger
-): Promise<[HTMLIFrameElement, HTMLElement]> => {
-    const cloner = new DocumentCloner(referenceElement, options, logger, false);
+    logger: Logger,
+    renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
+): Promise<[HTMLIFrameElement, HTMLElement, ImageLoader<ImageElement>]> => {
+    const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer);
     const cloneIframeContainer = ownerDocument.createElement('iframe');
 
     cloneIframeContainer.className = 'html2canvas-container';
@@ -275,7 +347,7 @@ export const cloneWindow = (
         );
     }
     return new Promise((resolve, reject) => {
-        let cloneWindow = cloneIframeContainer.contentWindow;
+        const cloneWindow = cloneIframeContainer.contentWindow;
         const documentClone = cloneWindow.document;
 
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
@@ -302,7 +374,11 @@ export const cloneWindow = (
                         cloner.clonedReferenceElement instanceof cloneWindow.HTMLElement ||
                         cloner.clonedReferenceElement instanceof HTMLElement
                     ) {
-                        resolve([cloneIframeContainer, cloner.clonedReferenceElement]);
+                        resolve([
+                            cloneIframeContainer,
+                            cloner.clonedReferenceElement,
+                            cloner.imageLoader
+                        ]);
                     } else {
                         reject(
                             __DEV__
