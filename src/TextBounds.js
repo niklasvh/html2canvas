@@ -137,7 +137,7 @@ type FindWordsAndWordCategoriesResult = {
 
 const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWordCategoriesResult => {
     const words = [];
-    const rtlWordIndicators = [];
+    const rtlIndicators = [];
     let i = 0;
     let onWordBoundary = false;
     // Store whether the text is LTR or RTL
@@ -152,7 +152,7 @@ const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWord
             word = codePoints.splice(0, i);
             if (word.length) {
                 words.push(ucs2.encode(word));
-                rtlWordIndicators.push(isRtlCategory(previousScriptCategory));
+                rtlIndicators.push(isRtlCategory(previousScriptCategory));
             }
             onWordBoundary = !onWordBoundary;
             i = 0;
@@ -165,7 +165,7 @@ const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWord
             word = codePoints.splice(0, i);
             if (word.length) {
                 words.push(ucs2.encode(word));
-                rtlWordIndicators.push(isRtlCategory(previousScriptCategory));
+                rtlIndicators.push(isRtlCategory(previousScriptCategory));
             }
         }
     }
