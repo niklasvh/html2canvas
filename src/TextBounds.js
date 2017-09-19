@@ -80,7 +80,7 @@ const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
 
 const splitWords = (codePoints: Array<number>): Array<string> => {
     // Get words and whether they are RTL or LTR
-    const { words, rtlIndicators } = findWordsAndWordCategories(characters);
+    const { words, rtlIndicators } = findWordsAndWordCategories(codePoints);
     // For RTL words, we should swap brackets
     flipCharactersForRtlWordsIfNeeded(words, rtlIndicators);
     return words;
@@ -183,15 +183,19 @@ const flipCharactersForRtlWordsIfNeeded = (words: Array<string>, rtlIndicators: 
         word.split('').forEach((letter, indexOfLetter) => {
             if ((CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL.indexOf(letter) !== -1 && isNextWordRtl) ||
                 (CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL.indexOf(letter) !== -1 && isPreviousWordRtl)) {
-                words[indexOfWord] = word.replace(indexOfLetter, CHARACTER_TO_FLIPPED_CHARACTER_MAP[letter]);
+                words[indexOfWord] = replaceIndexAt(word, indexOfLetter, CHARACTER_TO_FLIPPED_CHARACTER_MAP[letter]);
             }
         });
     });
 }
 
-const isRtlCategory = (category: string): boolean => category !== LTR_CATEGORY;
+const replaceIndexAt = (word: string, indexToReplace: number, replacementString: string): string => (
+    word.substring(0, indexToReplace) + replacementString + word.substring(indexToReplace + 1)
+)
 
-const getUtf8ScriptCategory = (char: string): string => {
+const isRtlCategory = (category: string | null): boolean => !!category && category !== LTR_CATEGORY;
+
+const getUtf8ScriptCategory = (char: number): string => {
     if(char >= 0x0590 && char <= 0x05ff) {
         return SUPPORTED_RTL_CATEGORIES.HEBREW;
     } else if (char >= 0x0600 && char <= 0x06ff) {
