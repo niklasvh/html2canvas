@@ -8,8 +8,10 @@ import {TEXT_DECORATION} from './parsing/textDecoration';
 
 import FEATURES from './Feature';
 
+const RTL = /[\u0590-\u074f]/;
 const UNICODE = /[^\u0000-\u00ff]/;
 
+const hasRtlCharacters = (word: string): boolean => RTL.test(word);
 const hasUnicodeCharacters = (text: string): boolean => UNICODE.test(text);
 
 const encodeCodePoint = (codePoint: number): string => ucs2.encode([codePoint]);
@@ -30,7 +32,8 @@ export const parseTextBounds = (
     node: Text
 ): Array<TextBounds> => {
     const codePoints = ucs2.decode(value);
-    const letterRendering = parent.style.letterSpacing !== 0 || hasUnicodeCharacters(value);
+    const letterRendering = parent.style.letterSpacing !== 0 ||
+        (!hasUnicodeCharacters(value) && !hasRtlCharacters(value));
     const textList = letterRendering ? codePoints.map(encodeCodePoint) : splitWords(codePoints);
     const length = textList.length;
     const textBounds = [];
@@ -76,29 +79,10 @@ const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
 };
 
 const splitWords = (codePoints: Array<number>): Array<string> => {
-    const words = [];
-    let i = 0;
-    let onWordBoundary = false;
-    let word;
-    while (codePoints.length) {
-        if (isWordBoundary(codePoints[i]) === onWordBoundary) {
-            word = codePoints.splice(0, i);
-            if (word.length) {
-                words.push(ucs2.encode(word));
-            }
-            onWordBoundary = !onWordBoundary;
-            i = 0;
-        } else {
-            i++;
-        }
-
-        if (i >= codePoints.length) {
-            word = codePoints.splice(0, i);
-            if (word.length) {
-                words.push(ucs2.encode(word));
-            }
-        }
-    }
+    // Get words and whether they are RTL or LTR
+    const { words, rtlIndicators } = findWordsAndWordCategories(characters);
+    // For RTL words, we should swap brackets
+    flipCharactersForRtlWordsIfNeeded(words, rtlIndicators);
     return words;
 };
 
@@ -113,3 +97,109 @@ const isWordBoundary = (characterCode: number): boolean => {
         ].indexOf(characterCode) !== -1
     );
 };
+
+const SUPPORTED_RTL_CATEGORIES = {
+    ARABIC: 'ARABIC',
+    HEBREW: 'HEBREW',
+    SYRIAC: 'SYRIAC',
+};
+
+const LTR_CATEGORY = 'LTR';
+
+const CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL = [
+    '(',
+    '[',
+    '{',
+];
+
+const CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL = [
+    ')',
+    ']',
+    '}',
+];
+
+const CHARACTER_TO_FLIPPED_CHARACTER_MAP = {
+    // PARENS
+    '(': ')',
+    ')': '(',
+    // BRACKETS
+    '[': ']',
+    ']': '[',
+    // BRACES
+    '{': '}',
+    '}': '{',
+}
+
+type FindWordsAndWordCategoriesResult = {
+    rtlIndicators: Array<boolean>,
+    words: Array<string>,
+};
+
+const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWordCategoriesResult => {
+    const words = [];
+    const rtlWordIndicators = [];
+    let i = 0;
+    let onWordBoundary = false;
+    // Store whether the text is LTR or RTL
+    let previousScriptCategory = null;
+    let word;
+    while (codePoints.length) {
+        const codePointScriptCategory = getUtf8ScriptCategory(codePoints[i]);
+        if (previousScriptCategory == null) {
+            previousScriptCategory = codePointScriptCategory;
+        }
+        if (isWordBoundary(codePoints[i]) === onWordBoundary) {
+            word = codePoints.splice(0, i);
+            if (word.length) {
+                words.push(ucs2.encode(word));
+                rtlWordIndicators.push(isRtlCategory(previousScriptCategory));
+            }
+            onWordBoundary = !onWordBoundary;
+            i = 0;
+            previousScriptCategory = null;
+        } else {
+            i++;
+        }
+
+        if (i >= codePoints.length) {
+            word = codePoints.splice(0, i);
+            if (word.length) {
+                words.push(ucs2.encode(word));
+                rtlWordIndicators.push(isRtlCategory(previousScriptCategory));
+            }
+        }
+    }
+
+    return {
+        words,
+        rtlIndicators,
+    }
+}
+
+const flipCharactersForRtlWordsIfNeeded = (words: Array<string>, rtlIndicators: Array<boolean>): void => {
+    words.forEach((word, indexOfWord) => {
+        const isNextWordRtl = rtlIndicators[indexOfWord + 1] || false;
+        const isPreviousWordRtl = rtlIndicators[indexOfWord - 1] || false;
+        word.split('').forEach((letter, indexOfLetter) => {
+            if ((CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL.indexOf(letter) !== -1 && isNextWordRtl) ||
+                (CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL.indexOf(letter) !== -1 && isPreviousWordRtl)) {
+                words[indexOfWord] = word.replace(indexOfLetter, CHARACTER_TO_FLIPPED_CHARACTER_MAP[letter]);
+            }
+        });
+    });
+}
+
+const isRtlCategory = (category: string): boolean => category !== LTR_CATEGORY;
+
+const getUtf8ScriptCategory = (char: string): string => {
+    if(char >= 0x0590 && char <= 0x05ff) {
+        return SUPPORTED_RTL_CATEGORIES.HEBREW;
+    } else if (char >= 0x0600 && char <= 0x06ff) {
+        return SUPPORTED_RTL_CATEGORIES.ARABIC;
+    } else if(char >= 0x0700 && char <= 0x074f) {
+        return SUPPORTED_RTL_CATEGORIES.SYRIAC;
+    } else {
+        return LTR_CATEGORY;
+    }
+};
+
