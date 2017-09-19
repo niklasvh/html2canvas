@@ -32,7 +32,8 @@ export const parseTextBounds = (
     node: Text
 ): Array<TextBounds> => {
     const codePoints = ucs2.decode(value);
-    const letterRendering = parent.style.letterSpacing !== 0 ||
+    const letterRendering =
+        parent.style.letterSpacing !== 0 ||
         (!hasUnicodeCharacters(value) && !hasRtlCharacters(value));
     const textList = letterRendering ? codePoints.map(encodeCodePoint) : splitWords(codePoints);
     const length = textList.length;
@@ -80,7 +81,7 @@ const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
 
 const splitWords = (codePoints: Array<number>): Array<string> => {
     // Get words and whether they are RTL or LTR
-    const { words, rtlIndicators } = findWordsAndWordCategories(codePoints);
+    const {words, rtlIndicators} = findWordsAndWordCategories(codePoints);
     // For RTL words, we should swap brackets
     flipCharactersForRtlWordsIfNeeded(words, rtlIndicators);
     return words;
@@ -101,22 +102,14 @@ const isWordBoundary = (characterCode: number): boolean => {
 const SUPPORTED_RTL_CATEGORIES = {
     ARABIC: 'ARABIC',
     HEBREW: 'HEBREW',
-    SYRIAC: 'SYRIAC',
+    SYRIAC: 'SYRIAC'
 };
 
 const LTR_CATEGORY = 'LTR';
 
-const CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL = [
-    '(',
-    '[',
-    '{',
-];
+const CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL = ['(', '[', '{'];
 
-const CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL = [
-    ')',
-    ']',
-    '}',
-];
+const CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL = [')', ']', '}'];
 
 const CHARACTER_TO_FLIPPED_CHARACTER_MAP = {
     // PARENS
@@ -127,15 +120,17 @@ const CHARACTER_TO_FLIPPED_CHARACTER_MAP = {
     ']': '[',
     // BRACES
     '{': '}',
-    '}': '{',
-}
+    '}': '{'
+};
 
 type FindWordsAndWordCategoriesResult = {
     rtlIndicators: Array<boolean>,
-    words: Array<string>,
+    words: Array<string>
 };
 
-const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWordCategoriesResult => {
+const findWordsAndWordCategories = (
+    codePoints: Array<number>
+): FindWordsAndWordCategoriesResult => {
     const words = [];
     const rtlIndicators = [];
     let i = 0;
@@ -172,38 +167,46 @@ const findWordsAndWordCategories = (codePoints: Array<number>): FindWordsAndWord
 
     return {
         words,
-        rtlIndicators,
-    }
-}
+        rtlIndicators
+    };
+};
 
-const flipCharactersForRtlWordsIfNeeded = (words: Array<string>, rtlIndicators: Array<boolean>): void => {
+const flipCharactersForRtlWordsIfNeeded = (
+    words: Array<string>,
+    rtlIndicators: Array<boolean>
+): void => {
     words.forEach((word, indexOfWord) => {
         const isNextWordRtl = rtlIndicators[indexOfWord + 1] || false;
         const isPreviousWordRtl = rtlIndicators[indexOfWord - 1] || false;
         word.split('').forEach((letter, indexOfLetter) => {
-            if ((CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL.indexOf(letter) !== -1 && isNextWordRtl) ||
-                (CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL.indexOf(letter) !== -1 && isPreviousWordRtl)) {
-                words[indexOfWord] = replaceIndexAt(word, indexOfLetter, CHARACTER_TO_FLIPPED_CHARACTER_MAP[letter]);
+            if (
+                (CHARACTERS_TO_FLIP_IF_NEXT_WORD_IS_RTL.indexOf(letter) !== -1 && isNextWordRtl) ||
+                (CHARACTERS_TO_FLIP_IF_PREVIOUS_WORD_IS_RTL.indexOf(letter) !== -1 &&
+                    isPreviousWordRtl)
+            ) {
+                words[indexOfWord] = replaceIndexAt(
+                    word,
+                    indexOfLetter,
+                    CHARACTER_TO_FLIPPED_CHARACTER_MAP[letter]
+                );
             }
         });
     });
-}
+};
 
-const replaceIndexAt = (word: string, indexToReplace: number, replacementString: string): string => (
-    word.substring(0, indexToReplace) + replacementString + word.substring(indexToReplace + 1)
-)
+const replaceIndexAt = (word: string, indexToReplace: number, replacementString: string): string =>
+    word.substring(0, indexToReplace) + replacementString + word.substring(indexToReplace + 1);
 
 const isRtlCategory = (category: string | null): boolean => !!category && category !== LTR_CATEGORY;
 
 const getUtf8ScriptCategory = (char: number): string => {
-    if(char >= 0x0590 && char <= 0x05ff) {
+    if (char >= 0x0590 && char <= 0x05ff) {
         return SUPPORTED_RTL_CATEGORIES.HEBREW;
     } else if (char >= 0x0600 && char <= 0x06ff) {
         return SUPPORTED_RTL_CATEGORIES.ARABIC;
-    } else if(char >= 0x0700 && char <= 0x074f) {
+    } else if (char >= 0x0700 && char <= 0x074f) {
         return SUPPORTED_RTL_CATEGORIES.SYRIAC;
     } else {
         return LTR_CATEGORY;
     }
 };
-
