@@ -372,6 +372,8 @@ export const cloneWindow = (
                     }
                     if (
                         cloner.clonedReferenceElement instanceof cloneWindow.HTMLElement ||
+                        cloner.clonedReferenceElement instanceof
+                            ownerDocument.defaultView.HTMLElement ||
                         cloner.clonedReferenceElement instanceof HTMLElement
                     ) {
                         resolve([
