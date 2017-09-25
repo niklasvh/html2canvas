@@ -31,7 +31,7 @@ export const Proxy = (src: string, options: Options): Promise<string> => {
                 } else {
                     reject(
                         __DEV__
-                            ? `Failed to proxy image ${src.substring(
+                            ? `Failed to proxy resource ${src.substring(
                                   0,
                                   256
                               )} with status code ${xhr.status}`
