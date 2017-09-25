@@ -5,6 +5,7 @@
         "prettier"
     ],
     "rules": {
+        "no-console": ["error", { "allow": ["warn", "error"] }],
         "flowtype/boolean-style": [
             2,
             "boolean"
