@@ -46,13 +46,18 @@ const parseNodeTree = (
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
         nextNode = childNode.nextSibling;
         const defaultView = childNode.ownerDocument.defaultView;
-        if (childNode instanceof defaultView.Text || childNode instanceof Text) {
+        if (
+            childNode instanceof defaultView.Text ||
+            childNode instanceof Text ||
+            (defaultView.parent && childNode instanceof defaultView.parent.Text)
+        ) {
             if (childNode.data.trim().length > 0) {
                 parent.childNodes.push(TextContainer.fromTextNode(childNode, parent));
             }
         } else if (
             childNode instanceof defaultView.HTMLElement ||
-            childNode instanceof HTMLElement
+            childNode instanceof HTMLElement ||
+            (defaultView.parent && childNode instanceof defaultView.parent.HTMLElement)
         ) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
                 const container = new NodeContainer(childNode, parent, imageLoader, index++);
@@ -99,7 +104,8 @@ const parseNodeTree = (
             }
         } else if (
             childNode instanceof defaultView.SVGSVGElement ||
-            childNode instanceof SVGSVGElement
+            childNode instanceof SVGSVGElement ||
+            (defaultView.parent && childNode instanceof defaultView.parent.SVGSVGElement)
         ) {
             const container = new NodeContainer(childNode, parent, imageLoader, index++);
             const treatAsRealStackingContext = createsRealStackingContext(container, childNode);

@@ -38,7 +38,10 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
 
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.textBaseline = 'bottom';
-        options.logger.log(`Canvas renderer initialized with scale ${this.options.scale}`);
+        options.logger.log(
+            `Canvas renderer initialized (${options.width}x${options.height}) with scale ${this
+                .options.scale}`
+        );
     }
 
     clip(clipPaths: Array<Path>, callback: () => void) {
