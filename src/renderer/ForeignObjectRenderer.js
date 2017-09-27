@@ -12,31 +12,41 @@ export default class ForeignObjectRenderer {
         this.options = options;
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
-        this.canvas.width = Math.floor(options.bounds.width * options.scale);
-        this.canvas.height = Math.floor(options.bounds.height * options.scale);
-        this.canvas.style.width = `${options.bounds.width}px`;
-        this.canvas.style.height = `${options.bounds.height}px`;
+        this.canvas.width = Math.floor(options.width * options.scale);
+        this.canvas.height = Math.floor(options.height * options.scale);
+        this.canvas.style.width = `${options.width}px`;
+        this.canvas.style.height = `${options.height}px`;
         this.ctx.scale(this.options.scale, this.options.scale);
 
-        options.logger.log(`ForeignObject renderer initialized with scale ${this.options.scale}`);
+        options.logger.log(
+            `ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${this
+                .options.scale}`
+        );
         const svg = createForeignObjectSVG(
-            options.bounds.width,
-            options.bounds.height,
+            Math.max(options.windowWidth, options.width),
+            Math.max(options.windowHeight, options.height),
+            options.scrollX,
+            options.scrollY,
             this.element
         );
-
         return loadSerializedSVG(svg).then(img => {
             if (options.backgroundColor) {
                 this.ctx.fillStyle = options.backgroundColor.toString();
-                this.ctx.fillRect(0, 0, options.bounds.width, options.bounds.height);
+                this.ctx.fillRect(0, 0, options.width, options.height);
             }
-            this.ctx.drawImage(img, 0, 0);
+            this.ctx.drawImage(img, -options.x, -options.y);
             return this.canvas;
         });
     }
 }
 
-export const createForeignObjectSVG = (width: number, height: number, node: Node) => {
+export const createForeignObjectSVG = (
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    node: Node
+) => {
     const xmlns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(xmlns, 'svg');
     const foreignObject = document.createElementNS(xmlns, 'foreignObject');
@@ -45,6 +55,8 @@ export const createForeignObjectSVG = (width: number, height: number, node: Node
 
     foreignObject.setAttributeNS(null, 'width', '100%');
     foreignObject.setAttributeNS(null, 'height', '100%');
+    foreignObject.setAttributeNS(null, 'x', x);
+    foreignObject.setAttributeNS(null, 'y', y);
     foreignObject.setAttributeNS(null, 'externalResourcesRequired', 'true');
     svg.appendChild(foreignObject);
 

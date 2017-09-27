@@ -41,13 +41,22 @@ export class Bounds {
         this.height = h;
     }
 
-    static fromClientRect(clientRect: ClientRect): Bounds {
-        return new Bounds(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
+    static fromClientRect(clientRect: ClientRect, scrollX: number, scrollY: number): Bounds {
+        return new Bounds(
+            clientRect.left + scrollX,
+            clientRect.top + scrollY,
+            clientRect.width,
+            clientRect.height
+        );
     }
 }
 
-export const parseBounds = (node: HTMLElement | SVGSVGElement): Bounds => {
-    return Bounds.fromClientRect(node.getBoundingClientRect());
+export const parseBounds = (
+    node: HTMLElement | SVGSVGElement,
+    scrollX: number,
+    scrollY: number
+): Bounds => {
+    return Bounds.fromClientRect(node.getBoundingClientRect(), scrollX, scrollY);
 };
 
 export const calculatePaddingBox = (bounds: Bounds, borders: Array<Border>): Bounds => {

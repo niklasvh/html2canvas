@@ -92,7 +92,7 @@ const testForeignObject = document => {
     const img = new Image();
     const greenImageSrc = canvas.toDataURL();
     img.src = greenImageSrc;
-    const svg = createForeignObjectSVG(size, size, img);
+    const svg = createForeignObjectSVG(size, size, 0, 0, img);
     ctx.fillStyle = 'red';
     ctx.fillRect(0, 0, size, size);
 
@@ -108,7 +108,7 @@ const testForeignObject = document => {
             node.style.height = `${size}px`;
             // Firefox 55 does not render inline <img /> tags
             return isGreenPixel(data)
-                ? loadSerializedSVG(createForeignObjectSVG(size, size, node))
+                ? loadSerializedSVG(createForeignObjectSVG(size, size, 0, 0, node))
                 : Promise.reject(false);
         })
         .then(img => {

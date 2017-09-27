@@ -94,6 +94,8 @@ export default class NodeContainer {
         this.index = index;
         this.childNodes = [];
         const defaultView = node.ownerDocument.defaultView;
+        const scrollX = defaultView.pageXOffset;
+        const scrollY = defaultView.pageYOffset;
         const style = defaultView.getComputedStyle(node, null);
         const display = parseDisplay(style.display);
 
@@ -138,7 +140,7 @@ export default class NodeContainer {
         // TODO move bound retrieval for all nodes to a later stage?
         if (node.tagName === 'IMG') {
             node.addEventListener('load', () => {
-                this.bounds = parseBounds(node);
+                this.bounds = parseBounds(node, scrollX, scrollY);
                 this.curvedBounds = parseBoundCurves(
                     this.bounds,
                     this.style.border,
@@ -147,7 +149,9 @@ export default class NodeContainer {
             });
         }
         this.image = getImage(node, imageLoader);
-        this.bounds = IS_INPUT ? reformatInputBounds(parseBounds(node)) : parseBounds(node);
+        this.bounds = IS_INPUT
+            ? reformatInputBounds(parseBounds(node, scrollX, scrollY))
+            : parseBounds(node, scrollX, scrollY);
         this.curvedBounds = parseBoundCurves(
             this.bounds,
             this.style.border,

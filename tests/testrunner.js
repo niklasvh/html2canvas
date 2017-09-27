@@ -115,7 +115,7 @@ const assertPath = (result, expected, desc) => {
                     });
                     it('Should render untainted canvas', () => {
                         return testContainer.contentWindow
-                            .html2canvas(testContainer.contentWindow.document.documentElement, {
+                            .html2canvas(testContainer.contentWindow.forceElement || testContainer.contentWindow.document.documentElement, {
                                 removeContainer: true,
                                 backgroundColor: '#ffffff',
                                 proxy: 'http://localhost:8081/proxy',

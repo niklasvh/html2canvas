@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>element render test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        #div1 {
+            position: absolute;
+            left: 250px;
+            top: 250px;
+            width: 100px;
+            height: 100px;
+            background: green;
+        }
+
+        body, html {
+            background: red;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="div1">
+    great success
+</div>
+<script>
+    var forceElement = document.querySelector('#div1');
+    h2cSelector = forceElement;
+</script>
+</body>
+</html>

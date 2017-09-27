@@ -6,6 +6,7 @@ import type {RenderTarget} from './Renderer';
 import CanvasRenderer from './renderer/CanvasRenderer';
 import Logger from './Logger';
 import {renderElement} from './Window';
+import {parseBounds, parseDocumentSize} from './Bounds';
 
 export type Options = {
     async: ?boolean,
@@ -17,11 +18,14 @@ export type Options = {
     removeContainer: ?boolean,
     scale: number,
     target: RenderTarget<*>,
-    type: ?string,
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    scrollX: number,
+    scrollY: number,
     windowWidth: number,
-    windowHeight: number,
-    offsetX: number,
-    offsetY: number
+    windowHeight: number
 };
 
 const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
@@ -37,6 +41,15 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const ownerDocument = element.ownerDocument;
     const defaultView = ownerDocument.defaultView;
 
+    const scrollX = defaultView.pageXOffset;
+    const scrollY = defaultView.pageYOffset;
+
+    const isDocument = element.tagName === 'HTML' || element.tagName === 'BODY';
+
+    const {width, height, left, top} = isDocument
+        ? parseDocumentSize(ownerDocument)
+        : parseBounds(element, scrollX, scrollY);
+
     const defaultOptions = {
         async: true,
         allowTaint: false,
@@ -45,11 +58,14 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         removeContainer: true,
         scale: defaultView.devicePixelRatio || 1,
         target: new CanvasRenderer(config.canvas),
-        type: null,
+        x: left,
+        y: top,
+        width: Math.ceil(width),
+        height: Math.ceil(height),
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight,
-        offsetX: defaultView.pageXOffset,
-        offsetY: defaultView.pageYOffset
+        scrollX: defaultView.pageXOffset,
+        scrollY: defaultView.pageYOffset
     };
 
     const result = renderElement(element, {...defaultOptions, ...config}, logger);

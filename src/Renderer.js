@@ -46,6 +46,8 @@ export type RenderOptions = {
     imageStore: ImageStore<ImageElement>,
     fontMetrics: FontMetrics,
     logger: Logger,
+    x: number,
+    y: number,
     width: number,
     height: number
 };
