@@ -143,7 +143,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
             };
         })(jQuery);
 
-        h2cSelector = [document.documentElement];
+        h2cSelector = typeof h2cSelector === 'undefined' ? [document.documentElement] : h2cSelector;
 
         if (window.setUp) {
             window.setUp();

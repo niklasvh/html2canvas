@@ -10,7 +10,7 @@ import Renderer from './Renderer';
 import ForeignObjectRenderer from './renderer/ForeignObjectRenderer';
 
 import Feature from './Feature';
-import {Bounds, parseDocumentSize} from './Bounds';
+import {Bounds} from './Bounds';
 import {cloneWindow, DocumentCloner} from './Clone';
 import {FontMetrics} from './Font';
 import Color, {TRANSPARENT} from './Color';
@@ -23,13 +23,11 @@ export const renderElement = (
     const ownerDocument = element.ownerDocument;
 
     const windowBounds = new Bounds(
-        options.offsetX,
-        options.offsetY,
+        options.scrollX,
+        options.scrollY,
         options.windowWidth,
         options.windowHeight
     );
-
-    const bounds = options.type === 'view' ? windowBounds : parseDocumentSize(ownerDocument);
 
     // http://www.w3.org/TR/css3-background/#special-backgrounds
     const documentBackgroundColor = ownerDocument.documentElement
@@ -60,10 +58,17 @@ export const renderElement = (
                       return cloner.imageLoader.ready().then(() => {
                           const renderer = new ForeignObjectRenderer(cloner.clonedReferenceElement);
                           return renderer.render({
-                              bounds,
                               backgroundColor,
                               logger,
-                              scale: options.scale
+                              scale: options.scale,
+                              x: options.x,
+                              y: options.y,
+                              width: options.width,
+                              height: options.height,
+                              windowWidth: options.windowWidth,
+                              windowHeight: options.windowHeight,
+                              scrollX: options.scrollX,
+                              scrollY: options.scrollY
                           });
                       });
                   })(new DocumentCloner(element, options, logger, true, renderElement))
@@ -81,8 +86,6 @@ export const renderElement = (
 
                       const stack = NodeParser(clonedElement, imageLoader, logger);
                       const clonedDocument = clonedElement.ownerDocument;
-                      const width = bounds.width;
-                      const height = bounds.height;
 
                       if (backgroundColor === stack.container.style.background.backgroundColor) {
                           stack.container.style.background.backgroundColor = TRANSPARENT;
@@ -110,8 +113,10 @@ export const renderElement = (
                               imageStore,
                               logger,
                               scale: options.scale,
-                              width,
-                              height
+                              x: options.x,
+                              y: options.y,
+                              width: options.width,
+                              height: options.height
                           };
 
                           if (Array.isArray(options.target)) {

@@ -109,6 +109,8 @@ export class DocumentCloner {
             const iframeKey = generateIframeKey();
             tempIframe.setAttribute('data-html2canvas-internal-iframe-key', iframeKey);
 
+            const {width, height} = parseBounds(node, 0, 0);
+
             this.imageLoader.cache[iframeKey] = getIframeDocumentElement(node, this.options)
                 .then(documentElement => {
                     return this.renderer(
@@ -123,11 +125,14 @@ export class DocumentCloner {
                             removeContainer: this.options.removeContainer,
                             scale: this.options.scale,
                             target: new CanvasRenderer(),
-                            type: 'view',
+                            width,
+                            height,
+                            x: 0,
+                            y: 0,
                             windowWidth: documentElement.ownerDocument.defaultView.innerWidth,
                             windowHeight: documentElement.ownerDocument.defaultView.innerHeight,
-                            offsetX: documentElement.ownerDocument.defaultView.pageXOffset,
-                            offsetY: documentElement.ownerDocument.defaultView.pageYOffset
+                            scrollX: documentElement.ownerDocument.defaultView.pageXOffset,
+                            scrollY: documentElement.ownerDocument.defaultView.pageYOffset
                         },
                         this.logger.child(iframeKey)
                     );
@@ -338,7 +343,7 @@ const getIframeDocumentElement = (
                   .then(html =>
                       createIframeContainer(
                           node.ownerDocument,
-                          parseBounds(node)
+                          parseBounds(node, 0, 0)
                       ).then(cloneIframeContainer => {
                           const cloneWindow = cloneIframeContainer.contentWindow;
                           const documentClone = cloneWindow.document;
@@ -411,6 +416,8 @@ export const cloneWindow = (
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
 ): Promise<[HTMLIFrameElement, HTMLElement, ImageLoader<ImageElement>]> => {
     const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer);
+    const scrollX = ownerDocument.defaultView.pageXOffset;
+    const scrollY = ownerDocument.defaultView.pageYOffset;
 
     return createIframeContainer(ownerDocument, bounds).then(cloneIframeContainer => {
         const cloneWindow = cloneIframeContainer.contentWindow;
@@ -422,16 +429,14 @@ export const cloneWindow = (
 
         const iframeLoad = iframeLoader(cloneIframeContainer).then(() => {
             cloner.scrolledElements.forEach(initNode);
-            if (options.type === 'view') {
-                cloneWindow.scrollTo(bounds.left, bounds.top);
-                if (
-                    /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
-                    (cloneWindow.scrollY !== bounds.top || cloneWindow.scrollX !== bounds.left)
-                ) {
-                    documentClone.documentElement.style.top = -bounds.top + 'px';
-                    documentClone.documentElement.style.left = -bounds.left + 'px';
-                    documentClone.documentElement.style.position = 'absolute';
-                }
+            cloneWindow.scrollTo(bounds.left, bounds.top);
+            if (
+                /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
+                (cloneWindow.scrollY !== bounds.top || cloneWindow.scrollX !== bounds.left)
+            ) {
+                documentClone.documentElement.style.top = -bounds.top + 'px';
+                documentClone.documentElement.style.left = -bounds.left + 'px';
+                documentClone.documentElement.style.position = 'absolute';
             }
             return cloner.clonedReferenceElement instanceof cloneWindow.HTMLElement ||
             cloner.clonedReferenceElement instanceof ownerDocument.defaultView.HTMLElement ||
@@ -451,7 +456,7 @@ export const cloneWindow = (
         documentClone.open();
         documentClone.write('<!DOCTYPE html><html></html>');
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
-        restoreOwnerScroll(referenceElement.ownerDocument, bounds.left, bounds.top);
+        restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
         documentClone.replaceChild(
             documentClone.adoptNode(cloner.documentElement),
             documentClone.documentElement

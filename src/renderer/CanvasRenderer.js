@@ -37,9 +37,10 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         this.canvas.style.height = `${options.height}px`;
 
         this.ctx.scale(this.options.scale, this.options.scale);
+        this.ctx.translate(-options.x, -options.y);
         this.ctx.textBaseline = 'bottom';
         options.logger.log(
-            `Canvas renderer initialized (${options.width}x${options.height}) with scale ${this
+            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${this
                 .options.scale}`
         );
     }

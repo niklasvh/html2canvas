@@ -33,16 +33,24 @@ export const parseTextBounds = (
     const letterRendering = parent.style.letterSpacing !== 0 || hasUnicodeCharacters(value);
     const textList = letterRendering ? codePoints.map(encodeCodePoint) : splitWords(codePoints);
     const length = textList.length;
+    const defaultView = node.parentNode ? node.parentNode.ownerDocument.defaultView : null;
+    const scrollX = defaultView ? defaultView.pageXOffset : 0;
+    const scrollY = defaultView ? defaultView.pageYOffset : 0;
     const textBounds = [];
     let offset = 0;
     for (let i = 0; i < length; i++) {
         let text = textList[i];
         if (parent.style.textDecoration !== TEXT_DECORATION.NONE || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
+                textBounds.push(
+                    new TextBounds(
+                        text,
+                        getRangeBounds(node, offset, text.length, scrollX, scrollY)
+                    )
+                );
             } else {
                 const replacementNode = node.splitText(text.length);
-                textBounds.push(new TextBounds(text, getWrapperBounds(node)));
+                textBounds.push(new TextBounds(text, getWrapperBounds(node, scrollX, scrollY)));
                 node = replacementNode;
             }
         } else if (!FEATURES.SUPPORT_RANGE_BOUNDS) {
@@ -53,13 +61,13 @@ export const parseTextBounds = (
     return textBounds;
 };
 
-const getWrapperBounds = (node: Text): Bounds => {
+const getWrapperBounds = (node: Text, scrollX: number, scrollY: number): Bounds => {
     const wrapper = node.ownerDocument.createElement('html2canvaswrapper');
     wrapper.appendChild(node.cloneNode(true));
     const parentNode = node.parentNode;
     if (parentNode) {
         parentNode.replaceChild(wrapper, node);
-        const bounds = parseBounds(wrapper);
+        const bounds = parseBounds(wrapper, scrollX, scrollY);
         if (wrapper.firstChild) {
             parentNode.replaceChild(wrapper.firstChild, wrapper);
         }
@@ -68,11 +76,17 @@ const getWrapperBounds = (node: Text): Bounds => {
     return new Bounds(0, 0, 0, 0);
 };
 
-const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
+const getRangeBounds = (
+    node: Text,
+    offset: number,
+    length: number,
+    scrollX: number,
+    scrollY: number
+): Bounds => {
     const range = node.ownerDocument.createRange();
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return Bounds.fromClientRect(range.getBoundingClientRect());
+    return Bounds.fromClientRect(range.getBoundingClientRect(), scrollX, scrollY);
 };
 
 const splitWords = (codePoints: Array<number>): Array<string> => {

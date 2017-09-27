@@ -4,6 +4,7 @@
  * Complete rewrite of library
  ##### Breaking Changes #####
  * Remove deprecated onrendered callback, calling `html2canvas` returns a `Promise<HTMLCanvasElement>`
+ * Removed option `type`, same results can be achieved by assigning `x`, `y`, `scrollX`, `scrollY`, `width` and `height` properties.
  
  ##### New featues / fixes #####
  * Add support for scaling canvas (defaults to device pixel ratio)
