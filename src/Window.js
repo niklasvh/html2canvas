@@ -46,8 +46,10 @@ export const renderElement = (
               : documentBackgroundColor
             : options.backgroundColor ? new Color(options.backgroundColor) : null;
 
-    // $FlowFixMe
-    return Feature.SUPPORT_FOREIGNOBJECT_DRAWING.then(
+    return (options.foreignObjectRendering
+        ? // $FlowFixMe
+          Feature.SUPPORT_FOREIGNOBJECT_DRAWING
+        : Promise.resolve(false)).then(
         supportForeignObject =>
             supportForeignObject
                 ? (cloner => {
