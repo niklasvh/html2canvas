@@ -124,6 +124,7 @@ export class DocumentCloner {
                             proxy: this.options.proxy,
                             removeContainer: this.options.removeContainer,
                             scale: this.options.scale,
+                            foreignObjectRendering: this.options.foreignObjectRendering,
                             target: new CanvasRenderer(),
                             width,
                             height,
