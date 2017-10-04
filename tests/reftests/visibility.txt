@@ -1,0 +1,21 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 790, y: 10) > Vector(x: 10, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 8) > Vector(x: 792, y: 158) > Vector(x: 790, y: 156) > Vector(x: 790, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 792, y: 158) > Vector(x: 8, y: 158) > Vector(x: 10, y: 156) > Vector(x: 790, y: 156))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 158) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 156))
+Text: rgb(0,0,0) normal normal 700 32 Arial
+  [10, 32]: Display:none
+  [220, 32]: and
+  [286, 32]: visible:hidden
+  [510, 32]: tests
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 90) > Vector(x: 790, y: 90) > Vector(x: 788, y: 92) > Vector(x: 12, y: 92))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 90) > Vector(x: 790, y: 112) > Vector(x: 788, y: 110) > Vector(x: 788, y: 92))
+Shape: rgb(0,0,0) Path (Vector(x: 790, y: 112) > Vector(x: 10, y: 112) > Vector(x: 12, y: 110) > Vector(x: 788, y: 110))
+Shape: rgb(0,0,0) Path (Vector(x: 10, y: 112) > Vector(x: 10, y: 90) > Vector(x: 12, y: 92) > Vector(x: 12, y: 110))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [12, 92]: This
+  [47, 92]: should
+  [98, 92]: be
+  [120, 92]: visible

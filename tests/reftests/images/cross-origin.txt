@@ -1,0 +1,7 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 700 32 Arial
+  [8, 22]: External
+  [143, 22]: image
+  [244, 22]: (CORS)

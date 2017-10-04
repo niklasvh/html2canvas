@@ -1,0 +1,28 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 28, y: 28) > Vector(x: 772, y: 28) > Vector(x: 772, y: 245) > Vector(x: 28, y: 245))
+  Fill: rgb(155,255,248)
+Text: rgb(0,0,0) normal normal 700 24 Arial
+  [38, 50]: Div
+  [82, 50]: Element
+  [182, 50]: #1
+Clip: Path (Vector(x: 38, y: 110) > Vector(x: 321, y: 110) > Vector(x: 321, y: 235) > Vector(x: 38, y: 235))
+  Fill: rgb(124,182,89)
+Text: rgb(0,0,0) normal normal 700 24 Arial
+  [38, 123]: Div
+  [82, 123]: Element
+  [182, 123]: #2
+Text: rgb(0,0,0) normal normal 700 24 Arial
+  [38, 175]: Div
+  [82, 175]: Element
+  [182, 175]: #3
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [38, 217]: float:
+  [84, 217]: left;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [38, 93]: position:
+  [104, 93]: relative;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [209, 165]: position:
+  [275, 165]: static;

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>scroll test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        h2cOptions = {
+            x: 250,
+            y: 250,
+            width: 200,
+            height: 100,
+            scrollX: 250,
+            scrollY: 250
+        };
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        #div1 {
+            position: absolute;
+            left: 350px;
+            top: 250px;
+            width: 100px;
+            height: 100px;
+            background: green;
+        }
+
+        #div2 {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100px;
+            height: 100px;
+            background: lightblue;
+        }
+
+        body, html {
+            background: red;
+            height: 4000px;
+            width: 4000px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="div1">
+    great success
+</div>
+
+<div id="div2">
+    fixed great success
+</div>
+</body>
+</html>

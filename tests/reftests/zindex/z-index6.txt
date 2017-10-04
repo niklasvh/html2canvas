@@ -1,0 +1,34 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 28, y: 113) > Vector(x: 287, y: 113) > Vector(x: 287, y: 187) > Vector(x: 28, y: 187))
+  Fill: rgb(255,221,221)
+Shape: rgb(102,153,102) Path (Vector(x: 28, y: 113) > Vector(x: 287, y: 113) > Vector(x: 285, y: 115) > Vector(x: 30, y: 115))
+Shape: rgb(102,153,102) Path (Vector(x: 287, y: 113) > Vector(x: 287, y: 187) > Vector(x: 285, y: 185) > Vector(x: 285, y: 115))
+Shape: rgb(102,153,102) Path (Vector(x: 287, y: 187) > Vector(x: 28, y: 187) > Vector(x: 30, y: 185) > Vector(x: 285, y: 185))
+Shape: rgb(102,153,102) Path (Vector(x: 28, y: 187) > Vector(x: 28, y: 113) > Vector(x: 30, y: 115) > Vector(x: 30, y: 185))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [35, 115]: z
+  [43, 115]: -
+  [48, 115]: index:0
+Clip: Path (Vector(x: 8, y: 82) > Vector(x: 267, y: 82) > Vector(x: 267, y: 156) > Vector(x: 8, y: 156))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 82) > Vector(x: 267, y: 82) > Vector(x: 265, y: 84) > Vector(x: 10, y: 84))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 82) > Vector(x: 267, y: 156) > Vector(x: 265, y: 154) > Vector(x: 265, y: 84))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 156) > Vector(x: 8, y: 156) > Vector(x: 10, y: 154) > Vector(x: 265, y: 154))
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 156) > Vector(x: 8, y: 82) > Vector(x: 10, y: 84) > Vector(x: 10, y: 154))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [15, 84]: default
+  [68, 84]: z
+  [76, 84]: -
+  [81, 84]: index
+Clip: Path (Vector(x: 8, y: 156) > Vector(x: 267, y: 156) > Vector(x: 267, y: 230) > Vector(x: 8, y: 230))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 156) > Vector(x: 267, y: 156) > Vector(x: 265, y: 158) > Vector(x: 10, y: 158))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 156) > Vector(x: 267, y: 230) > Vector(x: 265, y: 228) > Vector(x: 265, y: 158))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 230) > Vector(x: 8, y: 230) > Vector(x: 10, y: 228) > Vector(x: 265, y: 228))
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 230) > Vector(x: 8, y: 156) > Vector(x: 10, y: 158) > Vector(x: 10, y: 228))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [15, 158]: z
+  [23, 158]: -
+  [28, 158]: index:1

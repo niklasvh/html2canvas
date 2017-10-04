@@ -1,0 +1,23 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 0) > Vector(x: 258, y: 0) > Vector(x: 258, y: 600) > Vector(x: 8, y: 600))
+  Fill: rgb(255,221,221)
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 267, y: 8) > Vector(x: 267, y: 82) > Vector(x: 8, y: 82))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 8) > Vector(x: 267, y: 8) > Vector(x: 265, y: 10) > Vector(x: 10, y: 10))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 8) > Vector(x: 267, y: 82) > Vector(x: 265, y: 80) > Vector(x: 265, y: 10))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 82) > Vector(x: 8, y: 82) > Vector(x: 10, y: 80) > Vector(x: 265, y: 80))
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 82) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 80))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [15, 10]: LEVEL
+  [69, 10]: #1
+Clip: Path (Vector(x: 8, y: 82) > Vector(x: 267, y: 82) > Vector(x: 267, y: 156) > Vector(x: 8, y: 156))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 82) > Vector(x: 267, y: 82) > Vector(x: 265, y: 84) > Vector(x: 10, y: 84))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 82) > Vector(x: 267, y: 156) > Vector(x: 265, y: 154) > Vector(x: 265, y: 84))
+Shape: rgb(102,153,102) Path (Vector(x: 267, y: 156) > Vector(x: 8, y: 156) > Vector(x: 10, y: 154) > Vector(x: 265, y: 154))
+Shape: rgb(102,153,102) Path (Vector(x: 8, y: 156) > Vector(x: 8, y: 82) > Vector(x: 10, y: 84) > Vector(x: 10, y: 154))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [15, 84]: LEVEL
+  [69, 84]: #1

@@ -1,0 +1,7 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 8) > Vector(x: 512, y: 8) > Vector(x: 510, y: 10) > Vector(x: 10, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 512, y: 8) > Vector(x: 512, y: 512) > Vector(x: 510, y: 510) > Vector(x: 510, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 512, y: 512) > Vector(x: 8, y: 512) > Vector(x: 10, y: 510) > Vector(x: 510, y: 510))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 512) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 510))

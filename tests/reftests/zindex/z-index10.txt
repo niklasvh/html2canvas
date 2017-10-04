@@ -1,0 +1,114 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Opacity: 0.7
+Clip: Path (Vector(x: 20, y: 292) > Vector(x: 780, y: 292) > Vector(x: 780, y: 374) > Vector(x: 20, y: 374))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 20, y: 292) > Vector(x: 780, y: 292) > Vector(x: 779, y: 293) > Vector(x: 21, y: 293))
+Shape: rgb(102,153,102) Path (Vector(x: 780, y: 292) > Vector(x: 780, y: 374) > Vector(x: 779, y: 373) > Vector(x: 779, y: 293))
+Shape: rgb(102,153,102) Path (Vector(x: 780, y: 374) > Vector(x: 20, y: 374) > Vector(x: 21, y: 373) > Vector(x: 779, y: 373))
+Shape: rgb(102,153,102) Path (Vector(x: 20, y: 374) > Vector(x: 20, y: 292) > Vector(x: 21, y: 293) > Vector(x: 21, y: 373))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [31, 306]: Division
+  [81, 306]: Element
+  [131, 306]: #2
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [31, 326]: position:
+  [97, 326]: relative;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [31, 346]: z
+  [37, 346]: -
+  [44, 346]: index:
+  [90, 346]: 2;
+Opacity: 1
+Clip: Path (Vector(x: 180, y: 40) > Vector(x: 552, y: 40) > Vector(x: 552, y: 356) > Vector(x: 180, y: 356))
+  Fill: rgb(255,221,221)
+Shape: rgb(153,0,0) Path (Vector(x: 180, y: 40) > Vector(x: 552, y: 40) > Vector(x: 551, y: 41) > Vector(x: 181, y: 41))
+Shape: rgb(153,0,0) Path (Vector(x: 552, y: 40) > Vector(x: 552, y: 356) > Vector(x: 551, y: 355) > Vector(x: 551, y: 41))
+Shape: rgb(153,0,0) Path (Vector(x: 552, y: 356) > Vector(x: 180, y: 356) > Vector(x: 181, y: 355) > Vector(x: 551, y: 355))
+Shape: rgb(153,0,0) Path (Vector(x: 180, y: 356) > Vector(x: 180, y: 40) > Vector(x: 181, y: 41) > Vector(x: 181, y: 355))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [201, 191]: Division
+  [251, 191]: Element
+  [301, 191]: #3
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [201, 211]: position:
+  [267, 211]: absolute;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [201, 231]: z
+  [207, 231]: -
+  [214, 231]: index:
+  [260, 231]: 4;
+Opacity: 0.7
+Clip: Path (Vector(x: 201, y: 263) > Vector(x: 531, y: 263) > Vector(x: 531, y: 335) > Vector(x: 201, y: 335))
+  Fill: rgb(255,255,204)
+Shape: rgb(153,153,102) Path (Vector(x: 201, y: 263) > Vector(x: 531, y: 263) > Vector(x: 530, y: 264) > Vector(x: 202, y: 264))
+Shape: rgb(153,153,102) Path (Vector(x: 531, y: 263) > Vector(x: 531, y: 335) > Vector(x: 530, y: 334) > Vector(x: 530, y: 264))
+Shape: rgb(153,153,102) Path (Vector(x: 531, y: 335) > Vector(x: 201, y: 335) > Vector(x: 202, y: 334) > Vector(x: 530, y: 334))
+Shape: rgb(153,153,102) Path (Vector(x: 201, y: 335) > Vector(x: 201, y: 263) > Vector(x: 202, y: 264) > Vector(x: 202, y: 334))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [212, 272]: Division
+  [262, 272]: Element
+  [312, 272]: #5
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [212, 292]: position:
+  [278, 292]: relative;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [212, 312]: z
+  [218, 312]: -
+  [225, 312]: index:
+  [271, 312]: 1;
+Clip: Path (Vector(x: 361, y: 61) > Vector(x: 513, y: 61) > Vector(x: 513, y: 313) > Vector(x: 361, y: 313))
+  Fill: rgb(221,221,255)
+Shape: rgb(0,0,153) Path (Vector(x: 361, y: 61) > Vector(x: 513, y: 61) > Vector(x: 512, y: 62) > Vector(x: 362, y: 62))
+Shape: rgb(0,0,153) Path (Vector(x: 513, y: 61) > Vector(x: 513, y: 313) > Vector(x: 512, y: 312) > Vector(x: 512, y: 62))
+Shape: rgb(0,0,153) Path (Vector(x: 513, y: 313) > Vector(x: 361, y: 313) > Vector(x: 362, y: 312) > Vector(x: 512, y: 312))
+Shape: rgb(0,0,153) Path (Vector(x: 361, y: 313) > Vector(x: 361, y: 61) > Vector(x: 362, y: 62) > Vector(x: 362, y: 312))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [380, 190]: Division
+  [430, 190]: Element
+  [480, 190]: #6
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [374, 210]: position:
+  [440, 210]: absolute;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [401, 230]: z
+  [407, 230]: -
+  [414, 230]: index:
+  [460, 230]: 3;
+Clip: Path (Vector(x: 201, y: 81) > Vector(x: 531, y: 81) > Vector(x: 531, y: 173) > Vector(x: 201, y: 173))
+  Fill: rgb(255,255,204)
+Shape: rgb(153,153,102) Path (Vector(x: 201, y: 81) > Vector(x: 531, y: 81) > Vector(x: 530, y: 82) > Vector(x: 202, y: 82))
+Shape: rgb(153,153,102) Path (Vector(x: 531, y: 81) > Vector(x: 531, y: 173) > Vector(x: 530, y: 172) > Vector(x: 530, y: 82))
+Shape: rgb(153,153,102) Path (Vector(x: 531, y: 173) > Vector(x: 201, y: 173) > Vector(x: 202, y: 172) > Vector(x: 530, y: 172))
+Shape: rgb(153,153,102) Path (Vector(x: 201, y: 173) > Vector(x: 201, y: 81) > Vector(x: 202, y: 82) > Vector(x: 202, y: 172))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [212, 110]: Division
+  [262, 110]: Element
+  [312, 110]: #4
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [212, 130]: position:
+  [278, 130]: relative;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [212, 150]: z
+  [218, 150]: -
+  [225, 150]: index:
+  [271, 150]: 6;
+Clip: Path (Vector(x: 20, y: 20) > Vector(x: 780, y: 20) > Vector(x: 780, y: 102) > Vector(x: 20, y: 102))
+  Fill: rgb(204,255,204)
+Shape: rgb(102,153,102) Path (Vector(x: 20, y: 20) > Vector(x: 780, y: 20) > Vector(x: 779, y: 21) > Vector(x: 21, y: 21))
+Shape: rgb(102,153,102) Path (Vector(x: 780, y: 20) > Vector(x: 780, y: 102) > Vector(x: 779, y: 101) > Vector(x: 779, y: 21))
+Shape: rgb(102,153,102) Path (Vector(x: 780, y: 102) > Vector(x: 20, y: 102) > Vector(x: 21, y: 101) > Vector(x: 779, y: 101))
+Shape: rgb(102,153,102) Path (Vector(x: 20, y: 102) > Vector(x: 20, y: 20) > Vector(x: 21, y: 21) > Vector(x: 21, y: 101))
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [31, 34]: Division
+  [81, 34]: Element
+  [131, 34]: #1
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [31, 54]: position:
+  [97, 54]: relative;
+Text: rgb(0,0,0) normal normal 400 12 monospace
+  [31, 74]: z
+  [37, 74]: -
+  [44, 74]: index:
+  [90, 74]: 5;

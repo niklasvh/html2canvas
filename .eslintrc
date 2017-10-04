@@ -1,0 +1,23 @@
+{
+    "parser": "babel-eslint",
+    "plugins": [
+        "flowtype",
+        "prettier"
+    ],
+    "rules": {
+        "no-console": ["error", { "allow": ["warn", "error"] }],
+        "flowtype/boolean-style": [
+            2,
+            "boolean"
+        ],
+        "flowtype/no-weak-types": 2,
+        "flowtype/delimiter-dangle": 2,
+        "prettier/prettier": ["error", {
+            "singleQuote": true,
+            "bracketSpacing": false,
+            "parser": "flow",
+            "tabWidth": 4,
+            "printWidth": 100
+        }]
+    }
+}

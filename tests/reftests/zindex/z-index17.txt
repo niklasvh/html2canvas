@@ -1,0 +1,13 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgb(238,130,238)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 792, y: 8) > Vector(x: 8, y: 8))
+  Fill: rgb(238,130,238)
+Clip: Path (Vector(x: 0, y: 0) > Vector(x: 800, y: 0) > Vector(x: 800, y: 100) > Vector(x: 0, y: 100))
+  Fill: rgb(85,107,47)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [0, 0]: fixed
+  [38, 0]: z
+  [46, 0]: -
+  [52, 0]: index
+  [94, 0]: 10

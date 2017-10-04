@@ -1,0 +1,9 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 208, y: 8) > Vector(x: 208, y: 208) > Vector(x: 8, y: 208))
+  Fill: rgb(0,255,255)
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 108, y: 8) > Vector(x: 108, y: 108) > Vector(x: 8, y: 108))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 8]: outer

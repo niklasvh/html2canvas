@@ -1,0 +1,32 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 8]: Image
+  [57, 8]: without
+  [112, 8]: src
+  [138, 8]: attribute,
+  [204, 8]: should
+  [256, 8]: not
+  [283, 8]: crash:
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 78]: Image
+  [57, 78]: with
+  [90, 78]: broken
+  [143, 78]: src
+  [169, 78]: attribute,
+  [236, 78]: should
+  [287, 78]: not
+  [314, 78]: crash:
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 26) > Vector(x: 60, y: 26) > Vector(x: 59, y: 27) > Vector(x: 9, y: 27))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 26) > Vector(x: 60, y: 78) > Vector(x: 59, y: 77) > Vector(x: 59, y: 27))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 78) > Vector(x: 8, y: 78) > Vector(x: 9, y: 77) > Vector(x: 59, y: 77))
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 78) > Vector(x: 8, y: 26) > Vector(x: 9, y: 27) > Vector(x: 9, y: 77))
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 96) > Vector(x: 60, y: 96) > Vector(x: 59, y: 97) > Vector(x: 9, y: 97))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 96) > Vector(x: 60, y: 148) > Vector(x: 59, y: 147) > Vector(x: 59, y: 97))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 148) > Vector(x: 8, y: 148) > Vector(x: 9, y: 147) > Vector(x: 59, y: 147))
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 148) > Vector(x: 8, y: 96) > Vector(x: 9, y: 97) > Vector(x: 9, y: 147))
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 148) > Vector(x: 60, y: 148) > Vector(x: 59, y: 149) > Vector(x: 9, y: 149))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 148) > Vector(x: 60, y: 200) > Vector(x: 59, y: 199) > Vector(x: 59, y: 149))
+Shape: rgb(255,0,0) Path (Vector(x: 60, y: 200) > Vector(x: 8, y: 200) > Vector(x: 9, y: 199) > Vector(x: 59, y: 199))
+Shape: rgb(255,0,0) Path (Vector(x: 8, y: 200) > Vector(x: 8, y: 148) > Vector(x: 9, y: 149) > Vector(x: 9, y: 199))

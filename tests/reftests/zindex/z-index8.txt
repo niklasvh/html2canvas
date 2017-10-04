@@ -1,0 +1,64 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 18, y: 64) > Vector(x: 782, y: 64) > Vector(x: 782, y: 166) > Vector(x: 18, y: 166))
+  Fill: rgb(255,255,204)
+Shape: rgb(153,153,102) Path (Vector(x: 18, y: 64) > Vector(x: 782, y: 64) > Vector(x: 781, y: 65) > Vector(x: 19, y: 65))
+Shape: rgb(153,153,102) Path (Vector(x: 782, y: 64) > Vector(x: 782, y: 166) > Vector(x: 781, y: 165) > Vector(x: 781, y: 65))
+Shape: rgb(153,153,102) Path (Vector(x: 782, y: 166) > Vector(x: 18, y: 166) > Vector(x: 19, y: 165) > Vector(x: 781, y: 165))
+Shape: rgb(153,153,102) Path (Vector(x: 18, y: 166) > Vector(x: 18, y: 64) > Vector(x: 19, y: 65) > Vector(x: 19, y: 165))
+Text: rgb(0,0,0) normal normal 400 12 Arial
+  [190, 93]: no
+  [207, 93]: positioning
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [190, 79]: DIV
+  [213, 79]: #4
+Opacity: 0.7
+Clip: Path (Vector(x: 508, y: 10) > Vector(x: 660, y: 10) > Vector(x: 660, y: 212) > Vector(x: 508, y: 212))
+  Fill: rgb(255,221,221)
+Shape: rgb(153,0,0) Path (Vector(x: 508, y: 10) > Vector(x: 660, y: 10) > Vector(x: 659, y: 11) > Vector(x: 509, y: 11))
+Shape: rgb(153,0,0) Path (Vector(x: 660, y: 10) > Vector(x: 660, y: 212) > Vector(x: 659, y: 211) > Vector(x: 659, y: 11))
+Shape: rgb(153,0,0) Path (Vector(x: 660, y: 212) > Vector(x: 508, y: 212) > Vector(x: 509, y: 211) > Vector(x: 659, y: 211))
+Shape: rgb(153,0,0) Path (Vector(x: 508, y: 212) > Vector(x: 508, y: 10) > Vector(x: 509, y: 11) > Vector(x: 509, y: 211))
+Text: rgb(0,0,0) normal normal 400 12 Arial
+  [536, 38]: position:
+  [584, 38]: absolute;
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [564, 25]: DIV
+  [587, 25]: #1
+Clip: Path (Vector(x: 28, y: 46) > Vector(x: 180, y: 46) > Vector(x: 180, y: 248) > Vector(x: 28, y: 248))
+  Fill: rgb(204,255,204)
+Shape: rgb(0,153,0) Path (Vector(x: 28, y: 46) > Vector(x: 180, y: 46) > Vector(x: 179, y: 47) > Vector(x: 29, y: 47))
+Shape: rgb(0,153,0) Path (Vector(x: 180, y: 46) > Vector(x: 180, y: 248) > Vector(x: 179, y: 247) > Vector(x: 179, y: 47))
+Shape: rgb(0,153,0) Path (Vector(x: 180, y: 248) > Vector(x: 28, y: 248) > Vector(x: 29, y: 247) > Vector(x: 179, y: 247))
+Shape: rgb(0,153,0) Path (Vector(x: 28, y: 248) > Vector(x: 28, y: 46) > Vector(x: 29, y: 47) > Vector(x: 29, y: 247))
+Text: rgb(0,0,0) normal normal 400 12 Arial
+  [80, 74]: float:
+  [109, 74]: left;
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [84, 60]: DIV
+  [107, 60]: #2
+Clip: Path (Vector(x: 620, y: 46) > Vector(x: 772, y: 46) > Vector(x: 772, y: 248) > Vector(x: 620, y: 248))
+  Fill: rgb(204,255,204)
+Shape: rgb(0,153,0) Path (Vector(x: 620, y: 46) > Vector(x: 772, y: 46) > Vector(x: 771, y: 47) > Vector(x: 621, y: 47))
+Shape: rgb(0,153,0) Path (Vector(x: 772, y: 46) > Vector(x: 772, y: 248) > Vector(x: 771, y: 247) > Vector(x: 771, y: 47))
+Shape: rgb(0,153,0) Path (Vector(x: 772, y: 248) > Vector(x: 620, y: 248) > Vector(x: 621, y: 247) > Vector(x: 771, y: 247))
+Shape: rgb(0,153,0) Path (Vector(x: 620, y: 248) > Vector(x: 620, y: 46) > Vector(x: 621, y: 47) > Vector(x: 621, y: 247))
+Text: rgb(0,0,0) normal normal 400 12 Arial
+  [668, 74]: float:
+  [697, 74]: right;
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [676, 60]: DIV
+  [699, 60]: #3
+Clip: Path (Vector(x: 100, y: 130) > Vector(x: 252, y: 130) > Vector(x: 252, y: 232) > Vector(x: 100, y: 232))
+  Fill: rgb(255,221,221)
+Shape: rgb(153,0,0) Path (Vector(x: 100, y: 130) > Vector(x: 252, y: 130) > Vector(x: 251, y: 131) > Vector(x: 101, y: 131))
+Shape: rgb(153,0,0) Path (Vector(x: 252, y: 130) > Vector(x: 252, y: 232) > Vector(x: 251, y: 231) > Vector(x: 251, y: 131))
+Shape: rgb(153,0,0) Path (Vector(x: 252, y: 232) > Vector(x: 100, y: 232) > Vector(x: 101, y: 231) > Vector(x: 251, y: 231))
+Shape: rgb(153,0,0) Path (Vector(x: 100, y: 232) > Vector(x: 100, y: 130) > Vector(x: 101, y: 131) > Vector(x: 101, y: 231))
+Text: rgb(0,0,0) normal normal 400 12 Arial
+  [128, 158]: position:
+  [176, 158]: absolute;
+Text: rgb(0,0,0) normal normal 700 12 Arial
+  [156, 145]: DIV
+  [179, 145]: #5

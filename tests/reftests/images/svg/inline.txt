@@ -1,0 +1,7 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 8]: Inline
+  [51, 8]: svg
+  [80, 8]: image:

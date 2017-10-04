@@ -1,0 +1,134 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 8) > Vector(x: 312, y: 8) > Vector(x: 310, y: 10) > Vector(x: 10, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 312, y: 8) > Vector(x: 312, y: 312) > Vector(x: 310, y: 310) > Vector(x: 310, y: 10))
+Shape: rgb(0,0,0) Path (Vector(x: 312, y: 312) > Vector(x: 8, y: 312) > Vector(x: 10, y: 310) > Vector(x: 310, y: 310))
+Shape: rgb(0,0,0) Path (Vector(x: 8, y: 312) > Vector(x: 8, y: 8) > Vector(x: 10, y: 10) > Vector(x: 10, y: 310))
+Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
+Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
+  Text: rgb(0,0,0) normal normal 400 16 Arial
+    [10, 26]: Le
+    [32, 26]: Lorem
+    [82, 26]: Ipsum
+    [130, 26]: est
+    [156, 26]: simplement
+    [242, 26]: du
+    [264, 26]: faux
+    [10, 42]: texte
+    [49, 42]: employé
+    [114, 42]: dans
+    [153, 42]: la
+    [170, 42]: composition
+    [260, 42]: et
+    [278, 42]: la
+    [10, 59]: mise
+    [48, 59]: en
+    [70, 59]: page
+    [110, 59]: avant
+    [154, 59]: impression.
+    [240, 59]: Le
+    [262, 59]: Lorem
+    [10, 76]: Ipsum
+    [58, 76]: est
+    [84, 76]: le
+    [101, 76]: faux
+    [135, 76]: texte
+    [174, 76]: standard
+    [241, 76]: de
+    [10, 93]: l'imprimerie
+    [96, 93]: depuis
+    [147, 93]: les
+    [172, 93]: années
+    [229, 93]: 1500,
+    [10, 110]: quand
+    [59, 110]: un
+    [81, 110]: peintre
+    [134, 110]: anonyme
+    [205, 110]: assembla
+    [10, 126]: ensemble
+    [84, 126]: des
+    [114, 126]: morceaux
+    [189, 126]: de
+    [211, 126]: texte
+    [250, 126]: pour
+    [10, 143]: réaliser
+    [67, 143]: un
+    [89, 143]: livre
+    [123, 143]: spécimen
+    [196, 143]: de
+    [218, 143]: polices
+    [272, 143]: de
+    [10, 160]: texte.
+    [54, 160]: Il
+    [66, 160]: n'a
+    [91, 160]: pas
+    [122, 160]: fait
+    [147, 160]: que
+    [178, 160]: survivre
+    [239, 160]: cinq
+    [10, 177]: siècles,
+    [68, 177]: mais
+    [106, 177]: s'est
+    [143, 177]: aussi
+    [185, 177]: adapté
+    [238, 177]: à
+    [251, 177]: la
+    [10, 194]: bureautique
+    [99, 194]: informatique,
+    [196, 194]: sans
+    [234, 194]: que
+    [265, 194]: son
+    [10, 210]: contenu
+    [71, 210]: n'en
+    [106, 210]: soit
+    [135, 210]: modifié.
+    [195, 210]: Il
+    [208, 210]: a
+    [221, 210]: été
+    [10, 227]: popularisé
+    [88, 227]: dans
+    [128, 227]: les
+    [152, 227]: années
+    [209, 227]: 1960
+    [249, 227]: grâce
+    [294, 227]: à
+    [10, 244]: la
+    [27, 244]: vente
+    [70, 244]: de
+    [93, 244]: feuilles
+    [147, 244]: Letraset
+    [209, 244]: contenant
+    [284, 244]: des
+    [10, 261]: passages
+    [83, 261]: du
+    [105, 261]: Lorem
+    [155, 261]: Ipsum,
+    [208, 261]: et,
+    [230, 261]: plus
+    [10, 278]: récemment,
+    [99, 278]: par
+    [126, 278]: son
+    [157, 278]: inclusion
+    [224, 278]: dans
+    [262, 278]: des
+    [10, 294]: applications
+    [99, 294]: de
+    [121, 294]: mise
+    [160, 294]: en
+    [182, 294]: page
+    [222, 294]: de
+    [244, 294]: texte,
+    [10, 311]: comme
+    [67, 311]: Aldus
+    [111, 311]: PageMaker.
+Transform: (91, 525) [-0.92, -0.39, 0.39, -0.92, 0, 0]
+  Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
+    Clip: Path (Vector(x: -140, y: 215) > Vector(x: 321, y: 215) > Vector(x: 321, y: 835) > Vector(x: -140, y: 835))
+      Fill: rgb(255,0,0)
+  Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
+Transform: (268, -94) [-0.92, -0.39, 0.39, -0.92, 0, 0]
+  Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))
+    Clip: Path (Vector(x: -47, y: -402) > Vector(x: 582, y: -402) > Vector(x: 582, y: 215) > Vector(x: -47, y: 215))
+      Fill: rgb(255,0,255)
+  Clip: Path (Vector(x: 10, y: 10) > Vector(x: 310, y: 10) > Vector(x: 310, y: 310) > Vector(x: 10, y: 310))

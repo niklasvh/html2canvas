@@ -1,0 +1,178 @@
+Window: [800, 600]
+Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 792, y: 104) > Vector(x: 8, y: 104))
+  Fill: rgb(255,0,0)
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 787, y: 13) > Vector(x: 13, y: 13))
+Shape: rgb(0,0,255) Path (Vector(x: 792, y: 8) > Vector(x: 792, y: 104) > Vector(x: 787, y: 99) > Vector(x: 787, y: 13))
+Shape: rgb(0,0,255) Path (Vector(x: 792, y: 104) > Vector(x: 8, y: 104) > Vector(x: 13, y: 99) > Vector(x: 787, y: 99))
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 104) > Vector(x: 8, y: 8) > Vector(x: 13, y: 13) > Vector(x: 13, y: 99))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 13]: Some
+  [59, 13]: inline
+  [101, 13]: text
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [302, 13]: followed
+  [365, 13]: by
+  [387, 13]: more
+  [427, 13]: inline
+  [469, 13]: text.
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 81]: Then
+  [54, 81]: more
+  [95, 81]: inline
+  [137, 81]: text.
+Clip: Path (Vector(x: 13, y: 47) > Vector(x: 787, y: 47) > Vector(x: 787, y: 65) > Vector(x: 13, y: 65))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 47]: Then
+  [54, 47]: a
+  [67, 47]: block
+  [109, 47]: level
+  [147, 47]: element.
+Text: rgb(0,0,255) normal normal 400 16 Arial
+  [131, 13]: followed
+  [195, 13]: by
+  [216, 13]: text
+  [246, 13]: in
+  [263, 13]: span
+Clip: Path (Vector(x: 8, y: 104) > Vector(x: 792, y: 104) > Vector(x: 792, y: 200) > Vector(x: 8, y: 200))
+  Fill: rgb(255,0,0)
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 104) > Vector(x: 792, y: 104) > Vector(x: 787, y: 109) > Vector(x: 13, y: 109))
+Shape: rgb(0,0,255) Path (Vector(x: 792, y: 104) > Vector(x: 792, y: 200) > Vector(x: 787, y: 195) > Vector(x: 787, y: 109))
+Shape: rgb(0,0,255) Path (Vector(x: 792, y: 200) > Vector(x: 8, y: 200) > Vector(x: 13, y: 195) > Vector(x: 787, y: 195))
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 200) > Vector(x: 8, y: 104) > Vector(x: 13, y: 109) > Vector(x: 13, y: 195))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 109]: Some
+  [59, 109]: inline
+  [101, 109]: text
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [302, 109]: followed
+  [365, 109]: by
+  [387, 109]: more
+  [427, 109]: inline
+  [469, 109]: text.
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 177]: Then
+  [54, 177]: more
+  [95, 177]: inline
+  [137, 177]: text.
+Clip: Path (Vector(x: 13, y: 143) > Vector(x: 787, y: 143) > Vector(x: 787, y: 161) > Vector(x: 13, y: 161))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 143]: Then
+  [54, 143]: a
+  [67, 143]: block
+  [109, 143]: level
+  [147, 143]: element.
+Text: rgb(0,0,255) normal normal 400 16 Arial
+  [131, 109]: followed
+  [195, 109]: by
+  [216, 109]: text
+  [246, 109]: in
+  [263, 109]: span
+Clip: Path (Vector(x: 8, y: 200) > Vector(x: 504, y: 200) > Vector(x: 504, y: 296) > Vector(x: 8, y: 296))
+  Fill: rgb(255,0,0)
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 200) > Vector(x: 504, y: 200) > Vector(x: 499, y: 205) > Vector(x: 13, y: 205))
+Shape: rgb(0,0,255) Path (Vector(x: 504, y: 200) > Vector(x: 504, y: 296) > Vector(x: 499, y: 291) > Vector(x: 499, y: 205))
+Shape: rgb(0,0,255) Path (Vector(x: 504, y: 296) > Vector(x: 8, y: 296) > Vector(x: 13, y: 291) > Vector(x: 499, y: 291))
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 296) > Vector(x: 8, y: 200) > Vector(x: 13, y: 205) > Vector(x: 13, y: 291))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 205]: Some
+  [59, 205]: inline
+  [101, 205]: text
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [302, 205]: followed
+  [365, 205]: by
+  [387, 205]: more
+  [427, 205]: inline
+  [469, 205]: text.
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 273]: Then
+  [54, 273]: more
+  [95, 273]: inline
+  [137, 273]: text.
+Clip: Path (Vector(x: 13, y: 239) > Vector(x: 499, y: 239) > Vector(x: 499, y: 257) > Vector(x: 13, y: 257))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 239]: Then
+  [54, 239]: a
+  [67, 239]: block
+  [109, 239]: level
+  [147, 239]: element.
+Text: rgb(0,0,255) normal normal 400 16 Arial
+  [131, 205]: followed
+  [195, 205]: by
+  [216, 205]: text
+  [246, 205]: in
+  [263, 205]: span
+Clip: Path (Vector(x: 500, y: 250) > Vector(x: 800, y: 250) > Vector(x: 800, y: 364) > Vector(x: 500, y: 364))
+  Fill: rgb(255,0,0)
+Shape: rgb(0,0,255) Path (Vector(x: 500, y: 250) > Vector(x: 800, y: 250) > Vector(x: 795, y: 255) > Vector(x: 505, y: 255))
+Shape: rgb(0,0,255) Path (Vector(x: 800, y: 250) > Vector(x: 800, y: 364) > Vector(x: 795, y: 359) > Vector(x: 795, y: 255))
+Shape: rgb(0,0,255) Path (Vector(x: 800, y: 364) > Vector(x: 500, y: 364) > Vector(x: 505, y: 359) > Vector(x: 795, y: 359))
+Shape: rgb(0,0,255) Path (Vector(x: 500, y: 364) > Vector(x: 500, y: 250) > Vector(x: 505, y: 255) > Vector(x: 505, y: 359))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [505, 255]: Some
+  [551, 255]: inline
+  [593, 255]: text
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [505, 273]: followed
+  [568, 273]: by
+  [589, 273]: more
+  [630, 273]: inline
+  [672, 273]: text.
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [505, 341]: Then
+  [546, 341]: more
+  [587, 341]: inline
+  [629, 341]: text.
+Clip: Path (Vector(x: 505, y: 307) > Vector(x: 795, y: 307) > Vector(x: 795, y: 325) > Vector(x: 505, y: 325))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [505, 307]: Then
+  [546, 307]: a
+  [559, 307]: block
+  [601, 307]: level
+  [639, 307]: element.
+Text: rgb(0,0,255) normal normal 400 16 Arial
+  [623, 255]: followed
+  [687, 255]: by
+  [708, 255]: text
+  [738, 255]: in
+  [755, 255]: span
+Clip: Path (Vector(x: 8, y: 500) > Vector(x: 504, y: 500) > Vector(x: 504, y: 596) > Vector(x: 8, y: 596))
+  Fill: rgb(255,0,0)
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 500) > Vector(x: 504, y: 500) > Vector(x: 499, y: 505) > Vector(x: 13, y: 505))
+Shape: rgb(0,0,255) Path (Vector(x: 504, y: 500) > Vector(x: 504, y: 596) > Vector(x: 499, y: 591) > Vector(x: 499, y: 505))
+Shape: rgb(0,0,255) Path (Vector(x: 504, y: 596) > Vector(x: 8, y: 596) > Vector(x: 13, y: 591) > Vector(x: 499, y: 591))
+Shape: rgb(0,0,255) Path (Vector(x: 8, y: 596) > Vector(x: 8, y: 500) > Vector(x: 13, y: 505) > Vector(x: 13, y: 591))
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 505]: Some
+  [59, 505]: inline
+  [101, 505]: text
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [302, 505]: followed
+  [365, 505]: by
+  [387, 505]: more
+  [427, 505]: inline
+  [469, 505]: text.
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 573]: Then
+  [54, 573]: more
+  [95, 573]: inline
+  [137, 573]: text.
+Clip: Path (Vector(x: 13, y: 539) > Vector(x: 499, y: 539) > Vector(x: 499, y: 557) > Vector(x: 13, y: 557))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [13, 539]: Then
+  [54, 539]: a
+  [67, 539]: block
+  [109, 539]: level
+  [147, 539]: element.
+Text: rgb(0,0,255) normal normal 400 16 Arial
+  [131, 505]: followed
+  [195, 505]: by
+  [216, 505]: text
+  [246, 505]: in
+  [263, 505]: span

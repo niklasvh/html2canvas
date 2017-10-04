@@ -1,0 +1,47 @@
+Window: [864, 600]
+Rectangle: [0, 0, 864, 600] rgb(238,130,238)
+Opacity: 1
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 792, y: 8) > Vector(x: 792, y: 308) > Vector(x: 8, y: 308))
+  Fill: rgb(238,130,238)
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 808, y: 8) > Vector(x: 808, y: 308) > Vector(x: 8, y: 308))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 8]: a
+Clip: Path (Vector(x: 8, y: 8) > Vector(x: 808, y: 8) > Vector(x: 808, y: 308) > Vector(x: 8, y: 308))
+  Fill: rgb(0,128,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [8, 8]: b
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: c
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: d
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: e
+Clip: Path (Vector(x: 24, y: 18) > Vector(x: 824, y: 18) > Vector(x: 824, y: 318) > Vector(x: 24, y: 318))
+  Fill: rgb(255,0,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: f
+Clip: Path (Vector(x: 24, y: 18) > Vector(x: 424, y: 18) > Vector(x: 424, y: 318) > Vector(x: 24, y: 318))
+  Fill: rgb(0,0,255)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: g
+Clip: Path (Vector(x: 24, y: 18) > Vector(x: 224, y: 18) > Vector(x: 224, y: 218) > Vector(x: 24, y: 218))
+  Fill: rgb(255,165,0)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: h
+Clip: Path (Vector(x: -24, y: 18) > Vector(x: 776, y: 18) > Vector(x: 776, y: 118) > Vector(x: -24, y: 118))
+  Fill: rgb(128,0,128)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [-24, 18]: i
+Clip: Path (Vector(x: 24, y: 68) > Vector(x: 824, y: 68) > Vector(x: 824, y: 168) > Vector(x: 24, y: 168))
+  Fill: rgb(255,192,203)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 68]: j
+Clip: Path (Vector(x: 64, y: 98) > Vector(x: 864, y: 98) > Vector(x: 864, y: 198) > Vector(x: 64, y: 198))
+  Fill: rgb(0,0,128)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [64, 98]: k
+Clip: Path (Vector(x: 24, y: 18) > Vector(x: 124, y: 18) > Vector(x: 124, y: 118) > Vector(x: 24, y: 118))
+  Fill: rgb(165,42,42)
+Text: rgb(0,0,0) normal normal 400 16 Arial
+  [24, 18]: l
