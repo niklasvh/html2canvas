@@ -1,0 +1,19 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": false,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "boss": true,
+    "eqnull": true,
+    "browser": true,
+    "node": true,
+    "indent": 4,
+    "globals": {
+      "jQuery": true
+    },
+    "predef": ["Promise", "define"]
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text shadow tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        .shadow1 span{
+            text-shadow: 1px 1px 3px #888;
+        }
+        .shadow1 strong {
+            text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+        }
+
+        .shadow2 {
+            font-size: 48px;
+        }
+
+        .shadow2 span{
+            color: transparent;
+            text-shadow: 0 0 5px #00f, 2px 2px 0 #f00;
+        }
+
+        .shadow2 strong {
+            color: rgba(0, 255, 0, 0.5);
+            text-shadow: 0 0 5px #00f, 2px 2px 0 #f00;
+            text-decoration: underline;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="shadow1">
+    Some text <span> followed by text with shadow </span> followed by more text without shadow.
+    <strong>Multi text shadow</strong> and some more text without shadow
+</div>
+<div class="shadow2">
+    <span>testing with transparent</span>
+    <strong>testing with low opacity</strong>
+</div>
+</body>
+</html>

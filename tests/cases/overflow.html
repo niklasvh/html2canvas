@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Overflow tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../test.js"></script>
+        <style>
+            .small{
+                font-size:14px;
+            }
+
+            .medium{
+                font-size:18px;
+            }
+            .large{
+                font-size:24px;
+            }
+            div{
+                background: #ccc;
+                border:6px solid black;
+                width:300px;
+                height:200px;
+                margin: 0 0 60px 0;
+            }
+            h1 {
+                margin:0;
+            }
+        </style>
+
+    </head>
+    <body>
+        <h1>Overflow: visible</h1>
+        <div>              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like <b>Aldus PageMaker</b> including versions of Lorem Ipsum.
+        </div>
+
+        <h1>Overflow: hidden</h1>
+        <div style="overflow:hidden;">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
+
+            with the release of <div style="border-width:10px 0 5px 0;background:green;">a</div>Letraset sheets containing Lorem Ipsum passages, <img src="../assets/image.jpg" /> and more recently with desktop publishing software like <b>Aldus PageMaker</b> including versions of Lorem Ipsum.
+
+
+            <div style="overflow:visible;position:relative;"><u>position:relative within a overflow:hidden element</u><br /> <br />
+
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like <b>Aldus PageMaker</b> including versions of Lorem Ipsum.
+
+            </div>
+        </div>
+
+
+    </body>
+</html>
