@@ -15,7 +15,7 @@ import type {Matrix} from './parsing/transform';
 
 import type {BoundCurves} from './Bounds';
 import type {Gradient} from './Gradient';
-import type {ImageStore, ImageElement} from './ImageLoader';
+import type {ResourceStore, ImageElement} from './ResourceLoader';
 import type NodeContainer from './NodeContainer';
 import type StackingContext from './StackingContext';
 import type {TextBounds} from './TextBounds';
@@ -43,7 +43,7 @@ import {BORDER_STYLE} from './parsing/border';
 export type RenderOptions = {
     scale: number,
     backgroundColor: ?Color,
-    imageStore: ImageStore<ImageElement>,
+    imageStore: ResourceStore,
     fontMetrics: FontMetrics,
     logger: Logger,
     x: number,

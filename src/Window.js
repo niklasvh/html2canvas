@@ -57,22 +57,25 @@ export const renderElement = (
                           logger.log(`Document cloned, using foreignObject rendering`);
                       }
 
-                      return cloner.imageLoader.ready().then(() => {
-                          const renderer = new ForeignObjectRenderer(cloner.clonedReferenceElement);
-                          return renderer.render({
-                              backgroundColor,
-                              logger,
-                              scale: options.scale,
-                              x: options.x,
-                              y: options.y,
-                              width: options.width,
-                              height: options.height,
-                              windowWidth: options.windowWidth,
-                              windowHeight: options.windowHeight,
-                              scrollX: options.scrollX,
-                              scrollY: options.scrollY
+                      return cloner
+                          .inlineFonts(ownerDocument)
+                          .then(() => cloner.resourceLoader.ready())
+                          .then(() => {
+                              const renderer = new ForeignObjectRenderer(cloner.documentElement);
+                              return renderer.render({
+                                  backgroundColor,
+                                  logger,
+                                  scale: options.scale,
+                                  x: options.x,
+                                  y: options.y,
+                                  width: options.width,
+                                  height: options.height,
+                                  windowWidth: options.windowWidth,
+                                  windowHeight: options.windowHeight,
+                                  scrollX: options.scrollX,
+                                  scrollY: options.scrollY
+                              });
                           });
-                      });
                   })(new DocumentCloner(element, options, logger, true, renderElement))
                 : cloneWindow(
                       ownerDocument,
@@ -81,19 +84,19 @@ export const renderElement = (
                       options,
                       logger,
                       renderElement
-                  ).then(([container, clonedElement, imageLoader]) => {
+                  ).then(([container, clonedElement, resourceLoader]) => {
                       if (__DEV__) {
                           logger.log(`Document cloned, using computed rendering`);
                       }
 
-                      const stack = NodeParser(clonedElement, imageLoader, logger);
+                      const stack = NodeParser(clonedElement, resourceLoader, logger);
                       const clonedDocument = clonedElement.ownerDocument;
 
                       if (backgroundColor === stack.container.style.background.backgroundColor) {
                           stack.container.style.background.backgroundColor = TRANSPARENT;
                       }
 
-                      return imageLoader.ready().then(imageStore => {
+                      return resourceLoader.ready().then(imageStore => {
                           if (options.removeContainer === true) {
                               if (container.parentNode) {
                                   container.parentNode.removeChild(container);

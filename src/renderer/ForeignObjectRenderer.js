@@ -12,29 +12,34 @@ export default class ForeignObjectRenderer {
         this.options = options;
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
-        this.canvas.width = Math.floor(options.width * options.scale);
-        this.canvas.height = Math.floor(options.height * options.scale);
+        this.canvas.width = Math.floor(options.width) * options.scale;
+        this.canvas.height = Math.floor(options.height) * options.scale;
         this.canvas.style.width = `${options.width}px`;
         this.canvas.style.height = `${options.height}px`;
-        this.ctx.scale(this.options.scale, this.options.scale);
 
         options.logger.log(
-            `ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${this
-                .options.scale}`
+            `ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
         );
         const svg = createForeignObjectSVG(
-            Math.max(options.windowWidth, options.width),
-            Math.max(options.windowHeight, options.height),
-            options.scrollX,
-            options.scrollY,
+            Math.max(options.windowWidth, options.width) * options.scale,
+            Math.max(options.windowHeight, options.height) * options.scale,
+            options.scrollX * options.scale,
+            options.scrollY * options.scale,
             this.element
         );
+
         return loadSerializedSVG(svg).then(img => {
             if (options.backgroundColor) {
                 this.ctx.fillStyle = options.backgroundColor.toString();
-                this.ctx.fillRect(0, 0, options.width, options.height);
+                this.ctx.fillRect(
+                    0,
+                    0,
+                    options.width * options.scale,
+                    options.height * options.scale
+                );
             }
-            this.ctx.drawImage(img, -options.x, -options.y);
+
+            this.ctx.drawImage(img, -options.x * options.scale, -options.y * options.scale);
             return this.canvas;
         });
     }

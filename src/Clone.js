@@ -3,11 +3,10 @@
 import type {Bounds} from './Bounds';
 import type {Options} from './index';
 import type Logger from './Logger';
-import type {ImageElement} from './ImageLoader';
 
 import {parseBounds} from './Bounds';
 import {Proxy} from './Proxy';
-import ImageLoader from './ImageLoader';
+import ResourceLoader from './ResourceLoader';
 import {copyCSSStyles} from './Util';
 import {parseBackgroundImage} from './parsing/background';
 import CanvasRenderer from './renderer/CanvasRenderer';
@@ -17,7 +16,7 @@ export class DocumentCloner {
     referenceElement: HTMLElement;
     clonedReferenceElement: HTMLElement;
     documentElement: HTMLElement;
-    imageLoader: ImageLoader<*>;
+    resourceLoader: ResourceLoader;
     logger: Logger;
     options: Options;
     inlineImages: boolean;
@@ -38,7 +37,7 @@ export class DocumentCloner {
         this.logger = logger;
         this.options = options;
         this.renderer = renderer;
-        this.imageLoader = new ImageLoader(options, logger, window);
+        this.resourceLoader = new ResourceLoader(options, logger, window);
         // $FlowFixMe
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
     }
@@ -49,9 +48,14 @@ export class DocumentCloner {
             Promise.all(
                 parseBackgroundImage(style.backgroundImage).map(backgroundImage => {
                     if (backgroundImage.method === 'url') {
-                        return this.imageLoader
+                        return this.resourceLoader
                             .inlineImage(backgroundImage.args[0])
-                            .then(img => (img ? `url("${img.src}")` : 'none'))
+                            .then(
+                                img =>
+                                    img && typeof img.src === 'string'
+                                        ? `url("${img.src}")`
+                                        : 'none'
+                            )
                             .catch(e => {
                                 if (__DEV__) {
                                     this.logger.log(`Unable to load image`, e);
@@ -73,7 +77,7 @@ export class DocumentCloner {
             });
 
             if (node instanceof HTMLImageElement) {
-                this.imageLoader
+                this.resourceLoader
                     .inlineImage(node.src)
                     .then(img => {
                         if (img && node instanceof HTMLImageElement && node.parentNode) {
@@ -89,6 +93,56 @@ export class DocumentCloner {
                     });
             }
         }
+    }
+
+    inlineFonts(document: Document): Promise<void> {
+        return Promise.all(
+            Array.from(document.styleSheets).map(sheet => {
+                if (sheet.href) {
+                    return fetch(sheet.href)
+                        .then(res => res.text())
+                        .then(text => createStyleSheetFontsFromText(text, sheet.href))
+                        .catch(e => {
+                            if (__DEV__) {
+                                this.logger.log(`Unable to load stylesheet`, e);
+                            }
+                            return [];
+                        });
+                }
+                return getSheetFonts(sheet, document);
+            })
+        )
+            .then(fonts => fonts.reduce((acc, font) => acc.concat(font), []))
+            .then(fonts =>
+                Promise.all(
+                    fonts.map(font =>
+                        fetch(font.formats[0].src)
+                            .then(response => response.blob())
+                            .then(
+                                blob =>
+                                    new Promise((resolve, reject) => {
+                                        const reader = new FileReader();
+                                        reader.onerror = reject;
+                                        reader.onload = () => {
+                                            // $FlowFixMe
+                                            const result: string = reader.result;
+                                            resolve(result);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    })
+                            )
+                            .then(dataUri => {
+                                font.fontFace.setProperty('src', `url("${dataUri}")`);
+                                return `@font-face {${font.fontFace.cssText} `;
+                            })
+                    )
+                )
+            )
+            .then(fontCss => {
+                const style = document.createElement('style');
+                style.textContent = fontCss.join('\n');
+                this.documentElement.appendChild(style);
+            });
     }
 
     createElementClone(node: Node) {
@@ -111,7 +165,7 @@ export class DocumentCloner {
 
             const {width, height} = parseBounds(node, 0, 0);
 
-            this.imageLoader.cache[iframeKey] = getIframeDocumentElement(node, this.options)
+            this.resourceLoader.cache[iframeKey] = getIframeDocumentElement(node, this.options)
                 .then(documentElement => {
                     return this.renderer(
                         documentElement,
@@ -210,6 +264,67 @@ export class DocumentCloner {
         return clone;
     }
 }
+
+type Font = {
+    src: string,
+    format: string
+};
+
+type FontFamily = {
+    formats: Array<Font>,
+    fontFace: CSSStyleDeclaration
+};
+
+const getSheetFonts = (sheet: StyleSheet, document: Document): Array<FontFamily> => {
+    // $FlowFixMe
+    return (sheet.cssRules ? Array.from(sheet.cssRules) : [])
+        .filter(rule => rule.type === CSSRule.FONT_FACE_RULE)
+        .map(rule => {
+            const src = parseBackgroundImage(rule.style.getPropertyValue('src'));
+            const formats = [];
+            for (let i = 0; i < src.length; i++) {
+                if (src[i].method === 'url' && src[i + 1] && src[i + 1].method === 'format') {
+                    const a = document.createElement('a');
+                    a.href = src[i].args[0];
+                    if (document.body) {
+                        document.body.appendChild(a);
+                    }
+
+                    const font = {
+                        src: a.href,
+                        format: src[i + 1].args[0]
+                    };
+                    formats.push(font);
+                }
+            }
+
+            return {
+                // TODO select correct format for browser),
+
+                formats: formats.filter(font => /^woff/i.test(font.format)),
+                fontFace: rule.style
+            };
+        })
+        .filter(font => font.formats.length);
+};
+
+const createStyleSheetFontsFromText = (text: string, baseHref: string): Array<FontFamily> => {
+    const doc = document.implementation.createHTMLDocument('');
+    const base = document.createElement('base');
+    // $FlowFixMe
+    base.href = baseHref;
+    const style = document.createElement('style');
+
+    style.textContent = text;
+    if (doc.head) {
+        doc.head.appendChild(base);
+    }
+    if (doc.body) {
+        doc.body.appendChild(style);
+    }
+
+    return style.sheet ? getSheetFonts(style.sheet, doc) : [];
+};
 
 const restoreOwnerScroll = (ownerDocument: Document, x: number, y: number) => {
     if (
@@ -415,7 +530,7 @@ export const cloneWindow = (
     options: Options,
     logger: Logger,
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
-): Promise<[HTMLIFrameElement, HTMLElement, ImageLoader<ImageElement>]> => {
+): Promise<[HTMLIFrameElement, HTMLElement, ResourceLoader]> => {
     const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer);
     const scrollX = ownerDocument.defaultView.pageXOffset;
     const scrollY = ownerDocument.defaultView.pageYOffset;
@@ -445,7 +560,7 @@ export const cloneWindow = (
                 ? Promise.resolve([
                       cloneIframeContainer,
                       cloner.clonedReferenceElement,
-                      cloner.imageLoader
+                      cloner.resourceLoader
                   ])
                 : Promise.reject(
                       __DEV__

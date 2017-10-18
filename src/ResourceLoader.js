@@ -5,17 +5,17 @@ import type Options from './index';
 import type Logger from './Logger';
 
 export type ImageElement = Image | HTMLCanvasElement;
-type ImageCache<T> = {[string]: Promise<T>};
+export type Resource = ImageElement;
+type ResourceCache = {[string]: Promise<Resource>};
 
 import FEATURES from './Feature';
 import {Proxy} from './Proxy';
 
-// $FlowFixMe
-export default class ImageLoader<T> {
+export default class ResourceLoader {
     origin: string;
     options: Options;
     _link: HTMLAnchorElement;
-    cache: ImageCache<T>;
+    cache: ResourceCache;
     logger: Logger;
     _index: number;
     _window: WindowProxy;
@@ -30,7 +30,7 @@ export default class ImageLoader<T> {
     }
 
     loadImage(src: string): ?string {
-        if (this.hasImageInCache(src)) {
+        if (this.hasResourceInCache(src)) {
             return src;
         }
 
@@ -58,11 +58,11 @@ export default class ImageLoader<T> {
         }
     }
 
-    inlineImage(src: string): Promise<Image> {
+    inlineImage(src: string): Promise<Resource> {
         if (isInlineImage(src)) {
             return loadImage(src, this.options.imageTimeout || 0);
         }
-        if (this.hasImageInCache(src)) {
+        if (this.hasResourceInCache(src)) {
             return this.cache[src];
         }
         if (!this.isSameOrigin(src) && typeof this.options.proxy === 'string') {
@@ -74,7 +74,7 @@ export default class ImageLoader<T> {
         return this.xhrImage(src);
     }
 
-    xhrImage(src: string): Promise<Image> {
+    xhrImage(src: string): Promise<Resource> {
         this.cache[src] = new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onreadystatechange = () => {
@@ -88,10 +88,16 @@ export default class ImageLoader<T> {
                         );
                     } else {
                         const reader = new FileReader();
-                        // $FlowFixMe
-                        reader.addEventListener('load', () => resolve(reader.result), false);
-                        // $FlowFixMe
-                        reader.addEventListener('error', e => reject(e), false);
+                        reader.addEventListener(
+                            'load',
+                            () => {
+                                // $FlowFixMe
+                                const result: string = reader.result;
+                                resolve(result);
+                            },
+                            false
+                        );
+                        reader.addEventListener('error', (e: Event) => reject(e), false);
                         reader.readAsDataURL(xhr.response);
                     }
                 }
@@ -118,7 +124,7 @@ export default class ImageLoader<T> {
         return key;
     }
 
-    hasImageInCache(key: string): boolean {
+    hasResourceInCache(key: string): boolean {
         return typeof this.cache[key] !== 'undefined';
     }
 
@@ -177,38 +183,37 @@ export default class ImageLoader<T> {
         return link.protocol + link.hostname + link.port;
     }
 
-    ready(): Promise<ImageStore<T>> {
-        const keys = Object.keys(this.cache);
-        return Promise.all(
-            keys.map(str =>
-                this.cache[str].catch(e => {
-                    if (__DEV__) {
-                        this.logger.log(`Unable to load image`, e);
-                    }
-                    return null;
-                })
-            )
-        ).then(images => {
+    ready(): Promise<ResourceStore> {
+        const keys: Array<string> = Object.keys(this.cache);
+        const values: Array<Promise<?Resource>> = keys.map(str =>
+            this.cache[str].catch(e => {
+                if (__DEV__) {
+                    this.logger.log(`Unable to load image`, e);
+                }
+                return null;
+            })
+        );
+        return Promise.all(values).then((images: Array<?Resource>) => {
             if (__DEV__) {
                 this.logger.log(`Finished loading ${images.length} images`, images);
             }
-            return new ImageStore(keys, images);
+            return new ResourceStore(keys, images);
         });
     }
 }
 
-export class ImageStore<T> {
+export class ResourceStore {
     _keys: Array<string>;
-    _images: Array<?T>;
+    _resources: Array<?Resource>;
 
-    constructor(keys: Array<string>, images: Array<?T>) {
+    constructor(keys: Array<string>, resources: Array<?Resource>) {
         this._keys = keys;
-        this._images = images;
+        this._resources = resources;
     }
 
-    get(key: string): ?T {
+    get(key: string): ?Resource {
         const index = this._keys.indexOf(key);
-        return index === -1 ? null : this._images[index];
+        return index === -1 ? null : this._resources[index];
     }
 }
 
@@ -222,7 +227,7 @@ const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
 const isSVG = (src: string): boolean =>
     src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
 
-const loadImage = (src: string, timeout: number) => {
+const loadImage = (src: string, timeout: number): Promise<Image> => {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);

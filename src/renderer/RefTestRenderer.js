@@ -17,7 +17,7 @@ import type {TextShadow} from '../parsing/textShadow';
 import type {Matrix} from '../parsing/transform';
 
 import type {Bounds} from '../Bounds';
-import type {ImageElement} from '../ImageLoader';
+import type {ImageElement} from '../ResourceLoader';
 import type {Gradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
