@@ -18,7 +18,7 @@ import type {Visibility} from './parsing/visibility';
 import type {zIndex} from './parsing/zIndex';
 
 import type {Bounds, BoundCurves} from './Bounds';
-import type ImageLoader, {ImageElement} from './ImageLoader';
+import type ResourceLoader, {ImageElement} from './ResourceLoader';
 import type {Path} from './drawing/Path';
 import type TextContainer from './TextContainer';
 
@@ -87,7 +87,7 @@ export default class NodeContainer {
     constructor(
         node: HTMLElement | SVGSVGElement,
         parent: ?NodeContainer,
-        imageLoader: ImageLoader<ImageElement>,
+        resourceLoader: ResourceLoader,
         index: number
     ) {
         this.parent = parent;
@@ -104,7 +104,7 @@ export default class NodeContainer {
         const position = parsePosition(style.position);
 
         this.style = {
-            background: IS_INPUT ? INPUT_BACKGROUND : parseBackground(style, imageLoader),
+            background: IS_INPUT ? INPUT_BACKGROUND : parseBackground(style, resourceLoader),
             border: IS_INPUT ? INPUT_BORDERS : parseBorder(style),
             borderRadius:
                 (node instanceof defaultView.HTMLInputElement ||
@@ -148,7 +148,7 @@ export default class NodeContainer {
                 );
             });
         }
-        this.image = getImage(node, imageLoader);
+        this.image = getImage(node, resourceLoader);
         this.bounds = IS_INPUT
             ? reformatInputBounds(parseBounds(node, scrollX, scrollY))
             : parseBounds(node, scrollX, scrollY);
@@ -223,26 +223,25 @@ export default class NodeContainer {
     }
 }
 
-const getImage = (
-    node: HTMLElement | SVGSVGElement,
-    imageLoader: ImageLoader<ImageElement>
-): ?string => {
+const getImage = (node: HTMLElement | SVGSVGElement, resourceLoader: ResourceLoader): ?string => {
     if (
         node instanceof node.ownerDocument.defaultView.SVGSVGElement ||
         node instanceof SVGSVGElement
     ) {
         const s = new XMLSerializer();
-        return imageLoader.loadImage(
+        return resourceLoader.loadImage(
             `data:image/svg+xml,${encodeURIComponent(s.serializeToString(node))}`
         );
     }
     switch (node.tagName) {
         case 'IMG':
             // $FlowFixMe
-            return imageLoader.loadImage(node.currentSrc || node.src);
+            const img: HTMLImageElement = node;
+            return resourceLoader.loadImage(img.currentSrc || img.src);
         case 'CANVAS':
             // $FlowFixMe
-            return imageLoader.loadCanvas(node);
+            const canvas: HTMLCanvasElement = node;
+            return resourceLoader.loadCanvas(canvas);
         case 'IFRAME':
             const iframeKey = node.getAttribute('data-html2canvas-internal-iframe-key');
             if (iframeKey) {

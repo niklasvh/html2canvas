@@ -146,7 +146,10 @@ const FEATURES = {
     // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_FOREIGNOBJECT_DRAWING() {
         'use strict';
-        const value = testForeignObject(document);
+        const value =
+            typeof Array.from === 'function' && typeof window.fetch === 'function'
+                ? testForeignObject(document)
+                : Promise.resolve(false);
         Object.defineProperty(FEATURES, 'SUPPORT_FOREIGNOBJECT_DRAWING', {value});
         return value;
     },

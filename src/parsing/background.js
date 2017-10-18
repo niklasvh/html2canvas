@@ -2,7 +2,7 @@
 'use strict';
 import type {Path} from '../drawing/Path';
 import type {Bounds, BoundCurves} from '../Bounds';
-import type ImageLoader, {ImageElement} from '../ImageLoader';
+import type ResourceLoader, {ImageElement} from '../ResourceLoader';
 
 import Color from '../Color';
 import Length from '../Length';
@@ -223,11 +223,11 @@ export const calculateBackgroundRepeatPath = (
 
 export const parseBackground = (
     style: CSSStyleDeclaration,
-    imageLoader: ImageLoader<ImageElement>
+    resourceLoader: ResourceLoader
 ): Background => {
     return {
         backgroundColor: new Color(style.backgroundColor),
-        backgroundImage: parseBackgroundImages(style, imageLoader),
+        backgroundImage: parseBackgroundImages(style, resourceLoader),
         backgroundClip: parseBackgroundClip(style.backgroundClip),
         backgroundOrigin: parseBackgroundOrigin(style.backgroundOrigin)
     };
@@ -276,13 +276,13 @@ const parseBackgroundRepeat = (backgroundRepeat: string): BackgroundRepeat => {
 
 const parseBackgroundImages = (
     style: CSSStyleDeclaration,
-    imageLoader: ImageLoader<ImageElement>
+    resourceLoader: ResourceLoader
 ): Array<BackgroundImage> => {
     const sources: Array<BackgroundSource> = parseBackgroundImage(
         style.backgroundImage
     ).map(backgroundImage => {
         if (backgroundImage.method === 'url') {
-            const key = imageLoader.loadImage(backgroundImage.args[0]);
+            const key = resourceLoader.loadImage(backgroundImage.args[0]);
             backgroundImage.args = key ? [key] : [];
         }
         return backgroundImage;

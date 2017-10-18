@@ -1,6 +1,6 @@
 /* @flow */
 'use strict';
-import type ImageLoader, {ImageElement} from './ImageLoader';
+import type ResourceLoader, {ImageElement} from './ResourceLoader';
 import type Logger from './Logger';
 import StackingContext from './StackingContext';
 import NodeContainer from './NodeContainer';
@@ -9,7 +9,7 @@ import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './
 
 export const NodeParser = (
     node: HTMLElement,
-    imageLoader: ImageLoader<ImageElement>,
+    resourceLoader: ResourceLoader,
     logger: Logger
 ): StackingContext => {
     if (__DEV__) {
@@ -18,10 +18,10 @@ export const NodeParser = (
 
     let index = 0;
 
-    const container = new NodeContainer(node, null, imageLoader, index++);
+    const container = new NodeContainer(node, null, resourceLoader, index++);
     const stack = new StackingContext(container, null, true);
 
-    parseNodeTree(node, container, stack, imageLoader, index);
+    parseNodeTree(node, container, stack, resourceLoader, index);
 
     if (__DEV__) {
         logger.log(`Finished parsing node tree`);
@@ -36,7 +36,7 @@ const parseNodeTree = (
     node: HTMLElement,
     parent: NodeContainer,
     stack: StackingContext,
-    imageLoader: ImageLoader<ImageElement>,
+    resourceLoader: ResourceLoader,
     index: number
 ): void => {
     if (__DEV__ && index > 50000) {
@@ -60,7 +60,7 @@ const parseNodeTree = (
             (defaultView.parent && childNode instanceof defaultView.parent.HTMLElement)
         ) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-                const container = new NodeContainer(childNode, parent, imageLoader, index++);
+                const container = new NodeContainer(childNode, parent, resourceLoader, index++);
                 if (container.isVisible()) {
                     if (childNode.tagName === 'INPUT') {
                         // $FlowFixMe
@@ -92,12 +92,12 @@ const parseNodeTree = (
                         );
                         parentStack.contexts.push(childStack);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, childStack, imageLoader, index);
+                            parseNodeTree(childNode, container, childStack, resourceLoader, index);
                         }
                     } else {
                         stack.children.push(container);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, stack, imageLoader, index);
+                            parseNodeTree(childNode, container, stack, resourceLoader, index);
                         }
                     }
                 }
@@ -107,7 +107,7 @@ const parseNodeTree = (
             childNode instanceof SVGSVGElement ||
             (defaultView.parent && childNode instanceof defaultView.parent.SVGSVGElement)
         ) {
-            const container = new NodeContainer(childNode, parent, imageLoader, index++);
+            const container = new NodeContainer(childNode, parent, resourceLoader, index++);
             const treatAsRealStackingContext = createsRealStackingContext(container, childNode);
             if (treatAsRealStackingContext || createsStackingContext(container)) {
                 // for treatAsRealStackingContext:false, any positioned descendants and descendants
