@@ -42,8 +42,9 @@ export class DocumentCloner {
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
     }
 
-    inlineAllImages(node: ?HTMLElement) {
-        if (this.inlineImages && node) {
+    inlineAllImages(_node: ?HTMLElement) {
+        if (this.inlineImages && _node) {
+            const node = _node;
             const style = node.style;
             Promise.all(
                 parseBackgroundImage(style.backgroundImage).map(backgroundImage => {
@@ -76,11 +77,15 @@ export class DocumentCloner {
                 style.backgroundImage = backgroundImages.join(',');
             });
 
-            if (node instanceof HTMLImageElement) {
+            if (node instanceof node.ownerDocument.defaultView.HTMLImageElement) {
                 this.resourceLoader
                     .inlineImage(node.src)
                     .then(img => {
-                        if (img && node instanceof HTMLImageElement && node.parentNode) {
+                        if (
+                            img &&
+                            node instanceof node.ownerDocument.defaultView.HTMLImageElement &&
+                            node.parentNode
+                        ) {
                             const parentNode = node.parentNode;
                             const clonedChild = copyCSSStyles(node.style, img.cloneNode(false));
                             parentNode.replaceChild(clonedChild, node);
