@@ -10,12 +10,6 @@ module.exports = function(config) {
             platform: 'Windows 10',
             version: 'beta'
         },
-        sl_beta_firefox: {
-            base: 'SauceLabs',
-            browserName: 'firefox',
-            platform: 'Windows 8.1',
-            version: 'beta'
-        },
         sl_ie9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
