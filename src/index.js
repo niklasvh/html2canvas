@@ -41,7 +41,7 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
 
     const ownerDocument = element.ownerDocument;
     if (!ownerDocument) {
-        return Promise.reject(`Provided element is not within a Document`)
+        return Promise.reject(`Provided element is not within a Document`);
     }
     const defaultView = ownerDocument.defaultView;
 
