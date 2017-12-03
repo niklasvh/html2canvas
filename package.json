@@ -63,7 +63,7 @@
   },
   "scripts": {
     "build": "rimraf dist/ && node scripts/create-reftest-list && npm run build:npm && npm run build:browser",
-    "build:npm": "babel src/ -d dist/npm/ --plugins=dev-expression,transform-es2015-modules-commonjs && replace-in-file __VERSION__ '$npm_package_version' dist/npm/index.js",
+    "build:npm": "babel src/ -d dist/npm/ --plugins=dev-expression,transform-es2015-modules-commonjs && replace-in-file __VERSION__ '\"$npm_package_version\"' dist/npm/index.js",
     "build:browser": "webpack",
     "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"{src,tests,scripts}/**/*.js\"",
     "flow": "flow",
