@@ -1,10 +1,14 @@
-tests/
+build/
 examples/
-Gruntfile.js
-bower.json
+scripts/
 src/
+tests/
 *.iml
+.babelrc
 .idea/
 .npmignore
 .jshintrc
 .travis.yml
+karma.js
+karma.config.js
+webpack.config.js
