@@ -39,6 +39,12 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const config = conf || {};
     const logger = new Logger();
 
+    if (__DEV__ && typeof config.onrendered === 'function') {
+        logger.error(
+            `onrendered option is deprecated, html2canvas returns a Promise with the canvas as the value`
+        );
+    }
+
     const ownerDocument = element.ownerDocument;
     if (!ownerDocument) {
         return Promise.reject(`Provided element is not within a Document`);
