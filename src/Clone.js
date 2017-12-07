@@ -11,6 +11,8 @@ import {copyCSSStyles} from './Util';
 import {parseBackgroundImage} from './parsing/background';
 import CanvasRenderer from './renderer/CanvasRenderer';
 
+const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
+
 export class DocumentCloner {
     scrolledElements: Array<[HTMLElement, number, number]>;
     referenceElement: HTMLElement;
@@ -235,7 +237,8 @@ export class DocumentCloner {
         for (let child = node.firstChild; child; child = child.nextSibling) {
             if (
                 child.nodeType !== Node.ELEMENT_NODE ||
-                (child.nodeName !== 'SCRIPT' && !child.hasAttribute('data-html2canvas-ignore'))
+                // $FlowFixMe
+                (child.nodeName !== 'SCRIPT' && !child.hasAttribute(IGNORE_ATTRIBUTE))
             ) {
                 if (!this.copyStyles || child.nodeName !== 'STYLE') {
                     clone.appendChild(this.cloneNode(child));
@@ -496,6 +499,7 @@ const createIframeContainer = (
     cloneIframeContainer.width = bounds.width.toString();
     cloneIframeContainer.height = bounds.height.toString();
     cloneIframeContainer.scrolling = 'no'; // ios won't scroll without it
+    cloneIframeContainer.setAttribute(IGNORE_ATTRIBUTE, 'true');
     if (!ownerDocument.body) {
         return Promise.reject(
             __DEV__ ? `Body element not found in Document that is getting rendered` : ''
