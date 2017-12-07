@@ -3,12 +3,13 @@ examples/
 scripts/
 src/
 tests/
+.github/
 *.iml
 .babelrc
 .idea/
 .npmignore
-.jshintrc
+.eslintrc
 .travis.yml
 karma.js
-karma.config.js
+karma.conf.js
 webpack.config.js
