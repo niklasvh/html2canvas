@@ -1,6 +1,9 @@
 ### Changelog ###
 
-#### v1.0.0-alpha1 - TBD ####
+#### v1.0.0-alpha2 - TBD ####
+ * Fix decimal `letter-spacing` values
+
+#### v1.0.0-alpha1 - 5.12.2017 ####
  * Complete rewrite of library
  ##### Breaking Changes #####
  * Remove deprecated onrendered callback, calling `html2canvas` returns a `Promise<HTMLCanvasElement>`
