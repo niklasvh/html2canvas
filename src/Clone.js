@@ -253,7 +253,7 @@ export class DocumentCloner {
             }
             this.inlineAllImages(clone);
             if (node.scrollTop !== 0 || node.scrollLeft !== 0) {
-                this.scrolledElements.push([node, node.scrollLeft, node.scrollTop]);
+                this.scrolledElements.push([clone, node.scrollLeft, node.scrollTop]);
             }
             switch (node.nodeName) {
                 case 'CANVAS':

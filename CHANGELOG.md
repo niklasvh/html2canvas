@@ -1,8 +1,9 @@
 ### Changelog ###
 
 #### v1.0.0-alpha2 - TBD ####
- * Fix `data-html2canvas-ignore` attribute
- * Fix decimal `letter-spacing` values
+ * Fix scroll positions for CanvasRenderer (#1259)
+ * Fix `data-html2canvas-ignore` attribute (#1253)
+ * Fix decimal `letter-spacing` values (#1293)
 
 #### v1.0.0-alpha1 - 5.12.2017 ####
  * Complete rewrite of library
