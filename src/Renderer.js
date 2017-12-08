@@ -27,6 +27,7 @@ import {
     calculatePaddingBox,
     calculatePaddingBoxPath
 } from './Bounds';
+import {PADDING_SIDES} from './parsing/padding';
 import {FontMetrics} from './Font';
 import {parseGradient} from './Gradient';
 import TextContainer from './TextContainer';
@@ -223,14 +224,35 @@ export default class Renderer {
         if (image) {
             const bounds = container.bounds;
             const paddingBox = calculatePaddingBox(bounds, container.style.border);
-            const backgroundImageSize = calculateBackgroundSize(background, image, bounds);
 
-            // TODO support CONTENT_BOX
-            const backgroundPositioningArea =
-                container.style.background.backgroundOrigin === BACKGROUND_ORIGIN.BORDER_BOX
-                    ? bounds
-                    : paddingBox;
+            let backgroundPositioningArea;
+            switch (container.style.background.backgroundOrigin) {
+                case BACKGROUND_ORIGIN.BORDER_BOX:
+                    backgroundPositioningArea = bounds;
+                    break;
+                case BACKGROUND_ORIGIN.CONTENT_BOX:
+                    const paddingLeft = container.style.padding[PADDING_SIDES.LEFT].value;
+                    const paddingRight = container.style.padding[PADDING_SIDES.RIGHT].value;
+                    const paddingTop = container.style.padding[PADDING_SIDES.TOP].value;
+                    const paddingBottom = container.style.padding[PADDING_SIDES.BOTTOM].value;
+                    backgroundPositioningArea = new Bounds(
+                        paddingBox.left + paddingLeft,
+                        paddingBox.top + paddingTop,
+                        paddingBox.width - paddingLeft - paddingRight,
+                        paddingBox.height - paddingTop - paddingBottom
+                    );
+                    break;
+                case BACKGROUND_ORIGIN.PADDING_BOX:
+                default:
+                    backgroundPositioningArea = paddingBox;
+                    break;
+            }
 
+            const backgroundImageSize = calculateBackgroundSize(
+                background,
+                image,
+                backgroundPositioningArea
+            );
             const position = calculateBackgroundPosition(
                 background.position,
                 backgroundImageSize,
@@ -244,8 +266,8 @@ export default class Renderer {
                 bounds
             );
 
-            const offsetX = Math.round(paddingBox.left + position.x);
-            const offsetY = Math.round(paddingBox.top + position.y);
+            const offsetX = Math.round(backgroundPositioningArea.left + position.x);
+            const offsetY = Math.round(backgroundPositioningArea.top + position.y);
             this.target.renderRepeat(path, image, backgroundImageSize, offsetX, offsetY);
         }
     }
