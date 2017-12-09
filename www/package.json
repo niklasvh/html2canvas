@@ -1,0 +1,27 @@
+{
+  "name": "html2canvas-website",
+  "description": "https://html2canvas.hertzen.com",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Niklas von Hertzen",
+  "dependencies": {
+    "gatsby": "^1.9.127",
+    "gatsby-link": "^1.6.30",
+    "gatsby-plugin-catch-links": "^1.0.13",
+    "gatsby-plugin-glamor": "^1.6.9",
+    "gatsby-plugin-react-helmet": "^1.0.8",
+    "gatsby-plugin-typography": "^1.7.10",
+    "gatsby-remark-prismjs": "^1.2.10",
+    "gatsby-source-filesystem": "^1.5.9",
+    "gatsby-transformer-remark": "^1.7.23",
+    "typography": "^0.16.6",
+    "typography-theme-github": "^0.15.10"
+  },
+  "license": "MIT",
+  "main": "n/a",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
