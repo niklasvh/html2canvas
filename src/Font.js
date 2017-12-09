@@ -63,9 +63,11 @@ export class FontMetrics {
         return {baseline, middle};
     }
     getMetrics(font: Font) {
-        if (this._data[`${font.fontFamily} ${font.fontSize}`] === undefined) {
-            this._data[`${font.fontFamily} ${font.fontSize}`] = this._parseMetrics(font);
+        const key = `${font.fontFamily} ${font.fontSize}`;
+        if (this._data[key] === undefined) {
+            this._data[key] = this._parseMetrics(font);
         }
-        return this._data[`${font.fontFamily} ${font.fontSize}`];
+
+        return this._data[key];
     }
 }
