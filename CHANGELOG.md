@@ -1,6 +1,7 @@
 ### Changelog ###
 
 #### v1.0.0-alpha3 - TBD ####
+ * Disable `foreignObjectRendering` by default (#1295)
  * Fix background-size when using background-origin and background-size: cover/contain (#1299)
  * Added support for background-origin: content-box (#1299)
 

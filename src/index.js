@@ -66,7 +66,7 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         imageTimeout: 15000,
         proxy: null,
         removeContainer: true,
-        foreignObjectRendering: true,
+        foreignObjectRendering: false,
         scale: defaultView.devicePixelRatio || 1,
         target: new CanvasRenderer(config.canvas),
         x: left,
