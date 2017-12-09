@@ -35,6 +35,10 @@ Below is a list of all the supported CSS properties and values.
  - left
  - letter-spacing
  - margin
+ - max-height
+ - max-width
+ - min-height
+ - min-width
  - opacity
  - overflow
  - padding
@@ -58,6 +62,7 @@ Below is a list of all the supported CSS properties and values.
 ## Unsupported CSS properties
 These CSS properties are **NOT** currently supported
  - [background-blend-mode](https://github.com/niklasvh/html2canvas/issues/966)
+ - [border-image](https://github.com/niklasvh/html2canvas/issues/1287)
  - [box-shadow](https://github.com/niklasvh/html2canvas/pull/1086)
  - [filter](https://github.com/niklasvh/html2canvas/issues/493)
  - [font-variant-ligatures](https://github.com/niklasvh/html2canvas/pull/1085)
