@@ -44,7 +44,14 @@ module.exports = [
             libraryTarget: 'umd'
         },
         module: modules,
-        plugins: plugins.concat([new UglifyJSPlugin(), new webpack.BannerPlugin(banner)])
+        plugins: [
+            new webpack.DefinePlugin({
+                '__DEV__': false,
+                '__VERSION__': JSON.stringify(pkg.version)
+            }),
+            new UglifyJSPlugin(),
+            new webpack.BannerPlugin(banner)
+        ]
     },
     {
         entry: './src/renderer/RefTestRenderer.js',
