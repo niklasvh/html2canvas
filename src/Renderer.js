@@ -20,20 +20,13 @@ import type NodeContainer from './NodeContainer';
 import type StackingContext from './StackingContext';
 import type {TextBounds} from './TextBounds';
 
-import {
-    Bounds,
-    parsePathForBorder,
-    calculateContentBox,
-    calculatePaddingBox,
-    calculatePaddingBoxPath
-} from './Bounds';
-import {PADDING_SIDES} from './parsing/padding';
+import {Bounds, parsePathForBorder, calculateContentBox, calculatePaddingBoxPath} from './Bounds';
 import {FontMetrics} from './Font';
 import {parseGradient} from './Gradient';
 import TextContainer from './TextContainer';
 
 import {
-    BACKGROUND_ORIGIN,
+    calculateBackgroungPositioningArea,
     calculateBackgroungPaintingArea,
     calculateBackgroundPosition,
     calculateBackgroundRepeatPath,
@@ -222,32 +215,12 @@ export default class Renderer {
     renderBackgroundRepeat(container: NodeContainer, background: BackgroundImage) {
         const image = this.options.imageStore.get(background.source.args[0]);
         if (image) {
-            const bounds = container.bounds;
-            const paddingBox = calculatePaddingBox(bounds, container.style.border);
-
-            let backgroundPositioningArea;
-            switch (container.style.background.backgroundOrigin) {
-                case BACKGROUND_ORIGIN.BORDER_BOX:
-                    backgroundPositioningArea = bounds;
-                    break;
-                case BACKGROUND_ORIGIN.CONTENT_BOX:
-                    const paddingLeft = container.style.padding[PADDING_SIDES.LEFT].value;
-                    const paddingRight = container.style.padding[PADDING_SIDES.RIGHT].value;
-                    const paddingTop = container.style.padding[PADDING_SIDES.TOP].value;
-                    const paddingBottom = container.style.padding[PADDING_SIDES.BOTTOM].value;
-                    backgroundPositioningArea = new Bounds(
-                        paddingBox.left + paddingLeft,
-                        paddingBox.top + paddingTop,
-                        paddingBox.width - paddingLeft - paddingRight,
-                        paddingBox.height - paddingTop - paddingBottom
-                    );
-                    break;
-                case BACKGROUND_ORIGIN.PADDING_BOX:
-                default:
-                    backgroundPositioningArea = paddingBox;
-                    break;
-            }
-
+            const backgroundPositioningArea = calculateBackgroungPositioningArea(
+                container.style.background.backgroundOrigin,
+                container.bounds,
+                container.style.padding,
+                container.style.border
+            );
             const backgroundImageSize = calculateBackgroundSize(
                 background,
                 image,
@@ -263,7 +236,7 @@ export default class Renderer {
                 position,
                 backgroundImageSize,
                 backgroundPositioningArea,
-                bounds
+                container.bounds
             );
 
             const offsetX = Math.round(backgroundPositioningArea.left + position.x);

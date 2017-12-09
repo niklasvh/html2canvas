@@ -1,6 +1,8 @@
 ### Changelog ###
 
 #### v1.0.0-alpha3 - TBD ####
+ * Fix background-size when using background-origin and background-size: cover/contain (#1299)
+ * Added support for background-origin: content-box (#1299)
 
 #### v1.0.0-alpha2 - 7.12.2017 ####
  * Fix scroll positions for CanvasRenderer (#1259)
