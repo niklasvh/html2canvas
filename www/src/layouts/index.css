@@ -16,6 +16,17 @@ h4 {
     margin: 1.14rem 0 .912rem 0;
 }
 
+h5 {
+    font-size: 1.28rem;
+    line-height: 110%;
+    margin: 1.14rem 0 .912rem 0;
+}
+
+h6 {
+    line-height: 110%;
+    margin: 1.14rem 0 .912rem 0;
+}
+
 a {
     color: #7cb342;
     text-decoration: none;

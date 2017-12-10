@@ -1,7 +1,7 @@
 ---
 title: "Getting Started"
 description: "Learn how to start using html2canvas"
-previousUrl: "/about"
+previousUrl: "/documentation"
 previousTitle: "About"
 nextUrl: "/configuration"
 nextTitle: "Configuration"

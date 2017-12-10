@@ -28,7 +28,7 @@ const navStyle = {
 };
 
 const links = [
-    {href: '/about', text: 'About'},
+    {href: '/documentation', text: 'About'},
     {href: '/getting-started', text: 'Getting started'},
     {href: '/configuration', text: 'Configuration'},
     {href: '/features', text: 'Features'},
@@ -38,9 +38,9 @@ const links = [
 
 export default () =>
     <div css={navStyle}>
-        <div css={{background: '#558b2f'}}>
-            <img src={logo} css={{margin: 0, padding: '24px 30px 24px'}} />
-        </div>
+        <Link to="/" css={{background: '#558b2f', display: 'block', padding: '24px 30px 24px'}}>
+            <img src={logo} css={{margin: 0}} />
+        </Link>
         <ul
             style={{
                 listStyle: 'none',

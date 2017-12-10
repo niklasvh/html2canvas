@@ -10,6 +10,7 @@ module.exports = {
             }
         },
         `gatsby-plugin-catch-links`,
+        `gatsby-plugin-twitter`,
         `gatsby-plugin-react-helmet`,
         `gatsby-plugin-glamor`,
         {
