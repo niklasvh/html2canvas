@@ -22,6 +22,7 @@ notifications:
     on_start: false
 script:
   - npm run build
+  - cd www && npm install && npm run build && cd ..
   - npm test
 deploy:
   - provider: npm
@@ -42,5 +43,15 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+      branch: master
+      repo: niklasvh/html2canvas
+  - provider: pages
+    skip_cleanup: true
+    local_dir: www/public
+    target_branch: gh-pages-test
+    fqdn: html2canvas.hertzen.com
+    github_token:
+      secure: "PowO/Jat660k3gHcjgI6DlJz15RM7pLUu11UPsLCtYJ8ZwodppE6Keg0DfVkSFSIZttZor+UssDwP/WOEqfZNLqmXbcj3Gec4xolohet/GOe0KJKKuF/HgggbcxumopxMX6sMVePlMBpkLpHh7tgEAEHBWTlzC1c1a7Xa48fZ7k="
+    on:
       branch: master
       repo: niklasvh/html2canvas

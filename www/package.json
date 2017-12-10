@@ -9,6 +9,7 @@
     "gatsby-link": "^1.6.30",
     "gatsby-plugin-catch-links": "^1.0.13",
     "gatsby-plugin-glamor": "^1.6.9",
+    "gatsby-plugin-google-analytics": "^1.0.14",
     "gatsby-plugin-react-helmet": "^1.0.8",
     "gatsby-plugin-typography": "^1.7.10",
     "gatsby-remark-prismjs": "^1.2.10",
