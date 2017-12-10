@@ -1,0 +1,30 @@
+
+#carbonads {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.5;
+}
+#carbonads span {
+    display: block;
+    overflow: hidden;
+}
+.carbon-img {
+    display: block;
+}
+.carbon-text {
+    display: block;
+    margin-bottom: .5em;
+}
+.carbon-poweredby {
+    display: block;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 9px;
+}
+
+#carbonads a {
+    color: #fff;
+}
+
+

@@ -1,8 +1,13 @@
 ---
 title: "Getting Started"
+description: "Learn how to start using html2canvas"
+previousUrl: "/about"
+previousTitle: "About"
+nextUrl: "/configuration"
+nextTitle: "Configuration"
 ---
 
-# Installing
+## Installing
 
 You can install `html2canvas` through npm or [download a built release](https://github.com/niklasvh/html2canvas/releases).
 
@@ -14,7 +19,7 @@ You can install `html2canvas` through npm or [download a built release](https://
 import html2canvas from 'html2canvas';
 ```
     
-# Usage
+## Usage
 
 To render an `element` with html2canvas with some (optional) [options](/configuration/), simply call `html2canvas(element, options);`
 
