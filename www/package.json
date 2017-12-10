@@ -5,23 +5,27 @@
   "private": true,
   "author": "Niklas von Hertzen",
   "dependencies": {
+    "cpy-cli": "^1.0.1",
     "gatsby": "^1.9.127",
     "gatsby-link": "^1.6.30",
     "gatsby-plugin-catch-links": "^1.0.13",
     "gatsby-plugin-glamor": "^1.6.9",
     "gatsby-plugin-google-analytics": "^1.0.14",
     "gatsby-plugin-react-helmet": "^1.0.8",
+    "gatsby-plugin-twitter": "^1.0.14",
     "gatsby-plugin-typography": "^1.7.10",
     "gatsby-remark-prismjs": "^1.2.10",
     "gatsby-source-filesystem": "^1.5.9",
     "gatsby-transformer-remark": "^1.7.23",
+    "mkdirp": "^0.5.1",
     "typography": "^0.16.6",
     "typography-theme-github": "^0.15.10"
   },
   "license": "MIT",
   "main": "n/a",
   "scripts": {
-    "build": "gatsby build",
+    "copybuild": "mkdirp public/dist && cpy ../dist/*.js public/dist",
+    "build": "npm run copybuild && gatsby build",
     "develop": "gatsby develop",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

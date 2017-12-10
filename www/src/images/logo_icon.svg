@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Proposal---Sukhumvit-Set" fill="#FFFFFF">
+            <g id="Group-2" transform="translate(0.000000, 3.000000)">
+                <g id="Group" fill-rule="nonzero">
+                    <path d="M4,12 L4,46 L37.0232558,46 L37.0232558,12 L4,12 Z M2,8 L39.0232558,8 C40.1278253,8 41.0232558,8.8954305 41.0232558,10 L41.0232558,48 C41.0232558,49.1045695 40.1278253,50 39.0232558,50 L2,50 C0.8954305,50 1.3527075e-16,49.1045695 -1.23259516e-31,48 L-2.22044605e-16,10 C-3.57315355e-16,8.8954305 0.8954305,8 2,8 Z" id="Rectangle"></path>
+                    <path d="M12,4 L12,38 L46,38 L46,4 L12,4 Z M10,0 L48,0 C49.1045695,-2.02906125e-16 50,0.8954305 50,2 L50,40 C50,41.1045695 49.1045695,42 48,42 L10,42 C8.8954305,42 8,41.1045695 8,40 L8,2 C8,0.8954305 8.8954305,2.02906125e-16 10,0 Z" id="Rectangle-Copy"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
