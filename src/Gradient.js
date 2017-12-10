@@ -34,7 +34,7 @@ export const parseGradient = (
     bounds: Bounds
 ): ?Gradient => {
     if (method === 'linear-gradient') {
-        return parseLinearGradient(args, bounds);
+        return parseLinearGradient(args, bounds, !!prefix);
     } else if (method === 'gradient' && args[0] === 'linear') {
         // TODO handle correct angle
         return parseLinearGradient(
@@ -46,18 +46,23 @@ export const parseGradient = (
                     // $FlowFixMe
                     .map(v => v[2])
             ),
-            bounds
+            bounds,
+            !!prefix
         );
     }
 };
 
-const parseLinearGradient = (args: Array<string>, bounds: Bounds): Gradient => {
+const parseLinearGradient = (args: Array<string>, bounds: Bounds, hasPrefix: boolean): Gradient => {
     const angle = parseAngle(args[0]);
     const HAS_SIDE_OR_CORNER = SIDE_OR_CORNER.test(args[0]);
     const HAS_DIRECTION = HAS_SIDE_OR_CORNER || angle !== null || PERCENTAGE_ANGLES.test(args[0]);
     const direction = HAS_DIRECTION
         ? angle !== null
-          ? calculateGradientDirection(angle, bounds)
+          ? calculateGradientDirection(
+                // if there is a prefix, the 0° angle points due East (instead of North per W3C)
+                hasPrefix ? angle - Math.PI * 0.5 : angle,
+                bounds
+            )
           : HAS_SIDE_OR_CORNER
             ? parseSideOrCorner(args[0], bounds)
             : parsePercentageAngle(args[0], bounds)

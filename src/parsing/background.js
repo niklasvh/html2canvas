@@ -123,6 +123,19 @@ export const calculateBackgroundSize = (
     return new Size(width, height);
 };
 
+export const calculateGradientBackgroundSize = (
+    backgroundImage: BackgroundImage,
+    bounds: Bounds
+): Size => {
+    const size = backgroundImage.size;
+    const width = size[0].value ? size[0].value.getAbsoluteValue(bounds.width) : bounds.width;
+    const height = size[1].value
+        ? size[1].value.getAbsoluteValue(bounds.height)
+        : size[0].value ? width : bounds.height;
+
+    return new Size(width, height);
+};
+
 const AUTO_SIZE = new BackgroundSize(AUTO);
 
 export const calculateBackgroungPaintingArea = (
