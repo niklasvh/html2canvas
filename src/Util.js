@@ -3,6 +3,8 @@
 
 export const contains = (bit: number, value: number): boolean => (bit & value) !== 0;
 
+export const distance = (a: number, b: number): number => Math.sqrt(a * a + b * b);
+
 export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): HTMLElement => {
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {

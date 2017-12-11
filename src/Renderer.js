@@ -14,7 +14,7 @@ import type {TextShadow} from './parsing/textShadow';
 import type {Matrix} from './parsing/transform';
 
 import type {BoundCurves} from './Bounds';
-import type {Gradient} from './Gradient';
+import type {LinearGradient, RadialGradient} from './Gradient';
 import type {ResourceStore, ImageElement} from './ResourceLoader';
 import type NodeContainer from './NodeContainer';
 import type StackingContext from './StackingContext';
@@ -22,7 +22,7 @@ import type {TextBounds} from './TextBounds';
 
 import {Bounds, parsePathForBorder, calculateContentBox, calculatePaddingBoxPath} from './Bounds';
 import {FontMetrics} from './Font';
-import {parseGradient} from './Gradient';
+import {parseGradient, GRADIENT_TYPE} from './Gradient';
 import TextContainer from './TextContainer';
 
 import {
@@ -62,7 +62,9 @@ export interface RenderTarget<Output> {
 
     render(options: RenderOptions): void,
 
-    renderLinearGradient(bounds: Bounds, gradient: Gradient): void,
+    renderLinearGradient(bounds: Bounds, gradient: LinearGradient): void,
+
+    renderRadialGradient(bounds: Bounds, gradient: RadialGradient): void,
 
     renderRepeat(
         path: Path,
@@ -265,9 +267,18 @@ export default class Renderer {
             backgroundImageSize.height
         );
 
-        const gradient = parseGradient(background.source, gradientBounds);
+        const gradient = parseGradient(container, background.source, gradientBounds);
         if (gradient) {
-            this.target.renderLinearGradient(gradientBounds, gradient);
+            switch (gradient.type) {
+                case GRADIENT_TYPE.LINEAR_GRADIENT:
+                    // $FlowFixMe
+                    this.target.renderLinearGradient(gradientBounds, gradient);
+                    break;
+                case GRADIENT_TYPE.RADIAL_GRADIENT:
+                    // $FlowFixMe
+                    this.target.renderRadialGradient(gradientBounds, gradient);
+                    break;
+            }
         }
     }
 

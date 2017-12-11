@@ -13,11 +13,22 @@ import type {Matrix} from '../parsing/transform';
 
 import type {Bounds} from '../Bounds';
 import type {ImageElement} from '../ResourceLoader';
-import type {Gradient} from '../Gradient';
+import type {LinearGradient, RadialGradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
 import {PATH} from '../drawing/Path';
 import {TEXT_DECORATION_LINE} from '../parsing/textDecoration';
+
+const addColorStops = (
+    gradient: LinearGradient | RadialGradient,
+    canvasGradient: CanvasGradient
+): void => {
+    const maxStop = Math.max.apply(null, gradient.colorStops.map(colorStop => colorStop.stop));
+    const f = 1 / Math.max(1, maxStop);
+    gradient.colorStops.forEach(colorStop => {
+        canvasGradient.addColorStop(f * colorStop.stop, colorStop.color.toString());
+    });
+};
 
 export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
     canvas: HTMLCanvasElement;
@@ -131,7 +142,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         this.ctx.fillRect(x, y, width, height);
     }
 
-    renderLinearGradient(bounds: Bounds, gradient: Gradient) {
+    renderLinearGradient(bounds: Bounds, gradient: LinearGradient) {
         const linearGradient = this.ctx.createLinearGradient(
             bounds.left + gradient.direction.x1,
             bounds.top + gradient.direction.y1,
@@ -139,12 +150,41 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
             bounds.top + gradient.direction.y0
         );
 
-        gradient.colorStops.forEach(colorStop => {
-            linearGradient.addColorStop(colorStop.stop, colorStop.color.toString());
-        });
-
+        addColorStops(gradient, linearGradient);
         this.ctx.fillStyle = linearGradient;
         this.ctx.fillRect(bounds.left, bounds.top, bounds.width, bounds.height);
+    }
+
+    renderRadialGradient(bounds: Bounds, gradient: RadialGradient) {
+        const x = bounds.left + gradient.center.x;
+        const y = bounds.top + gradient.center.y;
+
+        const radialGradient = this.ctx.createRadialGradient(x, y, 0, x, y, gradient.radius.x);
+        if (!radialGradient) {
+            return;
+        }
+
+        addColorStops(gradient, radialGradient);
+        this.ctx.fillStyle = radialGradient;
+
+        if (gradient.radius.x !== gradient.radius.y) {
+            // transforms for elliptical radial gradient
+            const midX = bounds.left + 0.5 * bounds.width;
+            const midY = bounds.top + 0.5 * bounds.height;
+            const f = gradient.radius.y / gradient.radius.x;
+            const invF = 1 / f;
+
+            this.transform(midX, midY, [1, 0, 0, f, 0, 0], () =>
+                this.ctx.fillRect(
+                    bounds.left,
+                    invF * (bounds.top - midY) + midY,
+                    bounds.width,
+                    bounds.height * invF
+                )
+            );
+        } else {
+            this.ctx.fillRect(bounds.left, bounds.top, bounds.width, bounds.height);
+        }
     }
 
     renderRepeat(
