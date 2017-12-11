@@ -1,9 +1,0 @@
-Window: [800, 600]
-Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
-Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16 Arial
-  [8, 8]: Inline
-  [51, 8]: svg
-  [80, 8]: image:
-Clip: Path (Vector(x: 8, y: 26) > Vector(x: 208, y: 26) > Vector(x: 208, y: 226) > Vector(x: 8, y: 226))
-  Draw image: Image ("/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53") (source: [0, 0, 306, 296]) (destination: [0, 0, 306, 296])

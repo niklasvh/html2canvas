@@ -1,7 +1,0 @@
-Window: [800, 656]
-Rectangle: [0, 0, 800, 656] rgba(0,0,0,0)
-Opacity: 1
-Clip: Path (Vector(x: 8, y: 8) > Vector(x: 666, y: 8) > Vector(x: 666, y: 345) > Vector(x: 8, y: 345))
-  Draw image: Image ("/tests/assets/image.svg") (source: [0, 0, 658, 337]) (destination: [0, 0, 658, 337])
-Clip: Path (Vector(x: 523, y: 445) > Vector(x: 723, y: 445) > Vector(x: 723, y: 645) > Vector(x: 523, y: 645))
-  Draw image: Image ("/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53") (source: [0, 0, 306, 296]) (destination: [0, 0, 306, 296])

@@ -1,9 +1,0 @@
-Window: [800, 600]
-Rectangle: [0, 0, 800, 600] rgba(0,0,0,0)
-Opacity: 1
-Text: rgb(0,0,0) normal normal 400 16 Arial
-  [8, 8]: SVG
-  [46, 8]: taints
-  [89, 8]: image:
-Clip: Path (Vector(x: 8, y: 26) > Vector(x: 666, y: 26) > Vector(x: 666, y: 363) > Vector(x: 8, y: 363))
-  Draw image: Image ("/tests/assets/image.svg") (source: [0, 0, 658, 337]) (destination: [0, 0, 658, 337])
