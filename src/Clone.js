@@ -177,6 +177,7 @@ export class DocumentCloner {
                             backgroundColor: '#ffffff',
                             canvas: null,
                             imageTimeout: this.options.imageTimeout,
+                            logging: this.options.logging,
                             proxy: this.options.proxy,
                             removeContainer: this.options.removeContainer,
                             scale: this.options.scale,
