@@ -34,16 +34,8 @@ export default class ResourceLoader {
             return src;
         }
 
-        if (isSVG(src)) {
-            if (this.options.allowTaint === true || FEATURES.SUPPORT_SVG_DRAWING) {
-                return this.addImage(src, src, false);
-            }
-        } else {
-            if (
-                this.options.allowTaint === true ||
-                isInlineBase64Image(src) ||
-                this.isSameOrigin(src)
-            ) {
+        if (!isSVG(src) || FEATURES.SUPPORT_SVG_DRAWING) {
+            if (this.options.allowTaint === true || isInlineImage(src) || this.isSameOrigin(src)) {
                 return this.addImage(src, src, false);
             } else if (!this.isSameOrigin(src)) {
                 if (typeof this.options.proxy === 'string') {

@@ -1,6 +1,9 @@
 ### Changelog ###
 
 #### v1.0.0-alpha4 - TBD ####
+ * Fix logging option (#1302)
+ * Add support for rendering webgl canvas content (#646)
+ * Fix external SVG loading with proxies (#802)
 
 #### v1.0.0-alpha3 - 9.12.2017 ####
  * Disable `foreignObjectRendering` by default (#1295)

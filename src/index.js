@@ -65,6 +65,7 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         async: true,
         allowTaint: false,
         imageTimeout: 15000,
+        logging: true,
         proxy: null,
         removeContainer: true,
         foreignObjectRendering: false,
