@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+
+		<style>
+			div {
+				display: inline-block;
+				width: 100px;
+				height: 100px;
+				padding: 10px;
+				margin: 5px;
+				border: 15px solid black;
+				vertical-align: top;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="background: radial-gradient(red, blue)"></div>
+		<div style="background: radial-gradient(circle, red, blue)"></div>
+		<div style="background: radial-gradient(ellipse, red, blue)"></div>
+		<div style="background: radial-gradient(circle, red, blue); width:200px"></div>
+		<div style="background: radial-gradient(ellipse, red, blue); width:200px"></div>
+		<div style="background: radial-gradient(closest-side, red, blue)"></div>
+		<div style="background: radial-gradient(closest-corner, red, blue)"></div>
+		<div style="background: radial-gradient(farthest-side, red, blue)"></div>
+		<div style="background: radial-gradient(farthest-corner, red, blue)"></div>
+		<div style="background: radial-gradient(circle 20px, red, blue)"></div>
+		<div style="background: radial-gradient(ellipse 20px 30px, red, blue)"></div>
+		<div style="font-size: 24px; border: none; padding: 0; width: auto;">
+			<div style="background: radial-gradient(circle 20px at 2em 80px, red, blue)"></div>
+			<div style="background: radial-gradient(circle 20px at 6rem 80px, red, blue)"></div>
+		</div>
+		<div style="background: radial-gradient(circle farthest-side, red, blue)"></div>
+		<div style="background: radial-gradient(at 20px 20px, red, blue)"></div>
+		<div style="background: radial-gradient(ellipse farthest-corner at 45px 45px , #00FFFF 0%, rgba(0, 0, 255, 0) 50%, #0000FF 95%);"></div>
+		<div style="background: radial-gradient(16px at 70px 50% , #000000 0%, #000000 14px, rgba(0, 0, 0, 0.3) 18px, rgba(0, 0, 0, 0) 19px);"></div>
+		<div style="background: radial-gradient(16px at 70px 50% , #000000 0%, #000000 87.5%, rgba(0, 0, 0, 0.3) 112.5%, rgba(0, 0, 0, 0) 118.75%);"></div>
+		<div style="background: radial-gradient(19px at 70px 50% , #000000 0%, #000000 73.68%, rgba(0, 0, 0, 0.3) 94.74%, rgba(0, 0, 0, 0) 100%);"></div>
+		<div style="background: radial-gradient(ellipse 60px 30px at 70px 50%, #000000 0%, blue 10%, yellow 15%, red 18%);"></div>
+		<div style="background: radial-gradient(circle farthest-corner at left top, aquamarine, deeppink);"></div>
+		<div style="width: 300px; height: 200px; transform: translate(20px, 30px) rotate(20deg)">
+			<div style="width: 200px; height: 150px; transform: translate(-10px, -20px) rotate(10deg)">
+				<div style="background: radial-gradient(circle, red, blue)"></div>
+				<div style="background: radial-gradient(ellipse, red, blue); width:150px;"></div>
+			</div>
+		</div>
+	</body>
+</html>
