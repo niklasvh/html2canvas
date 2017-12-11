@@ -17,6 +17,7 @@
     "gatsby-remark-prismjs": "^1.2.10",
     "gatsby-source-filesystem": "^1.5.9",
     "gatsby-transformer-remark": "^1.7.23",
+    "gzip-size": "^4.1.0",
     "mkdirp": "^0.5.1",
     "typography": "^0.16.6",
     "typography-theme-github": "^0.15.10"

@@ -1,6 +1,13 @@
+const gzipSize = require('gzip-size');
+const path = require('path');
+const fs = require('fs');
+
 module.exports = {
     siteMetadata: {
-        title: `Gatsby Default Starter`
+        title: `html2canvas`,
+        packageSize: gzipSize.sync(
+            fs.readFileSync(path.resolve(__dirname, '../dist/html2canvas.min.js'))
+        )
     },
     plugins: [
         {
