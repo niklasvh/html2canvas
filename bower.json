@@ -1,9 +1,0 @@
-{
-    "name": "html2canvas",
-    "description": "Screenshots with JavaScript",
-    "main": "dist/html2canvas.js",
-    "ignore": [
-        "tests",
-        ".travis.yml"
-    ]
-}

@@ -1,12 +1,15 @@
 build/
+docs/
 examples/
 scripts/
 src/
 tests/
+www/
 .github/
 *.iml
 .babelrc
 .idea/
+.editorconfig
 .npmignore
 .eslintrc
 .travis.yml
