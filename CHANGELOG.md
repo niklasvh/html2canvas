@@ -1,6 +1,7 @@
 ### Changelog ###
 
 #### v1.0.0-alpha4 - TBD ####
+ * Fix rendering with multiple fonts defined (Fix #796)
  * Add support for radial-gradients
  * Fix logging option (#1302)
  * Add support for rendering webgl canvas content (#646)
