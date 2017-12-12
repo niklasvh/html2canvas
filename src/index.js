@@ -64,6 +64,7 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const defaultOptions = {
         async: true,
         allowTaint: false,
+        backgroundColor: '#ffffff',
         imageTimeout: 15000,
         logging: true,
         proxy: null,

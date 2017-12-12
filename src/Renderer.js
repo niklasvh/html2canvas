@@ -353,8 +353,8 @@ export default class Renderer {
     render(stack: StackingContext): Promise<*> {
         if (this.options.backgroundColor) {
             this.target.rectangle(
-                0,
-                0,
+                this.options.x,
+                this.options.y,
                 this.options.width,
                 this.options.height,
                 this.options.backgroundColor
