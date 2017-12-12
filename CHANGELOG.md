@@ -1,6 +1,6 @@
 ### Changelog ###
 
-#### v1.0.0-alpha4 - TBD ####
+#### v1.0.0-alpha4 - 12.12.2017 ####
  * Fix rendering with multiple fonts defined (Fix #796)
  * Add support for radial-gradients
  * Fix logging option (#1302)
