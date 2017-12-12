@@ -87,7 +87,16 @@ export default ({data}) => {
                     </div>
 
                     <div css={{margin: '20px'}}>
-                        <Link css={linkStyle}>Try it out</Link>
+                        <a
+                            href="#"
+                            css={linkStyle}
+                            onClick={e => {
+                                e.preventDefault();
+                                document.querySelector('#tryhtml2canvas').click();
+                            }}
+                        >
+                            Try it out
+                        </a>
                         <Link to={'/documentation'} css={linkStyle}>
                             Documentation
                         </Link>
