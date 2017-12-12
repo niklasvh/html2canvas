@@ -339,19 +339,21 @@ const findCorner = (bounds: Bounds, x: number, y: number, closest: boolean): Poi
         {x: bounds.width, y: bounds.height}
     ];
 
-    let optimumDistance = closest ? Infinity : -Infinity;
-    let optimumCorner = null;
-
-    for (let corner of corners) {
-        const d = distance(x - corner.x, y - corner.y);
-        if (closest ? d < optimumDistance : d > optimumDistance) {
-            optimumDistance = d;
-            optimumCorner = corner;
-        }
-    }
-
     // $FlowFixMe
-    return optimumCorner;
+    return corners.reduce((stat, corner) => {
+        const d = distance(x - corner.x, y - corner.y);
+        if (closest ? d < stat.optimumDistance : d > stat.optimumDistance) {
+            return {
+                optimumCorner: corner,
+                optimumDistance: d
+            };
+        }
+
+        return stat;
+    }, {
+        optimumDistance: closest ? Infinity : -Infinity,
+        optimumCorner: null
+    }).optimumCorner;
 };
 
 const calculateRadius = (
