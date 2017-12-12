@@ -214,8 +214,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
             font.fontWeight,
             font.fontSize,
             font.fontFamily
-        ]
-            .join(' ');
+        ].join(' ');
 
         textBounds.forEach(text => {
             this.ctx.fillStyle = color.toString();

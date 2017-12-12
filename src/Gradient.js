@@ -141,7 +141,8 @@ const parseColorStops = (args: Array<string>, firstColorStopIndex: number, lineL
         return {
             color,
             // $FlowFixMe
-            stop: lineLength === 0 ? 0 : stop ? stop.getAbsoluteValue(lineLength) / lineLength : null
+            stop:
+                lineLength === 0 ? 0 : stop ? stop.getAbsoluteValue(lineLength) / lineLength : null
         };
     });
 
@@ -340,20 +341,23 @@ const findCorner = (bounds: Bounds, x: number, y: number, closest: boolean): Poi
     ];
 
     // $FlowFixMe
-    return corners.reduce((stat, corner) => {
-        const d = distance(x - corner.x, y - corner.y);
-        if (closest ? d < stat.optimumDistance : d > stat.optimumDistance) {
-            return {
-                optimumCorner: corner,
-                optimumDistance: d
-            };
-        }
+    return corners.reduce(
+        (stat, corner) => {
+            const d = distance(x - corner.x, y - corner.y);
+            if (closest ? d < stat.optimumDistance : d > stat.optimumDistance) {
+                return {
+                    optimumCorner: corner,
+                    optimumDistance: d
+                };
+            }
 
-        return stat;
-    }, {
-        optimumDistance: closest ? Infinity : -Infinity,
-        optimumCorner: null
-    }).optimumCorner;
+            return stat;
+        },
+        {
+            optimumDistance: closest ? Infinity : -Infinity,
+            optimumCorner: null
+        }
+    ).optimumCorner;
 };
 
 const calculateRadius = (
