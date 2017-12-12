@@ -1,6 +1,10 @@
 /* @flow */
 'use strict';
 
+import NodeContainer from './NodeContainer';
+
+const LENGTH_WITH_UNIT = /([\d.]+)(px|r?em|%)/i;
+
 export const LENGTH_TYPE = {
     PX: 0,
     PERCENTAGE: 1
@@ -34,3 +38,31 @@ export default class Length {
         return new Length(v);
     }
 }
+
+const getRootFontSize = (container: NodeContainer): number => {
+    const parent = container.parent;
+    return parent ? getRootFontSize(parent) : parseFloat(container.style.font.fontSize);
+};
+
+export const calculateLengthFromValueWithUnit = (
+    container: NodeContainer,
+    value: string,
+    unit: string
+): Length => {
+    switch (unit) {
+        case 'px':
+        case '%':
+            return new Length(value + unit);
+        case 'em':
+        case 'rem':
+            const length = new Length(value);
+            length.value *=
+                unit === 'em'
+                    ? parseFloat(container.style.font.fontSize)
+                    : getRootFontSize(container);
+            return length;
+        default:
+            // TODO: handle correctly if unknown unit is used
+            return new Length('0');
+    }
+};
