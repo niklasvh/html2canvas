@@ -66,7 +66,9 @@ export default class Example extends Component {
                         position: 'fixed',
                         zIndex: '1000',
                         right: '-348.4px',
-                        bottom: '-327.2px'
+                        bottom: '-327.2px',
+                        visibility: this.state.open ? 'visible' : 'hidden',
+                        transition: 'visibility 0.3s cubic-bezier(0.42, 0, 0.58, 1)'
                     }}
                 >
                     <div
@@ -107,6 +109,7 @@ export default class Example extends Component {
                                 cursor: 'pointer',
                                 transform: 'translate(-50%, -50%)',
                                 borderRadius: '50%',
+                                visibility: 'visible',
                                 boxShadow:
                                     '0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2)'
                             }}
