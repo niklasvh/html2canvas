@@ -65,11 +65,16 @@ Below is a list of all the supported CSS properties and values.
 These CSS properties are **NOT** currently supported
  - [background-blend-mode](https://github.com/niklasvh/html2canvas/issues/966)
  - [border-image](https://github.com/niklasvh/html2canvas/issues/1287)
+ - [box-decoration-break](https://github.com/niklasvh/html2canvas/issues/552)
  - [box-shadow](https://github.com/niklasvh/html2canvas/pull/1086)
  - [filter](https://github.com/niklasvh/html2canvas/issues/493)
  - [font-variant-ligatures](https://github.com/niklasvh/html2canvas/pull/1085)
+ - [mix-blend-mode](https://github.com/niklasvh/html2canvas/issues/580)
+ - [object-fit](https://github.com/niklasvh/html2canvas/issues/1064)
  - [list-style](https://github.com/niklasvh/html2canvas/issues/177)
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
  - word-break
+ - [word-wrap](https://github.com/niklasvh/html2canvas/issues/664)
  - [writing-mode](https://github.com/niklasvh/html2canvas/issues/1258)
+ - [zoom](https://github.com/niklasvh/html2canvas/issues/732)
 
