@@ -48,7 +48,7 @@ deploy:
   - provider: pages
     skip_cleanup: true
     local_dir: www/public
-    target_branch: gh-pages-test
+    target_branch: gh-pages
     fqdn: html2canvas.hertzen.com
     github_token:
       secure: "PowO/Jat660k3gHcjgI6DlJz15RM7pLUu11UPsLCtYJ8ZwodppE6Keg0DfVkSFSIZttZor+UssDwP/WOEqfZNLqmXbcj3Gec4xolohet/GOe0KJKKuF/HgggbcxumopxMX6sMVePlMBpkLpHh7tgEAEHBWTlzC1c1a7Xa48fZ7k="
