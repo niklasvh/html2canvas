@@ -138,11 +138,13 @@ const parseColorStops = (args: Array<string>, firstColorStopIndex: number, lineL
     }
 
     const absoluteValuedColorStops = colorStops.map(({color, stop}) => {
+        const absoluteStop =
+            lineLength === 0 ? 0 : stop ? stop.getAbsoluteValue(lineLength) / lineLength : null;
+
         return {
             color,
-            stop:
             // $FlowFixMe
-                lineLength === 0 ? 0 : stop ? stop.getAbsoluteValue(lineLength) / lineLength : null
+            stop: absoluteStop
         };
     });
 
