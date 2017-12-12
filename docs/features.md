@@ -11,6 +11,7 @@ Below is a list of all the supported CSS properties and values.
    - background-image
        - url()
        - linear-gradient()
+       - radial-gradient()
    - background-origin 
    - background-position
    - background-size   
@@ -68,7 +69,6 @@ These CSS properties are **NOT** currently supported
  - [filter](https://github.com/niklasvh/html2canvas/issues/493)
  - [font-variant-ligatures](https://github.com/niklasvh/html2canvas/pull/1085)
  - [list-style](https://github.com/niklasvh/html2canvas/issues/177)
- - radial-gradient()
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
  - word-break
  - [writing-mode](https://github.com/niklasvh/html2canvas/issues/1258)

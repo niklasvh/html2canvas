@@ -1,6 +1,7 @@
 ### Changelog ###
 
 #### v1.0.0-alpha4 - TBD ####
+ * Add support for radial-gradients
  * Fix logging option (#1302)
  * Add support for rendering webgl canvas content (#646)
  * Fix external SVG loading with proxies (#802)
