@@ -18,7 +18,7 @@ import type {Matrix} from '../parsing/transform';
 
 import type {Bounds} from '../Bounds';
 import type {ImageElement} from '../ResourceLoader';
-import type {Gradient} from '../Gradient';
+import type {LinearGradient, RadialGradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
 import {TEXT_DECORATION_STYLE, TEXT_DECORATION_LINE} from '../parsing/textDecoration';
@@ -110,7 +110,7 @@ class RefTestRenderer implements RenderTarget<string> {
         return `Path (${string})`;
     }
 
-    renderLinearGradient(bounds: Bounds, gradient: Gradient) {
+    renderLinearGradient(bounds: Bounds, gradient: LinearGradient) {
         const direction = [
             `x0: ${Math.round(gradient.direction.x0)}`,
             `x1: ${Math.round(gradient.direction.x1)}`,
@@ -126,6 +126,19 @@ class RefTestRenderer implements RenderTarget<string> {
             `Gradient: ${this.formatBounds(bounds)} linear-gradient(${direction.join(
                 ', '
             )} ${stops.join(', ')})`
+        );
+    }
+
+    renderRadialGradient(bounds: Bounds, gradient: RadialGradient) {
+        const stops = gradient.colorStops.map(
+            stop => `${stop.color.toString()} ${Math.ceil(stop.stop * 100) / 100}`
+        );
+
+        this.writeLine(
+            `RadialGradient: ${this.formatBounds(bounds)} radial-gradient(${gradient.radius
+                .x} ${gradient.radius.y} at ${gradient.center.x} ${gradient.center.y}, ${stops.join(
+                ', '
+            )})`
         );
     }
 
