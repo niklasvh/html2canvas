@@ -141,7 +141,7 @@ const parseColorStops = (args: Array<string>, firstColorStopIndex: number, lineL
         return {
             color,
             // $FlowFixMe
-            stop: stop ? stop.getAbsoluteValue(lineLength) / lineLength : null
+            stop: lineLength === 0 ? 0 : stop ? stop.getAbsoluteValue(lineLength) / lineLength : null
         };
     });
 
