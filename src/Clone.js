@@ -264,6 +264,21 @@ export class DocumentCloner {
                 case 'SELECT':
                     clone.value = node.value;
                     break;
+                case 'IMG':
+                    var dt = node.ownerDocument.doctype;
+                    if (
+                        dt == undefined ||
+                        dt == 'null' ||
+                        (dt.systemId != '' &&
+                            dt.systemId.indexOf('strict') == -1 &&
+                            !(
+                                dt.systemId.indexOf('xhtml') > -1 &&
+                                dt.systemId.indexOf('11.dtd') > -1
+                            ) &&
+                            dt.systemId.indexOf('xhtml-math-svg') == -1)
+                    )
+                        clone.style.verticalAlign = 'bottom';
+                    break;
             }
         }
         return clone;
