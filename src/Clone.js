@@ -394,7 +394,7 @@ const inlinePseudoElement = (
     node: HTMLElement,
     clone: HTMLElement,
     style: CSSStyleDeclaration,
-    contentItems: Array<PseudoContentItem>,
+    contentItems: ?Array<PseudoContentItem>,
     pseudoElt: ':before' | ':after'
 ): ?HTMLElement => {
     if (
@@ -408,24 +408,25 @@ const inlinePseudoElement = (
     }
 
     const anonymousReplacedElement = clone.ownerDocument.createElement('html2canvaspseudoelement');
-    const len = contentItems.length;
-
     copyCSSStyles(style, anonymousReplacedElement);
 
-    for (var i = 0; i < len; i++) {
-        const item = contentItems[i];
-        switch (item.type) {
-            case PSEUDO_CONTENT_ITEM_TYPE.IMAGE:
-                const img = clone.ownerDocument.createElement('img');
-                img.src = parseBackgroundImage(`url(${item.value})`)[0].args[0];
-                img.style.opacity = '1';
-                anonymousReplacedElement.appendChild(img);
-                break;
-            case PSEUDO_CONTENT_ITEM_TYPE.TEXT:
-                anonymousReplacedElement.appendChild(
-                    clone.ownerDocument.createTextNode(item.value)
-                );
-                break;
+    if (contentItems) {
+        const len = contentItems.length;
+        for (var i = 0; i < len; i++) {
+            const item = contentItems[i];
+            switch (item.type) {
+                case PSEUDO_CONTENT_ITEM_TYPE.IMAGE:
+                    const img = clone.ownerDocument.createElement('img');
+                    img.src = parseBackgroundImage(`url(${item.value})`)[0].args[0];
+                    img.style.opacity = '1';
+                    anonymousReplacedElement.appendChild(img);
+                    break;
+                case PSEUDO_CONTENT_ITEM_TYPE.TEXT:
+                    anonymousReplacedElement.appendChild(
+                        clone.ownerDocument.createTextNode(item.value)
+                    );
+                    break;
+            }
         }
     }
 

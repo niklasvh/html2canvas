@@ -1,3 +1,6 @@
+/* @flow */
+'use strict';
+
 import ListStyleTypeFormatter from 'liststyletype-formatter';
 
 export const PSEUDO_CONTENT_ITEM_TYPE = {
@@ -27,13 +30,14 @@ export type PseudoContentItem = {
 
 export type Token = {
     type: $Values<typeof TOKEN_TYPE>,
-    value: ?string,
-    format: ?string,
-    glue: ?string
+    value?: string,
+    name?: string,
+    format?: string,
+    glue?: string
 };
 
 export const parseCounterReset = (
-    style: CSSStyleDeclaration,
+    style: ?CSSStyleDeclaration,
     data: PseudoContentData
 ): Array<string> => {
     if (!style || !style.counterReset || style.counterReset === 'none') {
@@ -66,9 +70,9 @@ export const popCounters = (counterNames: Array<string>, data: PseudoContentData
 
 export const resolvePseudoContent = (
     node: Node,
-    style: CSSStyleDeclaration,
+    style: ?CSSStyleDeclaration,
     data: PseudoContentData
-): Array<PseudoContentItem> => {
+): ?Array<PseudoContentItem> => {
     if (
         !style ||
         !style.content ||
@@ -100,24 +104,24 @@ export const resolvePseudoContent = (
         const token = tokens[i];
         switch (token.type) {
             case TOKEN_TYPE.STRING:
-                s += token.value;
+                s += token.value || '';
                 break;
 
             case TOKEN_TYPE.ATTRIBUTE:
-                if (node instanceof HTMLElement) {
-                    s += node.getAttribute(token.value);
+                if (node instanceof HTMLElement && token.value) {
+                    s += node.getAttribute(token.value) || '';
                 }
                 break;
 
             case TOKEN_TYPE.COUNTER:
-                const counter = data.counters[token.name];
+                const counter = data.counters[token.name || ''];
                 if (counter) {
                     s += formatCounterValue([counter[counter.length - 1]], '', token.format);
                 }
                 break;
 
             case TOKEN_TYPE.COUNTERS:
-                const counters = data.counters[token.name];
+                const counters = data.counters[token.name || ''];
                 if (counters) {
                     s += formatCounterValue(counters, token.glue, token.format);
                 }
@@ -138,7 +142,7 @@ export const resolvePseudoContent = (
                     contentItems.push({type: PSEUDO_CONTENT_ITEM_TYPE.TEXT, value: s});
                     s = '';
                 }
-                contentItems.push({type: PSEUDO_CONTENT_ITEM_TYPE.IMAGE, value: token.value});
+                contentItems.push({type: PSEUDO_CONTENT_ITEM_TYPE.IMAGE, value: token.value || ''});
                 break;
         }
     }
@@ -150,12 +154,7 @@ export const resolvePseudoContent = (
     return contentItems;
 };
 
-type Token = {
-    type: string,
-    value: ?string
-};
-
-export const parseContent = (content: string, cache: ?{[string]: string}): Array<Token> => {
+export const parseContent = (content: string, cache?: {[string]: Array<Token>}): Array<Token> => {
     if (cache && cache[content]) {
         return cache[content];
     }
@@ -302,7 +301,7 @@ export const parseContent = (content: string, cache: ?{[string]: string}): Array
     return tokens;
 };
 
-const addOtherToken = (tokens: Array<Token>, identifier: string): Token => {
+const addOtherToken = (tokens: Array<Token>, identifier: string): void => {
     switch (identifier) {
         case 'open-quote':
             tokens.push({type: TOKEN_TYPE.OPENQUOTE});
@@ -325,15 +324,15 @@ const getQuote = (style: CSSStyleDeclaration, isOpening: boolean, quoteDepth: nu
     return quotes[idx].replace(/^["']|["']$/g, '');
 };
 
-const formatCounterValue = (counter, glue: string, format: string): string => {
+const formatCounterValue = (counter, glue: ?string, format: ?string): string => {
     const len = counter.length;
     let result = '';
 
     for (let i = 0; i < len; i++) {
         if (i > 0) {
-            result += glue;
+            result += glue || '';
         }
-        result += ListStyleTypeFormatter.format(counter[i], format, false);
+        result += ListStyleTypeFormatter.format(counter[i], format || 'decimal', false);
     }
 
     return result;
