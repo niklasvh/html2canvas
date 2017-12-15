@@ -6,6 +6,7 @@ import StackingContext from './StackingContext';
 import NodeContainer from './NodeContainer';
 import TextContainer from './TextContainer';
 import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './Input';
+import {inlineListItemElement} from './ListItem';
 
 export const NodeParser = (
     node: HTMLElement,
@@ -71,6 +72,9 @@ const parseNodeTree = (
                     } else if (childNode.tagName === 'SELECT') {
                         // $FlowFixMe
                         inlineSelectElement(childNode, container);
+                    } else if (childNode.tagName === 'LI') {
+                        // $FlowFixMe
+                        inlineListItemElement(childNode, container, resourceLoader);
                     }
 
                     const SHOULD_TRAVERSE_CHILDREN = childNode.tagName !== 'TEXTAREA';

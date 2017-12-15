@@ -17,5 +17,23 @@ export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): 
     return target;
 };
 
+export const getParentOfType = (node: HTMLElement, parentTypes: Array<string>): ?HTMLElement => {
+    let parent = node.parentNode;
+    if (!parent) {
+        return null;
+    }
+
+    // $FlowFixMe
+    while (parentTypes.indexOf(parent.tagName) < 0) {
+        parent = parent.parentNode;
+        if (!parent) {
+            return null;
+        }
+    }
+
+    // $FlowFixMe
+    return parent;
+};
+
 export const SMALL_IMAGE =
     'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
