@@ -6,6 +6,9 @@
 		<script type="text/javascript" src="../../test.js"></script>
 
 		<style>
+            li {
+                margin: 10px 5%;
+            }
 			.list1 {
 				list-style-type: circle;
 			}
@@ -33,6 +36,22 @@
 			.list7 {
 				list-style-type: simp-chinese-informal;
 			}
+
+            .list8 {
+                list-style-type: lower-roman;
+            }
+
+            .list8 li {
+                display: block;
+            }
+
+            .list9 {
+                display: list-item;
+                list-style-type: lower-alpha;
+                margin: 10px;
+                position: relative;
+                left: 200px;
+            }
 		</style>
 	</head>
 	<body>
@@ -40,7 +59,7 @@
 			<li>Alpha</li>
 			<li>Beta</li>
 			<li>Gamma</li>
-		</ul>			
+		</ul>
 		<ul class="list2">
 			<li>Alpha</li>
 			<li>Beta</li>
@@ -71,5 +90,13 @@
 			<li>Beta</li>
 			<li>Gamma</li>
 		</ol>
+        <ol class="list8">
+            <li>Alpha</li>
+            <li>Beta</li>
+            <li>Gamma</li>
+        </ol>
+        <div class="list9">Alpha</div>
+        <div class="list9">Beta</div>
+        <div class="list9">Gamma</div>
 	</body>
 </html>

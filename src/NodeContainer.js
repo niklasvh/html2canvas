@@ -7,6 +7,8 @@ import type {BorderRadius} from './parsing/borderRadius';
 import type {DisplayBit} from './parsing/display';
 import type {Float} from './parsing/float';
 import type {Font} from './parsing/font';
+import type {ListStyle} from './parsing/listStyle';
+import type {Margin} from './parsing/margin';
 import type {Overflow} from './parsing/overflow';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
@@ -32,6 +34,8 @@ import {parseDisplay, DISPLAY} from './parsing/display';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
 import {parseLetterSpacing} from './parsing/letterSpacing';
+import {parseListStyle} from './parsing/listStyle';
+import {parseMargin} from './parsing/margin';
 import {parseOverflow, OVERFLOW} from './parsing/overflow';
 import {parsePadding} from './parsing/padding';
 import {parsePosition, POSITION} from './parsing/position';
@@ -50,6 +54,7 @@ import {
     getInputBorderRadius,
     reformatInputBounds
 } from './Input';
+import {getListOwner} from './ListItem';
 
 type StyleDeclaration = {
     background: Background,
@@ -60,6 +65,8 @@ type StyleDeclaration = {
     float: Float,
     font: Font,
     letterSpacing: number,
+    listStyle: ListStyle | null,
+    margin: Margin,
     opacity: number,
     overflow: Overflow,
     padding: Padding,
@@ -79,10 +86,14 @@ export default class NodeContainer {
     parent: ?NodeContainer;
     style: StyleDeclaration;
     childNodes: Array<TextContainer | Path>;
+    listItems: Array<NodeContainer>;
+    listIndex: ?number;
+    listStart: ?number;
     bounds: Bounds;
     curvedBounds: BoundCurves;
     image: ?string;
     index: number;
+    tagName: string;
 
     constructor(
         node: HTMLElement | SVGSVGElement,
@@ -91,8 +102,13 @@ export default class NodeContainer {
         index: number
     ) {
         this.parent = parent;
+        this.tagName = node.tagName;
         this.index = index;
         this.childNodes = [];
+        this.listItems = [];
+        if (typeof node.start === 'number') {
+            this.listStart = node.start;
+        }
         const defaultView = node.ownerDocument.defaultView;
         const scrollX = defaultView.pageXOffset;
         const scrollY = defaultView.pageYOffset;
@@ -117,6 +133,8 @@ export default class NodeContainer {
             float: parseCSSFloat(style.float),
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
+            listStyle: display === DISPLAY.LIST_ITEM ? parseListStyle(style) : null,
+            margin: parseMargin(style),
             opacity: parseFloat(style.opacity),
             overflow:
                 INPUT_TAGS.indexOf(node.tagName) === -1
@@ -135,6 +153,20 @@ export default class NodeContainer {
         if (this.isTransformed()) {
             // getBoundingClientRect provides values post-transform, we want them without the transformation
             node.style.transform = 'matrix(1,0,0,1,0,0)';
+        }
+
+        if (display === DISPLAY.LIST_ITEM) {
+            const listOwner = getListOwner(this);
+            if (listOwner) {
+                const listIndex = listOwner.listItems.length;
+                listOwner.listItems.push(this);
+                this.listIndex =
+                    node.hasAttribute('value') && typeof node.value === 'number'
+                        ? node.value
+                        : listIndex === 0
+                          ? typeof listOwner.listStart === 'number' ? listOwner.listStart : 1
+                          : listOwner.listItems[listIndex - 1].listIndex + 1;
+            }
         }
 
         // TODO move bound retrieval for all nodes to a later stage?

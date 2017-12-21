@@ -77,7 +77,6 @@
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
-    "punycode": "2.1.0",
-    "liststyletype-formatter": "latest"
+    "punycode": "2.1.0"
   }
 }
