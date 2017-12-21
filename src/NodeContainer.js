@@ -202,8 +202,7 @@ export default class NodeContainer {
     }
     getClipPaths(): Array<Path> {
         const parentClips = this.parent ? this.parent.getClipPaths() : [];
-        const isClipped =
-            this.style.overflow === OVERFLOW.HIDDEN || this.style.overflow === OVERFLOW.SCROLL;
+        const isClipped = this.style.overflow !== OVERFLOW.VISIBLE;
 
         return isClipped
             ? parentClips.concat([calculatePaddingBoxPath(this.curvedBounds)])
