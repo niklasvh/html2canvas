@@ -97,16 +97,6 @@ export const renderElement = (
                       }
 
                       return resourceLoader.ready().then(imageStore => {
-                          if (options.removeContainer === true) {
-                              if (container.parentNode) {
-                                  container.parentNode.removeChild(container);
-                              } else if (__DEV__) {
-                                  logger.log(
-                                      `Cannot detach cloned iframe as it is not in the DOM anymore`
-                                  );
-                              }
-                          }
-
                           const fontMetrics = new FontMetrics(clonedDocument);
                           if (__DEV__) {
                               logger.log(`Starting renderer`);
@@ -133,7 +123,18 @@ export const renderElement = (
                               );
                           } else {
                               const renderer = new Renderer(options.target, renderOptions);
-                              return renderer.render(stack);
+                              const canvas = renderer.render(stack);
+                              if (options.removeContainer === true) {
+                                  if (container.parentNode) {
+                                      container.parentNode.removeChild(container);
+                                  } else if (__DEV__) {
+                                      logger.log(
+                                          `Cannot detach cloned iframe as it is not in the DOM anymore`
+                                      );
+                                  }
+                              }
+
+                              return canvas;
                           }
                       });
                   })
