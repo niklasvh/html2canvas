@@ -36,6 +36,10 @@ Below is a list of all the supported CSS properties and values.
  - height
  - left
  - letter-spacing
+ - list-style
+    - list-style-image
+    - list-style-position
+    - list-style-type
  - margin
  - max-height
  - max-width
@@ -71,7 +75,6 @@ These CSS properties are **NOT** currently supported
  - [font-variant-ligatures](https://github.com/niklasvh/html2canvas/pull/1085)
  - [mix-blend-mode](https://github.com/niklasvh/html2canvas/issues/580)
  - [object-fit](https://github.com/niklasvh/html2canvas/issues/1064)
- - [list-style](https://github.com/niklasvh/html2canvas/issues/177)
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
  - word-break
  - [word-wrap](https://github.com/niklasvh/html2canvas/issues/664)
