@@ -72,8 +72,10 @@ const parseNodeTree = (
                     } else if (childNode.tagName === 'SELECT') {
                         // $FlowFixMe
                         inlineSelectElement(childNode, container);
-                    } else if (childNode.tagName === 'LI') {
-                        // $FlowFixMe
+                    } else if (
+                        container.style.listStyle &&
+                        container.style.listStyle.listStyleType !== 'none'
+                    ) {
                         inlineListItemElement(childNode, container, resourceLoader);
                     }
 
