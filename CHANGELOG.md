@@ -1,5 +1,11 @@
 ### Changelog ###
 
+#### v1.0.0-alpha5 - 21.12.2017 ####
+ * Fix underline positioning
+ * Fix canvas rendering on Chrome
+ * Fix overflow: auto
+ * Added support for rendering list-style
+
 #### v1.0.0-alpha4 - 12.12.2017 ####
  * Fix rendering with multiple fonts defined (Fix #796)
  * Add support for radial-gradients
