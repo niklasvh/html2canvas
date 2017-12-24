@@ -75,7 +75,7 @@ export const LIST_STYLE_TYPE = {
 export type ListStylePosition = $Values<typeof LIST_STYLE_POSITION>;
 export type ListStyleType = $Values<typeof LIST_STYLE_TYPE>;
 
-const parseListStyleType = (type: string): ListStyleType => {
+export const parseListStyleType = (type: string): ListStyleType => {
     switch (type) {
         case 'disc':
             return LIST_STYLE_TYPE.DISC;
