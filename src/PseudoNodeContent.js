@@ -1,7 +1,8 @@
 /* @flow */
 'use strict';
 
-import ListStyleTypeFormatter from 'liststyletype-formatter';
+import {createCounterText} from './ListItem';
+import {parseListStyleType} from './parsing/listStyle';
 
 export const PSEUDO_CONTENT_ITEM_TYPE = {
     TEXT: 0,
@@ -84,6 +85,9 @@ export const resolvePseudoContent = (
     }
 
     const tokens = parseContent(style.content);
+    console.log(style.content);
+    console.log(tokens);
+
     const len = tokens.length;
     const contentItems: Array<PseudoContentItem> = [];
     let s = '';
@@ -332,7 +336,7 @@ const formatCounterValue = (counter, glue: ?string, format: ?string): string => 
         if (i > 0) {
             result += glue || '';
         }
-        result += ListStyleTypeFormatter.format(counter[i], format || 'decimal', false);
+        result += createCounterText(counter[i], parseListStyleType(format || 'decimal'), false);
     }
 
     return result;
