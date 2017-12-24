@@ -2,6 +2,7 @@
 'use strict';
 import type {Bounds} from './Bounds';
 import type {Options} from './index';
+import type {PseudoContentData, PseudoContentItem} from './PseudoNodeContent';
 import type Logger from './Logger';
 
 import {parseBounds} from './Bounds';
@@ -10,6 +11,12 @@ import ResourceLoader from './ResourceLoader';
 import {copyCSSStyles} from './Util';
 import {parseBackgroundImage} from './parsing/background';
 import CanvasRenderer from './renderer/CanvasRenderer';
+import {
+    parseCounterReset,
+    popCounters,
+    resolvePseudoContent,
+    PSEUDO_CONTENT_ITEM_TYPE
+} from './PseudoNodeContent';
 
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 
@@ -24,6 +31,7 @@ export class DocumentCloner {
     inlineImages: boolean;
     copyStyles: boolean;
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>;
+    pseudoContentData: PseudoContentData;
 
     constructor(
         element: HTMLElement,
@@ -40,6 +48,10 @@ export class DocumentCloner {
         this.options = options;
         this.renderer = renderer;
         this.resourceLoader = new ResourceLoader(options, logger, window);
+        this.pseudoContentData = {
+            counters: {},
+            quoteDepth: 0
+        };
         // $FlowFixMe
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
     }
@@ -227,6 +239,11 @@ export class DocumentCloner {
                 : this.createElementClone(node);
 
         const window = node.ownerDocument.defaultView;
+        const style = node instanceof window.HTMLElement ? window.getComputedStyle(node) : null;
+        const styleBefore =
+            node instanceof window.HTMLElement ? window.getComputedStyle(node, ':before') : null;
+        const styleAfter =
+            node instanceof window.HTMLElement ? window.getComputedStyle(node, ':after') : null;
 
         if (this.referenceElement === node && clone instanceof window.HTMLElement) {
             this.clonedReferenceElement = clone;
@@ -235,6 +252,9 @@ export class DocumentCloner {
         if (clone instanceof window.HTMLBodyElement) {
             createPseudoHideStyles(clone);
         }
+
+        const counters = parseCounterReset(style, this.pseudoContentData);
+        const contentBefore = resolvePseudoContent(node, styleBefore, this.pseudoContentData);
 
         for (let child = node.firstChild; child; child = child.nextSibling) {
             if (
@@ -247,11 +267,23 @@ export class DocumentCloner {
                 }
             }
         }
+
+        const contentAfter = resolvePseudoContent(node, styleAfter, this.pseudoContentData);
+        popCounters(counters, this.pseudoContentData);
+
         if (node instanceof window.HTMLElement && clone instanceof window.HTMLElement) {
-            this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_BEFORE));
-            this.inlineAllImages(inlinePseudoElement(node, clone, PSEUDO_AFTER));
-            if (this.copyStyles && !(node instanceof HTMLIFrameElement)) {
-                copyCSSStyles(node.ownerDocument.defaultView.getComputedStyle(node), clone);
+            if (styleBefore) {
+                this.inlineAllImages(
+                    inlinePseudoElement(node, clone, styleBefore, contentBefore, PSEUDO_BEFORE)
+                );
+            }
+            if (styleAfter) {
+                this.inlineAllImages(
+                    inlinePseudoElement(node, clone, styleAfter, contentAfter, PSEUDO_AFTER)
+                );
+            }
+            if (style && this.copyStyles && !(node instanceof HTMLIFrameElement)) {
+                copyCSSStyles(style, clone);
             }
             this.inlineAllImages(clone);
             if (node.scrollTop !== 0 || node.scrollLeft !== 0) {
@@ -362,9 +394,10 @@ const cloneCanvasContents = (canvas: HTMLCanvasElement, clonedCanvas: HTMLCanvas
 const inlinePseudoElement = (
     node: HTMLElement,
     clone: HTMLElement,
+    style: CSSStyleDeclaration,
+    contentItems: ?Array<PseudoContentItem>,
     pseudoElt: ':before' | ':after'
 ): ?HTMLElement => {
-    const style = node.ownerDocument.defaultView.getComputedStyle(node, pseudoElt);
     if (
         !style ||
         !style.content ||
@@ -375,19 +408,28 @@ const inlinePseudoElement = (
         return;
     }
 
-    const content = stripQuotes(style.content);
-    const image = content.match(URL_REGEXP);
-    const anonymousReplacedElement = clone.ownerDocument.createElement(
-        image ? 'img' : 'html2canvaspseudoelement'
-    );
-    if (image) {
-        // $FlowFixMe
-        anonymousReplacedElement.src = stripQuotes(image[1]);
-    } else {
-        anonymousReplacedElement.textContent = content;
-    }
-
+    const anonymousReplacedElement = clone.ownerDocument.createElement('html2canvaspseudoelement');
     copyCSSStyles(style, anonymousReplacedElement);
+
+    if (contentItems) {
+        const len = contentItems.length;
+        for (var i = 0; i < len; i++) {
+            const item = contentItems[i];
+            switch (item.type) {
+                case PSEUDO_CONTENT_ITEM_TYPE.IMAGE:
+                    const img = clone.ownerDocument.createElement('img');
+                    img.src = parseBackgroundImage(`url(${item.value})`)[0].args[0];
+                    img.style.opacity = '1';
+                    anonymousReplacedElement.appendChild(img);
+                    break;
+                case PSEUDO_CONTENT_ITEM_TYPE.TEXT:
+                    anonymousReplacedElement.appendChild(
+                        clone.ownerDocument.createTextNode(item.value)
+                    );
+                    break;
+            }
+        }
+    }
 
     anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
     clone.className +=
@@ -401,13 +443,6 @@ const inlinePseudoElement = (
     }
 
     return anonymousReplacedElement;
-};
-
-const stripQuotes = (content: string): string => {
-    const first = content.substr(0, 1);
-    return first === content.substr(content.length - 1) && first.match(/['"]/)
-        ? content.substr(1, content.length - 2)
-        : content;
 };
 
 const URL_REGEXP = /^url\((.+)\)$/i;

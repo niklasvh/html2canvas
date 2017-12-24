@@ -92,7 +92,7 @@ export const inlineListItemElement = (
         }
     } else if (typeof container.listIndex === 'number') {
         text = node.ownerDocument.createTextNode(
-            createCounterText(container.listIndex, listStyle.listStyleType)
+            createCounterText(container.listIndex, listStyle.listStyleType, true)
         );
         wrapper.appendChild(text);
         wrapper.style.top = `${container.bounds.top - MARGIN_TOP}px`;
@@ -363,10 +363,10 @@ const createAdditiveCounter = (
     max: number,
     symbols,
     fallback: ListStyleType,
-    suffix: string = '. '
+    suffix: string
 ) => {
     if (value < min || value > max) {
-        return createCounterText(value, fallback);
+        return createCounterText(value, fallback, suffix.length > 0);
     }
 
     return (
@@ -404,7 +404,7 @@ const createCounterStyleFromRange = (
     codePointRangeStart: number,
     codePointRangeEnd: number,
     isNumeric: boolean,
-    suffix: string = '. '
+    suffix: string
 ): string => {
     const codePointRangeLength = codePointRangeEnd - codePointRangeStart + 1;
 
@@ -451,7 +451,7 @@ const createCJKCounter = (
     flags: number
 ): string => {
     if (value < -9999 || value > 9999) {
-        return createCounterText(value, LIST_STYLE_TYPE.CJK_DECIMAL);
+        return createCounterText(value, LIST_STYLE_TYPE.CJK_DECIMAL, suffix.length > 0);
     }
     let tmp = Math.abs(value);
     let string = suffix;
@@ -490,7 +490,14 @@ const CHINESE_FORMAL_MULTIPLIERS = '拾佰仟萬';
 const JAPANESE_NEGATIVE = 'マイナス';
 const KOREAN_NEGATIVE = '마이너스 ';
 
-const createCounterText = (value: number, type: ListStyleType): string => {
+export const createCounterText = (
+    value: number,
+    type: ListStyleType,
+    appendSuffix: boolean
+): string => {
+    const defaultSuffix = appendSuffix ? '. ' : '';
+    const cjkSuffix = appendSuffix ? '、' : '';
+    const koreanSuffix = appendSuffix ? ', ' : '';
     switch (type) {
         case LIST_STYLE_TYPE.DISC:
             return '•';
@@ -499,48 +506,64 @@ const createCounterText = (value: number, type: ListStyleType): string => {
         case LIST_STYLE_TYPE.SQUARE:
             return '◾';
         case LIST_STYLE_TYPE.DECIMAL_LEADING_ZERO:
-            const string = createCounterStyleFromRange(value, 48, 57, true);
+            const string = createCounterStyleFromRange(value, 48, 57, true, defaultSuffix);
             return string.length < 4 ? `0${string}` : string;
         case LIST_STYLE_TYPE.CJK_DECIMAL:
-            return createCounterStyleFromSymbols(value, '〇一二三四五六七八九', '、');
+            return createCounterStyleFromSymbols(value, '〇一二三四五六七八九', cjkSuffix);
         case LIST_STYLE_TYPE.LOWER_ROMAN:
             return createAdditiveCounter(
                 value,
                 1,
                 3999,
                 ROMAN_UPPER,
-                LIST_STYLE_TYPE.DECIMAL
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
             ).toLowerCase();
         case LIST_STYLE_TYPE.UPPER_ROMAN:
-            return createAdditiveCounter(value, 1, 3999, ROMAN_UPPER, LIST_STYLE_TYPE.DECIMAL);
+            return createAdditiveCounter(
+                value,
+                1,
+                3999,
+                ROMAN_UPPER,
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
+            );
         case LIST_STYLE_TYPE.LOWER_GREEK:
-            return createCounterStyleFromRange(value, 945, 969, false);
+            return createCounterStyleFromRange(value, 945, 969, false, defaultSuffix);
         case LIST_STYLE_TYPE.LOWER_ALPHA:
-            return createCounterStyleFromRange(value, 97, 122, false);
+            return createCounterStyleFromRange(value, 97, 122, false, defaultSuffix);
         case LIST_STYLE_TYPE.UPPER_ALPHA:
-            return createCounterStyleFromRange(value, 65, 90, false);
+            return createCounterStyleFromRange(value, 65, 90, false, defaultSuffix);
         case LIST_STYLE_TYPE.ARABIC_INDIC:
-            return createCounterStyleFromRange(value, 1632, 1641, true);
+            return createCounterStyleFromRange(value, 1632, 1641, true, defaultSuffix);
         case LIST_STYLE_TYPE.ARMENIAN:
         case LIST_STYLE_TYPE.UPPER_ARMENIAN:
-            return createAdditiveCounter(value, 1, 9999, ARMENIAN, LIST_STYLE_TYPE.DECIMAL);
+            return createAdditiveCounter(
+                value,
+                1,
+                9999,
+                ARMENIAN,
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
+            );
         case LIST_STYLE_TYPE.LOWER_ARMENIAN:
             return createAdditiveCounter(
                 value,
                 1,
                 9999,
                 ARMENIAN,
-                LIST_STYLE_TYPE.DECIMAL
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
             ).toLowerCase();
         case LIST_STYLE_TYPE.BENGALI:
-            return createCounterStyleFromRange(value, 2534, 2543, true);
+            return createCounterStyleFromRange(value, 2534, 2543, true, defaultSuffix);
         case LIST_STYLE_TYPE.CAMBODIAN:
         case LIST_STYLE_TYPE.KHMER:
-            return createCounterStyleFromRange(value, 6112, 6121, true);
+            return createCounterStyleFromRange(value, 6112, 6121, true, defaultSuffix);
         case LIST_STYLE_TYPE.CJK_EARTHLY_BRANCH:
-            return createCounterStyleFromSymbols(value, '子丑寅卯辰巳午未申酉戌亥', '、');
+            return createCounterStyleFromSymbols(value, '子丑寅卯辰巳午未申酉戌亥', cjkSuffix);
         case LIST_STYLE_TYPE.CJK_HEAVENLY_STEM:
-            return createCounterStyleFromSymbols(value, '甲乙丙丁戊己庚辛壬癸', '、');
+            return createCounterStyleFromSymbols(value, '甲乙丙丁戊己庚辛壬癸', cjkSuffix);
         case LIST_STYLE_TYPE.CJK_IDEOGRAPHIC:
         case LIST_STYLE_TYPE.TRAD_CHINESE_INFORMAL:
             return createCJKCounter(
@@ -548,7 +571,7 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 '零一二三四五六七八九',
                 CHINESE_INFORMAL_MULTIPLIERS,
                 '負',
-                '、',
+                cjkSuffix,
                 CJK_TEN_COEFFICIENTS | CJK_TEN_HIGH_COEFFICIENTS | CJK_HUNDRED_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.TRAD_CHINESE_FORMAL:
@@ -557,7 +580,7 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 '零壹貳參肆伍陸柒捌玖',
                 CHINESE_FORMAL_MULTIPLIERS,
                 '負',
-                '、',
+                cjkSuffix,
                 CJK_ZEROS |
                     CJK_TEN_COEFFICIENTS |
                     CJK_TEN_HIGH_COEFFICIENTS |
@@ -569,7 +592,7 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 '零一二三四五六七八九',
                 CHINESE_INFORMAL_MULTIPLIERS,
                 '负',
-                '、',
+                cjkSuffix,
                 CJK_TEN_COEFFICIENTS | CJK_TEN_HIGH_COEFFICIENTS | CJK_HUNDRED_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.SIMP_CHINESE_FORMAL:
@@ -578,21 +601,21 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 '零壹贰叁肆伍陆柒捌玖',
                 CHINESE_FORMAL_MULTIPLIERS,
                 '负',
-                '、',
+                cjkSuffix,
                 CJK_ZEROS |
                     CJK_TEN_COEFFICIENTS |
                     CJK_TEN_HIGH_COEFFICIENTS |
                     CJK_HUNDRED_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.JAPANESE_INFORMAL:
-            return createCJKCounter(value, '〇一二三四五六七八九', '十百千万', JAPANESE_NEGATIVE, '、', 0);
+            return createCJKCounter(value, '〇一二三四五六七八九', '十百千万', JAPANESE_NEGATIVE, cjkSuffix, 0);
         case LIST_STYLE_TYPE.JAPANESE_FORMAL:
             return createCJKCounter(
                 value,
                 '零壱弐参四伍六七八九',
                 '拾百千万',
                 JAPANESE_NEGATIVE,
-                '、',
+                cjkSuffix,
                 CJK_ZEROS | CJK_TEN_COEFFICIENTS | CJK_TEN_HIGH_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.KOREAN_HANGUL_FORMAL:
@@ -601,30 +624,44 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 '영일이삼사오육칠팔구',
                 '십백천만',
                 KOREAN_NEGATIVE,
-                ', ',
+                koreanSuffix,
                 CJK_ZEROS | CJK_TEN_COEFFICIENTS | CJK_TEN_HIGH_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.KOREAN_HANJA_INFORMAL:
-            return createCJKCounter(value, '零一二三四五六七八九', '十百千萬', KOREAN_NEGATIVE, ', ', 0);
+            return createCJKCounter(value, '零一二三四五六七八九', '十百千萬', KOREAN_NEGATIVE, koreanSuffix, 0);
         case LIST_STYLE_TYPE.KOREAN_HANJA_FORMAL:
             return createCJKCounter(
                 value,
                 '零壹貳參四五六七八九',
                 '拾百千',
                 KOREAN_NEGATIVE,
-                ', ',
+                koreanSuffix,
                 CJK_ZEROS | CJK_TEN_COEFFICIENTS | CJK_TEN_HIGH_COEFFICIENTS
             );
         case LIST_STYLE_TYPE.DEVANAGARI:
-            return createCounterStyleFromRange(value, 0x966, 0x96f, true);
+            return createCounterStyleFromRange(value, 0x966, 0x96f, true, defaultSuffix);
         case LIST_STYLE_TYPE.GEORGIAN:
-            return createAdditiveCounter(value, 1, 19999, GEORGIAN, LIST_STYLE_TYPE.DECIMAL);
+            return createAdditiveCounter(
+                value,
+                1,
+                19999,
+                GEORGIAN,
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
+            );
         case LIST_STYLE_TYPE.GUJARATI:
-            return createCounterStyleFromRange(value, 0xae6, 0xaef, true);
+            return createCounterStyleFromRange(value, 0xae6, 0xaef, true, defaultSuffix);
         case LIST_STYLE_TYPE.GURMUKHI:
-            return createCounterStyleFromRange(value, 0xa66, 0xa6f, true);
+            return createCounterStyleFromRange(value, 0xa66, 0xa6f, true, defaultSuffix);
         case LIST_STYLE_TYPE.HEBREW:
-            return createAdditiveCounter(value, 1, 10999, HEBREW, LIST_STYLE_TYPE.DECIMAL);
+            return createAdditiveCounter(
+                value,
+                1,
+                10999,
+                HEBREW,
+                LIST_STYLE_TYPE.DECIMAL,
+                defaultSuffix
+            );
         case LIST_STYLE_TYPE.HIRAGANA:
             return createCounterStyleFromSymbols(
                 value,
@@ -636,39 +673,39 @@ const createCounterText = (value: number, type: ListStyleType): string => {
                 'いろはにほへとちりぬるをわかよたれそつねならむうゐのおくやまけふこえてあさきゆめみしゑひもせす'
             );
         case LIST_STYLE_TYPE.KANNADA:
-            return createCounterStyleFromRange(value, 0xce6, 0xcef, true);
+            return createCounterStyleFromRange(value, 0xce6, 0xcef, true, defaultSuffix);
         case LIST_STYLE_TYPE.KATAKANA:
             return createCounterStyleFromSymbols(
                 value,
                 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲン',
-                '、'
+                cjkSuffix
             );
         case LIST_STYLE_TYPE.KATAKANA_IROHA:
             return createCounterStyleFromSymbols(
                 value,
                 'イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセス',
-                '、'
+                cjkSuffix
             );
         case LIST_STYLE_TYPE.LAO:
-            return createCounterStyleFromRange(value, 0xed0, 0xed9, true);
+            return createCounterStyleFromRange(value, 0xed0, 0xed9, true, defaultSuffix);
         case LIST_STYLE_TYPE.MONGOLIAN:
-            return createCounterStyleFromRange(value, 0x1810, 0x1819, true);
+            return createCounterStyleFromRange(value, 0x1810, 0x1819, true, defaultSuffix);
         case LIST_STYLE_TYPE.MYANMAR:
-            return createCounterStyleFromRange(value, 0x1040, 0x1049, true);
+            return createCounterStyleFromRange(value, 0x1040, 0x1049, true, defaultSuffix);
         case LIST_STYLE_TYPE.ORIYA:
-            return createCounterStyleFromRange(value, 0xb66, 0xb6f, true);
+            return createCounterStyleFromRange(value, 0xb66, 0xb6f, true, defaultSuffix);
         case LIST_STYLE_TYPE.PERSIAN:
-            return createCounterStyleFromRange(value, 0x6f0, 0x6f9, true);
+            return createCounterStyleFromRange(value, 0x6f0, 0x6f9, true, defaultSuffix);
         case LIST_STYLE_TYPE.TAMIL:
-            return createCounterStyleFromRange(value, 0xbe6, 0xbef, true);
+            return createCounterStyleFromRange(value, 0xbe6, 0xbef, true, defaultSuffix);
         case LIST_STYLE_TYPE.TELUGU:
-            return createCounterStyleFromRange(value, 0xc66, 0xc6f, true);
+            return createCounterStyleFromRange(value, 0xc66, 0xc6f, true, defaultSuffix);
         case LIST_STYLE_TYPE.THAI:
-            return createCounterStyleFromRange(value, 0xe50, 0xe59, true);
+            return createCounterStyleFromRange(value, 0xe50, 0xe59, true, defaultSuffix);
         case LIST_STYLE_TYPE.TIBETAN:
-            return createCounterStyleFromRange(value, 0xf20, 0xf29, true);
+            return createCounterStyleFromRange(value, 0xf20, 0xf29, true, defaultSuffix);
         case LIST_STYLE_TYPE.DECIMAL:
         default:
-            return createCounterStyleFromRange(value, 48, 57, true);
+            return createCounterStyleFromRange(value, 48, 57, true, defaultSuffix);
     }
 };
