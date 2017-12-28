@@ -1,33 +1,33 @@
 ### Changelog ###
 
-#### v1.0.0-alpha6 - 28.12.2017 ####
+#### v1.0.0-alpha.6 - 28.12.2017 ####
  * Fix list-style: none (#1340)
  * Extend supported values for pseudo element content
 
-#### v1.0.0-alpha5 - 21.12.2017 ####
+#### v1.0.0-alpha.5 - 21.12.2017 ####
  * Fix underline positioning
  * Fix canvas rendering on Chrome
  * Fix overflow: auto
  * Added support for rendering list-style
 
-#### v1.0.0-alpha4 - 12.12.2017 ####
+#### v1.0.0-alpha.4 - 12.12.2017 ####
  * Fix rendering with multiple fonts defined (Fix #796)
  * Add support for radial-gradients
  * Fix logging option (#1302)
  * Add support for rendering webgl canvas content (#646)
  * Fix external SVG loading with proxies (#802)
 
-#### v1.0.0-alpha3 - 9.12.2017 ####
+#### v1.0.0-alpha.3 - 9.12.2017 ####
  * Disable `foreignObjectRendering` by default (#1295)
  * Fix background-size when using background-origin and background-size: cover/contain (#1299)
  * Added support for background-origin: content-box (#1299)
 
-#### v1.0.0-alpha2 - 7.12.2017 ####
+#### v1.0.0-alpha.2 - 7.12.2017 ####
  * Fix scroll positions for CanvasRenderer (#1259)
  * Fix `data-html2canvas-ignore` attribute (#1253)
  * Fix decimal `letter-spacing` values (#1293)
 
-#### v1.0.0-alpha1 - 5.12.2017 ####
+#### v1.0.0-alpha.1 - 5.12.2017 ####
  * Complete rewrite of library
  ##### Breaking Changes #####
  * Remove deprecated onrendered callback, calling `html2canvas` returns a `Promise<HTMLCanvasElement>`
