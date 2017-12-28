@@ -1,5 +1,9 @@
 ### Changelog ###
 
+#### v1.0.0-alpha6 - 28.12.2017 ####
+ * Fix list-style: none (#1340)
+ * Extend supported values for pseudo element content
+
 #### v1.0.0-alpha5 - 21.12.2017 ####
  * Fix underline positioning
  * Fix canvas rendering on Chrome
