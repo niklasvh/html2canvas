@@ -7,6 +7,7 @@ import NodeContainer from './NodeContainer';
 import TextContainer from './TextContainer';
 import {inlineInputElement, inlineTextAreaElement, inlineSelectElement} from './Input';
 import {inlineListItemElement} from './ListItem';
+import {LIST_STYLE_TYPE} from './parsing/listStyle';
 
 export const NodeParser = (
     node: HTMLElement,
@@ -74,7 +75,7 @@ const parseNodeTree = (
                         inlineSelectElement(childNode, container);
                     } else if (
                         container.style.listStyle &&
-                        container.style.listStyle.listStyleType !== 'none'
+                        container.style.listStyle.listStyleType !== LIST_STYLE_TYPE.NONE
                     ) {
                         inlineListItemElement(childNode, container, resourceLoader);
                     }
