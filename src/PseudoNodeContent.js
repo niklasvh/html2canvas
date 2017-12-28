@@ -85,8 +85,6 @@ export const resolvePseudoContent = (
     }
 
     const tokens = parseContent(style.content);
-    console.log(style.content);
-    console.log(tokens);
 
     const len = tokens.length;
     const contentItems: Array<PseudoContentItem> = [];
