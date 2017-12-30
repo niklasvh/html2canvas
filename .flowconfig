@@ -1,6 +1,5 @@
 [ignore]
 .*/www/.*
-.*/node_modules/css-line-break/scripts.*
 [include]
 [libs]
 ./flow-typed
