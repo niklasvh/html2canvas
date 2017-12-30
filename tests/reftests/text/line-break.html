@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>word-break</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+        .test span {
+            line-break: normal;
+        }
+
+        .strict span {
+            line-break: strict;
+        }
+        p.test{
+            border: 1px solid gray;
+            color: blue;
+            width: 6em;
+        }
+    </style>
+
+</head>
+<body>
+<!-- iteration marks -->
+<p class="test" lang="ja">
+    <span>サンプルぁルぁルぁルぁルぁルぁルぁぁぁぁ文ンプル–文々サンプル文</span>
+</p>
+
+<p class="test strict" lang="ja">
+    <span>サンプルぁルぁルぁルぁルぁルぁルぁぁぁぁ文文文文文‐–〜゠サンプル文々サンプル文</span>
+</p>
+
+
+<hr />
+
+</body>
+</html>
