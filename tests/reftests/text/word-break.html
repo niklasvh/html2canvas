@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>word-break</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+        .narrow {
+            padding: 5px;
+            border: 1px solid;
+            width: 8em;
+        }
+
+        .normal {
+            word-break: normal;
+        }
+
+        .breakAll {
+            word-break: break-all;
+        }
+
+        .keep {
+            word-break: keep-all;
+        }
+    </style>
+
+</head>
+<body>
+<div>
+    <p>1. <code>word-break: normal</code></p>
+    <p class="normal narrow">This is a long and
+        Supercalifragilisticexpialidocious sentence.
+        次の単語グレートブリテンおよび北アイルランド連合王国で本当に大きな言葉</p>
+
+    <p>2. <code>word-break: break-all</code></p>
+    <p class="breakAll narrow">This is a long and
+        Supercalifragilisticexpialidocious sentence.
+        次の単語グレートブリテンおよび北アイルランド連合王国で本当に大きな言葉</p>
+
+    <p>3. <code>word-break: keep-all</code></p>
+    <p class="keep narrow">This is a long and
+        Supercalifragilisticexpialidocious sentence.
+        次の単語グレートブリテンおよび北アイルランド連合王国で本当に大きな言葉</p>
+</div>
+
+</body>
+</html>

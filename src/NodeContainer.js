@@ -7,9 +7,11 @@ import type {BorderRadius} from './parsing/borderRadius';
 import type {DisplayBit} from './parsing/display';
 import type {Float} from './parsing/float';
 import type {Font} from './parsing/font';
+import type {LineBreak} from './parsing/lineBreak';
 import type {ListStyle} from './parsing/listStyle';
 import type {Margin} from './parsing/margin';
 import type {Overflow} from './parsing/overflow';
+import type {OverflowWrap} from './parsing/overflowWrap';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
 import type {TextShadow} from './parsing/textShadow';
@@ -17,6 +19,7 @@ import type {TextTransform} from './parsing/textTransform';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {Transform} from './parsing/transform';
 import type {Visibility} from './parsing/visibility';
+import type {WordBreak} from './parsing/word-break';
 import type {zIndex} from './parsing/zIndex';
 
 import type {Bounds, BoundCurves} from './Bounds';
@@ -34,9 +37,11 @@ import {parseDisplay, DISPLAY} from './parsing/display';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
 import {parseLetterSpacing} from './parsing/letterSpacing';
+import {parseLineBreak} from './parsing/lineBreak';
 import {parseListStyle} from './parsing/listStyle';
 import {parseMargin} from './parsing/margin';
 import {parseOverflow, OVERFLOW} from './parsing/overflow';
+import {parseOverflowWrap} from './parsing/overflowWrap';
 import {parsePadding} from './parsing/padding';
 import {parsePosition, POSITION} from './parsing/position';
 import {parseTextDecoration} from './parsing/textDecoration';
@@ -44,6 +49,7 @@ import {parseTextShadow} from './parsing/textShadow';
 import {parseTextTransform} from './parsing/textTransform';
 import {parseTransform} from './parsing/transform';
 import {parseVisibility, VISIBILITY} from './parsing/visibility';
+import {parseWordBreak} from './parsing/word-break';
 import {parseZIndex} from './parsing/zIndex';
 
 import {parseBounds, parseBoundCurves, calculatePaddingBoxPath} from './Bounds';
@@ -65,10 +71,12 @@ type StyleDeclaration = {
     float: Float,
     font: Font,
     letterSpacing: number,
+    lineBreak: LineBreak,
     listStyle: ListStyle | null,
     margin: Margin,
     opacity: number,
     overflow: Overflow,
+    overflowWrap: OverflowWrap,
     padding: Padding,
     position: Position,
     textDecoration: TextDecoration | null,
@@ -76,6 +84,7 @@ type StyleDeclaration = {
     textTransform: TextTransform,
     transform: Transform,
     visibility: Visibility,
+    wordBreak: WordBreak,
     zIndex: zIndex
 };
 
@@ -134,12 +143,16 @@ export default class NodeContainer {
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
             listStyle: display === DISPLAY.LIST_ITEM ? parseListStyle(style) : null,
+            lineBreak: parseLineBreak(style.lineBreak),
             margin: parseMargin(style),
             opacity: parseFloat(style.opacity),
             overflow:
                 INPUT_TAGS.indexOf(node.tagName) === -1
                     ? parseOverflow(style.overflow)
                     : OVERFLOW.HIDDEN,
+            overflowWrap: parseOverflowWrap(
+                style.overflowWrap ? style.overflowWrap : style.wordWrap
+            ),
             padding: parsePadding(style),
             position: position,
             textDecoration: parseTextDecoration(style),
@@ -147,6 +160,7 @@ export default class NodeContainer {
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
             visibility: parseVisibility(style.visibility),
+            wordBreak: parseWordBreak(style.wordBreak),
             zIndex: parseZIndex(position !== POSITION.STATIC ? style.zIndex : 'auto')
         };
 
