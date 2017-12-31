@@ -36,6 +36,7 @@ Below is a list of all the supported CSS properties and values.
  - height
  - left
  - letter-spacing
+ - line-break
  - list-style
     - list-style-image
     - list-style-position
@@ -47,6 +48,7 @@ Below is a list of all the supported CSS properties and values.
  - min-width
  - opacity
  - overflow
+ - overflow-wrap
  - padding
  - position
  - right
@@ -62,7 +64,9 @@ Below is a list of all the supported CSS properties and values.
  - visibility
  - white-space
  - width
+ - word-break
  - word-spacing
+ - word-wrap
  - z-index
     
 ## Unsupported CSS properties
@@ -76,8 +80,6 @@ These CSS properties are **NOT** currently supported
  - [mix-blend-mode](https://github.com/niklasvh/html2canvas/issues/580)
  - [object-fit](https://github.com/niklasvh/html2canvas/issues/1064)
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
- - word-break
- - [word-wrap](https://github.com/niklasvh/html2canvas/issues/664)
  - [writing-mode](https://github.com/niklasvh/html2canvas/issues/1258)
  - [zoom](https://github.com/niklasvh/html2canvas/issues/732)
 

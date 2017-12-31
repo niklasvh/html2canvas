@@ -1,32 +1,27 @@
 /* @flow */
 'use strict';
 
-export const fromCodePoint = (...codePoints: Array<number>): string => {
-    if (String.fromCodePoint) {
-        return String.fromCodePoint(...codePoints);
+import NodeContainer from './NodeContainer';
+import {LineBreaker, fromCodePoint, toCodePoints} from 'css-line-break';
+import {OVERFLOW_WRAP} from './parsing/overflowWrap';
+
+export {toCodePoints, fromCodePoint} from 'css-line-break';
+
+export const breakWords = (str: string, parent: NodeContainer): Array<string> => {
+    const breaker = LineBreaker(str, {
+        lineBreak: parent.style.lineBreak,
+        wordBreak:
+            parent.style.overflowWrap === OVERFLOW_WRAP.BREAK_WORD
+                ? 'break-word'
+                : parent.style.wordBreak
+    });
+
+    const words = [];
+    let bk;
+
+    while (!(bk = breaker.next()).done) {
+        words.push(bk.value.slice());
     }
 
-    const length = codePoints.length;
-    if (!length) {
-        return '';
-    }
-
-    const codeUnits = [];
-
-    let index = -1;
-    let result = '';
-    while (++index < length) {
-        let codePoint = codePoints[index];
-        if (codePoint <= 0xffff) {
-            codeUnits.push(codePoint);
-        } else {
-            codePoint -= 0x10000;
-            codeUnits.push((codePoint >> 10) + 0xd800, codePoint % 0x400 + 0xdc00);
-        }
-        if (index + 1 === length || codeUnits.length > 0x4000) {
-            result += String.fromCharCode(...codeUnits);
-            codeUnits.length = 0;
-        }
-    }
-    return result;
+    return words;
 };
