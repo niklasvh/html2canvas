@@ -133,7 +133,7 @@ const inlineFormElement = (
     if (value.length > 0 && body) {
         const wrapper = node.ownerDocument.createElement('html2canvaswrapper');
         copyCSSStyles(node.ownerDocument.defaultView.getComputedStyle(node, null), wrapper);
-        wrapper.style.position = 'fixed';
+        wrapper.style.position = 'absolute';
         wrapper.style.left = `${container.bounds.left}px`;
         wrapper.style.top = `${container.bounds.top}px`;
         if (!allowLinebreak) {
