@@ -1,5 +1,9 @@
 ### Changelog ###
 
+#### v1.0.0-alpha.7 - 31.12.2017 ####
+ * Fix form input rendering (#1338)
+ * Improve word line breaking algorithm
+
 #### v1.0.0-alpha.6 - 28.12.2017 ####
  * Fix list-style: none (#1340)
  * Extend supported values for pseudo element content
