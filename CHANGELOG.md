@@ -1,5 +1,9 @@
 ### Changelog ###
 
+#### v1.0.0-alpha.8 - 2.1.2018 ####
+ * Use correct doctype in cloned Document (Fix #1298)
+ * Fix individual border rendering (Fix #1349)
+
 #### v1.0.0-alpha.7 - 31.12.2017 ####
  * Fix form input rendering (#1338)
  * Improve word line breaking algorithm
