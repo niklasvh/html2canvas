@@ -165,7 +165,7 @@ export default class Renderer {
             !container.style.background.backgroundColor.isTransparent() ||
             container.style.background.backgroundImage.length;
 
-        const renderableBorders = container.style.border.filter(
+        const hasRenderableBorders = container.style.border.some(
             border =>
                 border.borderStyle !== BORDER_STYLE.NONE && !border.borderColor.isTransparent()
         );
@@ -186,12 +186,17 @@ export default class Renderer {
                 });
             }
 
-            renderableBorders.forEach((border, side) => {
-                this.renderBorder(border, side, container.curvedBounds);
+            container.style.border.forEach((border, side) => {
+                if (
+                    border.borderStyle !== BORDER_STYLE.NONE &&
+                    !border.borderColor.isTransparent()
+                ) {
+                    this.renderBorder(border, side, container.curvedBounds);
+                }
             });
         };
 
-        if (HAS_BACKGROUND || renderableBorders.length) {
+        if (HAS_BACKGROUND || hasRenderableBorders) {
             const paths = container.parent ? container.parent.getClipPaths() : [];
             if (paths.length) {
                 this.target.clip(paths, callback);
