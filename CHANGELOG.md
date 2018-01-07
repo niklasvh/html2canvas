@@ -1,5 +1,9 @@
 ### Changelog ###
 
+#### v1.0.0-alpha.9 - 7.1.2018 ####
+ * Fix dynamic style sheets
+ * Fix > 50% border-radius values
+
 #### v1.0.0-alpha.8 - 2.1.2018 ####
  * Use correct doctype in cloned Document (Fix #1298)
  * Fix individual border rendering (Fix #1349)
