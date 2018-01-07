@@ -229,6 +229,15 @@ export class DocumentCloner {
             return tempIframe;
         }
 
+        if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
+            const css = [].slice
+                .call(node.sheet.cssRules, 0)
+                .reduce((css, rule) => css + rule.cssText, '');
+            const style = node.cloneNode(false);
+            style.textContent = css;
+            return style;
+        }
+
         return node.cloneNode(false);
     }
 
