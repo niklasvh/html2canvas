@@ -216,17 +216,17 @@ export const parseBoundCurves = (
     factors.push((blh + brh) / bounds.width);
     factors.push((tlv + blv) / bounds.height);
     factors.push((trv + brv) / bounds.height);
-    let maxFactor = Math.max(...factors);
+    const maxFactor = Math.max(...factors);
 
     if (maxFactor > 1) {
-        tlh = tlh / maxFactor;
-        tlv = tlv / maxFactor;
-        trh = trh / maxFactor;
-        trv = trv / maxFactor;
-        brh = brh / maxFactor;
-        brv = brv / maxFactor;
-        blh = blh / maxFactor;
-        blv = blv / maxFactor;
+        tlh /= maxFactor;
+        tlv /= maxFactor;
+        trh /= maxFactor;
+        trv /= maxFactor;
+        brh /= maxFactor;
+        brv /= maxFactor;
+        blh /= maxFactor;
+        blv /= maxFactor;
     }
 
     const topWidth = bounds.width - trh;
