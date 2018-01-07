@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../test.js"></script>
     <style type="text/css">
-      div {
+      .box {
         width: 200px;
         height: 200px;
         display: inline-block;
@@ -63,6 +63,21 @@
         border-radius: 200px;
       }
 
+      .gauge{
+          display: inline-block;
+          width: 100px;
+          height: 50px;
+          background: green;
+          margin-bottom: 20px;
+      }
+
+       .gauge1{ border-radius: 25px 25px 0 0   / 25px 25px 0 0; }
+       .gauge2{ border-radius: 100px 100px 0 0 / 50px 50px 0 0; }
+       .gauge3{ border-radius: 100px 100px 0 0 / 100px 100px 0 0; }
+       .gauge4{ border-radius: 300px 100px 0 0  / 100px 100px 0 0; }
+       .gauge5{ border-radius: 400px 400px 50px 50px / 50px 50px 50px 50px; }
+
+
       html {
         background: #3a84c3;
       }
@@ -70,11 +85,16 @@
   </head>
   <body>
 
-    <div class="box1">&nbsp;</div>
-    <div class="box2">&nbsp;</div>
-    <div class="box3">&nbsp;</div>
-    <div class="box4">&nbsp;</div>
-    <div class="box5">&nbsp;</div>
-    <div class="box6">&nbsp;</div>
+    <div class="box box1">&nbsp;</div>
+    <div class="box box2">&nbsp;</div>
+    <div class="box box3">&nbsp;</div>
+    <div class="box box4">&nbsp;</div>
+    <div class="box box5">&nbsp;</div>
+    <div class="box box6">&nbsp;</div>
+    <div class="gauge gauge1"></div>
+    <div class="gauge gauge2"></div>
+    <div class="gauge gauge3"></div>
+    <div class="gauge gauge4"></div>
+    <div class="gauge gauge5"></div>
   </body>
 </html>
