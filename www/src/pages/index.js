@@ -55,7 +55,16 @@ export default ({data}) => {
                         Screenshots with JavaScript
                     </h4>
 
-                    <div css={{display: 'flex', justifyContent: 'center'}}>
+                    <div
+                        css={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            '@media(min-width: 1000px)': {
+                                flexDirection: 'row'
+                            }
+                        }}
+                    >
                         <div>
                             <h4>HTML</h4>
                             <div
@@ -101,14 +110,25 @@ export default ({data}) => {
                             Documentation
                         </Link>
                     </div>
-                    <div css={{display: 'flex'}}>
+                    <div
+                        css={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            '@media(min-width: 1000px)': {
+                                flexDirection: 'row'
+                            }
+                        }}
+                    >
                         <div
                             css={{
                                 flex: 1,
                                 backgroundColor: '#558b2f',
                                 padding: '10px 20px',
                                 borderRadius: '10px',
-                                marginRight: '5px'
+                                marginBottom: '10px',
+                                '@media(min-width: 1000px)': {
+                                    marginRight: '5px'
+                                }
                             }}
                         >
                             <Carbon />
@@ -116,12 +136,16 @@ export default ({data}) => {
                         <div
                             css={{
                                 flex: 1,
-                                marginLeft: '5px',
+
                                 backgroundColor: '#558b2f',
                                 padding: '10px 20px',
                                 borderRadius: '10px',
                                 textAlign: 'left',
-                                marginRight: '5px'
+                                marginBottom: '10px',
+                                '@media(min-width: 1000px)': {
+                                    marginLeft: '5px',
+                                    marginRight: '5px'
+                                }
                             }}
                         >
                             <h6>Install NPM</h6>
@@ -143,11 +167,14 @@ export default ({data}) => {
                         <div
                             css={{
                                 flex: 1,
-                                marginLeft: '5px',
                                 backgroundColor: '#558b2f',
                                 padding: '10px 20px',
                                 borderRadius: '10px',
-                                textAlign: 'left'
+                                textAlign: 'left',
+                                marginBottom: '10px',
+                                '@media(min-width: 1000px)': {
+                                    marginLeft: '5px'
+                                }
                             }}
                         >
                             <h5>Connect</h5>
