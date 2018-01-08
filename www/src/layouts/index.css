@@ -36,9 +36,22 @@ table {
     border: 1px solid #ddd;
 }
 
+table tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
 th {
     padding: 8px;
     border: 1px solid #ddd;
+    border-bottom-width: 2px;
+}
+
+td {
+    padding: 8px;
+}
+
+th:first-child, td:first-child {
+    padding-left: 8px;
 }
 
 :not(pre) > code {
