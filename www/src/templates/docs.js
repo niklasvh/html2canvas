@@ -19,7 +19,9 @@ export default ({data}) => {
             <Navigation />
             <div
                 css={{
-                    marginLeft: '300px',
+                    '@media(min-width: 1000px)': {
+                        marginLeft: '300px'
+                    },
                     display: 'flex',
                     minHeight: '100vh',
                     flexDirection: 'column'
@@ -37,10 +39,23 @@ export default ({data}) => {
                     <div css={{maxWidth: '960px'}}>
                         <div css={{width: '85%', margin: '0 auto', display: 'flex'}}>
                             <div css={{flex: 1}}>
-                                <h1 css={{padding: '20px 0'}}>
+                                <h1
+                                    css={{
+                                        padding: '20px 0',
+                                        fontSize: '2.8rem',
+                                        '@media(min-width: 1000px)': {fontSize: '4.2rem'}
+                                    }}
+                                >
                                     {post.frontmatter.title}
                                 </h1>
-                                <h4 css={{fontWeight: 300, color: 'rgba(255, 255, 255, 0.6)'}}>
+                                <h4
+                                    css={{
+                                        fontWeight: 300,
+                                        color: 'rgba(255, 255, 255, 0.6)',
+                                        fontSize: '1.8rem',
+                                        '@media(min-width: 1000px)': {fontSize: '2.28rem'}
+                                    }}
+                                >
                                     {post.frontmatter.description}
                                 </h4>
                             </div>
