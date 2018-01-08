@@ -65,7 +65,14 @@ export default ({data}) => {
                             }
                         }}
                     >
-                        <div>
+                        <div
+                            css={{
+                                display: 'none',
+                                '@media(min-width: 1000px)': {
+                                    display: 'block'
+                                }
+                            }}
+                        >
                             <h4>HTML</h4>
                             <div
                                 css={{marginRight: '5px'}}
@@ -79,7 +86,14 @@ export default ({data}) => {
                                 }}
                             />
                         </div>
-                        <div>
+                        <div
+                            css={{
+                                display: 'none',
+                                '@media(min-width: 1000px)': {
+                                    display: 'block'
+                                }
+                            }}
+                        >
                             <h4>JavaScript</h4>
                             <div
                                 css={{marginLeft: '5px'}}

@@ -1,5 +1,5 @@
 ---
-title: "Configuration"
+title: "Options"
 description: "Explore the different configuration options available for html2canvas"
 previousUrl: "/getting-started"
 previousTitle: "Getting Started"
