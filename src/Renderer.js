@@ -300,7 +300,7 @@ export default class Renderer {
             }
 
             const transform = stack.container.style.transform;
-            if (transform !== null) {
+            if (transform !== null && !this.options.ignoreTransform) {
                 this.target.transform(
                     stack.container.bounds.left + transform.transformOrigin[0].value,
                     stack.container.bounds.top + transform.transformOrigin[1].value,

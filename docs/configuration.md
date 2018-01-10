@@ -30,5 +30,6 @@ These are all of the available configuration options.
 | scrollY | `Element` scrollY | The y-scroll position to used when rendering element, (for example if the Element uses `position: fixed`)
 | windowWidth | `Window.innerWidth` | Window width to use when rendering `Element`, which may affect things like Media queries
 | windowHeight | `Window.innerHeight` | Window height to use when rendering `Element`, which may affect things like Media queries
+| ignoreTransform | `false` | Ignore element transform style when rendering it (for example if the Element uses `transform: translate(30px 30px)`)
 
 If you wish to exclude certain `Element`s from getting rendered, you can add a `data-html2canvas-ignore` attribute to those elements and html2canvas will exclude them from the rendering.

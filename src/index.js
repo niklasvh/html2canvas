@@ -81,7 +81,8 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight,
         scrollX: defaultView.pageXOffset,
-        scrollY: defaultView.pageYOffset
+        scrollY: defaultView.pageYOffset,
+        ignoreTransform: false
     };
 
     const result = renderElement(element, {...defaultOptions, ...config}, logger);
