@@ -18,11 +18,13 @@ export default class Logger {
 
     // eslint-disable-next-line flowtype/no-weak-types
     log(...args: any) {
-        if (this.enabled && window.console && window.console.log) {
+        // eslint-disable-next-line no-console
+        if (this.enabled && typeof console !== undefined && console.log) {
             Function.prototype.bind
-                .call(window.console.log, window.console)
+                // eslint-disable-next-line no-console
+                .call(console.log, console)
                 .apply(
-                    window.console,
+                    console,
                     [
                         Date.now() - this.start + 'ms',
                         this.id ? `html2canvas (${this.id}):` : 'html2canvas:'
@@ -33,11 +35,11 @@ export default class Logger {
 
     // eslint-disable-next-line flowtype/no-weak-types
     error(...args: any) {
-        if (this.enabled && window.console && window.console.error) {
+        if (this.enabled && console && console.error) {
             Function.prototype.bind
-                .call(window.console.error, window.console)
+                .call(console.error, console)
                 .apply(
-                    window.console,
+                    console,
                     [
                         Date.now() - this.start + 'ms',
                         this.id ? `html2canvas (${this.id}):` : 'html2canvas:'
