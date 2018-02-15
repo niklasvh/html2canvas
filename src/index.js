@@ -17,6 +17,7 @@ export type Options = {
     ignoreElements?: HTMLElement => boolean,
     imageTimeout: number,
     logging: boolean,
+    onclone?: Document => void,
     proxy: ?string,
     removeContainer: ?boolean,
     scale: number,
