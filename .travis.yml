@@ -9,7 +9,7 @@ addons:
   chrome: stable
   firefox: latest
 dist: trusty
-sudo: false
+sudo: true
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
