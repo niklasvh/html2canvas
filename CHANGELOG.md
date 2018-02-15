@@ -1,5 +1,10 @@
 ### Changelog ###
 
+#### v1.0.0-alpha.10 - 15.2.2018 ####
+ * Re-introduce `onclone` option (Fix #1434)
+ * Add `ignoreElements` predicate function option
+ * Fix version console logging
+
 #### v1.0.0-alpha.9 - 7.1.2018 ####
  * Fix dynamic style sheets
  * Fix > 50% border-radius values
