@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>element render test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        h2cOptions = {onclone: function(document) {
+            const remove = document.querySelector('.ignored');
+            remove.parentNode.removeChild(remove);
+        }};
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        #div1 {
+
+            width: 100px;
+            height: 100px;
+            background: green;
+        }
+
+        #ignored, .ignored {
+            background: red;
+            width: 100px;
+            height: 100px;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+</head>
+<body>
+<div class="ignored">
+    ignore during onclone
+</div>
+<div id="div1">
+    great success
+</div>
+</body>
+</html>
