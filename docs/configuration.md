@@ -17,6 +17,7 @@ These are all of the available configuration options.
 | canvas | `null` | Existing `canvas` element to use as a base for drawing on
 | foreignObjectRendering | `false` | Whether to use ForeignObject rendering if the browser supports it
 | imageTimeout | `15000` | Timeout for loading an image (in milliseconds). Set to `0` to disable timeout.
+| ignoreElements | `(element) => false` | Predicate function which removes the matching elements from the render.
 | logging | `true` | Enable logging for debug purposes
 | proxy | `null` | Url to the [proxy](/proxy/) which is to be used for loading cross-origin images. If left empty, cross-origin images won't be loaded.
 | removeContainer | `true` | Whether to cleanup the cloned DOM elements html2canvas creates temporarily
