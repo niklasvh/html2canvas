@@ -7,7 +7,7 @@ export default class Logger {
     id: ?string;
 
     constructor(enabled: boolean, id: ?string, start: ?number) {
-        this.enabled = enabled;
+        this.enabled = typeof window !== 'undefined' && enabled;
         this.start = start ? start : Date.now();
         this.id = id;
     }
