@@ -28,7 +28,8 @@ export type Options = {
     scrollX: number,
     scrollY: number,
     windowWidth: number,
-    windowHeight: number
+    windowHeight: number,
+    classesToIgnore: Array<string>
 };
 
 const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
@@ -81,7 +82,8 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight,
         scrollX: defaultView.pageXOffset,
-        scrollY: defaultView.pageYOffset
+        scrollY: defaultView.pageYOffset,
+        classesToIgnore: []
     };
 
     const result = renderElement(element, {...defaultOptions, ...config}, logger);

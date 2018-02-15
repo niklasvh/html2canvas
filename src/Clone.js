@@ -203,7 +203,8 @@ export class DocumentCloner {
                             windowWidth: documentElement.ownerDocument.defaultView.innerWidth,
                             windowHeight: documentElement.ownerDocument.defaultView.innerHeight,
                             scrollX: documentElement.ownerDocument.defaultView.pageXOffset,
-                            scrollY: documentElement.ownerDocument.defaultView.pageYOffset
+                            scrollY: documentElement.ownerDocument.defaultView.pageYOffset,
+                            classesToIgnore: this.options.classesToIgnore
                         },
                         this.logger.child(iframeKey)
                     );
@@ -268,8 +269,11 @@ export class DocumentCloner {
         for (let child = node.firstChild; child; child = child.nextSibling) {
             if (
                 child.nodeType !== Node.ELEMENT_NODE ||
-                // $FlowFixMe
-                (child.nodeName !== 'SCRIPT' && !child.hasAttribute(IGNORE_ATTRIBUTE))
+                (child.nodeName !== 'SCRIPT' &&
+                    // $FlowFixMe
+                    !child.hasAttribute(IGNORE_ATTRIBUTE) &&
+                    // $FlowFixMe
+                    !this.options.classesToIgnore.some(cls => child.classList.contains(cls)))
             ) {
                 if (!this.copyStyles || child.nodeName !== 'STYLE') {
                     clone.appendChild(this.cloneNode(child));
