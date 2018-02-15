@@ -14,6 +14,7 @@ export type Options = {
     backgroundColor: string,
     canvas: ?HTMLCanvasElement,
     foreignObjectRendering: boolean,
+    ignoreElements?: HTMLElement => boolean,
     imageTimeout: number,
     logging: boolean,
     proxy: ?string,
