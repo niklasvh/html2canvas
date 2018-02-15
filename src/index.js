@@ -34,14 +34,9 @@ export type Options = {
 };
 
 const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
-    // eslint-disable-next-line no-console
-    if (typeof console === 'object' && typeof console.log === 'function') {
-        // eslint-disable-next-line no-console
-        console.log(`html2canvas ${__VERSION__}`);
-    }
-
     const config = conf || {};
     const logger = new Logger(typeof config.logging === 'boolean' ? config.logging : true);
+    logger.log(`html2canvas ${__VERSION__}`);
 
     if (__DEV__ && typeof config.onrendered === 'function') {
         logger.error(
