@@ -48,6 +48,9 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     if (!ownerDocument) {
         return Promise.reject(`Provided element is not within a Document`);
     }
+
+    logger.log(`html2canvas ${__VERSION__}`);
+
     const defaultView = ownerDocument.defaultView;
 
     const scrollX = defaultView.pageXOffset;
