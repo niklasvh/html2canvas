@@ -38,6 +38,8 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const logger = new Logger(typeof config.logging === 'boolean' ? config.logging : true);
     logger.log(`html2canvas ${__VERSION__}`);
 
+    logger.log(`html2canvas ${__VERSION__}`);
+
     if (__DEV__ && typeof config.onrendered === 'function') {
         logger.error(
             `onrendered option is deprecated, html2canvas returns a Promise with the canvas as the value`
