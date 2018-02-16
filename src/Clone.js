@@ -203,7 +203,8 @@ export class DocumentCloner {
                             windowWidth: documentElement.ownerDocument.defaultView.innerWidth,
                             windowHeight: documentElement.ownerDocument.defaultView.innerHeight,
                             scrollX: documentElement.ownerDocument.defaultView.pageXOffset,
-                            scrollY: documentElement.ownerDocument.defaultView.pageYOffset
+                            scrollY: documentElement.ownerDocument.defaultView.pageYOffset,
+                            ignoreTransform: this.options.ignoreTransform
                         },
                         this.logger.child(iframeKey)
                     );

@@ -111,7 +111,8 @@ export const renderElement = (
                               x: options.x,
                               y: options.y,
                               width: options.width,
-                              height: options.height
+                              height: options.height,
+                              ignoreTransform: options.ignoreTransform
                           };
 
                           if (Array.isArray(options.target)) {
