@@ -4,8 +4,9 @@
     <title>element render test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script>
-        h2cOptions = {ignoreElements: function(element) {
-            return element.className === 'ignored';
+        h2cOptions = {onclone: function(document) {
+            const remove = document.querySelector('.ignored');
+            remove.parentNode.removeChild(remove);
         }};
     </script>
     <script type="text/javascript" src="../../test.js"></script>
@@ -31,11 +32,8 @@
 
 </head>
 <body>
-<div id="ignored" data-html2canvas-ignore>
-    great failure
-</div>
 <div class="ignored">
-    ignore predicate
+    ignore during onclone
 </div>
 <div id="div1">
     great success

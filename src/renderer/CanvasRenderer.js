@@ -250,7 +250,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                             const {baseline} = this.options.fontMetrics.getMetrics(font);
                             this.rectangle(
                                 text.bounds.left,
-                                Math.round(text.bounds.top + text.bounds.height - baseline),
+                                Math.round(text.bounds.top + baseline),
                                 text.bounds.width,
                                 1,
                                 textDecorationColor
