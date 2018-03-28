@@ -240,7 +240,7 @@ export class DocumentCloner {
                     this.logger.log('Unable to access cssText property', rule.name);
                     return css;
                 }
-            });
+            }, '');
             const style = node.cloneNode(false);
             style.textContent = css;
             return style;
