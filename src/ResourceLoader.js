@@ -33,6 +33,10 @@ export default class ResourceLoader {
         if (this.hasResourceInCache(src)) {
             return src;
         }
+        if (isBlobImage(src)) {
+            this.cache[src] = loadImage(src, this.options.imageTimeout || 0);
+            return src;
+        }
 
         if (!isSVG(src) || FEATURES.SUPPORT_SVG_DRAWING) {
             if (this.options.allowTaint === true || isInlineImage(src) || this.isSameOrigin(src)) {
@@ -215,6 +219,7 @@ const INLINE_IMG = /^data:image\/.*/i;
 
 const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
 const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
+const isBlobImage = (src: string): boolean => src.substr(0, 4) === 'blob';
 
 const isSVG = (src: string): boolean =>
     src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
