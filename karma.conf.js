@@ -66,13 +66,6 @@ module.exports = function(config) {
             platform: 'iOS',
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
-        },
-        'sl_ios_8.4_safari': {
-            base: 'SauceLabs',
-            browserName: 'Safari',
-            platform: 'iOS',
-            version: '8.4',
-            device: 'iPhone 5s Simulator'
         }
     };
 
