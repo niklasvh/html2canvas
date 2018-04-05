@@ -98,6 +98,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
     }
 
     getTarget(): Promise<HTMLCanvasElement> {
+        this.canvas.getContext('2d').setTransform(1, 0, 0, 1, 0, 0);
         return Promise.resolve(this.canvas);
     }
 
