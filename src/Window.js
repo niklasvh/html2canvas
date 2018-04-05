@@ -14,6 +14,7 @@ import {Bounds} from './Bounds';
 import {cloneWindow, DocumentCloner} from './Clone';
 import {FontMetrics} from './Font';
 import Color, {TRANSPARENT} from './Color';
+import {parseBounds, parseDocumentSize} from './Bounds';
 
 export const renderElement = (
     element: HTMLElement,
@@ -62,14 +63,32 @@ export const renderElement = (
                           .then(() => cloner.resourceLoader.ready())
                           .then(() => {
                               const renderer = new ForeignObjectRenderer(cloner.documentElement);
+
+                              const defaultView = ownerDocument.defaultView;
+                              const scrollX = defaultView.pageXOffset;
+                              const scrollY = defaultView.pageYOffset;
+
+                              const isDocument =
+                                  element.tagName === 'HTML' || element.tagName === 'BODY';
+
+                              const {width, height, left, top} = isDocument
+                                  ? parseDocumentSize(ownerDocument)
+                                  : parseBounds(element, scrollX, scrollY);
+
                               return renderer.render({
                                   backgroundColor,
                                   logger,
                                   scale: options.scale,
-                                  x: options.x,
-                                  y: options.y,
-                                  width: options.width,
-                                  height: options.height,
+                                  x: typeof options.x === 'number' ? options.x : left,
+                                  y: typeof options.y === 'number' ? options.y : top,
+                                  width:
+                                      typeof options.width === 'number'
+                                          ? options.width
+                                          : Math.ceil(width),
+                                  height:
+                                      typeof options.height === 'number'
+                                          ? options.height
+                                          : Math.ceil(height),
                                   windowWidth: options.windowWidth,
                                   windowHeight: options.windowHeight,
                                   scrollX: options.scrollX,
@@ -102,16 +121,33 @@ export const renderElement = (
                               logger.log(`Starting renderer`);
                           }
 
+                          const defaultView = clonedDocument.defaultView;
+                          const scrollX = defaultView.pageXOffset;
+                          const scrollY = defaultView.pageYOffset;
+
+                          const isDocument =
+                              clonedElement.tagName === 'HTML' || clonedElement.tagName === 'BODY';
+
+                          const {width, height, left, top} = isDocument
+                              ? parseDocumentSize(ownerDocument)
+                              : parseBounds(clonedElement, scrollX, scrollY);
+
                           const renderOptions = {
                               backgroundColor,
                               fontMetrics,
                               imageStore,
                               logger,
                               scale: options.scale,
-                              x: options.x,
-                              y: options.y,
-                              width: options.width,
-                              height: options.height
+                              x: typeof options.x === 'number' ? options.x : left,
+                              y: typeof options.y === 'number' ? options.y : top,
+                              width:
+                                  typeof options.width === 'number'
+                                      ? options.width
+                                      : Math.ceil(width),
+                              height:
+                                  typeof options.height === 'number'
+                                      ? options.height
+                                      : Math.ceil(height)
                           };
 
                           if (Array.isArray(options.target)) {
