@@ -6,7 +6,6 @@ import type {RenderTarget} from './Renderer';
 import CanvasRenderer from './renderer/CanvasRenderer';
 import Logger from './Logger';
 import {renderElement} from './Window';
-import {parseBounds, parseDocumentSize} from './Bounds';
 
 export type Options = {
     async: ?boolean,
@@ -50,15 +49,6 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     }
     const defaultView = ownerDocument.defaultView;
 
-    const scrollX = defaultView.pageXOffset;
-    const scrollY = defaultView.pageYOffset;
-
-    const isDocument = element.tagName === 'HTML' || element.tagName === 'BODY';
-
-    const {width, height, left, top} = isDocument
-        ? parseDocumentSize(ownerDocument)
-        : parseBounds(element, scrollX, scrollY);
-
     const defaultOptions = {
         async: true,
         allowTaint: false,
@@ -71,10 +61,6 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
         scale: defaultView.devicePixelRatio || 1,
         target: new CanvasRenderer(config.canvas),
         useCORS: false,
-        x: left,
-        y: top,
-        width: Math.ceil(width),
-        height: Math.ceil(height),
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight,
         scrollX: defaultView.pageXOffset,
