@@ -65,6 +65,15 @@ Install dependencies:
 Build browser bundle
 
     $ npm run build
+    
+### Angular configuration
+
+Import it into your component
+
+```
+import * as html2canvas from "html2canvas";
+
+```
 
 ### Running tests ###
 
