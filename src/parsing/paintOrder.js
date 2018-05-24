@@ -9,8 +9,6 @@ export const PAINT_LAYER = {
 
 export type PaintLayer = $Values<typeof PAINT_LAYER>;
 
-// export type PaintOrder = Array<PaintOrder>
-
 export const parsePaintOrder = (paintOrder: string): Array<PaintLayer> => {
     const order = paintOrder.split(' ');
 

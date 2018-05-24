@@ -296,7 +296,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     case PAINT_LAYER.STROKE:
                         if (textStroke && text.text.trim().length) {
                             this.ctx.strokeStyle = textStroke.color.toString();
-                            this.ctx.lineWidth = textStroke.size; // * 1.5
+                            this.ctx.lineWidth = textStroke.size;
 
                             this.ctx.strokeText(
                                 text.text,
