@@ -12,9 +12,9 @@ Below is a list of all the supported CSS properties and values.
        - url()
        - linear-gradient()
        - radial-gradient()
-   - background-origin 
+   - background-origin
    - background-position
-   - background-size   
+   - background-size
  - border
    - border-color
    - border-radius
@@ -50,6 +50,7 @@ Below is a list of all the supported CSS properties and values.
  - overflow
  - overflow-wrap
  - padding
+ - paint-order
  - position
  - right
  - text-align
@@ -58,7 +59,8 @@ Below is a list of all the supported CSS properties and values.
    - text-decoration-line
    - text-decoration-style (**Only supports `solid`**)
  - text-shadow
- - text-transform 
+ - text-stroke (**with -webkit prefix**)
+ - text-transform
  - top
  - transform (**Limited support**)
  - visibility
@@ -68,7 +70,7 @@ Below is a list of all the supported CSS properties and values.
  - word-spacing
  - word-wrap
  - z-index
-    
+
 ## Unsupported CSS properties
 These CSS properties are **NOT** currently supported
  - [background-blend-mode](https://github.com/niklasvh/html2canvas/issues/966)
@@ -82,4 +84,3 @@ These CSS properties are **NOT** currently supported
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
  - [writing-mode](https://github.com/niklasvh/html2canvas/issues/1258)
  - [zoom](https://github.com/niklasvh/html2canvas/issues/732)
-
