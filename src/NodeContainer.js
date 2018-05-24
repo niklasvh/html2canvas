@@ -12,7 +12,7 @@ import type {ListStyle} from './parsing/listStyle';
 import type {Margin} from './parsing/margin';
 import type {Overflow} from './parsing/overflow';
 import type {OverflowWrap} from './parsing/overflowWrap';
-import type {PaintOrder} from './parsing/paintOrder';
+import type {PaintLayer} from './parsing/paintOrder';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
 import type {TextShadow} from './parsing/textShadow';
@@ -82,11 +82,11 @@ type StyleDeclaration = {
     overflow: Overflow,
     overflowWrap: OverflowWrap,
     padding: Padding,
-    paintOrder: PaintOrder,
+    paintOrder: Array<PaintLayer>,
     position: Position,
     textDecoration: TextDecoration | null,
     textShadow: Array<TextShadow> | null,
-    textStroke: TextStroke,
+    textStroke: TextStroke | null,
     textTransform: TextTransform,
     transform: Transform,
     visibility: Visibility,

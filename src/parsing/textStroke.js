@@ -5,11 +5,19 @@ import Color from '../Color';
 
 export type TextStroke = {
     color: Color,
-    size: string,
+    size: number
 };
-export const parseTextStroke = (textStrokeWidth: string, textStrokeColor: string): TextStroke => {
+
+export const parseTextStroke = (
+    textStrokeWidth: string,
+    textStrokeColor: string
+): TextStroke | null => {
     const color = new Color(textStrokeColor);
-    const size = parseInt(textStrokeWidth);
+    const size = parseFloat(textStrokeWidth);
+
+    if (size <= 0) {
+        return null;
+    }
 
     return {
         color,

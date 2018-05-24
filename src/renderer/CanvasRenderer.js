@@ -7,7 +7,7 @@ import type {Path} from '../drawing/Path';
 import type Size from '../drawing/Size';
 
 import type {Font} from '../parsing/font';
-import type {PaintOrder} from '../parsing/paintOrder';
+import type {PaintLayer} from '../parsing/paintOrder';
 import type {TextDecoration} from '../parsing/textDecoration';
 import type {TextShadow} from '../parsing/textShadow';
 import type {TextStroke} from '../parsing/textStroke';
@@ -18,7 +18,7 @@ import type {ImageElement} from '../ResourceLoader';
 import type {LinearGradient, RadialGradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
-import {PAINT_ORDER} from '../parsing/paintOrder';
+import {PAINT_LAYER} from '../parsing/paintOrder';
 import {PATH} from '../drawing/Path';
 import {TEXT_DECORATION_LINE} from '../parsing/textDecoration';
 
@@ -212,7 +212,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         textDecoration: TextDecoration | null,
         textShadows: Array<TextShadow> | null,
         textStroke: TextStroke | null,
-        paintOrder: PaintOrder | {order: [PAINT_ORDER.FILL, PAINT_ORDER.STROKE, PAINT_ORDER.MARKERS]}
+        paintOrder: Array<PaintLayer>
     ) {
         this.ctx.font = [
             font.fontStyle,
@@ -223,10 +223,9 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         ].join(' ');
 
         textBounds.forEach(text => {
-
-            paintOrder.order.forEach(layer => {
+            paintOrder.forEach(layer => {
                 switch (layer) {
-                    case PAINT_ORDER.FILL:
+                    case PAINT_LAYER.FILL:
                         this.ctx.fillStyle = color.toString();
 
                         if (textShadows && text.text.trim().length) {
@@ -258,7 +257,9 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                                         // Draws a line at the baseline of the font
                                         // TODO As some browsers display the line as more than 1px if the font-size is big,
                                         // need to take that into account both in position and size
-                                        const {baseline} = this.options.fontMetrics.getMetrics(font);
+                                        const {baseline} = this.options.fontMetrics.getMetrics(
+                                            font
+                                        );
                                         this.rectangle(
                                             text.bounds.left,
                                             Math.round(text.bounds.top + baseline),
@@ -292,8 +293,8 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                         }
                         break;
 
-                    case PAINT_ORDER.STROKE:
-                        if (textStroke.size && text.text.trim().length) {
+                    case PAINT_LAYER.STROKE:
+                        if (textStroke && text.text.trim().length) {
                             this.ctx.strokeStyle = textStroke.color.toString();
                             this.ctx.lineWidth = textStroke.size; // * 1.5
 
@@ -303,12 +304,12 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                                 text.bounds.top + text.bounds.height
                             );
                         } else {
-                            this.ctx.strokeStyle = null;
+                            this.ctx.strokeStyle = '';
                             this.ctx.lineWidth = 0;
                         }
                         break;
                 }
-            })
+            });
         });
     }
 

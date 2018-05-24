@@ -9,7 +9,7 @@ import type Logger from './Logger';
 import type {BackgroundImage} from './parsing/background';
 import type {Border, BorderSide} from './parsing/border';
 import type {Font} from './parsing/font';
-import type {PaintOrder} from './parsing/paintOrder';
+import type {PaintLayer} from './parsing/paintOrder';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {TextShadow} from './parsing/textShadow';
 import type {TextStroke} from './parsing/textStroke';
@@ -83,7 +83,7 @@ export interface RenderTarget<Output> {
         textDecoration: TextDecoration | null,
         textShadows: Array<TextShadow> | null,
         textStroke: TextStroke | null,
-        paintOrder: PaintOrder | null
+        paintOrder: Array<PaintLayer>
     ): void,
 
     setOpacity(opacity: number): void,

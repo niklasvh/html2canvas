@@ -1,39 +1,38 @@
 /* @flow */
 'use strict';
 
-export const PAINT_ORDER = {
+export const PAINT_LAYER = {
     STROKE: 0,
     FILL: 1,
     MARKERS: 2
 };
 
-export type PaintOrder = {
-    order: array
-};
+export type PaintLayer = $Values<typeof PAINT_LAYER>;
 
-export const parsePaintOrder = (paintOrder: string): PaintOrder => {
-    const order = paintOrder.split(' ')
+// export type PaintOrder = Array<PaintOrder>
+
+export const parsePaintOrder = (paintOrder: string): Array<PaintLayer> => {
+    const order = paintOrder.split(' ');
 
     if (order[0] === 'normal') {
-        return {order: [PAINT_ORDER.FILL, PAINT_ORDER.STROKE, PAINT_ORDER.MARKERS]}
+        return [PAINT_LAYER.FILL, PAINT_LAYER.STROKE, PAINT_LAYER.MARKERS];
     }
 
-    const layers = order.map(layer => {
+    const layers = [];
+
+    order.forEach(layer => {
         switch (layer) {
             case 'stroke':
-                layer = PAINT_ORDER.STROKE;
+                layers.push(PAINT_LAYER.STROKE);
                 break;
             case 'fill':
-                layer = PAINT_ORDER.FILL;
+                layers.push(PAINT_LAYER.FILL);
                 break;
             case 'markers':
-                layer = PAINT_ORDER.MARKERS;
+                layers.push(PAINT_LAYER.MARKERS);
                 break;
         }
-        return layer;
-    })
+    });
 
-    return {
-        order: layers
-    }
+    return layers;
 };

@@ -8,12 +8,14 @@ import type {Path} from '../drawing/Path';
 import type Size from '../drawing/Size';
 
 import type {Font} from '../parsing/font';
+import type {PaintLayer} from '../parsing/paintOrder';
 import type {
     TextDecoration,
     TextDecorationStyle,
     TextDecorationLine
 } from '../parsing/textDecoration';
 import type {TextShadow} from '../parsing/textShadow';
+import type {TextStroke} from '../parsing/textStroke';
 import type {Matrix} from '../parsing/transform';
 
 import type {Bounds} from '../Bounds';
@@ -163,7 +165,9 @@ class RefTestRenderer implements RenderTarget<string> {
         color: Color,
         font: Font,
         textDecoration: TextDecoration | null,
-        textShadows: Array<TextShadow> | null
+        textShadows: Array<TextShadow> | null,
+        textStroke: TextStroke | null,
+        paintOrder: Array<PaintLayer>
     ) {
         const fontString = [
             font.fontStyle,
