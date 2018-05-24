@@ -9,8 +9,10 @@ import type Logger from './Logger';
 import type {BackgroundImage} from './parsing/background';
 import type {Border, BorderSide} from './parsing/border';
 import type {Font} from './parsing/font';
+import type {PaintOrder} from './parsing/paintOrder';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {TextShadow} from './parsing/textShadow';
+import type {TextStroke} from './parsing/textStroke';
 import type {Matrix} from './parsing/transform';
 
 import type {BoundCurves} from './Bounds';
@@ -79,7 +81,9 @@ export interface RenderTarget<Output> {
         color: Color,
         font: Font,
         textDecoration: TextDecoration | null,
-        textShadows: Array<TextShadow> | null
+        textShadows: Array<TextShadow> | null,
+        textStroke: TextStroke | null,
+        paintOrder: PaintOrder | null
     ): void,
 
     setOpacity(opacity: number): void,
@@ -116,7 +120,9 @@ export default class Renderer {
                             style.color,
                             style.font,
                             style.textDecoration,
-                            style.textShadow
+                            style.textShadow,
+                            style.textStroke,
+                            style.paintOrder
                         );
                     } else {
                         this.target.drawShape(child, container.style.color);

@@ -7,8 +7,10 @@ import type {Path} from '../drawing/Path';
 import type Size from '../drawing/Size';
 
 import type {Font} from '../parsing/font';
+import type {PaintOrder} from '../parsing/paintOrder';
 import type {TextDecoration} from '../parsing/textDecoration';
 import type {TextShadow} from '../parsing/textShadow';
+import type {TextStroke} from '../parsing/textStroke';
 import type {Matrix} from '../parsing/transform';
 
 import type {Bounds} from '../Bounds';
@@ -16,6 +18,7 @@ import type {ImageElement} from '../ResourceLoader';
 import type {LinearGradient, RadialGradient} from '../Gradient';
 import type {TextBounds} from '../TextBounds';
 
+import {PAINT_ORDER} from '../parsing/paintOrder';
 import {PATH} from '../drawing/Path';
 import {TEXT_DECORATION_LINE} from '../parsing/textDecoration';
 
@@ -207,7 +210,9 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         color: Color,
         font: Font,
         textDecoration: TextDecoration | null,
-        textShadows: Array<TextShadow> | null
+        textShadows: Array<TextShadow> | null,
+        textStroke: TextStroke | null,
+        paintOrder: PaintOrder | {order: [PAINT_ORDER.FILL, PAINT_ORDER.STROKE, PAINT_ORDER.MARKERS]}
     ) {
         this.ctx.font = [
             font.fontStyle,
@@ -218,68 +223,92 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         ].join(' ');
 
         textBounds.forEach(text => {
-            this.ctx.fillStyle = color.toString();
-            if (textShadows && text.text.trim().length) {
-                textShadows.slice(0).reverse().forEach(textShadow => {
-                    this.ctx.shadowColor = textShadow.color.toString();
-                    this.ctx.shadowOffsetX = textShadow.offsetX * this.options.scale;
-                    this.ctx.shadowOffsetY = textShadow.offsetY * this.options.scale;
-                    this.ctx.shadowBlur = textShadow.blur;
 
-                    this.ctx.fillText(
-                        text.text,
-                        text.bounds.left,
-                        text.bounds.top + text.bounds.height
-                    );
-                });
-            } else {
-                this.ctx.fillText(
-                    text.text,
-                    text.bounds.left,
-                    text.bounds.top + text.bounds.height
-                );
-            }
+            paintOrder.order.forEach(layer => {
+                switch (layer) {
+                    case PAINT_ORDER.FILL:
+                        this.ctx.fillStyle = color.toString();
 
-            if (textDecoration !== null) {
-                const textDecorationColor = textDecoration.textDecorationColor || color;
-                textDecoration.textDecorationLine.forEach(textDecorationLine => {
-                    switch (textDecorationLine) {
-                        case TEXT_DECORATION_LINE.UNDERLINE:
-                            // Draws a line at the baseline of the font
-                            // TODO As some browsers display the line as more than 1px if the font-size is big,
-                            // need to take that into account both in position and size
-                            const {baseline} = this.options.fontMetrics.getMetrics(font);
-                            this.rectangle(
+                        if (textShadows && text.text.trim().length) {
+                            textShadows.slice(0).reverse().forEach(textShadow => {
+                                this.ctx.shadowColor = textShadow.color.toString();
+                                this.ctx.shadowOffsetX = textShadow.offsetX * this.options.scale;
+                                this.ctx.shadowOffsetY = textShadow.offsetY * this.options.scale;
+                                this.ctx.shadowBlur = textShadow.blur;
+
+                                this.ctx.fillText(
+                                    text.text,
+                                    text.bounds.left,
+                                    text.bounds.top + text.bounds.height
+                                );
+                            });
+                        } else {
+                            this.ctx.fillText(
+                                text.text,
                                 text.bounds.left,
-                                Math.round(text.bounds.top + baseline),
-                                text.bounds.width,
-                                1,
-                                textDecorationColor
+                                text.bounds.top + text.bounds.height
                             );
-                            break;
-                        case TEXT_DECORATION_LINE.OVERLINE:
-                            this.rectangle(
+                        }
+
+                        if (textDecoration !== null) {
+                            const textDecorationColor = textDecoration.textDecorationColor || color;
+                            textDecoration.textDecorationLine.forEach(textDecorationLine => {
+                                switch (textDecorationLine) {
+                                    case TEXT_DECORATION_LINE.UNDERLINE:
+                                        // Draws a line at the baseline of the font
+                                        // TODO As some browsers display the line as more than 1px if the font-size is big,
+                                        // need to take that into account both in position and size
+                                        const {baseline} = this.options.fontMetrics.getMetrics(font);
+                                        this.rectangle(
+                                            text.bounds.left,
+                                            Math.round(text.bounds.top + baseline),
+                                            text.bounds.width,
+                                            1,
+                                            textDecorationColor
+                                        );
+                                        break;
+                                    case TEXT_DECORATION_LINE.OVERLINE:
+                                        this.rectangle(
+                                            text.bounds.left,
+                                            Math.round(text.bounds.top),
+                                            text.bounds.width,
+                                            1,
+                                            textDecorationColor
+                                        );
+                                        break;
+                                    case TEXT_DECORATION_LINE.LINE_THROUGH:
+                                        // TODO try and find exact position for line-through
+                                        const {middle} = this.options.fontMetrics.getMetrics(font);
+                                        this.rectangle(
+                                            text.bounds.left,
+                                            Math.ceil(text.bounds.top + middle),
+                                            text.bounds.width,
+                                            1,
+                                            textDecorationColor
+                                        );
+                                        break;
+                                }
+                            });
+                        }
+                        break;
+
+                    case PAINT_ORDER.STROKE:
+                        if (textStroke.size && text.text.trim().length) {
+                            this.ctx.strokeStyle = textStroke.color.toString();
+                            this.ctx.lineWidth = textStroke.size; // * 1.5
+
+                            this.ctx.strokeText(
+                                text.text,
                                 text.bounds.left,
-                                Math.round(text.bounds.top),
-                                text.bounds.width,
-                                1,
-                                textDecorationColor
+                                text.bounds.top + text.bounds.height
                             );
-                            break;
-                        case TEXT_DECORATION_LINE.LINE_THROUGH:
-                            // TODO try and find exact position for line-through
-                            const {middle} = this.options.fontMetrics.getMetrics(font);
-                            this.rectangle(
-                                text.bounds.left,
-                                Math.ceil(text.bounds.top + middle),
-                                text.bounds.width,
-                                1,
-                                textDecorationColor
-                            );
-                            break;
-                    }
-                });
-            }
+                        } else {
+                            this.ctx.strokeStyle = null;
+                            this.ctx.lineWidth = 0;
+                        }
+                        break;
+                }
+            })
         });
     }
 

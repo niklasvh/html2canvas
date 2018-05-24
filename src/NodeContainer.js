@@ -12,9 +12,11 @@ import type {ListStyle} from './parsing/listStyle';
 import type {Margin} from './parsing/margin';
 import type {Overflow} from './parsing/overflow';
 import type {OverflowWrap} from './parsing/overflowWrap';
+import type {PaintOrder} from './parsing/paintOrder';
 import type {Padding} from './parsing/padding';
 import type {Position} from './parsing/position';
 import type {TextShadow} from './parsing/textShadow';
+import type {TextStroke} from './parsing/textStroke';
 import type {TextTransform} from './parsing/textTransform';
 import type {TextDecoration} from './parsing/textDecoration';
 import type {Transform} from './parsing/transform';
@@ -43,9 +45,11 @@ import {parseMargin} from './parsing/margin';
 import {parseOverflow, OVERFLOW} from './parsing/overflow';
 import {parseOverflowWrap} from './parsing/overflowWrap';
 import {parsePadding} from './parsing/padding';
+import {parsePaintOrder} from './parsing/paintOrder';
 import {parsePosition, POSITION} from './parsing/position';
 import {parseTextDecoration} from './parsing/textDecoration';
 import {parseTextShadow} from './parsing/textShadow';
+import {parseTextStroke} from './parsing/textStroke';
 import {parseTextTransform} from './parsing/textTransform';
 import {parseTransform} from './parsing/transform';
 import {parseVisibility, VISIBILITY} from './parsing/visibility';
@@ -78,9 +82,11 @@ type StyleDeclaration = {
     overflow: Overflow,
     overflowWrap: OverflowWrap,
     padding: Padding,
+    paintOrder: PaintOrder,
     position: Position,
     textDecoration: TextDecoration | null,
     textShadow: Array<TextShadow> | null,
+    textStroke: TextStroke,
     textTransform: TextTransform,
     transform: Transform,
     visibility: Visibility,
@@ -154,9 +160,11 @@ export default class NodeContainer {
                 style.overflowWrap ? style.overflowWrap : style.wordWrap
             ),
             padding: parsePadding(style),
+            paintOrder: parsePaintOrder(style.paintOrder),
             position: position,
             textDecoration: parseTextDecoration(style),
             textShadow: parseTextShadow(style.textShadow),
+            textStroke: parseTextStroke(style.webkitTextStrokeWidth, style.webkitTextStrokeColor),
             textTransform: parseTextTransform(style.textTransform),
             transform: parseTransform(style),
             visibility: parseVisibility(style.visibility),
