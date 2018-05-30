@@ -207,7 +207,9 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         color: Color,
         font: Font,
         textDecoration: TextDecoration | null,
-        textShadows: Array<TextShadow> | null
+        textShadows: Array<TextShadow> | null,
+        xnwWidth,
+        xnwLeft
     ) {
         this.ctx.font = [
             font.fontStyle,
@@ -233,6 +235,17 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     );
                 });
             } else {
+                const unique = font.fontSize.split('.')[1];
+                if (unique === '1px') {
+                    let gradientxnw = this.ctx.createLinearGradient(xnwLeft, 0, xnwWidth, 0);
+                    let gradientText2 = this.options.gradientText;
+                    for(let xnwi = 0;xnwi<gradientText2.length;xnwi++){
+                        gradientxnw.addColorStop(gradientText2[xnwi].start,gradientText2[xnwi].color );
+                    }
+                    this.ctx.fillStyle = gradientxnw;
+                } else {
+                    this.ctx.fillStyle = color;
+                }
                 this.ctx.fillText(
                     text.text,
                     text.bounds.left,

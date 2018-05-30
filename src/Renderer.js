@@ -79,7 +79,9 @@ export interface RenderTarget<Output> {
         color: Color,
         font: Font,
         textDecoration: TextDecoration | null,
-        textShadows: Array<TextShadow> | null
+        textShadows: Array<TextShadow> | null,
+        xnwWidth:Number,
+        xnwLeft:Number
     ): void,
 
     setOpacity(opacity: number): void,
@@ -111,12 +113,20 @@ export default class Renderer {
                 container.childNodes.forEach(child => {
                     if (child instanceof TextContainer) {
                         const style = child.parent.style;
+                        let xnwWidth = 0;
+                        let xnwLeft = child.bounds[0].bounds.left;
+                        for (let xnwi = 0; xnwi < child.bounds.length; xnwi++) {
+                            xnwWidth += child.bounds[xnwi].bounds.width;
+                        }
+                        xnwWidth = xnwLeft + xnwWidth;
                         this.target.renderTextNode(
                             child.bounds,
                             style.color,
                             style.font,
                             style.textDecoration,
-                            style.textShadow
+                            style.textShadow,
+                            xnwWidth,
+                            xnwLeft
                         );
                     } else {
                         this.target.drawShape(child, container.style.color);
