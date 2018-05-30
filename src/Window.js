@@ -137,6 +137,7 @@ export const renderElement = (
                               fontMetrics,
                               imageStore,
                               logger,
+                              gradientText,
                               scale: options.scale,
                               x: typeof options.x === 'number' ? options.x : left,
                               y: typeof options.y === 'number' ? options.y : top,
