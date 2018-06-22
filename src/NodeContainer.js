@@ -6,6 +6,7 @@ import type {Border} from './parsing/border';
 import type {BorderRadius} from './parsing/borderRadius';
 import type {DisplayBit} from './parsing/display';
 import type {Float} from './parsing/float';
+import type {FlexWrap, JustifyContent} from './parsing/flex';
 import type {Font} from './parsing/font';
 import type {LineBreak} from './parsing/lineBreak';
 import type {ListStyle} from './parsing/listStyle';
@@ -36,6 +37,7 @@ import {parseBorderRadius} from './parsing/borderRadius';
 import {parseDisplay, DISPLAY} from './parsing/display';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
+import {parseFlexWrap, parseJustifyContent} from './parsing/flex';
 import {parseLetterSpacing} from './parsing/letterSpacing';
 import {parseLineBreak} from './parsing/lineBreak';
 import {parseListStyle} from './parsing/listStyle';
@@ -69,6 +71,8 @@ type StyleDeclaration = {
     color: Color,
     display: DisplayBit,
     float: Float,
+    flexWrap: FlexWrap,
+    justifyContent: JustifyContent,
     font: Font,
     letterSpacing: number,
     lineBreak: LineBreak,
@@ -140,6 +144,8 @@ export default class NodeContainer {
             color: IS_INPUT ? INPUT_COLOR : new Color(style.color),
             display: display,
             float: parseCSSFloat(style.float),
+            flexWrap: parseFlexWrap(style.flexWrap),
+            justifyContent: parseJustifyContent(style.justifyContent),
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
             listStyle: display === DISPLAY.LIST_ITEM ? parseListStyle(style) : null,
