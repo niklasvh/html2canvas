@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import NodeContainer from './NodeContainer';
+import type NodeContainer from './NodeContainer';
 import {LineBreaker, fromCodePoint, toCodePoints} from 'css-line-break';
 import {OVERFLOW_WRAP} from './parsing/overflowWrap';
 

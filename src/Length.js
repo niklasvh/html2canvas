@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import NodeContainer from './NodeContainer';
+import type NodeContainer from './NodeContainer';
 
 const LENGTH_WITH_UNIT = /([\d.]+)(px|r?em|%)/i;
 
