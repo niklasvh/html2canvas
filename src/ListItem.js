@@ -488,7 +488,7 @@ const createCJKCounter = (
 const CHINESE_INFORMAL_MULTIPLIERS = '十百千萬';
 const CHINESE_FORMAL_MULTIPLIERS = '拾佰仟萬';
 const JAPANESE_NEGATIVE = 'マイナス';
-const KOREAN_NEGATIVE = '마이너스 ';
+const KOREAN_NEGATIVE = '마이너스';
 
 export const createCounterText = (
     value: number,
