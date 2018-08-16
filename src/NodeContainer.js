@@ -7,6 +7,7 @@ import type {BorderRadius} from './parsing/borderRadius';
 import type {DisplayBit} from './parsing/display';
 import type {Float} from './parsing/float';
 import type {Font} from './parsing/font';
+import type {FontVariantLigatures} from './parsing/fontVariantLigatures';
 import type {LineBreak} from './parsing/lineBreak';
 import type {ListStyle} from './parsing/listStyle';
 import type {Margin} from './parsing/margin';
@@ -36,6 +37,7 @@ import {parseBorderRadius} from './parsing/borderRadius';
 import {parseDisplay, DISPLAY} from './parsing/display';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
+import {parseFontVariantLigatures, FONT_VARIANT_LIGATURES} from './parsing/fontVariantLigatures';
 import {parseLetterSpacing} from './parsing/letterSpacing';
 import {parseLineBreak} from './parsing/lineBreak';
 import {parseListStyle} from './parsing/listStyle';
@@ -70,6 +72,7 @@ type StyleDeclaration = {
     display: DisplayBit,
     float: Float,
     font: Font,
+    fontVariantLigatures: FontVariantLigatures,
     letterSpacing: number,
     lineBreak: LineBreak,
     listStyle: ListStyle | null,
@@ -90,6 +93,10 @@ type StyleDeclaration = {
 
 const INPUT_TAGS = ['INPUT', 'TEXTAREA', 'SELECT'];
 
+export type NodeContainerOptions = {
+    disableLigatures: boolean
+};
+
 export default class NodeContainer {
     name: ?string;
     parent: ?NodeContainer;
@@ -103,20 +110,26 @@ export default class NodeContainer {
     image: ?string;
     index: number;
     tagName: string;
+    options: NodeContainerOptions;
 
     constructor(
         node: HTMLElement | SVGSVGElement,
         parent: ?NodeContainer,
         resourceLoader: ResourceLoader,
-        index: number
+        index: number,
+        options: NodeContainerOptions
     ) {
         this.parent = parent;
         this.tagName = node.tagName;
         this.index = index;
+        this.options = options;
         this.childNodes = [];
         this.listItems = [];
         if (typeof node.start === 'number') {
             this.listStart = node.start;
+        }
+        if (options.disableLigatures) {
+            node.style.fontVariantLigatures = FONT_VARIANT_LIGATURES.NONE;
         }
         const defaultView = node.ownerDocument.defaultView;
         const scrollX = defaultView.pageXOffset;
@@ -141,6 +154,7 @@ export default class NodeContainer {
             display: display,
             float: parseCSSFloat(style.float),
             font: parseFont(style),
+            fontVariantLigatures: parseFontVariantLigatures(style.fontVariantLigatures),
             letterSpacing: parseLetterSpacing(style.letterSpacing),
             listStyle: display === DISPLAY.LIST_ITEM ? parseListStyle(style) : null,
             lineBreak: parseLineBreak(style.lineBreak),

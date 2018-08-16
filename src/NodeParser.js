@@ -1,5 +1,6 @@
 /* @flow */
 'use strict';
+import type {NodeContainerOptions} from './NodeContainer';
 import type ResourceLoader, {ImageElement} from './ResourceLoader';
 import type Logger from './Logger';
 import StackingContext from './StackingContext';
@@ -12,7 +13,8 @@ import {LIST_STYLE_TYPE} from './parsing/listStyle';
 export const NodeParser = (
     node: HTMLElement,
     resourceLoader: ResourceLoader,
-    logger: Logger
+    logger: Logger,
+    options: NodeContainerOptions
 ): StackingContext => {
     if (__DEV__) {
         logger.log(`Starting node parsing`);
@@ -20,10 +22,10 @@ export const NodeParser = (
 
     let index = 0;
 
-    const container = new NodeContainer(node, null, resourceLoader, index++);
+    const container = new NodeContainer(node, null, resourceLoader, index++, options);
     const stack = new StackingContext(container, null, true);
 
-    parseNodeTree(node, container, stack, resourceLoader, index);
+    parseNodeTree(node, container, stack, resourceLoader, index, options);
 
     if (__DEV__) {
         logger.log(`Finished parsing node tree`);
@@ -39,7 +41,8 @@ const parseNodeTree = (
     parent: NodeContainer,
     stack: StackingContext,
     resourceLoader: ResourceLoader,
-    index: number
+    index: number,
+    options: NodeContainerOptions
 ): void => {
     if (__DEV__ && index > 50000) {
         throw new Error(`Recursion error while parsing node tree`);
@@ -62,7 +65,13 @@ const parseNodeTree = (
             (defaultView.parent && childNode instanceof defaultView.parent.HTMLElement)
         ) {
             if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-                const container = new NodeContainer(childNode, parent, resourceLoader, index++);
+                const container = new NodeContainer(
+                    childNode,
+                    parent,
+                    resourceLoader,
+                    index++,
+                    options
+                );
                 if (container.isVisible()) {
                     if (childNode.tagName === 'INPUT') {
                         // $FlowFixMe
@@ -99,12 +108,26 @@ const parseNodeTree = (
                         );
                         parentStack.contexts.push(childStack);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, childStack, resourceLoader, index);
+                            parseNodeTree(
+                                childNode,
+                                container,
+                                childStack,
+                                resourceLoader,
+                                index,
+                                options
+                            );
                         }
                     } else {
                         stack.children.push(container);
                         if (SHOULD_TRAVERSE_CHILDREN) {
-                            parseNodeTree(childNode, container, stack, resourceLoader, index);
+                            parseNodeTree(
+                                childNode,
+                                container,
+                                stack,
+                                resourceLoader,
+                                index,
+                                options
+                            );
                         }
                     }
                 }
@@ -114,7 +137,13 @@ const parseNodeTree = (
             childNode instanceof SVGSVGElement ||
             (defaultView.parent && childNode instanceof defaultView.parent.SVGSVGElement)
         ) {
-            const container = new NodeContainer(childNode, parent, resourceLoader, index++);
+            const container = new NodeContainer(
+                childNode,
+                parent,
+                resourceLoader,
+                index++,
+                options
+            );
             const treatAsRealStackingContext = createsRealStackingContext(container, childNode);
             if (treatAsRealStackingContext || createsStackingContext(container)) {
                 // for treatAsRealStackingContext:false, any positioned descendants and descendants

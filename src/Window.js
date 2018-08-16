@@ -108,7 +108,16 @@ export const renderElement = (
                           logger.log(`Document cloned, using computed rendering`);
                       }
 
-                      const stack = NodeParser(clonedElement, resourceLoader, logger);
+                      const nodeContainerOptions = {
+                          disableLigatures: options.disableLigatures
+                      };
+
+                      const stack = NodeParser(
+                          clonedElement,
+                          resourceLoader,
+                          logger,
+                          nodeContainerOptions
+                      );
                       const clonedDocument = clonedElement.ownerDocument;
 
                       if (backgroundColor === stack.container.style.background.backgroundColor) {
