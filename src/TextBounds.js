@@ -95,7 +95,7 @@ const fixLigatures = (textBounds: Array<TextBounds>): void => {
     const size = textBounds.length;
     let prev = size > 0 ? textBounds[0].bounds : null;
     for (let i = 1; i < size; i++) {
-        const bounds = textBounds[i].bounds;
+        let bounds = textBounds[i].bounds;
         const next = i + 1 < size ? textBounds[i + 1].bounds : null;
         if (
             !prev ||
@@ -108,16 +108,48 @@ const fixLigatures = (textBounds: Array<TextBounds>): void => {
             continue;
         }
         if (next && bounds.top === next.top) {
-            let offset = next.left - prev.left - prev.width;
-            if (offset <= 0) {
-                offset = prev.width / ((bounds.width + prev.width) / prev.width);
-            } else if (bounds.width < offset) {
-                offset = offset - (offset - bounds.width) / 2;
+            const ligatures = untilNonLigature(bounds, textBounds, i + 1);
+            const ligLen = ligatures.length;
+            const nonLig = ligatures[ligLen - 1];
+            const nnext = ligatures[ligLen - 2] || next;
+            const rightBound = (nonLig ? nonLig.left : nnext.left + nnext.width) - prev.left;
+            bounds.left += rightBound / (1 + ligLen);
+            if (ligLen > 1) {
+                bounds = ligatures[ligLen - 2];
+                i += ligLen - 1;
             }
-            bounds.left += offset;
         } else {
-            bounds.left += prev.width;
+            bounds.left += prev.width / 2;
         }
         prev = bounds;
     }
+};
+
+const untilNonLigature = (
+    ligatureBounds: Bounds,
+    textBounds: Array<TextBounds>,
+    startIndex: number
+): Array<Bounds | null> => {
+    const size = textBounds.length;
+    let ligatures = [];
+    let isFound = false;
+    for (let i = startIndex; i < size; i++) {
+        const bounds = textBounds[i].bounds;
+        if (
+            !bounds.width ||
+            !bounds.height ||
+            bounds.top > ligatureBounds.top ||
+            bounds.left > ligatureBounds.left
+        ) {
+            isFound = true;
+        }
+        ligatures.push(bounds);
+
+        if (isFound) {
+            break;
+        } else if (i === size - 1) {
+            ligatures.push(null);
+        }
+    }
+    return ligatures;
 };
