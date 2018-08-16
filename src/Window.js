@@ -109,7 +109,7 @@ export const renderElement = (
                       }
 
                       const nodeContainerOptions = {
-                          disableLigatures: options.disableLigatures
+                          fixLigatures: options.fixLigatures
                       };
 
                       const stack = NodeParser(

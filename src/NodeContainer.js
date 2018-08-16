@@ -94,7 +94,7 @@ type StyleDeclaration = {
 const INPUT_TAGS = ['INPUT', 'TEXTAREA', 'SELECT'];
 
 export type NodeContainerOptions = {
-    disableLigatures: boolean
+    fixLigatures: boolean
 };
 
 export default class NodeContainer {
@@ -127,9 +127,6 @@ export default class NodeContainer {
         this.listItems = [];
         if (typeof node.start === 'number') {
             this.listStart = node.start;
-        }
-        if (options.disableLigatures) {
-            node.style.fontVariantLigatures = FONT_VARIANT_LIGATURES.NONE;
         }
         const defaultView = node.ownerDocument.defaultView;
         const scrollX = defaultView.pageXOffset;
