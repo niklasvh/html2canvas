@@ -55,6 +55,7 @@ export const parseTextBounds = (
         offset += text.length;
     }
     if (
+        textBounds.length > 0 &&
         parent.options.fixLigatures &&
         parent.style.fontVariantLigatures !== FONT_VARIANT_LIGATURES.NONE
     ) {
@@ -93,12 +94,11 @@ const getRangeBounds = (
 
 const fixLigatures = (textBounds: Array<TextBounds>): void => {
     const size = textBounds.length;
-    let prev = size > 0 ? textBounds[0].bounds : null;
+    let prev = textBounds[0].bounds;
     for (let i = 1; i < size; i++) {
         let bounds = textBounds[i].bounds;
         const next = i + 1 < size ? textBounds[i + 1].bounds : null;
         if (
-            !prev ||
             !bounds.width ||
             !bounds.height ||
             bounds.top !== prev.top ||
@@ -113,9 +113,17 @@ const fixLigatures = (textBounds: Array<TextBounds>): void => {
             const nonLig = ligatures[ligLen - 1];
             const nnext = ligatures[ligLen - 2] || next;
             const rightBound = (nonLig ? nonLig.left : nnext.left + nnext.width) - prev.left;
-            bounds.left += rightBound / (1 + ligLen);
+            const offset = rightBound / (1 + ligLen);
+            bounds.left += offset;
             if (ligLen > 1) {
-                bounds = ligatures[ligLen - 2];
+                for (let j = 0, ligSize = ligLen - 1; j < ligSize; j++) {
+                    prev = bounds;
+                    bounds = ligatures[j] || bounds;
+                    if (bounds === prev) {
+                        break;
+                    }
+                    bounds.left = prev.left + offset;
+                }
                 i += ligLen - 1;
             }
         } else {
