@@ -7,7 +7,11 @@ describe('PseudoNodeContent', function() {
             {type: PseudoNodeContent.TOKEN_TYPE.STRING, value: 'hello'}
         ]);
     });
-
+    it('should parse string', function() {
+        assert.deepEqual(PseudoNodeContent.parseContent('safari'), [
+            {type: PseudoNodeContent.TOKEN_TYPE.STRING, value: 'safari'}
+        ]);
+    });
     it('should parse string with (,)', function() {
         assert.deepEqual(PseudoNodeContent.parseContent('"a,b (c) d"'), [
             {type: PseudoNodeContent.TOKEN_TYPE.STRING, value: 'a,b (c) d'}

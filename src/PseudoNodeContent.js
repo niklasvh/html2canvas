@@ -311,6 +311,8 @@ const addOtherToken = (tokens: Array<Token>, identifier: string): void => {
         case 'close-quote':
             tokens.push({type: TOKEN_TYPE.CLOSEQUOTE});
             break;
+        default:
+            tokens.push({type: TOKEN_TYPE.STRING, value: identifier});
     }
 };
 
