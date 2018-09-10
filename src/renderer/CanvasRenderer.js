@@ -239,11 +239,10 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     text.bounds.top + text.bounds.height
                 );
             }
-            this.ctx.shadowColor = null;
-            this.ctx.shadowOffsetX = null;
-            this.ctx.shadowOffsetY = null;
-            this.ctx.shadowBlur = null;
-
+            this.ctx.shadowColor = '';
+            this.ctx.shadowOffsetX = 0;
+            this.ctx.shadowOffsetY = 0;
+            this.ctx.shadowBlur = 0;
 
             if (textDecoration !== null) {
                 const textDecorationColor = textDecoration.textDecorationColor || color;
