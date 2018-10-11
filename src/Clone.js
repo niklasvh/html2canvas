@@ -225,7 +225,10 @@ export class DocumentCloner {
                                 );
                             }
                         })
-                );
+                )
+                .catch(() => {
+                    // avoid Angular ngZone error
+                });
             return tempIframe;
         }
 
