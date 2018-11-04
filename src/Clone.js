@@ -434,7 +434,7 @@ const inlinePseudoElement = (
 
     if (contentItems) {
         const len = contentItems.length;
-        for (var i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             const item = contentItems[i];
             switch (item.type) {
                 case PSEUDO_CONTENT_ITEM_TYPE.IMAGE:

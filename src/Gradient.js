@@ -335,7 +335,7 @@ const parsePercentageAngle = (angle: string, bounds: Bounds): Direction => {
 };
 
 const findCorner = (bounds: Bounds, x: number, y: number, closest: boolean): Point => {
-    var corners = [
+    const corners = [
         {x: 0, y: 0},
         {x: 0, y: bounds.height},
         {x: bounds.width, y: 0},
