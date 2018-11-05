@@ -1,6 +1,10 @@
 language: node_js
 node_js:
-- '7'
+- 'node'
+- '10'
+- '8'
+- '6'
+- '4'
 env:
   global:
   - secure: eW41gIqOizwO4pTgWnAAbW75AP7F+CK9qfSed/fSh4sJ9HWMIY1YRIaY8gjr+6jV/f7XVHcXuym6ZxgINYSkVKbF1JKxBJNLOXtSgNbVHSic58pYFvUjwxIBI9aPig9uux1+DbnpWqXFDTcACJSevQZE0xwmjdrSkDLgB0G34v8=
