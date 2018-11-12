@@ -25,7 +25,7 @@ export const parseFont = (style: CSSStyleDeclaration): Font => {
     const fontFamily = style.fontFamily;
     const fontSize = style.fontSize;
     const fontStyle = style.fontStyle;
-    const fontVariant = style.fontVariant;
+    const fontVariant = ["normal", "small-caps"].indexOf(style.fontVariant) > -1 ? style.fontVariant : "normal";
     const fontWeight = parseFontWeight(style.fontWeight);
 
     return {
