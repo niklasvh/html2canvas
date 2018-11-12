@@ -53,7 +53,7 @@ const parseNodeTree = (
             childNode instanceof Text ||
             (defaultView.parent && childNode instanceof defaultView.parent.Text)
         ) {
-            if (childNode.data.trim().length > 0) {
+            if (childNode.data.length > 0) {
                 parent.childNodes.push(TextContainer.fromTextNode(childNode, parent));
             }
         } else if (
