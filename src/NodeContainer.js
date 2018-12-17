@@ -273,6 +273,16 @@ const getImage = (node: HTMLElement | SVGSVGElement, resourceLoader: ResourceLoa
         node instanceof node.ownerDocument.defaultView.SVGSVGElement ||
         node instanceof SVGSVGElement
     ) {
+        var svgElem = node.getElementsByTagName('text');
+        for (const n of svgElem) {
+            if (window.getComputedStyle(node, null).getPropertyValue('font-family')) {
+                n.setAttribute(
+                    'font-family',
+                    window.getComputedStyle(node, null).getPropertyValue('font-family')
+                );
+                n.replaceWith(n);
+            }
+        }
         const s = new XMLSerializer();
         return resourceLoader.loadImage(
             `data:image/svg+xml,${encodeURIComponent(s.serializeToString(node))}`
