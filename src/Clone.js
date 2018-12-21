@@ -225,7 +225,7 @@ export class DocumentCloner {
                                 );
                             }
                         })
-                );
+                ).catch( err => err);
             return tempIframe;
         }
 
