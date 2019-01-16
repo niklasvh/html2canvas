@@ -54,6 +54,10 @@ export class DocumentCloner {
         };
         // $FlowFixMe
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
+
+        if (this.options.oncloneForeign) {
+            this.options.oncloneForeign(this.documentElement);
+        }
     }
 
     inlineAllImages(node: ?HTMLElement) {

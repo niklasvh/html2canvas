@@ -17,6 +17,7 @@ export type Options = {
     imageTimeout: number,
     logging: boolean,
     onclone?: Document => void,
+    oncloneForeign?: Node => void,
     proxy: ?string,
     removeContainer: ?boolean,
     scale: number,
