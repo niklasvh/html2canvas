@@ -288,6 +288,10 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
             return image;
         }
 
+        if (isNaN(size.width) || isNaN(size.height)) {
+            return image;
+        }
+
         const canvas = this.canvas.ownerDocument.createElement('canvas');
         canvas.width = size.width;
         canvas.height = size.height;
