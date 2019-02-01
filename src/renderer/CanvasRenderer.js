@@ -200,7 +200,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         this.ctx.translate(offsetX, offsetY);
         this.ctx.scale(1 / this.options.scale, 1 / this.options.scale);
         this.ctx.fill();
-        this.ctx.translate(-offsetX, -offsetY);
+        this.ctx.translate(-offsetX * this.options.scale, -offsetY * this.options.scale);
         this.ctx.scale(this.options.scale, this.options.scale);
     }
 
