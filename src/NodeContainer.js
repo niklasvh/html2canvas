@@ -34,6 +34,7 @@ import {parseBackground} from './parsing/background';
 import {parseBorder} from './parsing/border';
 import {parseBorderRadius} from './parsing/borderRadius';
 import {parseDisplay, DISPLAY} from './parsing/display';
+import Filter, {parseFilter} from './Filter';
 import {parseCSSFloat, FLOAT} from './parsing/float';
 import {parseFont} from './parsing/font';
 import {parseLetterSpacing} from './parsing/letterSpacing';
@@ -68,6 +69,7 @@ type StyleDeclaration = {
     borderRadius: Array<BorderRadius>,
     color: Color,
     display: DisplayBit,
+    filter: Filter,
     float: Float,
     font: Font,
     letterSpacing: number,
@@ -139,6 +141,7 @@ export default class NodeContainer {
                     : parseBorderRadius(style),
             color: IS_INPUT ? INPUT_COLOR : new Color(style.color),
             display: display,
+            filter: parseFilter(style.filter || style.webkitFilter),
             float: parseCSSFloat(style.float),
             font: parseFont(style),
             letterSpacing: parseLetterSpacing(style.letterSpacing),

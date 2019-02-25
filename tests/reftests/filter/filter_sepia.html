@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+	<title>Filter:sepia tests</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../test.js"></script>
+
+	<style>
+		.base_img{
+		  width:auto;
+		  height:300px;
+		}
+		body{ background-color: rgb(80,80,180);}
+
+		.border{ border:1px solid black; }
+		.borderRadius{ border-radius:15px;}
+		.circle{ border-radius:100%; }
+		.filterHigh{
+		  -webkit-filter:sepia(1);
+		 	  filter:sepia(1);
+		}
+		.filterLow{
+		  -webkit-filter:sepia(0.6);
+		 	  filter:sepia(0.6);
+		}
+		.filterHighPerC{
+		  -webkit-filter:sepia(40%);
+		 	  filter:sepia(40%);
+		}
+		.filterLowPerC{
+		  -webkit-filter:sepia(10%);
+		 	  filter:sepia(10%);
+		}
+
+
+	</style>
+	</head>
+	<body>
+		<img class="base_img filterLow" src="./example.jpg">
+		<img class="base_img filterHigh border" src="./example.jpg">
+		<img class="base_img filterLowPerC borderRadius" src="./example.jpg">
+		<img class="base_img filterHighPerC circle" src="./example.jpg">
+	</body>
+</html>

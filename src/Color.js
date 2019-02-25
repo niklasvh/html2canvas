@@ -70,6 +70,11 @@ export default class Color {
     g: number;
     b: number;
     a: number | null;
+    k: number;
+    isHSL: boolean;
+    isHSV: boolean;
+    isCMYK: boolean;
+    isRGB: boolean;
 
     constructor(value: string | Array<number>) {
         const [r, g, b, a] = Array.isArray(value)
@@ -83,6 +88,11 @@ export default class Color {
         this.g = g;
         this.b = b;
         this.a = a;
+        this.k = 0;
+        this.isHSL = false;
+        this.isHSV = false;
+        this.isCMYK = false;
+        this.isRGB = true;
     }
 
     isTransparent(): boolean {
@@ -93,6 +103,413 @@ export default class Color {
         return this.a !== null && this.a !== 1
             ? `rgba(${this.r},${this.g},${this.b},${this.a})`
             : `rgb(${this.r},${this.g},${this.b})`;
+    }
+
+    hsl2rgb() {
+        if (this.isRGB) return;
+        if (!this.isHSL) return;
+        this.r = Math.max(0, Math.min(359, this.r));
+        this.g = Math.max(0, Math.min(100, this.g));
+        this.b = Math.max(0, Math.min(100, this.b));
+        this.g /= 100;
+        this.b /= 100;
+        var C = (1 - Math.abs(2 * this.b - 1)) * this.g;
+        var h = this.r / 60;
+        var X = C * (1 - Math.abs(h % 2 - 1));
+        var l = this.b;
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+        if (h >= 0 && h < 1) {
+            this.r = C;
+            this.g = X;
+        } else if (h >= 1 && h < 2) {
+            this.r = X;
+            this.g = C;
+        } else if (h >= 2 && h < 3) {
+            this.g = C;
+            this.b = X;
+        } else if (h >= 3 && h < 4) {
+            this.g = X;
+            this.b = C;
+        } else if (h >= 4 && h < 5) {
+            this.r = X;
+            this.b = C;
+        } else {
+            this.r = C;
+            this.b = X;
+        }
+        var m = l - C / 2;
+        this.r += m;
+        this.g += m;
+        this.b += m;
+        this.r = Math.round(this.r * 255.0);
+        this.g = Math.round(this.g * 255.0);
+        this.b = Math.round(this.b * 255.0);
+        this.isHSL = false;
+        this.isRGB = true;
+    }
+
+    hsv2rgb() {
+        if (this.isRGB) return;
+        if (!this.isHSV) return;
+        this.r = Math.max(0, Math.min(359, this.r));
+        this.g = Math.max(0, Math.min(100, this.g));
+        this.b = Math.max(0, Math.min(100, this.b));
+        this.g /= 100;
+        this.b /= 100;
+        var C = this.g * this.b;
+        var h = this.r / 60;
+        var X = C * (1 - Math.abs(h % 2 - 1));
+        var v = this.b;
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+        if (h >= 0 && h < 1) {
+            this.r = C;
+            this.g = X;
+        } else if (h >= 1 && h < 2) {
+            this.r = X;
+            this.g = C;
+        } else if (h >= 2 && h < 3) {
+            this.g = C;
+            this.b = X;
+        } else if (h >= 3 && h < 4) {
+            this.g = X;
+            this.b = C;
+        } else if (h >= 4 && h < 5) {
+            this.r = X;
+            this.b = C;
+        } else {
+            this.r = C;
+            this.b = X;
+        }
+        var m = v - C;
+        this.r += m;
+        this.g += m;
+        this.b += m;
+        this.r = Math.round(this.r * 255.0);
+        this.g = Math.round(this.g * 255.0);
+        this.b = Math.round(this.b * 255.0);
+        this.isHSV = false;
+        this.isRGB = true;
+    }
+
+    cmyk2rgb() {
+        if (this.isRGB) return;
+        if (!this.isCMYK) return;
+        this.r = Math.max(0, Math.min(100, this.r)) / 100;
+        this.g = Math.max(0, Math.min(100, this.g)) / 100;
+        this.b = Math.max(0, Math.min(100, this.b)) / 100;
+        this.k = Math.max(0, Math.min(100, this.k)) / 100;
+        this.r = Math.round((1 - this.r) * (1 - this.k) * 255);
+        this.g = Math.round((1 - this.g) * (1 - this.k) * 255);
+        this.b = Math.round((1 - this.b) * (1 - this.k) * 255);
+        this.isCMYK = false;
+        this.isRGB = true;
+    }
+
+    rgb2hsl() {
+        if (this.isHSL) return;
+        if (!this.isRGB) return;
+        this.r = Math.max(0, Math.min(255, this.r));
+        this.g = Math.max(0, Math.min(255, this.g));
+        this.b = Math.max(0, Math.min(255, this.b));
+        this.r /= 255;
+        this.g /= 255;
+        this.b /= 255;
+        var h, l, s;
+        var M = Math.max(this.r, this.g, this.b);
+        var m = Math.min(this.r, this.g, this.b);
+        var d = M - m;
+        if (d == 0) h = 0;
+        else if (M == this.r) h = (this.g - this.b) / d % 6;
+        else if (M == this.g) h = (this.b - this.r) / d + 2;
+        else h = (this.r - this.g) / d + 4;
+        h *= 60;
+        if (h < 0) h += 360;
+        this.r = h;
+        l = (M + m) / 2;
+        if (d == 0) this.g = 0;
+        else this.g = d / (1 - Math.abs(2 * l - 1)) * 100;
+        this.b = l * 100;
+        this.isHSL = true;
+        this.isRGB = false;
+    }
+
+    rgb2hsv() {
+        if (this.isHSV) return;
+        if (!this.isRGB) return;
+        this.r = Math.max(0, Math.min(255, this.r));
+        this.g = Math.max(0, Math.min(255, this.g));
+        this.b = Math.max(0, Math.min(255, this.b));
+        this.r /= 255;
+        this.g /= 255;
+        this.b /= 255;
+        var M = Math.max(this.r, this.g, this.b);
+        var m = Math.min(this.r, this.g, this.b);
+        var C = M - m;
+        var h, s;
+        if (C == 0) h = 0;
+        else if (M == this.r) h = (this.g - this.b) / C % 6;
+        else if (M == this.g) h = (this.b - this.r) / C + 2;
+        else h = (this.r - this.g) / C + 4;
+        h *= 60;
+        if (h < 0) h += 360;
+        this.r = h;
+        //var v = M;
+        if (M == 0) this.g = 0;
+        else this.g = C / M * 100;
+        this.b = M * 100;
+        this.isHSV = true;
+        this.isRGB = false;
+    }
+
+    rgb2cmyk() {
+        if (this.isCMYK) return;
+        if (!this.isRGB) return;
+        this.r = Math.max(0, Math.min(255, this.r));
+        this.g = Math.max(0, Math.min(255, this.g));
+        this.b = Math.max(0, Math.min(255, this.b));
+        this.r /= 255;
+        this.g /= 255;
+        this.b /= 255;
+        this.k = 1 - Math.max(this.r, this.g, this.b);
+        if (this.k == 1) {
+            this.r = 0;
+            this.g = 0;
+            this.b = 0;
+        } else {
+            this.r = Math.round((1 - this.r - this.k) / (1 - this.k) * 100);
+            this.g = Math.round((1 - this.g - this.k) / (1 - this.k) * 100);
+            this.b = Math.round((1 - this.b - this.k) / (1 - this.k) * 100);
+        }
+        this.k = Math.round(this.k * 100);
+        this.isCMYK = true;
+        this.isRGB = false;
+    }
+
+    adjustBrightness(value: number) {
+        if (value < 0) value = 0;
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.rgb2hsl();
+            this.b *= value;
+            this.hsl2rgb();
+            this.rgb2cmyk();
+        } else if (this.isRGB) {
+            this.rgb2hsl();
+            this.b *= value;
+            this.hsl2rgb();
+        } else if (this.isHSV) {
+            //this.hsv2rgb();
+            //this.rgb2hsl();
+            this.b *= value;
+            //this.hsl2rgb();
+            //this.rgb2hsv();
+        } else if (this.isHSL) this.b *= value;
+    }
+
+    brightnessRGB(value: number) {
+        this.r = Math.max(0, Math.min(255, this.r * value));
+        this.g = Math.max(0, Math.min(255, this.g * value));
+        this.b = Math.max(0, Math.min(255, this.b * value));
+    }
+
+    adjustBrightnessRGB(value: number) {
+        if (value < 0) value = 0;
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.brightnessRGB(value);
+            this.rgb2cmyk();
+        } else if (this.isHSL) {
+            this.hsl2rgb();
+            this.brightnessRGB(value);
+            this.rgb2hsl();
+        } else if (this.isHSV) {
+            this.hsv2rgb();
+            this.brightnessRGB(value);
+            this.rgb2hsv();
+        } else if (this.isRGB) {
+            this.brightnessRGB(value);
+        }
+    }
+
+    contrastRGB(value: number) {
+        this.r = Math.max(0, Math.min(255, value * (this.r - 128) + 128));
+        this.g = Math.max(0, Math.min(255, value * (this.g - 128) + 128));
+        this.b = Math.max(0, Math.min(255, value * (this.b - 128) + 128));
+    }
+
+    adjustContrast(value: number) {
+        if (value < 0) value = 0;
+        else if (value > 1) value = 1;
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.contrastRGB(value);
+            this.rgb2cmyk();
+        } else if (this.isHSL) {
+            this.hsl2rgb();
+            this.contrastRGB(value);
+            this.rgb2hsl();
+        } else if (this.isHSV) {
+            this.hsv2rgb();
+            this.contrastRGB(value);
+            this.rgb2hsv();
+        } else if (this.isRGB) {
+            this.contrastRGB(value);
+        }
+    }
+
+    grayscaleRGB(value: number, mode: ?string) {
+        var gray = 0;
+        //different grayscale algorithms
+        switch (mode) {
+            case 'average':
+                gray = (this.r + this.g + this.b) / 3;
+                break;
+            case 'luma:BT601':
+                gray = this.r * 0.299 + this.g * 0.587 + this.b * 0.114;
+                break;
+            case 'desaturation':
+                gray = (Math.max(this.r, this.g, this.b) + Math.max(this.r, this.g, this.b)) / 2;
+                break;
+            case 'decompsition:max':
+                gray = Math.max(this.r, this.g, this.b);
+                break;
+            case 'decompsition:min':
+                gray = Math.min(this.r, this.g, this.b);
+                break;
+            case 'luma:BT709':
+            default:
+                gray = this.r * 0.2126 + this.g * 0.7152 + this.b * 0.0722;
+                break;
+        }
+        this.r = value * (gray - this.r) + this.r;
+        this.g = value * (gray - this.g) + this.g;
+        this.b = value * (gray - this.b) + this.b;
+    }
+
+    grayscale(value: number, mode: ?string) {
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.grayscaleRGB(value, mode);
+            this.rgb2cmyk();
+        } else if (this.isHSL) {
+            this.hsl2rgb();
+            this.grayscaleRGB(value, mode);
+            this.rgb2hsl();
+        } else if (this.isHSV) {
+            this.hsv2rgb();
+            this.grayscaleRGB(value, mode);
+            this.rgb2hsv();
+        } else if (this.isRGB) {
+            this.grayscaleRGB(value, mode);
+        }
+    }
+
+    adjustHue(value: number) {
+        while (value < 0) value += 360;
+        while (value > 360) value -= 360;
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.rgb2hsl();
+            this.r += value;
+            if (this.r < 0) this.r += 360;
+            if (this.r > 359) this.r -= 360;
+            this.hsl2rgb();
+            this.rgb2cmyk();
+        } else if (this.isRGB) {
+            this.rgb2hsl();
+            this.r += value;
+            if (this.r < 0) this.r += 360;
+            if (this.r > 359) this.r -= 360;
+            this.hsl2rgb();
+        } else if (this.isHSV) {
+            this.r += value;
+            if (this.r < 0) this.r += 360;
+            if (this.r > 359) this.r -= 360;
+        } else if (this.isHSL) {
+            this.r += value;
+            if (this.r < 0) this.r += 360;
+            if (this.r > 359) this.r -= 360;
+        }
+    }
+
+    invert(value: number) {
+        if (this.isRGB) {
+            this.r = value * (255 - 2 * this.r) + this.r;
+            this.g = value * (255 - 2 * this.g) + this.g;
+            this.b = value * (255 - 2 * this.b) + this.b;
+        } else if (this.isHSL || this.isHSV) {
+            this.r = value * (360 - 2 * this.r) + this.r;
+            this.g = value * (100 - 2 * this.g) + this.g;
+            this.b = value * (100 - 2 * this.b) + this.b;
+        } else if (this.isCMYK) {
+            this.r = value * (255 - 2 * this.r) + this.r;
+            this.g = value * (255 - 2 * this.g) + this.g;
+            this.b = value * (255 - 2 * this.b) + this.b;
+            //this.k = 1 - this.k;
+        }
+    }
+
+    adjustSaturation(value: number) {
+        while (value < 0) value = 0;
+        if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.rgb2hsl();
+            this.g *= value;
+            if (this.g > 100) this.g = 100;
+            this.hsl2rgb();
+            this.rgb2cmyk();
+        } else if (this.isHSL) {
+            this.g *= value;
+            if (this.g > 100) this.g = 100;
+        } else if (this.isHSV) {
+            this.g *= value;
+            if (this.g > 100) this.g = 100;
+        } else {
+            this.rgb2hsl();
+            this.g *= value;
+            if (this.g > 100) this.g = 100;
+            this.hsl2rgb();
+        }
+    }
+
+    sepiaRGB(value: number) {
+        this.r =
+            value * Math.min(255, this.r * 0.393 + this.g * 0.769 + this.b * 0.189 - this.r) +
+            this.r;
+        this.g =
+            value * Math.min(255, this.r * 0.349 + this.g * 0.686 + this.b * 0.168 - this.g) +
+            this.g;
+        this.b =
+            value * Math.min(255, this.r * 0.272 + this.g * 0.534 + this.b * 0.131 - this.b) +
+            this.b;
+    }
+
+    adjustSepia(value: number) {
+        if (value < 0) value = 0;
+        else if (value > 1) value = 1;
+        if (this.isRGB) {
+            this.sepiaRGB(value);
+        } else if (this.isCMYK) {
+            this.cmyk2rgb();
+            this.sepiaRGB(value);
+            this.rgb2cmyk();
+        } else if (this.isHSL) {
+            this.hsl2rgb();
+            this.sepiaRGB(value);
+            this.rgb2hsl();
+        } else if (this.isHSV) {
+            this.hsv2rgb();
+            this.sepiaRGB(value);
+            this.rgb2hsv();
+        }
+    }
+
+    static create(s): Color {
+        return new Color(s);
     }
 }
 
