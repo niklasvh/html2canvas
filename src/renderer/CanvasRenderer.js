@@ -104,9 +104,6 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     var alpha = imageData.data[index + 3];
                     var c = Color.create([red, green, blue, alpha]);
 
-                    if (filter.hasOpacity()) {
-                        alpha = filter.getOpacity() * 255;
-                    }
                     if (filter.hasSepia()) {
                         c.adjustSepia(filter.getSepia());
                     }
@@ -128,11 +125,19 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     if (filter.hasContrast()) {
                         c.adjustContrast(filter.getContrast());
                     }
+                    if (filter.hasOpacity()) {
+                        //opacity filter is applied last, because it blends with the BG and sets opacity to 1
+                        c.a = filter.getOpacity();
+                        if (typeof this.options.backgroundColor !== "undefined") {
+                            c.blend(this.options.backgroundColor, c.a);
+                        }
+                    }
+
 
                     imageData.data[index] = c.r;
                     imageData.data[index + 1] = c.g;
                     imageData.data[index + 2] = c.b;
-                    imageData.data[index + 3] = alpha;
+                    imageData.data[index + 3] = c.a;
                 }
             }
             this.ctx.putImageData(imageData, destination.left, destination.top);

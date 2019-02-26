@@ -289,6 +289,25 @@ export default class Color {
         this.isRGB = false;
     }
 
+    blend(color: Color, opacity){
+        if (opacity > 1) opacity /= 255;
+        this.r = opacity * (this.r - color.r) + color.r;
+        this.g = opacity * (this.g - color.g) + color.g;
+        this.b = opacity * (this.b - color.b) + color.b;
+        this.a = 255;
+    }
+
+    clip(){
+      if(this.r > 255) this.r = 255;
+      if(this.g > 255) this.g = 255;
+      if(this.b > 255) this.b = 255;
+      if(this.a > 255) this.a = 255;
+      if(this.r < 0) this.r = 0;
+      if(this.g < 0) this.g = 0;
+      if(this.b < 0) this.b = 0;
+      if(this.a < 0) this.a = 0;
+    }
+
     adjustBrightness(value: number) {
         if (value < 0) value = 0;
         if (this.isCMYK) {
