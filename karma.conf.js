@@ -1,6 +1,7 @@
 // Karma configuration
 // Generated on Sat Aug 05 2017 23:42:26 GMT+0800 (Malay Peninsula Standard Time)
 
+const path = require('path');
 const port = 9876;
 module.exports = function(config) {
     const slLaunchers = (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) ? {} : {
@@ -78,6 +79,15 @@ module.exports = function(config) {
         }
     });
 
+    const injectTypedArrayPolyfills = function(files) {
+        files.unshift({
+            pattern: path.resolve('./node_modules/js-polyfills/typedarray.js'),
+            included: true,
+            served: true,
+            watched: false
+        });
+    };
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -86,8 +96,7 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha'],
-
+        frameworks: ['mocha', 'inline-mocha-fix'],
 
         // list of files / patterns to load in the browser
         files: [
@@ -97,6 +106,12 @@ module.exports = function(config) {
             { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true}
         ],
 
+        plugins: [
+            'karma-*',
+            {
+                'framework:inline-mocha-fix': ['factory', injectTypedArrayPolyfills]
+            }
+        ],
 
         // list of files to exclude
         exclude: [

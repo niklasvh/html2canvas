@@ -46,6 +46,7 @@
     "glob": "7.1.2",
     "html2canvas-proxy": "1.0.1",
     "jquery": "3.2.1",
+    "js-polyfills": "^0.1.42",
     "karma": "^4.0.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-edge-launcher": "^0.4.2",
