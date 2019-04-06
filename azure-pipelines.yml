@@ -1,0 +1,20 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+- script: Xvfb :99 &
+  displayName: 'Start Xvfb'
+- script: DISPLAY=:99 TARGET_BROWSER=Firefox_Stable npm run karma
+  displayName: 'Run the tests on Firefox'
