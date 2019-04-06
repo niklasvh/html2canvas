@@ -81,12 +81,14 @@ module.exports = function(config) {
 
     const injectTypedArrayPolyfills = function(files) {
         files.unshift({
-            pattern: path.resolve('./node_modules/js-polyfills/typedarray.js'),
+            pattern: path.resolve(__dirname, './node_modules/js-polyfills/typedarray.js'),
             included: true,
             served: true,
             watched: false
         });
     };
+
+    injectTypedArrayPolyfills.$inject = ['config.files'];
 
     config.set({
 
@@ -103,7 +105,7 @@ module.exports = function(config) {
             'build/testrunner.js',
             { pattern: './tests/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './dist/**/*', 'watched': true, 'included': false, 'served': true},
-            { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true}
+            { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true},
         ],
 
         plugins: [
