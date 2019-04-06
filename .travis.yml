@@ -25,68 +25,14 @@ cache:
 jobs:
   include:
     - stage: test
-      name: "Flow/lint"
-      script:
-        - npm run flow && npm run lint
-    - stage: test
-      name: "Unit tests"
-      script:
-        - npm run build && npm run test:node
-    - stage: test
-      name: "Browser test - Edge 18"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_Edge18 npm run karma
-    - stage: test
-      name: "Browser test - Android 4.4"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_Android4 npm run karma
-    - stage: test
-      name: "Browser test - iOS Safari 9.3"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_iOS9_3 npm run karma
-    - stage: test
-      name: "Browser test - iOS Safari 10.3"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_iOS10_3 npm run karma
-    - stage: test
-      name: "Browser test - Chrome Stable"
-      addons:
-        chrome: stable
-      script:
-        - export DISPLAY=:99.0
-        - sh -e /etc/init.d/xvfb start
-        - npm run build
-        - TARGET_BROWSER=Chrome_Stable npm run karma
-    - stage: test
-      name: "Browser test - Firefox Stable"
-      addons:
-        firefox: latest
-      script:
-        - export DISPLAY=:99.0
-        - sh -e /etc/init.d/xvfb start
-        - npm run build
-        - TARGET_BROWSER=Firefox_Stable npm run karma
-    - stage: test
-      name: "Browser test - Safari Stable"
-      os: osx
-      script:
-        - sudo safaridriver --enable
-        - npm run build
-        - TARGET_BROWSER=Safari_Stable npm run karma
-    - stage: test
       name: "Browser test - Internet Explorer 11"
       os: windows
       filter_secrets: false
+      if: type = push AND repo=niklasvh/html2canvas
       script:
         - npm run build
+        - dir "c:\Program Files"
+        - dir "c:\Program Files (x86)"
         - TARGET_BROWSER=IE_11 npm run karma
     - stage: test
       name: "Build docs"
