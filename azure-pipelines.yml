@@ -6,7 +6,8 @@ jobs:
     displayName: Linux Firefox Stable
     pool:
       vmImage: 'Ubuntu-16.04'
-
+    variables:
+      TARGET_BROWSER: Firefox_Stable
     steps:
     - task: NodeTool@0
       inputs:
@@ -19,14 +20,15 @@ jobs:
       displayName: Build
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
-    - script: DISPLAY=:99 TARGET_BROWSER=Firefox_Stable npm run karma
+    - script: DISPLAY=:99 npm run karma
       displayName: 'Run Firefox tests - Firefox Stable'
 
   - job: Browser_Tests_Linux_Chrome_Stable
     displayName: Linux Chrome Stable
     pool:
       vmImage: 'Ubuntu-16.04'
-
+    variables:
+      TARGET_BROWSER: Chrome_Stable
     steps:
     - task: NodeTool@0
       inputs:
@@ -39,12 +41,14 @@ jobs:
       displayName: Build
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
-    - script: DISPLAY=:99 TARGET_BROWSER=Chrome_Stable npm run karma
+    - script: DISPLAY=:99 npm run karma
       displayName: 'Run Chrome tests - Chrome Stable'
   - job: Browser_Tests_OSX_Safari_Stable
     displayName: OSX Safari Stable
     pool:
       vmImage: 'macOS-10.13'
+    variables:
+      TARGET_BROWSER: Safari_Stable
     steps:
     - task: NodeTool@0
       inputs:
@@ -55,12 +59,14 @@ jobs:
         command: install
     - script: npm run build
       displayName: Build
-    - script: TARGET_BROWSER=Safari_Stable npm run karma
+    - script: npm run karma
       displayName: 'Run Safari tests - Safari Stable'
   - job: Browser_Tests_Windows_IE11
     displayName: Windows Internet Explorer 11
     pool:
       vmImage: 'vs2017-win2016'
+    variables:
+      TARGET_BROWSER: IE11
     steps:
     - task: NodeTool@0
       inputs:
@@ -71,5 +77,5 @@ jobs:
         command: install
     - script: npm run build
       displayName: Build
-    - script: TARGET_BROWSER=IE11 npm run karma
+    - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 11'
