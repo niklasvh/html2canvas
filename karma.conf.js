@@ -4,74 +4,82 @@
 const path = require('path');
 const port = 9876;
 module.exports = function(config) {
-    const slLaunchers = (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) ? {} : {
-        sl_ie9: {
+    const launchers = {
+        SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '9.0',
             platform: 'Windows 7'
         },
-        sl_ie10: {
+        SauceLabs_IE10: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '10.0',
             platform: 'Windows 7'
         },
-        sl_ie11: {
+        SauceLabs_IE11: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '11.0',
             platform: 'Windows 7'
         },
-        sl_edge_15: {
+        SauceLabs_Edge15: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
             version: '15.15063',
             platform: 'Windows 10'
         },
-        sl_edge_14: {
+        SauceLabs_Edge14: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
             version: '14.14393',
             platform: 'Windows 10'
         },
-        sl_safari: {
+        SauceLabs_Safari10: {
             base: 'SauceLabs',
             browserName: 'safari',
             version: '10.1',
             platform: 'macOS 10.12'
         },
-        'sl_android_4.4': {
+        SauceLabs_Android4: {
             base: 'SauceLabs',
             browserName: 'Browser',
             platform: 'Android',
             version: '4.4',
             device: 'Android Emulator',
         },
-        'sl_ios_10.3_safari': {
+        SauceLabs_iOS10_3: {
             base: 'SauceLabs',
             browserName: 'Safari',
             platform: 'iOS',
             version: '10.3',
             device: 'iPhone 7 Plus Simulator'
         },
-        'sl_ios_9.3_safari': {
+        SauceLabs_iOS9_3: {
             base: 'SauceLabs',
             browserName: 'Safari',
             platform: 'iOS',
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
+        },
+        Chrome_Stable: {
+            base: 'Chrome'
+        },
+        Firefox_Stable: {
+            base: 'Firefox'
         }
     };
 
-    const customLaunchers = Object.assign({}, slLaunchers, {
+    const ciLauncher = launchers[process.env.TARGET_BROWSER];
+
+    const customLaunchers = ciLauncher ? ciLauncher : {
         stable_chrome: {
             base: 'Chrome'
         },
         stable_firefox: {
             base: 'Firefox'
         }
-    });
+    };
 
     const injectTypedArrayPolyfills = function(files) {
         files.unshift({

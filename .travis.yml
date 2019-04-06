@@ -36,13 +36,40 @@ jobs:
       script:
         - npm run build && npm run test:node
     - stage: test
-      name: "Browser tests"
+      name: "Browser test - Chrome Stable"
       addons:
         chrome: stable
+      script:
+        - npm run build
+        - TARGET_BROWSER=Chrome_Stable npm run karma
+    - stage: test
+      name: "Browser test - Firefox Stable"
+      addons:
         firefox: latest
       script:
         - npm run build
-        - npm run karma
+        - TARGET_BROWSER=Firefox_Stable npm run karma
+    - stage: test
+      name: "Browser test - Internet Explorer 9"
+      addons:
+        firefox: latest
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_IE9 npm run karma
+    - stage: test
+      name: "Browser test - Internet Explorer 10"
+      addons:
+        firefox: latest
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_IE10 npm run karma
+    - stage: test
+      name: "Browser test - Internet Explorer 11"
+      addons:
+        firefox: latest
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_IE11 npm run karma
     - stage: test
       name: "Build docs"
       script:
