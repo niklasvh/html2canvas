@@ -72,7 +72,7 @@ module.exports = function(config) {
 
     const ciLauncher = launchers[process.env.TARGET_BROWSER];
 
-    const customLaunchers = ciLauncher ? ciLauncher : {
+    const customLaunchers = ciLauncher ? {target_browser: ciLauncher} : {
         stable_chrome: {
             base: 'Chrome'
         },
