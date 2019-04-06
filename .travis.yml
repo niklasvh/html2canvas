@@ -37,46 +37,58 @@ jobs:
         - npm run build && npm run test:node
     - stage: test
       name: "Browser test - Internet Explorer 9"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_IE9 npm run karma
     - stage: test
       name: "Browser test - Internet Explorer 10"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_IE10 npm run karma
     - stage: test
       name: "Browser test - Internet Explorer 11"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_IE11 npm run karma
     - stage: test
       name: "Browser test - Edge 14"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_Edge14 npm run karma
     - stage: test
       name: "Browser test - Edge 15"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_Edge15 npm run karma
     - stage: test
       name: "Browser test - OSX Safari 10"
-      addons:
-        firefox: latest
+      if: type = push
       script:
         - npm run build
         - TARGET_BROWSER=SauceLabs_Safari10 npm run karma
+    - stage: test
+      name: "Browser test - Android 4.4"
+      if: type = push
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_Android4 npm run karma
+    - stage: test
+      name: "Browser test - iOS Safari 9.3"
+      if: type = push
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_iOS9_3 npm run karma
+    - stage: test
+      name: "Browser test - iOS Safari 10.3"
+      if: type = push
+      script:
+        - npm run build
+        - TARGET_BROWSER=SauceLabs_iOS10_3 npm run karma
     - stage: test
       name: "Browser test - Chrome Stable"
       addons:
