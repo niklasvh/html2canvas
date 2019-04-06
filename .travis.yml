@@ -26,16 +26,23 @@ notifications:
 jobs:
   include:
     - stage: test
+      name: "Flow/lint"
       script:
         - npm run flow && npm run lint
+    - stage: test
+      name: "Unit tests"
+      script:
         - npm run build && npm run test:node
     - stage: test
+      name: "Browser tests"
       addons:
         chrome: stable
         firefox: latest
       script:
+        - npm run build
         - npm run karma
     - stage: build-docs
+      name: "Build docs"
       script:
         - npm run build && cd www && npm install && npm run build && cd ..
     - stage: deploy-docs
