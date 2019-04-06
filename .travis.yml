@@ -53,6 +53,7 @@ jobs:
     - stage: release
       name: "Deploy docs"
       script: skip
+      if: type = push AND branch=master AND repo=niklasvh/html2canvas
       deploy:
         provider: pages
         skip_cleanup: true
@@ -61,13 +62,13 @@ jobs:
         fqdn: html2canvas.hertzen.com
         github_token:
           secure: "PowO/Jat660k3gHcjgI6DlJz15RM7pLUu11UPsLCtYJ8ZwodppE6Keg0DfVkSFSIZttZor+UssDwP/WOEqfZNLqmXbcj3Gec4xolohet/GOe0KJKKuF/HgggbcxumopxMX6sMVePlMBpkLpHh7tgEAEHBWTlzC1c1a7Xa48fZ7k="
-        if: branch=master AND repo=niklasvh/html2canvas
         on:
           branch: master
           repo: niklasvh/html2canvas
     - stage: release
       name: "GitHub release"
       script: skip
+      if: type = push AND tag IS present AND branch=master AND repo=niklasvh/html2canvas
       deploy:
         provider: releases
         api_key:
@@ -76,7 +77,6 @@ jobs:
          - "dist/html2canvas.js"
          - "dist/html2canvas.min.js"
         skip_cleanup: true
-        if: tag IS present AND branch=master AND repo=niklasvh/html2canvas
         on:
           tags: true
           branch: master
@@ -84,13 +84,13 @@ jobs:
     - stage: release
       name: "npm release"
       script: skip
+      if: type = push AND tag IS present AND branch=master AND repo=niklasvh/html2canvas
       deploy:
         provider: npm
         email: niklasvh@gmail.com
         api_key:
           secure: G/Szpr8q4/D6hp+H/Z9yyluUXtHAwf7LLa1Y07X59/Enlj1h7V5fQ7AW4/iAVM3XbIsrCPWR3dJU9g/ZxpxFg4OovIHVpS2Jr/mahtPYWdHR3pWuSmMW8QD+Twnq2VAFwSgg5Oumq3QxhX3YbCOnZox6+6Uviqk8FO7Z5B0RwW4=
         skip_cleanup: true
-        if: tag IS present AND branch=master AND repo=niklasvh/html2canvas
         on:
           tags: true
           branch: master
