@@ -2,7 +2,7 @@ trigger:
 - master
 
 jobs:
-  - job: Browser Tests (Linux) Firefox Stable
+  - job: Browser_Tests_Linux_Firefox_Stable
     pool:
       vmImage: 'Ubuntu-16.04'
 
@@ -21,7 +21,7 @@ jobs:
     - script: DISPLAY=:99 TARGET_BROWSER=Firefox_Stable npm run karma
       displayName: 'Run Firefox tests - Firefox Stable'
 
-  - job: Browser Tests (Linux) Chrome Stable
+  - job: Browser_Tests_Linux_Chrome_Stable
     pool:
       vmImage: 'Ubuntu-16.04'
 
@@ -39,7 +39,7 @@ jobs:
       displayName: 'Start Xvfb'
     - script: DISPLAY=:99 TARGET_BROWSER=Chrome_Stable npm run karma
       displayName: 'Run Chrome tests - Chrome Stable'
-  - job: Browser Tests (OSX) Safari Stable
+  - job: Browser_Tests_OSX_Safari_Stable
     pool:
       vmImage: 'macOS-10.13'
     steps:
