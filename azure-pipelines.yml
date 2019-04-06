@@ -14,7 +14,7 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm build
+    - script: npm run build
       displayName: Build
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
@@ -33,7 +33,7 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm build
+    - script: npm run build
       displayName: Build
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
@@ -50,5 +50,7 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
+    - script: npm run build
+      displayName: Build
     - script: TARGET_BROWSER=Safari_Stable npm run karma
       displayName: 'Run Safari tests - Safari Stable'
