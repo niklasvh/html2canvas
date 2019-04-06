@@ -5,12 +5,6 @@ const path = require('path');
 const port = 9876;
 module.exports = function(config) {
     const slLaunchers = (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) ? {} : {
-        sl_beta_chrome: {
-            base: 'SauceLabs',
-            browserName: 'chrome',
-            platform: 'Windows 10',
-            version: 'beta'
-        },
         sl_ie9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
