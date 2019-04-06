@@ -50,6 +50,9 @@ module.exports = function(config) {
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
         },
+        IE_11: {
+            base: 'IE'
+        },
         Safari_Stable: {
             base: 'Safari'
         },

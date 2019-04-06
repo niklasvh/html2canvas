@@ -100,6 +100,11 @@ jobs:
         - npm run build
         - TARGET_BROWSER=Safari_Stable npm run karma
     - stage: test
+      os: windows
+      script:
+        - npm run build
+        - TARGET_BROWSER=IE_11 npm run karma
+    - stage: test
       name: "Build docs"
       script:
         - npm run build && cd www && npm install && npm run build && cd ..
