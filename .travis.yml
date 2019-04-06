@@ -3,9 +3,6 @@ node_js:
 - '10'
 stages:
   - test
-  - build-docs
-  - deploy-docs
-  - release
   - release
 env:
   global:
@@ -46,7 +43,7 @@ jobs:
       script:
         - npm run build
         - npm run karma
-    - stage: build-docs
+    - stage: test
       name: "Build docs"
       script:
         - npm run build && cd www && npm install && npm run build && cd ..
