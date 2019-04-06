@@ -19,9 +19,7 @@ notifications:
     on_start: false
 install:
   - npm ci
-cache:
-  directories:
-  - "$HOME/.npm"
+cache: npm
 jobs:
   include:
     - stage: test
