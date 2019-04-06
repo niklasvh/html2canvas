@@ -54,17 +54,11 @@ jobs:
         - npm run build
         - TARGET_BROWSER=SauceLabs_IE11 npm run karma
     - stage: test
-      name: "Browser test - Edge 14"
+      name: "Browser test - Edge 18"
       if: type = push
       script:
         - npm run build
-        - TARGET_BROWSER=SauceLabs_Edge14 npm run karma
-    - stage: test
-      name: "Browser test - Edge 15"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_Edge15 npm run karma
+        - TARGET_BROWSER=SauceLabs_Edge18 npm run karma
     - stage: test
       name: "Browser test - OSX Safari 10"
       if: type = push
@@ -103,6 +97,13 @@ jobs:
       script:
         - npm run build
         - TARGET_BROWSER=Firefox_Stable npm run karma
+    - stage: test
+      name: "Browser test - Safari Stable"
+      os: osx
+      script:
+        - sudo safaridriver --enable
+        - npm run build
+        - TARGET_BROWSER=Safari_Stable npm run karma
     - stage: test
       name: "Build docs"
       script:

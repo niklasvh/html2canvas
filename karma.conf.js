@@ -35,12 +35,6 @@ module.exports = function(config) {
             version: '14.14393',
             platform: 'Windows 10'
         },
-        SauceLabs_Safari10: {
-            base: 'SauceLabs',
-            browserName: 'safari',
-            version: '10.1',
-            platform: 'macOS 10.12'
-        },
         SauceLabs_Android4: {
             base: 'SauceLabs',
             browserName: 'Browser',
@@ -61,6 +55,9 @@ module.exports = function(config) {
             platform: 'iOS',
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
+        },
+        Safari_Stable: {
+            base: 'Safari'
         },
         Chrome_Stable: {
             base: 'Chrome'
