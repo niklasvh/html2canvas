@@ -22,6 +22,11 @@ jobs:
       displayName: 'Start Xvfb'
     - script: DISPLAY=:99 npm run karma
       displayName: 'Run Firefox tests - Firefox Stable'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
 
   - job: Browser_Tests_Linux_Chrome_Stable
     displayName: Linux Chrome Stable
@@ -43,6 +48,11 @@ jobs:
       displayName: 'Start Xvfb'
     - script: DISPLAY=:99 npm run karma
       displayName: 'Run Chrome tests - Chrome Stable'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
   - job: Browser_Tests_OSX_Safari_Stable
     displayName: OSX Safari Stable
     pool:
@@ -61,6 +71,11 @@ jobs:
       displayName: Build
     - script: npm run karma
       displayName: 'Run Safari tests - Safari Stable'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
   - job: Browser_Tests_Windows_IE9
     displayName: Windows Internet Explorer 9 (Emulated)
     pool:
@@ -79,6 +94,11 @@ jobs:
       displayName: Build
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 9'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
   - job: Browser_Tests_Windows_IE10
     displayName: Windows Internet Explorer 10 (Emulated)
     pool:
@@ -97,6 +117,11 @@ jobs:
       displayName: Build
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 10'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
   - job: Browser_Tests_Windows_IE11
     displayName: Windows Internet Explorer 11
     pool:
@@ -115,3 +140,8 @@ jobs:
       displayName: Build
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 11'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
