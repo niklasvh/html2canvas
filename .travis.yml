@@ -57,12 +57,6 @@ jobs:
         - npm run build
         - TARGET_BROWSER=SauceLabs_Edge18 npm run karma
     - stage: test
-      name: "Browser test - OSX Safari 10"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_Safari10 npm run karma
-    - stage: test
       name: "Browser test - Android 4.4"
       if: type = push
       script:

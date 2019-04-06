@@ -23,16 +23,10 @@ module.exports = function(config) {
             version: '11.0',
             platform: 'Windows 7'
         },
-        SauceLabs_Edge15: {
+        SauceLabs_Edge18: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
-            version: '15.15063',
-            platform: 'Windows 10'
-        },
-        SauceLabs_Edge14: {
-            base: 'SauceLabs',
-            browserName: 'MicrosoftEdge',
-            version: '14.14393',
+            version: '18.17763',
             platform: 'Windows 10'
         },
         SauceLabs_Android4: {
