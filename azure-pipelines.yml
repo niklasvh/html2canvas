@@ -1,20 +1,54 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Ubuntu-16.04'
+jobs:
+  - job: Browser Tests (Linux) Firefox Stable
+    pool:
+      vmImage: 'Ubuntu-16.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm build
+      displayName: Build
+    - script: Xvfb :99 &
+      displayName: 'Start Xvfb'
+    - script: DISPLAY=:99 TARGET_BROWSER=Firefox_Stable npm run karma
+      displayName: 'Run Firefox tests - Firefox Stable'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-- script: Xvfb :99 &
-  displayName: 'Start Xvfb'
-- script: DISPLAY=:99 TARGET_BROWSER=Firefox_Stable npm run karma
-  displayName: 'Run the tests on Firefox'
+  - job: Browser Tests (Linux) Chrome Stable
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm build
+      displayName: Build
+    - script: Xvfb :99 &
+      displayName: 'Start Xvfb'
+    - script: DISPLAY=:99 TARGET_BROWSER=Chrome_Stable npm run karma
+      displayName: 'Run Chrome tests - Chrome Stable'
+  - job: Browser Tests (OSX) Safari Stable
+    pool:
+      vmImage: 'macOS-10.13'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: TARGET_BROWSER=Safari_Stable npm run karma
+      displayName: 'Run Safari tests - Safari Stable'
