@@ -34,6 +34,7 @@ jobs:
         - dir "c:\Program Files\internet explorer"
         - dir "c:\Program Files (x86)"
         - dir "c:\Program Files (x86)\internet explorer"
+        - "c:\Program Files (x86)\internet explorer\iexplore.exe" http://blog.hertzen.com/
         - TARGET_BROWSER=IE_11 IE_BIN="c:\Program Files (x86)\Internet Explorer\iexplore.exe" npm run karma
     - stage: test
       name: "Build docs"
