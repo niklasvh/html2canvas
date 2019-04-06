@@ -50,6 +50,16 @@ module.exports = function(config) {
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
         },
+        IE_9: {
+            base: 'IE',
+            'x-ua-compatible': 'IE=EmulateIE9',
+            flags: ['-extoff']
+        },
+        IE_10: {
+            base: 'IE',
+            'x-ua-compatible': 'IE=EmulateIE10',
+            flags: ['-extoff']
+        },
         IE_11: {
             base: 'IE',
             flags: ['-extoff']
