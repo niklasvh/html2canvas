@@ -3,6 +3,7 @@ trigger:
 
 jobs:
   - job: Browser_Tests_Linux_Firefox_Stable
+    displayName: Linux Firefox Stable
     pool:
       vmImage: 'Ubuntu-16.04'
 
@@ -22,6 +23,7 @@ jobs:
       displayName: 'Run Firefox tests - Firefox Stable'
 
   - job: Browser_Tests_Linux_Chrome_Stable
+    displayName: Linux Chrome Stable
     pool:
       vmImage: 'Ubuntu-16.04'
 
@@ -40,6 +42,7 @@ jobs:
     - script: DISPLAY=:99 TARGET_BROWSER=Chrome_Stable npm run karma
       displayName: 'Run Chrome tests - Chrome Stable'
   - job: Browser_Tests_OSX_Safari_Stable
+    displayName: OSX Safari Stable
     pool:
       vmImage: 'macOS-10.13'
     steps:
@@ -54,3 +57,19 @@ jobs:
       displayName: Build
     - script: TARGET_BROWSER=Safari_Stable npm run karma
       displayName: 'Run Safari tests - Safari Stable'
+  - job: Browser_Tests_Windows_IE11
+    displayName: Windows Internet Explorer 11
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm run build
+      displayName: Build
+    - script: TARGET_BROWSER=IE11 npm run karma
+      displayName: 'Run Internet Explorer tests - IE 11'
