@@ -33,24 +33,6 @@ jobs:
       script:
         - npm run build && npm run test:node
     - stage: test
-      name: "Browser test - Internet Explorer 9"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_IE9 npm run karma
-    - stage: test
-      name: "Browser test - Internet Explorer 10"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_IE10 npm run karma
-    - stage: test
-      name: "Browser test - Internet Explorer 11"
-      if: type = push
-      script:
-        - npm run build
-        - TARGET_BROWSER=SauceLabs_IE11 npm run karma
-    - stage: test
       name: "Browser test - Edge 18"
       if: type = push
       script:
@@ -100,7 +82,9 @@ jobs:
         - npm run build
         - TARGET_BROWSER=Safari_Stable npm run karma
     - stage: test
+      name: "Browser test - Internet Explorer 11"
       os: windows
+      filter_secrets: false
       script:
         - npm run build
         - TARGET_BROWSER=IE_11 npm run karma
