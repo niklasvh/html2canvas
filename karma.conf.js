@@ -51,7 +51,8 @@ module.exports = function(config) {
             device: 'iPhone 6 Plus Simulator'
         },
         IE_11: {
-            base: 'IE'
+            base: 'IE',
+            flags: ['-extoff']
         },
         Safari_Stable: {
             base: 'Safari'
