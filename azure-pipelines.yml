@@ -16,12 +16,12 @@ jobs:
         command: install
     - script: npm run build
       displayName: Build
-    - script: ##vso[task.setvariable variable=packageName;isOutput=true]npm pack
+    - script: npm pack && mv html2canvas-*.tgz html2canvas.tgz
       displayName: Pack
       name: pack
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: $(pack.packageName)
+        PathtoPublish: html2canvas.tgz
         artifactName: npm
     - task: PublishBuildArtifacts@1
       inputs:
