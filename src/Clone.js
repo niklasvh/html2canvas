@@ -234,21 +234,25 @@ export class DocumentCloner {
             return tempIframe;
         }
 
-        if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
-            const css = [].slice.call(node.sheet.cssRules, 0).reduce((css, rule) => {
-                try {
+        try {
+            if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
+                const css = [].slice.call(node.sheet.cssRules, 0).reduce((css, rule) => {
                     if (rule && rule.cssText) {
                         return css + rule.cssText;
                     }
                     return css;
-                } catch (err) {
-                    this.logger.log('Unable to access cssText property', rule.name);
-                    return css;
-                }
-            }, '');
-            const style = node.cloneNode(false);
-            style.textContent = css;
-            return style;
+                }, '');
+                const style = node.cloneNode(false);
+                style.textContent = css;
+                return style;
+            }
+        } catch (e) {
+            // accessing node.sheet.cssRules throws a DOMException
+            this.logger.log('Unable to access cssRules property');
+            if (e.name !== 'SecurityError') {
+                this.logger.log(e);
+                throw e;
+            }
         }
 
         return node.cloneNode(false);
