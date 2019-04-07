@@ -16,10 +16,11 @@ jobs:
         command: install
     - script: |
        echo "aaa"
-       git log --format=%B -n 1
+       git log --format=%B -n 5
        echo "ddd"
        echo "$(Build.SourceVersionMessage)"
        echo "sss"
+       git log --format=%B -n 1 $(Build.SourceVersion)
     - task: Npm@0
       inputs:
         command: version patch
