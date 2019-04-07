@@ -14,6 +14,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const filenamifyUrl = require('filenamify-url');
 
+const mkdirp = require('mkdirp');
+const screenshotFolder = './tmp/reftests';
+
+mkdirp.sync(path.resolve(__dirname, screenshotFolder));
+
+
 const CORS_PORT = 8081;
 const corsApp = express();
 corsApp.use('/proxy', proxy());
@@ -61,7 +67,7 @@ const writeScreenshot = (buffer, body) => {
         {replacement: '-'}
     )}!${body.platform.name}-${body.platform.version}.png`;
 
-    fs.writeFileSync(path.resolve(__dirname, './tests/results/', filename), buffer);
+    fs.writeFileSync(path.resolve(__dirname, screenshotFolder, filename), buffer);
 };
 
 app.post('/screenshot', (req, res) => {

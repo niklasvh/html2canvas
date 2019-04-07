@@ -27,7 +27,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
-
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
   - job: Browser_Tests_Linux_Chrome_Stable
     displayName: Linux Chrome Stable
     pool:
@@ -53,6 +55,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
   - job: Browser_Tests_OSX_Safari_Stable
     displayName: OSX Safari Stable
     pool:
@@ -76,6 +81,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
   - job: Browser_Tests_Windows_IE9
     displayName: Windows Internet Explorer 9 (Emulated)
     pool:
@@ -99,6 +107,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
   - job: Browser_Tests_Windows_IE10
     displayName: Windows Internet Explorer 10 (Emulated)
     pool:
@@ -122,6 +133,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
   - job: Browser_Tests_Windows_IE11
     displayName: Windows Internet Explorer 11
     pool:
@@ -145,3 +159,6 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'tmp/reftests'
