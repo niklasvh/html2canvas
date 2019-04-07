@@ -1,82 +1,101 @@
 // Karma configuration
 // Generated on Sat Aug 05 2017 23:42:26 GMT+0800 (Malay Peninsula Standard Time)
 
+const path = require('path');
 const port = 9876;
 module.exports = function(config) {
-    const slLaunchers = (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) ? {} : {
-        sl_beta_chrome: {
-            base: 'SauceLabs',
-            browserName: 'chrome',
-            platform: 'Windows 10',
-            version: 'beta'
-        },
-        sl_ie9: {
+    const launchers = {
+        SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '9.0',
             platform: 'Windows 7'
         },
-        sl_ie10: {
+        SauceLabs_IE10: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '10.0',
             platform: 'Windows 7'
         },
-        sl_ie11: {
+        SauceLabs_IE11: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             version: '11.0',
             platform: 'Windows 7'
         },
-        sl_edge_15: {
+        SauceLabs_Edge18: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
-            version: '15.15063',
+            version: '18.17763',
             platform: 'Windows 10'
         },
-        sl_edge_14: {
-            base: 'SauceLabs',
-            browserName: 'MicrosoftEdge',
-            version: '14.14393',
-            platform: 'Windows 10'
-        },
-        sl_safari: {
-            base: 'SauceLabs',
-            browserName: 'safari',
-            version: '10.1',
-            platform: 'macOS 10.12'
-        },
-        'sl_android_4.4': {
+        SauceLabs_Android4: {
             base: 'SauceLabs',
             browserName: 'Browser',
             platform: 'Android',
             version: '4.4',
             device: 'Android Emulator',
         },
-        'sl_ios_10.3_safari': {
+        SauceLabs_iOS10_3: {
             base: 'SauceLabs',
             browserName: 'Safari',
             platform: 'iOS',
             version: '10.3',
             device: 'iPhone 7 Plus Simulator'
         },
-        'sl_ios_9.3_safari': {
+        SauceLabs_iOS9_3: {
             base: 'SauceLabs',
             browserName: 'Safari',
             platform: 'iOS',
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
+        },
+        IE_9: {
+            base: 'IE',
+            'x-ua-compatible': 'IE=EmulateIE9',
+            flags: ['-extoff']
+        },
+        IE_10: {
+            base: 'IE',
+            'x-ua-compatible': 'IE=EmulateIE10',
+            flags: ['-extoff']
+        },
+        IE_11: {
+            base: 'IE',
+            flags: ['-extoff']
+        },
+        Safari_Stable: {
+            base: 'Safari'
+        },
+        Chrome_Stable: {
+            base: 'Chrome'
+        },
+        Firefox_Stable: {
+            base: 'Firefox'
         }
     };
 
-    const customLaunchers = Object.assign({}, slLaunchers, {
+    const ciLauncher = launchers[process.env.TARGET_BROWSER];
+
+    const customLaunchers = ciLauncher ? {target_browser: ciLauncher} : {
         stable_chrome: {
             base: 'Chrome'
         },
         stable_firefox: {
             base: 'Firefox'
         }
-    });
+    };
+
+    const injectTypedArrayPolyfills = function(files) {
+        files.unshift({
+            pattern: path.resolve(__dirname, './node_modules/js-polyfills/typedarray.js'),
+            included: true,
+            served: true,
+            watched: false
+        });
+    };
+
+    injectTypedArrayPolyfills.$inject = ['config.files'];
 
     config.set({
 
@@ -86,17 +105,22 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha'],
-
+        frameworks: ['mocha', 'inline-mocha-fix'],
 
         // list of files / patterns to load in the browser
         files: [
             'build/testrunner.js',
             { pattern: './tests/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './dist/**/*', 'watched': true, 'included': false, 'served': true},
-            { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true}
+            { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true},
         ],
 
+        plugins: [
+            'karma-*',
+            {
+                'framework:inline-mocha-fix': ['factory', injectTypedArrayPolyfills]
+            }
+        ],
 
         // list of files to exclude
         exclude: [
@@ -112,7 +136,11 @@ module.exports = function(config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'saucelabs'],
+        reporters: ['dots', 'junit'],
+
+        junitReporter: {
+            outputDir: 'tmp/junit/'
+        },
 
         // web server port
         port,

@@ -1,0 +1,2 @@
+[Safari]/tests/reftests/acid2.html
+[Safari]/tests/reftests/background/encoded.html
