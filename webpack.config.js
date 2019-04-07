@@ -33,6 +33,7 @@ module.exports = [
             path: path.resolve(__dirname, 'dist'),
             filename: 'html2canvas.js',
             library: 'html2canvas',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,
@@ -45,6 +46,7 @@ module.exports = [
             path: path.resolve(__dirname, 'dist'),
             filename: 'html2canvas.min.js',
             library: 'html2canvas',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,
@@ -64,6 +66,7 @@ module.exports = [
             path: path.resolve(__dirname, 'build'),
             filename: 'RefTestRenderer.js',
             library: 'RefTestRenderer',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,

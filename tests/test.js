@@ -21,7 +21,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
         .concat([
             '/node_modules/jquery/dist/jquery.min',
             '/dist/html2canvas',
-            '/dist/RefTestRenderer'
+            '/build/RefTestRenderer'
         ])
         .forEach(appendScript);
 
