@@ -23,11 +23,6 @@ const downloadResult = (filename, data) => {
     document.body.appendChild(a);
 };
 
-const getBrowserVersion = () => {
-    const meta = document.querySelector('meta[http-equiv="X-UA-Compatible"]');
-    return (meta && meta.content) ? meta.content : platform.version;
-};
-
 const assertPath = (result, expected, desc) => {
     expect(result.length).to.equal(expected.length, `${desc} path length`);
 
@@ -373,7 +368,7 @@ const assertPath = (result, expected, desc) => {
                                             test: url,
                                             platform: {
                                                 name: platform.name,
-                                                version: getBrowserVersion()
+                                                version: platform.version
                                             }
                                         }));
                                     });

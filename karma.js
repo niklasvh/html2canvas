@@ -65,7 +65,7 @@ const writeScreenshot = (buffer, body) => {
     const filename = `${filenamifyUrl(
         body.test.replace(/^\/tests\/reftests\//, '').replace(/\.html$/, ''),
         {replacement: '-'}
-    )}!${body.platform.name}-${body.platform.version}.png`;
+    )}!${[process.env.TARGET_BROWSER, body.platform.name, body.platform.version].join('-')}.png`;
 
     fs.writeFileSync(path.resolve(__dirname, screenshotFolder, filename), buffer);
 };
