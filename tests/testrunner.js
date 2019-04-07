@@ -23,6 +23,13 @@ const downloadResult = (filename, data) => {
     document.body.appendChild(a);
 };
 
+const getBrowserVersion = () => {
+    const meta = document.querySelector('meta[http-equiv="X-UA-Compatible"]');
+    return (meta && meta.content.indexOf('IE=Emulate') === 0)
+        ? meta.content.substring('IE=Emulate'.length)
+        : platform.version;
+};
+
 const assertPath = (result, expected, desc) => {
     expect(result.length).to.equal(expected.length, `${desc} path length`);
 
@@ -342,79 +349,37 @@ const assertPath = (result, expected, desc) => {
                                 }
 
                                 if (window.__karma__) {
-                                    const MAX_CHUNK_SIZE = 75000;
+                                    return new Promise((resolve, reject) => {
+                                        const xhr =
+                                            'withCredentials' in new XMLHttpRequest()
+                                                ? new XMLHttpRequest()
+                                                : new XDomainRequest();
 
-                                    const sendScreenshot = (tries, body, server) => {
-                                        return new Promise((resolve, reject) => {
-                                            const xhr =
-                                                'withCredentials' in new XMLHttpRequest()
-                                                    ? new XMLHttpRequest()
-                                                    : new XDomainRequest();
-
-                                            xhr.onload = () => {
-                                                if (
-                                                    typeof xhr.status !== 'number' ||
-                                                    xhr.status === 200
-                                                ) {
-                                                    resolve();
-                                                } else {
-                                                    reject(
-                                                        `Failed to send screenshot with status ${xhr.status}`
-                                                    );
-                                                }
-                                            };
-                                            xhr.onerror = reject;
-
-                                            xhr.open('POST', server, true);
-                                            xhr.send(body);
-                                        }).catch(e => {
-                                            if (tries > 0) {
-                                                // Older edge browsers and some safari browsers have issues sending large xhr through saucetunnel
-                                                const data = canvas.toDataURL();
-                                                const totalCount = Math.ceil(
-                                                    data.length / MAX_CHUNK_SIZE
-                                                );
-                                                return Promise.all(
-                                                    Array.apply(
-                                                        null,
-                                                        Array(totalCount)
-                                                    ).map((x, part) =>
-                                                        sendScreenshot(
-                                                            0,
-                                                            JSON.stringify({
-                                                                screenshot: data.substr(
-                                                                    part * MAX_CHUNK_SIZE,
-                                                                    MAX_CHUNK_SIZE
-                                                                ),
-                                                                part,
-                                                                totalCount,
-                                                                test: url,
-                                                                platform: {
-                                                                    name: platform.name,
-                                                                    version: platform.version
-                                                                }
-                                                            }),
-                                                            'http://localhost:8000/screenshot/chunk'
-                                                        )
-                                                    )
+                                        xhr.onload = () => {
+                                            if (
+                                                typeof xhr.status !== 'number' ||
+                                                xhr.status === 200
+                                            ) {
+                                                resolve();
+                                            } else {
+                                                reject(
+                                                    `Failed to send screenshot with status ${xhr.status}`
                                                 );
                                             }
+                                        };
+                                        xhr.onerror = reject;
 
-                                            return Promise.reject(e);
-                                        });
-                                    };
-                                    return sendScreenshot(
-                                        1,
-                                        JSON.stringify({
+                                        xhr.open('POST', 'http://localhost:8000/screenshot', true);
+                                        xhr.send(JSON.stringify({
                                             screenshot: canvas.toDataURL(),
                                             test: url,
                                             platform: {
                                                 name: platform.name,
-                                                version: platform.version
+                                                version: getBrowserVersion()
                                             }
-                                        }),
-                                        'http://localhost:8000/screenshot'
-                                    );
+                                        }));
+                                    });
+
                                 }
                             });
                     });
