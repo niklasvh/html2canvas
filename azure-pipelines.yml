@@ -14,11 +14,20 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm version patch
+    - script: |
+       echo "test"
+       echo "$BUILD_SOURCEVERSIONMESSAGE"
+    - task: Npm@0
+      inputs:
+        command: version patch
       condition: contains(variables['Build.SourceVersionMessage'], '#patch')
-    - script: npm version minor
+    - task: Npm@0
+      inputs:
+        command: version minor
       condition: contains(variables['Build.SourceVersionMessage'], '#minor')
-    - script: npm version major
+    - task: Npm@0
+      inputs:
+        command: version major
       condition: contains(variables['Build.SourceVersionMessage'], '#major')
     - script: npm run build
       displayName: Build
