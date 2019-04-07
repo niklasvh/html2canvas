@@ -25,9 +25,7 @@ const downloadResult = (filename, data) => {
 
 const getBrowserVersion = () => {
     const meta = document.querySelector('meta[http-equiv="X-UA-Compatible"]');
-    return (meta && meta.content.indexOf('IE=Emulate') === 0)
-        ? meta.content.substring('IE=Emulate'.length)
-        : platform.version;
+    return (meta && meta.content) ? meta.content : platform.version;
 };
 
 const assertPath = (result, expected, desc) => {

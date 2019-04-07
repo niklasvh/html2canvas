@@ -2,12 +2,32 @@ trigger:
 - master
 
 jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm run build
+      displayName: Build
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'dist'
+        artifactName: Dist
   - job: Browser_Tests_Linux_Firefox_Stable
     displayName: Linux Firefox Stable
     pool:
       vmImage: 'Ubuntu-16.04'
     variables:
       TARGET_BROWSER: Firefox_Stable
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
@@ -28,6 +48,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
         artifactName: ReftestResults
@@ -37,6 +58,8 @@ jobs:
       vmImage: 'Ubuntu-16.04'
     variables:
       TARGET_BROWSER: Chrome_Stable
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
@@ -67,6 +90,8 @@ jobs:
       vmImage: 'macOS-10.13'
     variables:
       TARGET_BROWSER: Safari_Stable
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
@@ -95,6 +120,8 @@ jobs:
       vmImage: 'vs2017-win2016'
     variables:
       TARGET_BROWSER: IE_9
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
@@ -123,6 +150,8 @@ jobs:
       vmImage: 'vs2017-win2016'
     variables:
       TARGET_BROWSER: IE_10
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
@@ -151,6 +180,8 @@ jobs:
       vmImage: 'vs2017-win2016'
     variables:
       TARGET_BROWSER: IE_11
+    dependsOn: Build
+    condition: succeeded()
     steps:
     - task: NodeTool@0
       inputs:
