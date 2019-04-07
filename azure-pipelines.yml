@@ -16,7 +16,10 @@ jobs:
         command: install
     - script: npm run build
       displayName: Build
-    - script: npm pack && mv html2canvas-*.tgz html2canvas.tgz
+    - script: |
+       npm pack
+       mv html2canvas-*.tgz html2canvas.tgz
+       tar --list --verbose --file=html2canvas.tgz
       displayName: Pack
       name: pack
     - task: PublishBuildArtifacts@1
