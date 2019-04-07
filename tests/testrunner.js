@@ -75,7 +75,7 @@ const assertPath = (result, expected, desc) => {
             .filter(test => {
                 return (
                     !Array.isArray(reftests.ignoredTests[test]) ||
-                    reftests.ignoredTests[test].indexOf(query.browser) === -1
+                    reftests.ignoredTests[test].indexOf(platform.name) === -1
                 );
             })
             .forEach(url => {
