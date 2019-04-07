@@ -13,8 +13,14 @@ methods to check whether an image would taint the canvas before applying it. If 
 If you wish to load images that reside outside of your pages origin, you can use a [proxy](/proxy) to load the images.
 
 ## Why is the produced canvas empty or cuts off half way through?
-Make sure that `canvas` element doesn't hit [browser limitations](https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element) for the `canvas` size. 
-The limitations vary by browser, operating system and system hardware.
+Make sure that `canvas` element doesn't hit [browser limitations](https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element) for the `canvas` size or use the window configuration options to set a custom window size based on the `canvas` element:
+```
+await html2canvas(element, {
+    windowWidth: element.scrollWidth,
+    windowHeight: element.scrollHeight
+});
+```
+The window limitations vary by browser, operating system and system hardware.
 
 ### Chrome
 > Maximum height/width: 32,767 pixels
