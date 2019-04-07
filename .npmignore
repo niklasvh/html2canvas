@@ -17,4 +17,5 @@ tmp/
 azure-pipelines.yml
 karma.js
 karma.conf.js
+rollup.config.js
 webpack.config.js

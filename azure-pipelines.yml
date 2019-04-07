@@ -16,6 +16,16 @@ jobs:
         command: install
     - script: npm run build
       displayName: Build
+    - script: |
+       npm pack
+       mv html2canvas-*.tgz html2canvas.tgz
+       tar --list --verbose --file=html2canvas.tgz
+      displayName: Pack
+      name: pack
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: html2canvas.tgz
+        artifactName: npm
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: 'dist'
@@ -59,6 +69,7 @@ jobs:
     - script: npm run build && cd www && npm install && npm run build && cd ..
       displayName: Build docs
     - task: PublishBuildArtifacts@1
+      displayName: Upload docs website artifact
       inputs:
         PathtoPublish: 'www/public'
         artifactName: docs
@@ -98,6 +109,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
@@ -138,6 +150,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
@@ -176,6 +189,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
@@ -214,6 +228,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
@@ -252,6 +267,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
@@ -290,6 +306,7 @@ jobs:
         testRunner: JUnit
         testResultsFiles: 'tmp/junit/*.xml'
     - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
       condition: succeededOrFailed()
       inputs:
         PathtoPublish: 'tmp/reftests'
