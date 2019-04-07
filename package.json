@@ -5,7 +5,7 @@
   "main": "dist/npm/index.js",
   "module": "dist/html2canvas.js",
   "browser": "dist/html2canvas.js",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0-alpha.12",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
