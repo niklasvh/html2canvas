@@ -39,7 +39,7 @@
     "eslint-plugin-prettier": "2.1.2",
     "express": "^4.16.4",
     "filenamify-url": "1.0.0",
-    "flow-bin": "0.56.0",
+    "flow-bin": "^0.96.0",
     "glob": "7.1.2",
     "html2canvas-proxy": "1.0.1",
     "jquery": "3.2.1",
