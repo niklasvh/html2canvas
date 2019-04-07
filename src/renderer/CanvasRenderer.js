@@ -26,7 +26,10 @@ const addColorStops = (
     const maxStop = Math.max.apply(null, gradient.colorStops.map(colorStop => colorStop.stop));
     const f = 1 / Math.max(1, maxStop);
     gradient.colorStops.forEach(colorStop => {
-        canvasGradient.addColorStop(f * colorStop.stop, colorStop.color.toString());
+        canvasGradient.addColorStop(
+            Math.floor(Math.max(0, f * colorStop.stop)),
+            colorStop.color.toString()
+        );
     });
 };
 
