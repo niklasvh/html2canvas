@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0-alpha.12...v1.0.0-rc.0) (2019-04-07)
+
+
+### build
+
+* update webpack and babel (#1793) ([44f3d79f68836624c2673a86f9ad47c17ef843c3](https://github.com/niklasvh/html2canvas/commit/44f3d79f68836624c2673a86f9ad47c17ef843c3)), closes [#1793](https://github.com/niklasvh/html2canvas/issues/1793)
+
+### ci
+
+* automate changelog generation (#1792) ([7ebef72e927eaafd34a1792ece431d2a73109230](https://github.com/niklasvh/html2canvas/commit/7ebef72e927eaafd34a1792ece431d2a73109230)), closes [#1792](https://github.com/niklasvh/html2canvas/issues/1792)
+* Improve CI pipeline (#1790) ([c45ef099fe8f7142e174f4fce39448a370a987d5](https://github.com/niklasvh/html2canvas/commit/c45ef099fe8f7142e174f4fce39448a370a987d5)), closes [#1790](https://github.com/niklasvh/html2canvas/issues/1790)
+
+### docs
+
+* improve canvas size limit documentation (#1576) ([3212184146b33c3564c2f416e1bfda911737c38b](https://github.com/niklasvh/html2canvas/commit/3212184146b33c3564c2f416e1bfda911737c38b)), closes [#1576](https://github.com/niklasvh/html2canvas/issues/1576)
+
+### fix
+
+* enforce colorstop min 0 (#1743) ([349bbf137abd83464e074db3948fc79a541c2ef3](https://github.com/niklasvh/html2canvas/commit/349bbf137abd83464e074db3948fc79a541c2ef3)), closes [#1743](https://github.com/niklasvh/html2canvas/issues/1743)
+* prevent unhandled promise rejections for hidden frames (#1762) ([5cbe5db35155e3a9790a30de09feb17843053b7a](https://github.com/niklasvh/html2canvas/commit/5cbe5db35155e3a9790a30de09feb17843053b7a)), closes [#1762](https://github.com/niklasvh/html2canvas/issues/1762)
+* wrap .sheet.cssRules access in try...catch. (#1693) ([2c018d19875ced30caafdc40f84ca531de6e6f91](https://github.com/niklasvh/html2canvas/commit/2c018d19875ced30caafdc40f84ca531de6e6f91)), closes [#1693](https://github.com/niklasvh/html2canvas/issues/1693)
+
+
+
 # [1.0.0-alpha.12](https://github.com/niklasvh/html2canvas/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2019-04-07)
  * Fix white space appearing on element rendering (Fix #1438)
  * Reset canvas transform on finish (Fix #1494)
