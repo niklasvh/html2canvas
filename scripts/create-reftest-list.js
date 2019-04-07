@@ -10,7 +10,7 @@ const outputPath = 'tests/reftests.js';
 const ignoredTests = fs
     .readFileSync(path.resolve(__dirname, `../tests/reftests/ignore.txt`))
     .toString()
-    .split('\n')
+    .split(/\r\n|\r|\n/)
     .filter(l => l.length)
     .reduce((acc, l) => {
         const m = l.match(/^(\[(.+)\])?(.+)$/i);
