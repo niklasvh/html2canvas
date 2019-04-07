@@ -213,7 +213,12 @@ export class DocumentCloner {
                         new Promise((resolve, reject) => {
                             const iframeCanvas = document.createElement('img');
                             iframeCanvas.onload = () => resolve(canvas);
-                            iframeCanvas.onerror = reject;
+                            iframeCanvas.onerror = function(event) {
+                                // Empty iframes may result in empty "data:," URLs, which are invalid from the <img>'s point of view
+                                // and instead of `onload` cause `onerror` and unhandled rejection warnings
+                                // https://github.com/niklasvh/html2canvas/issues/1502
+                                iframeCanvas.src == 'data:,' ? resolve(canvas) : reject(event);
+                            };
                             iframeCanvas.src = canvas.toDataURL();
                             if (tempIframe.parentNode) {
                                 tempIframe.parentNode.replaceChild(
