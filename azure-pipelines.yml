@@ -15,8 +15,11 @@ jobs:
       inputs:
         command: install
     - script: |
-       echo "test"
-       echo "$BUILD_SOURCEVERSIONMESSAGE"
+       echo "aaa"
+       git log --format=%B -n 1
+       echo "ddd"
+       echo "$(Build.SourceVersionMessage)"
+       echo "sss"
     - task: Npm@0
       inputs:
         command: version patch
