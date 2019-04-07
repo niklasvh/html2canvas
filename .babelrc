@@ -6,5 +6,8 @@
                 "ie": "9"
             }
         }
-    ], "@babel/preset-flow"]
+    ], "@babel/preset-flow"],
+    "plugins": [
+        "add-module-exports"
+    ]
 }
