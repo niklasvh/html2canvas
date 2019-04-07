@@ -69,6 +69,7 @@
     "rollup-plugin-uglify": "^3.0.0",
     "serve-index": "^1.9.1",
     "slash": "1.0.0",
+    "standard-version": "^5.0.2",
     "uglifyjs-webpack-plugin": "^1.1.2",
     "webpack": "3.4.1"
   },
@@ -76,6 +77,7 @@
     "build": "rimraf dist/ && node scripts/create-reftest-list && npm run build:npm && npm run build:browser",
     "build:npm": "babel src/ -d dist/npm/ --plugins=dev-expression,transform-es2015-modules-commonjs && replace-in-file __VERSION__ '\"$npm_package_version\"' dist/npm/index.js",
     "build:browser": "webpack",
+    "release": "standard-version",
     "rollup": "rollup -c",
     "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"{src,www/src,tests,scripts}/**/*.js\"",
     "flow": "flow",
