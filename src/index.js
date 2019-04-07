@@ -79,5 +79,4 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
 };
 
 html2canvas.CanvasRenderer = CanvasRenderer;
-
-module.exports = html2canvas;
+export default html2canvas;

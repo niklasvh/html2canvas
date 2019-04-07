@@ -18,7 +18,7 @@ const plugins = [
 ];
 
 const modules = {
-    loaders: [{
+    rules: [{
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
@@ -27,20 +27,26 @@ const modules = {
 
 module.exports = [
     {
+        mode: 'development',
         entry: './src/index.js',
         output: {
-            filename: './dist/html2canvas.js',
+            path: path.resolve(__dirname, 'dist'),
+            filename: 'html2canvas.js',
             library: 'html2canvas',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,
         plugins
     },
     {
+        mode: 'production',
         entry: './src/index.js',
         output: {
-            filename: './dist/html2canvas.min.js',
+            path: path.resolve(__dirname, 'dist'),
+            filename: 'html2canvas.min.js',
             library: 'html2canvas',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,
@@ -54,19 +60,24 @@ module.exports = [
         ]
     },
     {
+        mode: 'production',
         entry: './src/renderer/RefTestRenderer.js',
         output: {
-            filename: './dist/RefTestRenderer.js',
+            path: path.resolve(__dirname, 'build'),
+            filename: 'RefTestRenderer.js',
             library: 'RefTestRenderer',
+            libraryExport: 'default',
             libraryTarget: 'umd'
         },
         module: modules,
         plugins
     },
     {
+        mode: 'production',
         entry: './tests/testrunner.js',
         output: {
-            filename: './build/testrunner.js',
+            path: path.resolve(__dirname, 'build'),
+            filename: 'testrunner.js',
             library: 'testrunner',
             libraryTarget: 'umd'
         },
