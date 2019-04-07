@@ -30,7 +30,8 @@ module.exports = [
         mode: 'development',
         entry: './src/index.js',
         output: {
-            filename: './dist/html2canvas.js',
+            path: path.resolve(__dirname, 'dist'),
+            filename: 'html2canvas.js',
             library: 'html2canvas',
             libraryTarget: 'umd'
         },
@@ -41,7 +42,8 @@ module.exports = [
         mode: 'production',
         entry: './src/index.js',
         output: {
-            filename: './dist/html2canvas.min.js',
+            path: path.resolve(__dirname, 'dist'),
+            filename: 'html2canvas.min.js',
             library: 'html2canvas',
             libraryTarget: 'umd'
         },
@@ -59,7 +61,8 @@ module.exports = [
         mode: 'production',
         entry: './src/renderer/RefTestRenderer.js',
         output: {
-            filename: './dist/RefTestRenderer.js',
+            path: path.resolve(__dirname, 'build'),
+            filename: 'RefTestRenderer.js',
             library: 'RefTestRenderer',
             libraryTarget: 'umd'
         },
@@ -70,7 +73,8 @@ module.exports = [
         mode: 'production',
         entry: './tests/testrunner.js',
         output: {
-            filename: './build/testrunner.js',
+            path: path.resolve(__dirname, 'build'),
+            filename: 'testrunner.js',
             library: 'testrunner',
             libraryTarget: 'umd'
         },
