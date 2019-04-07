@@ -26,7 +26,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [1.0.0-alpha.12](https://github.com/niklasvh/html2canvas/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2019-04-07)
+# [1.0.0-alpha.12](https://github.com/niklasvh/html2canvas/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2018-04-05)
  * Fix white space appearing on element rendering (Fix #1438)
  * Reset canvas transform on finish (Fix #1494)
 
