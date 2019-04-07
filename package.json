@@ -40,7 +40,7 @@
     "eslint": "4.2.0",
     "eslint-plugin-flowtype": "2.35.0",
     "eslint-plugin-prettier": "2.1.2",
-    "express": "4.15.4",
+    "express": "^4.16.4",
     "filenamify-url": "1.0.0",
     "flow-bin": "0.56.0",
     "glob": "7.1.2",
