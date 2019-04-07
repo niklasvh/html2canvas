@@ -24,6 +24,20 @@ jobs:
       inputs:
         PathtoPublish: 'build'
         artifactName: build
+  - job: Lint
+    displayName: Lint
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm run lint && npm run flow
+      displayName: Lint & flow
   - job: Browser_Tests_Linux_Firefox_Stable
     displayName: Linux Firefox Stable
     pool:
