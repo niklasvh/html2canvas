@@ -14,25 +14,6 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: |
-       echo "aaa"
-       git log --format=%B -n 5
-       echo "ddd"
-       echo "$(Build.SourceVersionMessage)"
-       echo "sss"
-       git log --format=%B -n 1 $(Build.SourceVersion)
-    - task: Npm@0
-      inputs:
-        command: version patch
-      condition: contains(variables['Build.SourceVersionMessage'], '#patch')
-    - task: Npm@0
-      inputs:
-        command: version minor
-      condition: contains(variables['Build.SourceVersionMessage'], '#minor')
-    - task: Npm@0
-      inputs:
-        command: version major
-      condition: contains(variables['Build.SourceVersionMessage'], '#major')
     - script: npm run build
       displayName: Build
     - task: PublishBuildArtifacts@1
