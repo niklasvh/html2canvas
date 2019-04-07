@@ -25,7 +25,7 @@ jobs:
         PathtoPublish: 'build'
         artifactName: build
   - job: Test
-    displayName: Lint / Unit test
+    displayName: Tests
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
@@ -36,6 +36,8 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
+    - script: npm run build
+      displayName: Build
     - script: npm run lint
       displayName: Lint
     - script: npm run flow
