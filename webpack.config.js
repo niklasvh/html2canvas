@@ -18,7 +18,7 @@ const plugins = [
 ];
 
 const modules = {
-    loaders: [{
+    rules: [{
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
@@ -27,6 +27,7 @@ const modules = {
 
 module.exports = [
     {
+        mode: 'development',
         entry: './src/index.js',
         output: {
             filename: './dist/html2canvas.js',
@@ -37,6 +38,7 @@ module.exports = [
         plugins
     },
     {
+        mode: 'production',
         entry: './src/index.js',
         output: {
             filename: './dist/html2canvas.min.js',
@@ -54,6 +56,7 @@ module.exports = [
         ]
     },
     {
+        mode: 'production',
         entry: './src/renderer/RefTestRenderer.js',
         output: {
             filename: './dist/RefTestRenderer.js',
@@ -64,6 +67,7 @@ module.exports = [
         plugins
     },
     {
+        mode: 'production',
         entry: './tests/testrunner.js',
         output: {
             filename: './build/testrunner.js',

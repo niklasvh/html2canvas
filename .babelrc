@@ -1,4 +1,10 @@
 {
-    "plugins": ["transform-object-rest-spread"],
-    "presets": ["es2015", "flow"]
+    "presets": [[
+        "@babel/preset-env",
+        {
+            "targets": {
+                "ie": "9"
+            }
+        }
+    ], "@babel/preset-flow"]
 }
