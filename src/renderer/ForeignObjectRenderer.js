@@ -16,6 +16,7 @@ export default class ForeignObjectRenderer {
         this.canvas.height = Math.floor(options.height) * options.scale;
         this.canvas.style.width = `${options.width}px`;
         this.canvas.style.height = `${options.height}px`;
+        this.ctx.scale(options.scale, options.scale);
 
         options.logger.log(
             `ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
