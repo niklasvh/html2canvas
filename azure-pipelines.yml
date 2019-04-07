@@ -19,7 +19,11 @@ jobs:
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: 'dist'
-        artifactName: Dist
+        artifactName: dist
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'build'
+        artifactName: build
   - job: Browser_Tests_Linux_Firefox_Stable
     displayName: Linux Firefox Stable
     pool:
@@ -36,8 +40,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
     - script: DISPLAY=:99 npm run karma
@@ -68,8 +80,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: Xvfb :99 &
       displayName: 'Start Xvfb'
     - script: DISPLAY=:99 npm run karma
@@ -100,8 +120,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: npm run karma
       displayName: 'Run Safari tests - Safari Stable'
     - task: PublishTestResults@2
@@ -130,8 +158,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 9'
     - task: PublishTestResults@2
@@ -160,8 +196,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 10'
     - task: PublishTestResults@2
@@ -190,8 +234,16 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: npm run build
-      displayName: Build
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
     - script: npm run karma
       displayName: 'Run Internet Explorer tests - IE 11'
     - task: PublishTestResults@2
