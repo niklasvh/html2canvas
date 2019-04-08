@@ -3,10 +3,11 @@
 
 const path = require('path');
 const simctl = require('node-simctl');
-//const iosSimulator = require('appium-ios-simulator');
+const iosSimulator = require('appium-ios-simulator');
 const port = 9876;
 
 if (process.env.TARGET_BROWSER === 'Safari_IOS') {
+console.log('finding devices');
     simctl.getDevices().then(devices => {
         console.log('devices: ', devices);
         const d = devices['11.4'].find(d => {
@@ -14,11 +15,13 @@ if (process.env.TARGET_BROWSER === 'Safari_IOS') {
         });
 
         console.log('found: ', d);
+        iosSimulator.getDevice(d.udid).then(device => {
+            console.log('device', device);
+        });
+        console.log('still ok')
     });
 /*
-    iosSimulator.getDevice('2EBE020A-53BC-45DF-B481-554C5D83141C').then(device => {
-        console.log('device', device);
-    });
+
 */
 }
 
