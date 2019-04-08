@@ -6,7 +6,10 @@ const simctl = require('node-simctl');
 const port = 9876;
 
 if (process.env.TARGET_BROWSER === 'Safari_IOS') {
-    console.log('devices: ', simctl.getDevices());
+    simctl.getDevices().then(devices => {
+        console.log('devices: ', devices);
+    })
+
 }
 
 module.exports = function(config) {
