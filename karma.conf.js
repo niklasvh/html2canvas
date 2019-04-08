@@ -3,12 +3,21 @@
 
 const path = require('path');
 const simctl = require('node-simctl');
+const iosSimulator = require('appium-ios-simulator');
 const port = 9876;
 
 if (process.env.TARGET_BROWSER === 'Safari_IOS') {
     simctl.getDevices().then(devices => {
+        const d = devices['11.4'].find(d => {
+            return d.name === 'iPhone 8 Plus';
+        });
         console.log('devices: ', devices);
-    })
+        console.log('found: ', d);
+    });
+
+    iosSimulator.getDevice('2EBE020A-53BC-45DF-B481-554C5D83141C').then(device => {
+        console.log('device', device);
+    });
 
 }
 
