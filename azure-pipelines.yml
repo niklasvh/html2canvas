@@ -155,7 +155,7 @@ jobs:
       inputs:
         PathtoPublish: 'tmp/reftests'
         artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_Stable
+  - job: Browser_Tests_OSX_Safari_IOS
     displayName: OSX Safari Stable
     pool:
       vmImage: 'macOS-10.13'
