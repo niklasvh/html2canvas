@@ -2,7 +2,13 @@
 // Generated on Sat Aug 05 2017 23:42:26 GMT+0800 (Malay Peninsula Standard Time)
 
 const path = require('path');
+const simctl = require('node-simctl');
 const port = 9876;
+
+if (process.env.TARGET_BROWSER === 'Safari_IOS') {
+    cconsole.log('devices: ', simctl.getDevices());
+}
+
 module.exports = function(config) {
     const launchers = {
         SauceLabs_IE9: {

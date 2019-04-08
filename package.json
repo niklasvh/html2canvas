@@ -55,6 +55,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^2.0.2",
     "mocha": "^6.1.0",
+    "node-simctl": "^5.0.0",
     "platform": "1.3.4",
     "prettier": "1.5.3",
     "promise-polyfill": "6.0.2",
