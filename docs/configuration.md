@@ -11,7 +11,6 @@ These are all of the available configuration options.
 
 | Name          | Default  | Description |
 | ------------- | :------: | ----------- |
-| async | `true` | Whether to parse and render the element asynchronously
 | allowTaint | `false` | Whether to allow cross-origin images to taint the canvas
 | backgroundColor | `#ffffff` | Canvas background color, if none is specified in DOM. Set `null` for transparent
 | canvas | `null` | Existing `canvas` element to use as a base for drawing on
