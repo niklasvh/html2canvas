@@ -127,6 +127,8 @@ module.exports = function(config) {
 
                 console.log('found: ', d);
                 return iosSimulator.getSimulator(d.udid).then(device => {
+                    return simctl.bootDevice(d.udid).then(() => device);
+                }).then(device => {
                     console.log('device', device);
                     return device.waitForBoot(60 * 5 * 1000).then(d => {
                         console.log('booted, d');
