@@ -118,7 +118,6 @@ module.exports = function(config) {
         }
         baseBrowserDecorator(this);
         this.on('start', url => {
-            console.log('got event', event)
             console.log('starting with url 2 ', url);
             simctl.getDevices().then(devices => {
                 console.log('devices: ', devices);
