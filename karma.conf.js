@@ -140,6 +140,16 @@ module.exports = function(config) {
         };
     };
 
+    MobileSafari.prototype = {
+        name: 'MobileSafari',
+        DEFAULT_CMD: {
+            darwin: '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator',
+        },
+        ENV_CMD: null,
+    };
+
+    MobileSafari.$inject = ['baseBrowserDecorator'];
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
