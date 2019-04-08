@@ -6,27 +6,18 @@ const simctl = require('node-simctl');
 const iosSimulator = require('appium-ios-simulator');
 const port = 9876;
 
+const exec = require('child_process').exec;
+const log = require('karma/lib/logger').create('launcher:MobileSafari');
+
 if (process.env.TARGET_BROWSER === 'Safari_IOS') {
-console.log('finding devices');
-    simctl.getDevices().then(devices => {
-        console.log('devices: ', devices);
-        const d = devices['11.4'].find(d => {
-            return d.name === 'iPhone 8 Plus';
-        });
 
-        console.log('found: ', d);
-        iosSimulator.getSimulator(d.udid).then(device => {
-            console.log('device', device);
-        });
-        console.log('still ok')
-    });
-/*
-
-*/
 }
 
 module.exports = function(config) {
     const launchers = {
+        Safari_IOS: {
+            base: 'MobileSafari'
+        },
         SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
@@ -119,6 +110,36 @@ module.exports = function(config) {
 
     injectTypedArrayPolyfills.$inject = ['config.files'];
 
+    const MobileSafari = (baseBrowserDecorator) => {
+        if(process.platform !== "darwin"){
+            log.error("This launcher only works in MacOS.");
+            this._process.kill();
+            return;
+        }
+        baseBrowserDecorator(this);
+        this._start = function(url) {
+            console.log('starting with url ', url);
+            simctl.getDevices().then(devices => {
+                console.log('devices: ', devices);
+                const d = devices['11.4'].find(d => {
+                    return d.name === 'iPhone 8 Plus';
+                });
+
+                console.log('found: ', d);
+                return iosSimulator.getSimulator(d.udid).then(device => {
+                    console.log('device', device);
+                    return device.waitForBoot(120 * 1000).then(d => {
+                        console.log('booted, d');
+                        return device.openUrl(url);
+                    });
+                });
+            }).catch(e => {
+                console.log('err,', e);
+            });
+
+        };
+    };
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -142,6 +163,9 @@ module.exports = function(config) {
             'karma-*',
             {
                 'framework:inline-mocha-fix': ['factory', injectTypedArrayPolyfills]
+            },
+            {
+                'launcher:MobileSafari': ['type', MobileSafari]
             }
         ],
 
