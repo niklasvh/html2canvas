@@ -128,7 +128,7 @@ module.exports = function(config) {
                 console.log('found: ', d);
                 return iosSimulator.getSimulator(d.udid).then(device => {
                     console.log('device', device);
-                    return device.waitForBoot(120 * 1000).then(d => {
+                    return device.waitForBoot(60 * 5 * 1000).then(d => {
                         console.log('booted, d');
                         return device.openUrl(url);
                     });
@@ -137,28 +137,6 @@ module.exports = function(config) {
                 console.log('err,', e);
             });
         });
-
-        this._start = function(url) {
-            console.log('starting with url ', url);
-            simctl.getDevices().then(devices => {
-                console.log('devices: ', devices);
-                const d = devices['11.4'].find(d => {
-                    return d.name === 'iPhone 8 Plus';
-                });
-
-                console.log('found: ', d);
-                return iosSimulator.getSimulator(d.udid).then(device => {
-                    console.log('device', device);
-                    return device.waitForBoot(120 * 1000).then(d => {
-                        console.log('booted, d');
-                        return device.openUrl(url);
-                    });
-                });
-            }).catch(e => {
-                console.log('err,', e);
-            });
-
-        };
     };
 
     MobileSafari.prototype = {
