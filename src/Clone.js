@@ -184,7 +184,6 @@ export class DocumentCloner {
                     return this.renderer(
                         documentElement,
                         {
-                            async: this.options.async,
                             allowTaint: this.options.allowTaint,
                             backgroundColor: '#ffffff',
                             canvas: null,

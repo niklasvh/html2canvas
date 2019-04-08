@@ -8,7 +8,6 @@ import Logger from './Logger';
 import {renderElement} from './Window';
 
 export type Options = {
-    async: ?boolean,
     allowTaint: ?boolean,
     backgroundColor: string,
     canvas: ?HTMLCanvasElement,
@@ -50,7 +49,6 @@ const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const defaultView = ownerDocument.defaultView;
 
     const defaultOptions = {
-        async: true,
         allowTaint: false,
         backgroundColor: '#ffffff',
         imageTimeout: 15000,
