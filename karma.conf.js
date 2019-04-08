@@ -15,7 +15,7 @@ console.log('finding devices');
         });
 
         console.log('found: ', d);
-        iosSimulator.getDevice(d.udid).then(device => {
+        iosSimulator.getSimulator(d.udid).then(device => {
             console.log('device', device);
         });
         console.log('still ok')
