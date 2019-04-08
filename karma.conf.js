@@ -121,8 +121,8 @@ module.exports = function(config) {
             console.log('starting with url 2 ', url);
             simctl.getDevices().then(devices => {
                 console.log('devices: ', devices);
-                const d = devices['11.4'].find(d => {
-                    return d.name === 'iPhone 8 Plus';
+                const d = devices['10.0'].find(d => {
+                    return d.name === 'iPhone 5';
                 });
 
                 console.log('found: ', d);
