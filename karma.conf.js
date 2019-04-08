@@ -8,10 +8,11 @@ const port = 9876;
 
 if (process.env.TARGET_BROWSER === 'Safari_IOS') {
     simctl.getDevices().then(devices => {
+        console.log('devices: ', devices);
         const d = devices['11.4'].find(d => {
             return d.name === 'iPhone 8 Plus';
         });
-        console.log('devices: ', devices);
+
         console.log('found: ', d);
     });
 
