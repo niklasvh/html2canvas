@@ -16,7 +16,9 @@ if (process.env.TARGET_BROWSER === 'Safari_IOS') {
 module.exports = function(config) {
     const launchers = {
         Safari_IOS: {
-            base: 'MobileSafari'
+            base: 'MobileSafari',
+            name: 'iPhone 4s',
+            sdk: '8.4'
         },
         SauceLabs_IE9: {
             base: 'SauceLabs',
@@ -110,7 +112,7 @@ module.exports = function(config) {
 
     injectTypedArrayPolyfills.$inject = ['config.files'];
 
-    const MobileSafari = function(baseBrowserDecorator) {
+    const MobileSafari = function(baseBrowserDecorator, args) {
         if(process.platform !== "darwin"){
             log.error("This launcher only works in MacOS.");
             this._process.kill();
@@ -118,20 +120,17 @@ module.exports = function(config) {
         }
         baseBrowserDecorator(this);
         this.on('start', url => {
-            console.log('starting with url 2 ', url);
+            console.log('starting with url 2 ', url, args);
             simctl.getDevices().then(devices => {
                 console.log('devices: ', devices);
                 const d = devices['10.0'].find(d => {
                     return d.name === 'iPhone 5';
                 });
 
-                console.log('found: ', d);
                 return iosSimulator.getSimulator(d.udid).then(device => {
                     return simctl.bootDevice(d.udid).then(() => device);
                 }).then(device => {
-                    console.log('device', device);
-                    return device.waitForBoot(60 * 5 * 1000).then(d => {
-                        console.log('booted, d');
+                    return device.waitForBoot(60 * 5 * 1000).then(() => {
                         return device.openUrl(url);
                     });
                 });
@@ -149,7 +148,7 @@ module.exports = function(config) {
         ENV_CMD: null,
     };
 
-    MobileSafari.$inject = ['baseBrowserDecorator'];
+    MobileSafari.$inject = ['baseBrowserDecorator', 'args'];
 
     config.set({
 
