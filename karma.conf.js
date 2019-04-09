@@ -6,12 +6,7 @@ const simctl = require('node-simctl');
 const iosSimulator = require('appium-ios-simulator');
 const port = 9876;
 
-const exec = require('child_process').exec;
 const log = require('karma/lib/logger').create('launcher:MobileSafari');
-
-if (process.env.TARGET_BROWSER === 'Safari_IOS') {
-
-}
 
 module.exports = function(config) {
     const launchers = {
