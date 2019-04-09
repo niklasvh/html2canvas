@@ -2,9 +2,29 @@
 // Generated on Sat Aug 05 2017 23:42:26 GMT+0800 (Malay Peninsula Standard Time)
 
 const path = require('path');
+const simctl = require('node-simctl');
+const iosSimulator = require('appium-ios-simulator');
 const port = 9876;
+
+const log = require('karma/lib/logger').create('launcher:MobileSafari');
+
 module.exports = function(config) {
     const launchers = {
+        Safari_IOS_9: {
+            base: 'MobileSafari',
+            name: 'iPhone 5s',
+            sdk: '9.0'
+        },
+        Safari_IOS_10: {
+            base: 'MobileSafari',
+            name: 'iPhone 5s',
+            sdk: '10.0'
+        },
+        Safari_IOS_11: {
+            base: 'MobileSafari',
+            name: 'iPhone 5s',
+            sdk: '11.4'
+        },
         SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
@@ -97,6 +117,48 @@ module.exports = function(config) {
 
     injectTypedArrayPolyfills.$inject = ['config.files'];
 
+    const MobileSafari = function(baseBrowserDecorator, args) {
+        if(process.platform !== "darwin"){
+            log.error("This launcher only works in MacOS.");
+            this._process.kill();
+            return;
+        }
+        baseBrowserDecorator(this);
+        this.on('start', url => {
+            simctl.getDevices().then(devices => {
+                const d = devices[args.sdk].find(d => {
+                    return d.name === args.name;
+                });
+
+                if (!d) {
+                    log.error(`No device found for sdk ${args.sdk} with name ${args.name}`);
+                    this._process.kill();
+                    return;
+                }
+
+                return iosSimulator.getSimulator(d.udid).then(device => {
+                    return simctl.bootDevice(d.udid).then(() => device);
+                }).then(device => {
+                    return device.waitForBoot(60 * 5 * 1000).then(() => {
+                        return device.openUrl(url);
+                    });
+                });
+            }).catch(e => {
+                console.log('err,', e);
+            });
+        });
+    };
+
+    MobileSafari.prototype = {
+        name: 'MobileSafari',
+        DEFAULT_CMD: {
+            darwin: '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator',
+        },
+        ENV_CMD: null,
+    };
+
+    MobileSafari.$inject = ['baseBrowserDecorator', 'args'];
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -120,6 +182,9 @@ module.exports = function(config) {
             'karma-*',
             {
                 'framework:inline-mocha-fix': ['factory', injectTypedArrayPolyfills]
+            },
+            {
+                'launcher:MobileSafari': ['type', MobileSafari]
             }
         ],
 
