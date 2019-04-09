@@ -25,6 +25,11 @@ module.exports = function(config) {
             name: 'iPhone 5s',
             sdk: '10.0'
         },
+        Safari_IOS_11: {
+            base: 'MobileSafari',
+            name: 'iPhone 5s',
+            sdk: '11.4'
+        },
         SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',

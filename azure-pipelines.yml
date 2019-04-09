@@ -155,6 +155,45 @@ jobs:
       inputs:
         PathtoPublish: 'tmp/reftests'
         artifactName: ReftestResults
+  - job: Browser_Tests_OSX_Safari_IOS_9
+    displayName: iOS Simulator Safari 9
+    pool:
+      vmImage: 'macOS-10.13'
+    variables:
+      TARGET_BROWSER: Safari_IOS_9
+    dependsOn: Build
+    condition: succeeded()
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - script: npm run karma
+      displayName: 'Run Safari tests - Safari IOS'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
+      condition: succeededOrFailed()
+      inputs:
+        PathtoPublish: 'tmp/reftests'
+        artifactName: ReftestResults
   - job: Browser_Tests_OSX_Safari_IOS_10
     displayName: iOS Simulator Safari 10
     pool:
@@ -194,12 +233,12 @@ jobs:
       inputs:
         PathtoPublish: 'tmp/reftests'
         artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_IOS
-    displayName: iOS Simulator Safari Stable
+  - job: Browser_Tests_OSX_Safari_IOS_11
+    displayName: iOS Simulator Safari 11
     pool:
       vmImage: 'macOS-10.13'
     variables:
-      TARGET_BROWSER: Safari_IOS_9
+      TARGET_BROWSER: Safari_IOS_11
     dependsOn: Build
     condition: succeeded()
     steps:
