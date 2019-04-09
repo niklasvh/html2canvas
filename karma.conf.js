@@ -15,10 +15,15 @@ if (process.env.TARGET_BROWSER === 'Safari_IOS') {
 
 module.exports = function(config) {
     const launchers = {
-        Safari_IOS: {
+        Safari_IOS_9: {
             base: 'MobileSafari',
-            name: 'iPhone 4s',
-            sdk: '8.4'
+            name: 'iPhone 5s',
+            sdk: '9.0'
+        },
+        Safari_IOS_10: {
+            base: 'MobileSafari',
+            name: 'iPhone 5s',
+            sdk: '10.0'
         },
         SauceLabs_IE9: {
             base: 'SauceLabs',
