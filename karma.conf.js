@@ -123,9 +123,16 @@ module.exports = function(config) {
             console.log('starting with url 2 ', url, args);
             simctl.getDevices().then(devices => {
                 console.log('devices: ', devices);
-                const d = devices['10.0'].find(d => {
-                    return d.name === 'iPhone 5';
+                const d = devices[args.sdk].find(d => {
+                    return d.name === args.name;
                 });
+
+                if (!d) {
+                    log.error(`No device found for sdk ${args.sdk} with name ${args.name}`);
+                    this._process.kill();
+                    return;
+                }
+
 
                 return iosSimulator.getSimulator(d.udid).then(device => {
                     return simctl.bootDevice(d.udid).then(() => device);
