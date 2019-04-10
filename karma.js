@@ -85,6 +85,7 @@ app.post('/screenshot', (req, res) => {
         platform: req.body.platform,
         devicePixelRatio: req.body.devicePixelRatio,
         test: req.body.test,
+        id: process.env.TARGET_BROWSER,
         screenshot: filename
     }));
     return res.sendStatus(200);
