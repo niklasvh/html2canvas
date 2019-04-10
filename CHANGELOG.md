@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.1](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.0...v1.0.0-rc.1) (2019-04-10)
+
+
+### ci
+
+* add ios simulator tests (#1794) ([a63cb3c0f132b1af915d9ef55a4c174f6e5502ce](https://github.com/niklasvh/html2canvas/commit/a63cb3c0f132b1af915d9ef55a4c174f6e5502ce)), closes [#1794](https://github.com/niklasvh/html2canvas/issues/1794)
+
+### docs
+
+* fix release date in changelog ([238de790a9f223becbc8726633c0f2a2dabf2cb7](https://github.com/niklasvh/html2canvas/commit/238de790a9f223becbc8726633c0f2a2dabf2cb7))
+* remove invalid `async` option from docs (fix #1769) (#1796) ([7775d3c0d6f3efca00611bedd5fc9200689a9f7a](https://github.com/niklasvh/html2canvas/commit/7775d3c0d6f3efca00611bedd5fc9200689a9f7a)), closes [#1769](https://github.com/niklasvh/html2canvas/issues/1769) [#1796](https://github.com/niklasvh/html2canvas/issues/1796)
+
+### fix
+
+* context scale for high resolution displays with foreignobjectrendering  (#1782) ([7027900f4993dcd00745a4db045ed1c0e3255f8a](https://github.com/niklasvh/html2canvas/commit/7027900f4993dcd00745a4db045ed1c0e3255f8a)), closes [#1782](https://github.com/niklasvh/html2canvas/issues/1782)
+* don't apply text shadows on elements (#1795) ([397595afb59ee50f0d128abb5945b5b9ddc6650d](https://github.com/niklasvh/html2canvas/commit/397595afb59ee50f0d128abb5945b5b9ddc6650d)), closes [#1795](https://github.com/niklasvh/html2canvas/issues/1795)
+* safari data url taints (#1797) ([4e4a231683904dfdc1f82472ece5a160a158dbb8](https://github.com/niklasvh/html2canvas/commit/4e4a231683904dfdc1f82472ece5a160a158dbb8)), closes [#1797](https://github.com/niklasvh/html2canvas/issues/1797)
+
+### test
+
+* fix RefTestRenderer.js inclusion with karma ([49f87fb680dbfe1898b3aeb60f2f5c3a93bfbe6d](https://github.com/niklasvh/html2canvas/commit/49f87fb680dbfe1898b3aeb60f2f5c3a93bfbe6d))
+
+
+
 # [1.0.0-rc.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0-alpha.12...v1.0.0-rc.0) (2019-04-07)
 
 
