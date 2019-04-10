@@ -134,9 +134,9 @@ export default class ResourceLoader {
                 const img = new Image();
                 img.onload = () => resolve(img);
                 //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
-             //   if (!supportsDataImages || useCORS) {
-                //    img.crossOrigin = 'anonymous';
-            //    }
+                if (useCORS) {
+                    img.crossOrigin = 'anonymous';
+                }
 
                 img.onerror = reject;
                 img.src = src;
