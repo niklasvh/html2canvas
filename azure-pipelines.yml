@@ -66,7 +66,7 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
-    - script: mkdir www/static/preview && cp -R tests/reftests www/static/preview/reftests && cp -R tests/assets www/static/preview/assets
+    - script: mkdir www/static/tests && cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets
       displayName: Copy reftests to docs website
     - script: npm run build && cd www && npm install && npm run build && cd ..
       displayName: Build docs
