@@ -66,6 +66,8 @@ jobs:
     - task: Npm@0
       inputs:
         command: install
+    - script: cp -R tests/reftests www/static/reftests
+      displayName: Copy reftests to docs website
     - script: npm run build && cd www && npm install && npm run build && cd ..
       displayName: Build docs
     - task: PublishBuildArtifacts@1
