@@ -73,358 +73,68 @@ jobs:
       inputs:
         PathtoPublish: 'www/public'
         artifactName: docs
-  - job: Browser_Tests_Linux_Firefox_Stable
-    displayName: Linux Firefox Stable
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    variables:
-      TARGET_BROWSER: Firefox_Stable
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: Xvfb :99 &
-      displayName: 'Start Xvfb'
-    - script: DISPLAY=:99 npm run karma
-      displayName: 'Run Firefox tests - Firefox Stable'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_Linux_Chrome_Stable
-    displayName: Linux Chrome Stable
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    variables:
-      TARGET_BROWSER: Chrome_Stable
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: Xvfb :99 &
-      displayName: 'Start Xvfb'
-    - script: DISPLAY=:99 npm run karma
-      displayName: 'Run Chrome tests - Chrome Stable'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_IOS_9
-    displayName: iOS Simulator Safari 9
-    pool:
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Linux_Firefox_Stable
+      displayName: Linux Firefox Stable
+      vmImage: 'ubuntu-16.04'
+      targetBrowser: Firefox_Stable
+      xvfb: true
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Linux_Chrome_Stable
+      displayName: Linux Chrome Stable
+      vmImage: 'ubuntu-16.04'
+      targetBrowser: Chrome_Stable
+      xvfb: true
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_9
+      displayName: iOS Simulator Safari 9
       vmImage: 'macOS-10.13'
-    variables:
-      TARGET_BROWSER: Safari_IOS_9
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Safari tests - Safari IOS'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_IOS_10
-    displayName: iOS Simulator Safari 10
-    pool:
+      targetBrowser: Safari_IOS_9
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_10
+      displayName: iOS Simulator Safari 10
       vmImage: 'macOS-10.13'
-    variables:
-      TARGET_BROWSER: Safari_IOS_10
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Safari tests - Safari IOS'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_IOS_11
-    displayName: iOS Simulator Safari 11
-    pool:
+      targetBrowser: Safari_IOS_10
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_11
+      displayName: iOS Simulator Safari 11
       vmImage: 'macOS-10.13'
-    variables:
-      TARGET_BROWSER: Safari_IOS_11
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Safari tests - Safari IOS'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_OSX_Safari_Stable
-    displayName: OSX Safari Stable
-    pool:
+      targetBrowser: Safari_IOS_11
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_Stable
+      displayName: OSX Safari Stable
       vmImage: 'macOS-10.13'
-    variables:
-      TARGET_BROWSER: Safari_Stable
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Safari tests - Safari Stable'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_Windows_IE9
-    displayName: Windows Internet Explorer 9 (Emulated)
-    pool:
+      targetBrowser: Safari_Stable
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE9
+      displayName: Windows Internet Explorer 9 (Emulated)
       vmImage: 'vs2017-win2016'
-    variables:
-      TARGET_BROWSER: IE_9
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Internet Explorer tests - IE 9'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_Windows_IE10
-    displayName: Windows Internet Explorer 10 (Emulated)
-    pool:
+      targetBrowser: IE_9
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE10
+      displayName: Windows Internet Explorer 10 (Emulated)
       vmImage: 'vs2017-win2016'
-    variables:
-      TARGET_BROWSER: IE_10
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Internet Explorer tests - IE 10'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
-  - job: Browser_Tests_Windows_IE11
-    displayName: Windows Internet Explorer 11
-    pool:
+      targetBrowser: IE_10
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE11
+      displayName: Windows Internet Explorer 11
       vmImage: 'vs2017-win2016'
-    variables:
-      TARGET_BROWSER: IE_11
-    dependsOn: Build
-    condition: succeeded()
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '10.x'
-      displayName: 'Install Node.js'
-    - task: Npm@0
-      inputs:
-        command: install
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download library'
-      inputs:
-        artifactName: dist
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download testrunner'
-      inputs:
-        artifactName: build
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - script: npm run karma
-      displayName: 'Run Internet Explorer tests - IE 11'
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'tmp/junit/*.xml'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Screenshots
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: 'tmp/reftests'
-        artifactName: ReftestResults
+      targetBrowser: IE_11
