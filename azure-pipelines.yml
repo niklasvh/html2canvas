@@ -148,8 +148,10 @@ jobs:
       inputs:
         artifactName: ReftestResults
         downloadPath: $(System.DefaultWorkingDirectory)
-    - script: mkdir www/static/tests && cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp -R tmp/ReftestResults www/static/results
+    - script: mkdir www/static/tests && cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp -R ReftestResults www/static/results
       displayName: Copy reftests to docs website
+    - script: npm run build:reftest-result-list tmp/static/results/metadata tmp/static/results/tests/results.json
+      displayName: Create reftest result index
     - script: npm run build && cd www && npm install && npm run build && cd ..
       displayName: Build docs
     - task: PublishBuildArtifacts@1
