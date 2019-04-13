@@ -159,6 +159,8 @@ jobs:
       displayName: Copy dist to docs website
     - script: npm run build:reftest-result-list www/static/results/metadata www/src/results.json
       displayName: Create reftest result index
+    - script: npm run build:reftest-preview
+      displayName: Create reftest previewer
     - script: rm -rf www/static/results/metadata
       displayName: Clean metadata folder
     - script: npm run build && cd www && npm install && npm run build && cd ..
