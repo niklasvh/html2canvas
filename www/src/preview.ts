@@ -111,9 +111,4 @@ if (testSelector && browserSelector) {
 
         testSelector.appendChild(option);
     });
-
 }
-
-
-
-console.log(results);
