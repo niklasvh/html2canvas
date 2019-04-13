@@ -14,8 +14,20 @@ if (process.argv.length <= 3){
 const path = resolve(__dirname, '../', process.argv[2]);
 const files = readdirSync(path);
 
-const result = files.reduce((result, file) => {
-    const json = JSON.parse(readFileSync(resolve(__dirname, path, file)).toString());
+interface RefTestMetadata {
+
+}
+
+interface RefTestSingleMetadata extends RefTestMetadata{
+    test: string;
+}
+
+interface RefTestResults {
+    [key: string]: Array<RefTestMetadata>
+}
+
+const result: RefTestResults = files.reduce((result: RefTestResults, file) => {
+    const json: RefTestSingleMetadata = JSON.parse(readFileSync(resolve(__dirname, path, file)).toString());
     if (!result[json.test]) {
         result[json.test] = [];
     }
