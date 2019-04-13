@@ -40,8 +40,9 @@ function onTestChange(browserTests: Test[]) {
 function onBrowserChange(browserTest: Test) {
     if (previewImage) {
         previewImage.src = `/results/${browserTest.screenshot}.png`;
-        previewImage.width = browserTest.windowWidth / browserTest.devicePixelRatio;
-        previewImage.height = browserTest.windowHeight / browserTest.devicePixelRatio;
+        if (browserTest.devicePixelRatio > 1) {
+            previewImage.style.transform = `scale(${1 / browserTest.devicePixelRatio})`;
+        }
     }
 }
 
