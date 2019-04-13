@@ -369,7 +369,10 @@ const assertPath = (result, expected, desc) => {
                                             platform: {
                                                 name: platform.name,
                                                 version: platform.version
-                                            }
+                                            },
+                                            devicePixelRatio: window.devicePixelRatio || 1,
+                                            windowWidth: window.innerWidth,
+                                            windowHeight: window.innerHeight
                                         }));
                                     });
 
