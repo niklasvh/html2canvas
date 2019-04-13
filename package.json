@@ -12,7 +12,7 @@
     "url": "https://hertzen.com"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-flow": "^7.0.0",
+    "@types/node": "^11.13.2",
     "appium-ios-simulator": "^3.10.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
@@ -65,6 +66,9 @@
     "serve-index": "^1.9.1",
     "slash": "1.0.0",
     "standard-version": "^5.0.2",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3",
     "uglifyjs-webpack-plugin": "^1.1.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
@@ -73,6 +77,8 @@
     "build": "rimraf dist/ && node scripts/create-reftest-list && npm run build:npm && npm run build:browser",
     "build:npm": "babel src/ -d dist/npm/ --plugins=dev-expression && replace-in-file __VERSION__ '\"$npm_package_version\"' dist/npm/index.js",
     "build:browser": "webpack",
+    "build:reftest-result-list": "ts-node scripts/create-reftest-result-list.ts",
+    "build:reftest-preview": "webpack --config www/webpack.config.js",
     "release": "standard-version",
     "rollup": "rollup -c",
     "format": "prettier --single-quote --no-bracket-spacing --tab-width 4 --print-width 100 --write \"{src,www/src,tests,scripts}/**/*.js\"",

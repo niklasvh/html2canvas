@@ -6,3 +6,6 @@ node_modules
 public/
 .DS_Store
 yarn-error.log
+src/results.json
+static/tests/preview.js
+src/preview.js
