@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+	<title>Filter:invert tests</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../test.js"></script>
+
+	<style>
+		.base_img{
+		  width:auto;
+		  height:300px;
+		}
+		body{ background-color: rgb(80,80,180);}
+
+		.border{ border:1px solid black; }
+		.borderRadius{ border-radius:15px;}
+		.circle{ border-radius:100%; }
+		.filterHigh{
+		  -webkit-filter:invert(1);
+		 	  filter:invert(1);
+		}
+		.filterLow{
+		  -webkit-filter:invert(0.5);
+		 	  filter:invert(0.5);
+		}
+		.filterHighPerC{
+		  -webkit-filter:invert(100%);
+		 	  filter:invert(100%);
+		}
+		.filterLowPerC{
+		  -webkit-filter:invert(0%);
+		 	  filter:invert(0%);
+		}
+
+
+	</style>
+	</head>
+	<body>
+		<img class="base_img filterLow" src="./example.jpg">
+		<img class="base_img filterHigh border" src="./example.jpg">
+		<img class="base_img filterLowPerC borderRadius" src="./example.jpg">
+		<img class="base_img filterHighPerC circle" src="./example.jpg">
+	</body>
+</html>

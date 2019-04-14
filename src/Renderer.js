@@ -2,6 +2,7 @@
 'use strict';
 
 import type Color from './Color';
+import type Filter from './Filter';
 import type {Path} from './drawing/Path';
 import type Size from './drawing/Size';
 import type Logger from './Logger';
@@ -50,7 +51,7 @@ export type RenderOptions = {
 export interface RenderTarget<Output> {
     clip(clipPaths: Array<Path>, callback: () => void): void,
 
-    drawImage(image: ImageElement, source: Bounds, destination: Bounds): void,
+    drawImage(image: ImageElement, source: Bounds, destination: Bounds, filter: Filter): void,
 
     drawShape(path: Path, color: Color): void,
 
@@ -145,7 +146,8 @@ export default class Renderer {
                             this.target.drawImage(
                                 image,
                                 new Bounds(0, 0, width, height),
-                                contentBox
+                                contentBox,
+                                container.style.filter
                             );
                         });
                     }

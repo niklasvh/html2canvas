@@ -2,9 +2,10 @@
 'use strict';
 
 import type {RenderTarget, RenderOptions} from '../Renderer';
-import type Color from '../Color';
+import Color from '../Color';
 import type {Path} from '../drawing/Path';
 import type Size from '../drawing/Size';
+import type Filter from '../Filter';
 
 import type {Font} from '../parsing/font';
 import type {TextDecoration} from '../parsing/textDecoration';
@@ -75,7 +76,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         }
     }
 
-    drawImage(image: ImageElement, source: Bounds, destination: Bounds) {
+    drawImage(image: ImageElement, source: Bounds, destination: Bounds, filter: Filter) {
         this.ctx.drawImage(
             image,
             source.left,
@@ -87,6 +88,63 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
             destination.width,
             destination.height
         );
+        if (typeof filter !== 'undefined') {
+            // Redraw image with filter applied, NOTE: this also applies the filter if the imag has rounded corners?
+            // This function cannot be called if the image is not from the same domain. You'll get security error if you do.
+            var imageData = this.ctx.getImageData(
+                destination.left,
+                destination.top,
+                destination.width,
+                destination.height
+            );
+            // This loop gets every pixels on the image and applies each filter that is supported
+            for (var _j = 0; _j < imageData.height; _j++) {
+                for (var _i = 0; _i < imageData.width; _i++) {
+                    var index = _j * 4 * imageData.width + _i * 4;
+                    var red = imageData.data[index];
+                    var green = imageData.data[index + 1];
+                    var blue = imageData.data[index + 2];
+                    var alpha = imageData.data[index + 3];
+                    var c = Color.create([red, green, blue, alpha]);
+
+                    if (filter.hasSepia()) {
+                        c.adjustSepia(filter.getSepia());
+                    }
+                    if (filter.hasGrayscale()) {
+                        c.grayscale(filter.getGrayscale(), 'luma:BT709');
+                    }
+                    if (filter.hasBrightness()) {
+                        c.adjustBrightnessRGB(filter.getBrightness());
+                    }
+                    if (filter.hasHueRotate()) {
+                        c.adjustHue(filter.getHueRotate());
+                    }
+                    if (filter.hasSaturation()) {
+                        c.adjustSaturation(filter.getSaturation());
+                    }
+                    if (filter.hasInvert()) {
+                        c.invert(filter.getInvert());
+                    }
+                    if (filter.hasContrast()) {
+                        c.adjustContrast(filter.getContrast());
+                    }
+                    if (filter.hasOpacity()) {
+                        //opacity filter is applied last, because it blends with the BG and sets opacity to 1
+                        c.a = filter.getOpacity();
+                        if (typeof this.options.backgroundColor !== "undefined") {
+                            c.blend(this.options.backgroundColor, c.a);
+                        }
+                    }
+
+
+                    imageData.data[index] = c.r;
+                    imageData.data[index + 1] = c.g;
+                    imageData.data[index + 2] = c.b;
+                    imageData.data[index + 3] = c.a;
+                }
+            }
+            this.ctx.putImageData(imageData, destination.left, destination.top);
+        }
     }
 
     drawShape(path: Path, color: Color) {
