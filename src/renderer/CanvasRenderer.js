@@ -26,7 +26,10 @@ const addColorStops = (
     const maxStop = Math.max.apply(null, gradient.colorStops.map(colorStop => colorStop.stop));
     const f = 1 / Math.max(1, maxStop);
     gradient.colorStops.forEach(colorStop => {
-        canvasGradient.addColorStop(f * colorStop.stop, colorStop.color.toString());
+        canvasGradient.addColorStop(
+            Math.floor(Math.max(0, f * colorStop.stop)),
+            colorStop.color.toString()
+        );
     });
 };
 
@@ -234,6 +237,11 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                         text.bounds.top + text.bounds.height
                     );
                 });
+
+                this.ctx.shadowColor = '';
+                this.ctx.shadowOffsetX = 0;
+                this.ctx.shadowOffsetY = 0;
+                this.ctx.shadowBlur = 0;
             } else {
                 this.ctx.fillText(
                     text.text,

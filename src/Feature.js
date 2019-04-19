@@ -27,38 +27,6 @@ const testRangeBounds = document => {
     return false;
 };
 
-// iOS 10.3 taints canvas with base64 images unless crossOrigin = 'anonymous'
-const testBase64 = (document: Document, src: string): Promise<boolean> => {
-    const img = new Image();
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    return new Promise(resolve => {
-        // Single pixel base64 image renders fine on iOS 10.3???
-        img.src = src;
-
-        const onload = () => {
-            try {
-                ctx.drawImage(img, 0, 0);
-                canvas.toDataURL();
-            } catch (e) {
-                return resolve(false);
-            }
-
-            return resolve(true);
-        };
-
-        img.onload = onload;
-        img.onerror = () => resolve(false);
-
-        if (img.complete === true) {
-            setTimeout(() => {
-                onload();
-            }, 500);
-        }
-    });
-};
-
 const testCORS = () => typeof new Image().crossOrigin !== 'undefined';
 
 const testResponseType = () => typeof new XMLHttpRequest().responseType === 'string';
@@ -133,15 +101,6 @@ const FEATURES = {
         const value = testSVG(document);
         Object.defineProperty(FEATURES, 'SUPPORT_SVG_DRAWING', {value});
         return value;
-    },
-    // $FlowFixMe - get/set properties not yet supported
-    get SUPPORT_BASE64_DRAWING() {
-        'use strict';
-        return (src: string) => {
-            const value = testBase64(document, src);
-            Object.defineProperty(FEATURES, 'SUPPORT_BASE64_DRAWING', {value: () => value});
-            return value;
-        };
     },
     // $FlowFixMe - get/set properties not yet supported
     get SUPPORT_FOREIGNOBJECT_DRAWING() {

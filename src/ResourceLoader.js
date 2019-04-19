@@ -129,42 +129,36 @@ export default class ResourceLoader {
             this.logger.log(`Added image ${key.substring(0, 256)}`);
         }
 
-        const imageLoadHandler = (supportsDataImages: boolean): Promise<Image> =>
-            new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
-                if (!supportsDataImages || useCORS) {
-                    img.crossOrigin = 'anonymous';
-                }
+        this.cache[key] = new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
+            if (isInlineBase64Image(src) || useCORS) {
+                img.crossOrigin = 'anonymous';
+            }
 
-                img.onerror = reject;
-                img.src = src;
-                if (img.complete === true) {
-                    // Inline XML images may fail to parse, throwing an Error later on
-                    setTimeout(() => {
-                        resolve(img);
-                    }, 500);
-                }
-                if (this.options.imageTimeout) {
-                    const timeout = this.options.imageTimeout;
-                    setTimeout(
-                        () =>
-                            reject(
-                                __DEV__
-                                    ? `Timed out (${timeout}ms) fetching ${src.substring(0, 256)}`
-                                    : ''
-                            ),
-                        timeout
-                    );
-                }
-            });
+            img.onerror = reject;
+            img.src = src;
+            if (img.complete === true) {
+                // Inline XML images may fail to parse, throwing an Error later on
+                setTimeout(() => {
+                    resolve(img);
+                }, 500);
+            }
+            if (this.options.imageTimeout) {
+                const timeout = this.options.imageTimeout;
+                setTimeout(
+                    () =>
+                        reject(
+                            __DEV__
+                                ? `Timed out (${timeout}ms) fetching ${src.substring(0, 256)}`
+                                : ''
+                        ),
+                    timeout
+                );
+            }
+        });
 
-        this.cache[key] =
-            isInlineBase64Image(src) && !isSVG(src)
-                ? // $FlowFixMe
-                  FEATURES.SUPPORT_BASE64_DRAWING(src).then(imageLoadHandler)
-                : imageLoadHandler(true);
         return key;
     }
 

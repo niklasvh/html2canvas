@@ -24,7 +24,7 @@ import type {TextBounds} from '../TextBounds';
 import {TEXT_DECORATION_STYLE, TEXT_DECORATION_LINE} from '../parsing/textDecoration';
 import {PATH} from '../drawing/Path';
 
-class RefTestRenderer implements RenderTarget<string> {
+export default class RefTestRenderer implements RenderTarget<string> {
     options: RenderOptions;
     indent: number;
     lines: Array<string>;
@@ -268,5 +268,3 @@ class RefTestRenderer implements RenderTarget<string> {
         this.lines.push(`${new Array(this.indent + 1).join(' ')}${text}`);
     }
 }
-
-module.exports = RefTestRenderer;

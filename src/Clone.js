@@ -184,7 +184,6 @@ export class DocumentCloner {
                     return this.renderer(
                         documentElement,
                         {
-                            async: this.options.async,
                             allowTaint: this.options.allowTaint,
                             backgroundColor: '#ffffff',
                             canvas: null,
@@ -213,7 +212,12 @@ export class DocumentCloner {
                         new Promise((resolve, reject) => {
                             const iframeCanvas = document.createElement('img');
                             iframeCanvas.onload = () => resolve(canvas);
-                            iframeCanvas.onerror = reject;
+                            iframeCanvas.onerror = function(event) {
+                                // Empty iframes may result in empty "data:," URLs, which are invalid from the <img>'s point of view
+                                // and instead of `onload` cause `onerror` and unhandled rejection warnings
+                                // https://github.com/niklasvh/html2canvas/issues/1502
+                                iframeCanvas.src == 'data:,' ? resolve(canvas) : reject(event);
+                            };
                             iframeCanvas.src = canvas.toDataURL();
                             if (tempIframe.parentNode) {
                                 tempIframe.parentNode.replaceChild(
@@ -229,21 +233,25 @@ export class DocumentCloner {
             return tempIframe;
         }
 
-        if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
-            const css = [].slice.call(node.sheet.cssRules, 0).reduce((css, rule) => {
-                try {
+        try {
+            if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
+                const css = [].slice.call(node.sheet.cssRules, 0).reduce((css, rule) => {
                     if (rule && rule.cssText) {
                         return css + rule.cssText;
                     }
                     return css;
-                } catch (err) {
-                    this.logger.log('Unable to access cssText property', rule.name);
-                    return css;
-                }
-            }, '');
-            const style = node.cloneNode(false);
-            style.textContent = css;
-            return style;
+                }, '');
+                const style = node.cloneNode(false);
+                style.textContent = css;
+                return style;
+            }
+        } catch (e) {
+            // accessing node.sheet.cssRules throws a DOMException
+            this.logger.log('Unable to access cssRules property');
+            if (e.name !== 'SecurityError') {
+                this.logger.log(e);
+                throw e;
+            }
         }
 
         return node.cloneNode(false);

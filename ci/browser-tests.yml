@@ -1,0 +1,52 @@
+parameters:
+  name: ''
+  vmImage: ''
+  targetBrowser: ''
+  xvfb: false
+
+jobs:
+  - job: ${{ parameters.name }}
+    displayName: ${{ parameters.displayName }}
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    variables:
+      TARGET_BROWSER: ${{ parameters.targetBrowser }}
+    dependsOn: Build
+    condition: succeeded()
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download library'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download testrunner'
+      inputs:
+        artifactName: build
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - ${{ if not(eq(parameters.xvfb, 'true')) }}:
+      - script: npm run karma
+        displayName: 'Run browser tests'
+    - ${{ if eq(parameters.xvfb, 'true') }}:
+      - script: Xvfb :99 &
+        displayName: 'Start Xvfb'
+      - script: DISPLAY=:99 npm run karma
+        displayName: 'Run browser tests'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'tmp/junit/*.xml'
+    - task: PublishBuildArtifacts@1
+      displayName: Upload Screenshots
+      condition: succeededOrFailed()
+      inputs:
+        PathtoPublish: 'tmp/reftests'
+        artifactName: ReftestResults
