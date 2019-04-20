@@ -56,8 +56,9 @@ export class DocumentCloner {
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
     }
 
-    inlineAllImages(node: ?HTMLElement) {
-        if (this.inlineImages && node) {
+    inlineAllImages(_node: ?HTMLElement) {
+        if (this.inlineImages && _node) {
+            const node = _node;
             const style = node.style;
             Promise.all(
                 parseBackgroundImage(style.backgroundImage).map(backgroundImage => {
@@ -90,11 +91,15 @@ export class DocumentCloner {
                 style.backgroundImage = backgroundImages.join(',');
             });
 
-            if (node instanceof HTMLImageElement) {
+            if (node instanceof node.ownerDocument.defaultView.HTMLImageElement) {
                 this.resourceLoader
                     .inlineImage(node.src)
                     .then(img => {
-                        if (img && node instanceof HTMLImageElement && node.parentNode) {
+                        if (
+                            img &&
+                            node instanceof node.ownerDocument.defaultView.HTMLImageElement &&
+                            node.parentNode
+                        ) {
                             const parentNode = node.parentNode;
                             const clonedChild = copyCSSStyles(node.style, img.cloneNode(false));
                             parentNode.replaceChild(clonedChild, node);
@@ -327,6 +332,21 @@ export class DocumentCloner {
                 case 'TEXTAREA':
                 case 'SELECT':
                     clone.value = node.value;
+                    break;
+                case 'IMG':
+                    var dt = node.ownerDocument.doctype;
+                    if (
+                        dt == undefined ||
+                        dt == 'null' ||
+                        (dt.systemId != '' &&
+                            dt.systemId.indexOf('strict') == -1 &&
+                            !(
+                                dt.systemId.indexOf('xhtml') > -1 &&
+                                dt.systemId.indexOf('11.dtd') > -1
+                            ) &&
+                            dt.systemId.indexOf('xhtml-math-svg') == -1)
+                    )
+                        clone.style.verticalAlign = 'bottom';
                     break;
             }
         }
