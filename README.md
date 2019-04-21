@@ -7,6 +7,8 @@ html2canvas
 [![Build Status](https://dev.azure.com/niklasvh/html2canvas/_apis/build/status/niklasvh.html2canvas?branchName=master)](https://dev.azure.com/niklasvh/html2canvas/_build/latest?definitionId=1&branchName=master)
 [![NPM Downloads](https://img.shields.io/npm/dm/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
 [![NPM Version](https://img.shields.io/npm/v/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
+[![Backers on Open Collective](https://opencollective.com/html2canvas/backers/badge.svg)](#backers) 
+[![Sponsors on Open Collective](https://opencollective.com/html2canvas/sponsors/badge.svg)](#sponsors) 
 
 #### JavaScript HTML renderer ####
 
@@ -71,3 +73,33 @@ For more information and examples, please visit the [homepage](https://html2canv
 ### Contributing ###
 
 If you wish to contribute to the project, please send the pull requests to the develop branch. Before submitting any changes, try and test that the changes work with all the support browsers. If some CSS property isn't supported or is incomplete, please create appropriate tests for it as well before submitting any code changes.
+
+## Contributors
+
+This project exists thanks to all the people who contribute. 
+<a href="https://github.com/niklasvh/html2canvas/graphs/contributors"><img src="https://opencollective.com/html2canvas/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/html2canvas#backer)]
+
+<a href="https://opencollective.com/html2canvas#backers" target="_blank"><img src="https://opencollective.com/html2canvas/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/html2canvas#sponsor)]
+
+<a href="https://opencollective.com/html2canvas/sponsor/0/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/1/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/2/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/3/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/4/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/5/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/6/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/7/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/8/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/html2canvas/sponsor/9/website" target="_blank"><img src="https://opencollective.com/html2canvas/sponsor/9/avatar.svg"></a>
+
+
