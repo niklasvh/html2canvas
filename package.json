@@ -88,11 +88,18 @@
     "test:node": "mocha tests/node/*.js",
     "karma": "node karma",
     "watch": "webpack --progress --colors --watch",
-    "start": "node tests/server"
+    "start": "node tests/server",
+    "postinstall": "opencollective-postinstall"
   },
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
-    "css-line-break": "1.0.1"
+    "css-line-break": "1.0.1",
+    "opencollective-postinstall": "^2.0.2",
+    "opencollective": "^1.0.3"
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/html2canvas"
   }
 }
