@@ -188,6 +188,7 @@ export class DocumentCloner {
                             backgroundColor: '#ffffff',
                             canvas: null,
                             imageTimeout: this.options.imageTimeout,
+                            fixLigatures: this.options.fixLigatures,
                             logging: this.options.logging,
                             proxy: this.options.proxy,
                             removeContainer: this.options.removeContainer,

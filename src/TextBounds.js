@@ -4,6 +4,7 @@
 import type NodeContainer from './NodeContainer';
 import {Bounds, parseBounds} from './Bounds';
 import {TEXT_DECORATION} from './parsing/textDecoration';
+import {FONT_VARIANT_LIGATURES} from './parsing/fontVariantLigatures';
 
 import FEATURES from './Feature';
 import {breakWords, toCodePoints, fromCodePoint} from './Unicode';
@@ -53,6 +54,13 @@ export const parseTextBounds = (
         }
         offset += text.length;
     }
+    if (
+        textBounds.length > 0 &&
+        parent.options.fixLigatures &&
+        parent.style.fontVariantLigatures !== FONT_VARIANT_LIGATURES.NONE
+    ) {
+        fixLigatures(textBounds);
+    }
     return textBounds;
 };
 
@@ -82,4 +90,74 @@ const getRangeBounds = (
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
     return Bounds.fromClientRect(range.getBoundingClientRect(), scrollX, scrollY);
+};
+
+const fixLigatures = (textBounds: Array<TextBounds>): void => {
+    const size = textBounds.length;
+    let prev = textBounds[0].bounds;
+    for (let i = 1; i < size; i++) {
+        let bounds = textBounds[i].bounds;
+        const next = i + 1 < size ? textBounds[i + 1].bounds : null;
+        if (
+            !bounds.width ||
+            !bounds.height ||
+            bounds.top !== prev.top ||
+            bounds.left !== prev.left
+        ) {
+            prev = bounds;
+            continue;
+        }
+        if (next && bounds.top === next.top) {
+            const ligatures = untilNonLigature(bounds, textBounds, i + 1);
+            const ligLen = ligatures.length;
+            const nonLig = ligatures[ligLen - 1];
+            const nnext = ligatures[ligLen - 2] || next;
+            const rightBound = (nonLig ? nonLig.left : nnext.left + nnext.width) - prev.left;
+            const offset = rightBound / (1 + ligLen);
+            bounds.left += offset;
+            if (ligLen > 1) {
+                for (let j = 0, ligSize = ligLen - 1; j < ligSize; j++) {
+                    prev = bounds;
+                    bounds = ligatures[j] || bounds;
+                    if (bounds === prev) {
+                        break;
+                    }
+                    bounds.left = prev.left + offset;
+                }
+                i += ligLen - 1;
+            }
+        } else {
+            bounds.left += prev.width / 2;
+        }
+        prev = bounds;
+    }
+};
+
+const untilNonLigature = (
+    ligatureBounds: Bounds,
+    textBounds: Array<TextBounds>,
+    startIndex: number
+): Array<Bounds | null> => {
+    const size = textBounds.length;
+    let ligatures = [];
+    let isFound = false;
+    for (let i = startIndex; i < size; i++) {
+        const bounds = textBounds[i].bounds;
+        if (
+            !bounds.width ||
+            !bounds.height ||
+            bounds.top > ligatureBounds.top ||
+            bounds.left > ligatureBounds.left
+        ) {
+            isFound = true;
+        }
+        ligatures.push(bounds);
+
+        if (isFound) {
+            break;
+        } else if (i === size - 1) {
+            ligatures.push(null);
+        }
+    }
+    return ligatures;
 };

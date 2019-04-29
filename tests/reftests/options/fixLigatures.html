@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fix-ligatures test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        h2cOptions = {
+            fixLigatures: true
+        };
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Noto+Serif+JP');
+
+        .text {
+            font-family: 'Noto Serif JP', sans-serif;
+            font-size: 20px;
+            font-stretch: 100%;
+            font-style: normal;
+            font-variant-caps: normal;
+            font-variant-east-asian: normal;
+            font-variant-ligatures: normal;
+            font-variant-numeric: normal;
+            font-weight: 400;
+        }
+
+        .ligatures {
+            font-variant-ligatures: normal;
+        }
+
+        p.text, textarea.text {
+            width: 25em;
+        }
+    </style>
+
+</head>
+<body>
+<div id="text-examples">
+
+  <p class="text ligatures">Difficult waffles - fi fj fl ffi gg gy - Einflu&szlig;stau</p>
+
+  <textarea class="text ligatures">Difficult waffles - fi fj fl ffi gg gy - Einflu&szlig;stau</textarea>
+
+</div>
+</body>
+</html>
