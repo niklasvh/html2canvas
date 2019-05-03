@@ -25,9 +25,6 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
         .forEach(appendScript);
 
     window.onload = function() {
-        var targets = REFTEST
-            ? [new html2canvas.CanvasRenderer(), new RefTestRenderer()]
-            : new html2canvas.CanvasRenderer();
         (function($) {
             $.fn.html2canvas = function(options) {
                 var date = new Date(),
@@ -40,18 +37,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                     console.log('html2canvas threw an error', err);
                 });
 
-                promise.then(function(output) {
-                    var canvas = Array.isArray(targets) ? output[0] : output;
-                    if (Array.isArray(targets)) {
-                        console.log(
-                            output[1]
-                                .split('\n')
-                                .map(function(line, i) {
-                                    return i + 1 + ':' + line;
-                                })
-                                .join('\n')
-                        );
-                    }
+                promise.then(function(canvas) {
                     var $canvas = $(canvas),
                         finishTime = new Date();
 
@@ -155,8 +141,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                         logging: true,
                         proxy: 'http://localhost:8081/proxy',
                         useCORS: false,
-                        removeContainer: false,
-                        target: targets
+                        removeContainer: false
                     },
                     h2cOptions,
                     REFTEST ? {windowWidth: 800, windowHeight: 600} : {}
