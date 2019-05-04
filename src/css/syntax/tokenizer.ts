@@ -1,9 +1,6 @@
 // https://www.w3.org/TR/css-syntax-3
 
-//const {fromCodePoint, toCodePoints} = require('css-line-break');
-//import {fromCodePoint, toCodePoints} from 'css-line-break';
 import {fromCodePoint, toCodePoints} from 'css-line-break';
-//const {fromCodePoint, toCodePoints} = cssLineBreak;
 
 export enum TokenType {
     STRING_TOKEN,
@@ -641,7 +638,20 @@ export class Tokenizer {
                 return BAD_STRING_TOKEN;
             }
 
-            value += fromCodePoint(codePoint);
+            if (codePoint === REVERSE_SOLIDUS) {
+                const next = this.peekCodePoint(0);
+                if (next !== EOF) {
+                    if (next === LINE_FEED) {
+                        this.consumeCodePoint();
+                    } else if (isValidEscape(codePoint, next)) {
+                        value += fromCodePoint(this.consumeEscapedCodePoint());
+                    }
+                }
+            } else {
+                value += fromCodePoint(codePoint);
+            }
+
+
         } while(true);
     }
 

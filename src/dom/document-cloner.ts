@@ -6,6 +6,12 @@ import {
     isTextNode
 } from "./node-parser";
 import {Logger} from "../core/logger";
+import {isIdentToken, nonFunctionArgSeperator} from "../css/syntax/parser";
+import {TokenType} from "../css/syntax/tokenizer";
+import {CounterState, createCounterText} from "../css/types/functions/counter";
+import {LIST_STYLE_TYPE, listStyleType} from "../css/property-descriptors/list-style-type";
+import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from "../css/index";
+import {getQuote} from "../css/property-descriptors/quotes";
 
 export type CloneOptions = {
     ignoreElements?: (element: Element) => boolean
@@ -25,14 +31,19 @@ export class DocumentCloner {
     private readonly  referenceElement: HTMLElement;
     clonedReferenceElement?: HTMLElement;
     private readonly documentElement: HTMLElement;
+    private readonly counters: CounterState;
+    private quoteDepth: number;
 
     constructor(element: HTMLElement, options: CloneConfigurations) {
         this.options = options;
         this.scrolledElements = [];
         this.referenceElement = element;
+        this.counters = new CounterState();
+        this.quoteDepth = 0;
         if (!element.ownerDocument) {
             throw new Error('Cloned element does not have an owner document');
         }
+
         this.documentElement = <HTMLElement>this.cloneNode(element.ownerDocument.documentElement);
     }
 
@@ -239,18 +250,19 @@ export class DocumentCloner {
             const clone = this.createElementClone(node);
 
             const style = window.getComputedStyle(node);
-       //     const styleBefore = window.getComputedStyle(node, ':before');
-        //    const styleAfter = window.getComputedStyle(node, ':after');
+            const styleBefore = window.getComputedStyle(node, ':before');
+            const styleAfter = window.getComputedStyle(node, ':after');
 
             if (this.referenceElement === node) {
                 this.clonedReferenceElement = clone;
             }
             if (isBodyElement(clone)) {
-                //createPseudoHideStyles(clone);
+                createPseudoHideStyles(clone);
             }
 
-        //    const counters = parseCounterReset(style, this.pseudoContentData);
-        //    const contentBefore = resolvePseudoContent(node, styleBefore, this.pseudoContentData);
+
+            const counters = this.counters.parse(new CSSParsedCounterDeclaration(style));
+            const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
             for (let child = node.firstChild; child; child = child.nextSibling) {
                 if (
@@ -265,20 +277,18 @@ export class DocumentCloner {
                     }
                 }
             }
-/*
-            const contentAfter = resolvePseudoContent(node, styleAfter, this.pseudoContentData);
-            popCounters(counters, this.pseudoContentData);
 
-            if (styleBefore) {
-                this.inlineAllImages(
-                    inlinePseudoElement(node, clone, styleBefore, contentBefore, PSEUDO_BEFORE)
-                );
+            if (before) {
+                clone.insertBefore(before, clone.firstChild);
             }
-            if (styleAfter) {
-                this.inlineAllImages(
-                    inlinePseudoElement(node, clone, styleAfter, contentAfter, PSEUDO_AFTER)
-                );
-            }*/
+
+            const after = this.resolvePseudoContent(node, clone, styleAfter, PseudoElementType.AFTER);
+            if (after) {
+                clone.appendChild(after);
+            }
+
+            this.counters.pop(counters);
+
             if (style && this.options.copyStyles && !isIFrameElement(node)) {
                 copyCSSStyles(style, clone);
             }
@@ -299,7 +309,93 @@ export class DocumentCloner {
         return node.cloneNode(false);
     }
 
+    resolvePseudoContent(node: Element, clone: Element, style: CSSStyleDeclaration, pseudoElt: PseudoElementType): HTMLElement | void {
+        if (!style) {
+            return;
+        }
 
+        const value = style.content;
+        const document = clone.ownerDocument;
+        if (
+            !document ||
+            !value ||
+            value === 'none' ||
+            value === '-moz-alt-content' ||
+            style.display === 'none'
+        ) {
+            return;
+        }
+
+        this.counters.parse(new CSSParsedCounterDeclaration(style));
+        const declaration = new CSSParsedPseudoDeclaration(style);
+
+        const anonymousReplacedElement = document.createElement('html2canvaspseudoelement');
+        copyCSSStyles(style, anonymousReplacedElement);
+
+        declaration.content.forEach(token => {
+            if (token.type === TokenType.STRING_TOKEN) {
+                anonymousReplacedElement.appendChild(document.createTextNode(token.value));
+            } else if (token.type === TokenType.URL_TOKEN) {
+                const img = document.createElement('img');
+                img.src = token.value;
+                img.style.opacity = '1';
+                anonymousReplacedElement.appendChild(img);
+            } else if (token.type === TokenType.FUNCTION) {
+                if (token.name === 'attr') {
+                    const attr = token.values.filter(isIdentToken);
+                    if (attr.length) {
+                        anonymousReplacedElement.appendChild(document.createTextNode(node.getAttribute(attr[0].value) || ''));
+                    }
+                } else if (token.name === 'counter') {
+                    const [counter, counterStyle] = token.values.filter(nonFunctionArgSeperator);
+                    if (counter && isIdentToken(counter)) {
+                        const counterState = this.counters.getCounterValue(counter.value);
+                        const counterType = counterStyle && isIdentToken(counterStyle) ? listStyleType.parse(counterStyle.value) : LIST_STYLE_TYPE.DECIMAL;
+
+                        anonymousReplacedElement.appendChild(document.createTextNode(createCounterText(counterState, counterType, false)));
+                    }
+                } else if (token.name === 'counters') {
+                    const [counter, delim, counterStyle] = token.values.filter(nonFunctionArgSeperator);
+                    if (counter && isIdentToken(counter)) {
+                        const counterStates = this.counters.getCounterValues(counter.value);
+                        const counterType = counterStyle && isIdentToken(counterStyle) ? listStyleType.parse(counterStyle.value) : LIST_STYLE_TYPE.DECIMAL;
+                        const separator = delim && delim.type === TokenType.STRING_TOKEN ? delim.value : '';
+                        const text = counterStates.map(value => createCounterText(value, counterType, false)).join(separator);
+
+                        anonymousReplacedElement.appendChild(document.createTextNode(text));
+                    }
+                } else {
+                    console.log('FUNCTION_TOKEN', token);
+                }
+
+            } else if (token.type === TokenType.IDENT_TOKEN) {
+                switch (token.value) {
+                    case 'open-quote':
+                        anonymousReplacedElement.appendChild(document.createTextNode(getQuote(declaration.quotes, this.quoteDepth++, true)));
+                        break;
+                    case 'close-quote':
+                        anonymousReplacedElement.appendChild(document.createTextNode(getQuote(declaration.quotes, --this.quoteDepth, false)));
+                        break;
+                    default:
+                        console.log('ident', token, declaration);
+                }
+
+            }
+        });
+
+        anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+        clone.className +=
+            pseudoElt === PseudoElementType.BEFORE
+                ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
+                : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+        return anonymousReplacedElement;
+    }
+
+}
+
+enum PseudoElementType {
+    BEFORE,
+    AFTER
 }
 
 const createIFrameContainer = (
@@ -398,4 +494,31 @@ const restoreOwnerScroll = (ownerDocument: Document | null, x: number, y: number
 const restoreNodeScroll = ([element, x, y]: [HTMLElement, number, number]) => {
     element.scrollLeft = x;
     element.scrollTop = y;
+};
+
+const PSEUDO_BEFORE = ':before';
+const PSEUDO_AFTER = ':after';
+const PSEUDO_HIDE_ELEMENT_CLASS_BEFORE = '___html2canvas___pseudoelement_before';
+const PSEUDO_HIDE_ELEMENT_CLASS_AFTER = '___html2canvas___pseudoelement_after';
+
+const PSEUDO_HIDE_ELEMENT_STYLE = `{
+    content: "" !important;
+    display: none !important;
+}`;
+
+const createPseudoHideStyles = (body: HTMLElement) => {
+    createStyles(
+        body,
+        `.${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}${PSEUDO_BEFORE}${PSEUDO_HIDE_ELEMENT_STYLE}
+         .${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}${PSEUDO_AFTER}${PSEUDO_HIDE_ELEMENT_STYLE}`
+    );
+};
+
+const createStyles = (body: HTMLElement, styles: string) => {
+    const document = body.ownerDocument;
+    if (document) {
+        const style = document.createElement('style');
+        style.textContent = styles;
+        body.appendChild(style);
+    }
 };

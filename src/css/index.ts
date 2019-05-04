@@ -58,17 +58,10 @@ import {fontWeight} from "./property-descriptors/font-weight";
 import {fontVariant} from "./property-descriptors/font-variant";
 import {fontStyle} from "./property-descriptors/font-style";
 import {contains} from "../core/bitwise";
-
-// export type CSSRegisteredProperty = keyof typeof CSS.registeredPropertySet;
-
-type KnownKeys<T> = {
-    [K in keyof T]: string extends K ? never : number extends K ? never : K
-} extends {[_ in keyof T]: infer U} ? ({} extends U ? never : U) : never;
-
-type GetInnerType<S> = S extends CSSPropertyDescriptor<infer T> ? T : never
-
-export type CSSRegisteredProperty = KnownKeys<typeof CSS.registeredPropertySet>;
-export type CSSRegisteredDeclarations = {[K in CSSRegisteredProperty]: GetInnerType<typeof CSS.registeredPropertySet[K]>};
+import {content} from "./property-descriptors/content";
+import {counterIncrement} from "./property-descriptors/counter-increment";
+import {counterReset} from "./property-descriptors/counter-reset";
+import {quotes} from "./property-descriptors/quotes";
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -128,92 +121,61 @@ export class CSSParsedDeclaration {
     zIndex: ReturnType<typeof zIndex.parse>;
 
     constructor(declaration: CSSStyleDeclaration) {
-        this.backgroundClip = this.parse(backgroundClip, declaration.backgroundClip);
-        this.backgroundColor = this.parse(backgroundColor, declaration.backgroundColor);
-        this.backgroundImage = this.parse(backgroundImage, declaration.backgroundImage);
-        this.backgroundOrigin = this.parse(backgroundOrigin, declaration.backgroundOrigin);
-        this.backgroundPosition = this.parse(backgroundPosition, declaration.backgroundPosition);
-        this.backgroundRepeat = this.parse(backgroundRepeat, declaration.backgroundRepeat);
-        this.backgroundSize = this.parse(backgroundSize, declaration.backgroundSize);
-        this.borderTopColor = this.parse(borderTopColor, declaration.borderTopColor);
-        this.borderRightColor = this.parse(borderRightColor, declaration.borderRightColor);
-        this.borderBottomColor = this.parse(borderBottomColor, declaration.borderBottomColor);
-        this.borderLeftColor = this.parse(borderLeftColor, declaration.borderLeftColor);
-        this.borderTopLeftRadius = this.parse(borderTopLeftRadius, declaration.borderTopLeftRadius);
-        this.borderTopRightRadius = this.parse(borderTopRightRadius, declaration.borderTopRightRadius);
-        this.borderBottomRightRadius = this.parse(borderBottomRightRadius, declaration.borderBottomRightRadius);
-        this.borderBottomLeftRadius = this.parse(borderBottomLeftRadius, declaration.borderBottomLeftRadius);
-        this.borderTopStyle = this.parse(borderTopStyle, declaration.borderTopStyle);
-        this.borderRightStyle = this.parse(borderRightStyle, declaration.borderRightStyle);
-        this.borderBottomStyle = this.parse(borderBottomStyle, declaration.borderBottomStyle);
-        this.borderLeftStyle = this.parse(borderLeftStyle, declaration.borderLeftStyle);
-        this.borderTopWidth = this.parse(borderTopWidth, declaration.borderTopWidth);
-        this.borderRightWidth = this.parse(borderRightWidth, declaration.borderRightWidth);
-        this.borderBottomWidth = this.parse(borderBottomWidth, declaration.borderBottomWidth);
-        this.borderLeftWidth = this.parse(borderLeftWidth, declaration.borderLeftWidth);
-        this.color = this.parse(color, declaration.color);
-        this.display = this.parse(display, declaration.display);
-        this.float = this.parse(float, declaration.cssFloat);
-        this.fontFamily = this.parse(fontFamily, declaration.fontFamily);
-        this.fontSize = this.parse(fontSize, declaration.fontSize);
-        this.fontStyle = this.parse(fontStyle, declaration.fontStyle);
-        this.fontVariant = this.parse(fontVariant, declaration.fontVariant);
-        this.fontWeight = this.parse(fontWeight, declaration.fontWeight);
-        this.letterSpacing = this.parse(letterSpacing, declaration.letterSpacing);
-        this.lineBreak = this.parse(lineBreak, declaration.lineBreak);
-        this.listStylePosition = this.parse(listStylePosition, declaration.listStylePosition);
-        this.listStyleType = this.parse(listStyleType, declaration.listStyleType);
-        this.marginTop = this.parse(marginTop, declaration.marginTop);
-        this.marginRight = this.parse(marginRight, declaration.marginRight);
-        this.marginBottom = this.parse(paddingBottom, declaration.marginBottom);
-        this.marginLeft = this.parse(paddingLeft, declaration.marginLeft);
-        this.opacity = this.parse(opacity, declaration.opacity);
-        this.overflow = this.parse(overflow, declaration.overflow);
-        this.overflowWrap = this.parse(overflowWrap, declaration.overflowWrap);
-        this.paddingTop = this.parse(paddingTop, declaration.paddingTop);
-        this.paddingRight = this.parse(paddingRight, declaration.paddingRight);
-        this.paddingBottom = this.parse(paddingBottom, declaration.paddingBottom);
-        this.paddingLeft = this.parse(paddingLeft, declaration.paddingLeft);
-        this.position = this.parse(position, declaration.position);
-        this.textDecorationColor = this.parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
-        this.textDecorationLine = this.parse(textDecorationLine, declaration.textDecorationLine);
-        this.textTransform = this.parse(textTransform, declaration.textTransform);
-        this.transform = this.parse(transform, declaration.transform);
-        this.transformOrigin = this.parse(transformOrigin, declaration.transformOrigin);
-        this.visibility = this.parse(visibility, declaration.visibility);
-        this.wordBreak = this.parse(wordBreak, declaration.wordBreak);
-        this.zIndex = this.parse(zIndex, declaration.zIndex);
-    }
-
-    private parse(descriptor: CSSPropertyDescriptor<any>, style?: string | null) {
-        const tokenizer = new Tokenizer();
-        tokenizer.write(typeof style === 'string' ? style : descriptor.initialValue);
-        const parser = new Parser(tokenizer.read());
-        switch(descriptor.type) {
-            case PropertyDescriptorParsingType.IDENT_VALUE:
-                const token = parser.parseComponentValue();
-                return descriptor.parse(isIdentToken(token) ? token.value : descriptor.initialValue);
-            case PropertyDescriptorParsingType.VALUE:
-                return descriptor.parse(parser.parseComponentValue());
-            case PropertyDescriptorParsingType.LIST:
-                return descriptor.parse(parser.parseComponentValues());
-            case PropertyDescriptorParsingType.TOKEN_VALUE:
-                return parser.parseComponentValue();
-            case PropertyDescriptorParsingType.TYPE_VALUE:
-                switch(descriptor.format) {
-                    case 'angle': return angle.parse(parser.parseComponentValue());
-                    case 'color': return colorType.parse(parser.parseComponentValue());
-                    case 'image': return image.parse(parser.parseComponentValue());
-                    case 'length':
-                        const length = parser.parseComponentValue();
-                        return isLength(length) ? length : ZERO_LENGTH;
-                    case 'length-percentage':
-                        const value = parser.parseComponentValue();
-                        return isLengthPercentage(value) ? value : ZERO_LENGTH;
-                }
-        }
-
-        throw new Error(`Attempting to parse unsupported css format type ${descriptor.format}`);
+        this.backgroundClip = parse(backgroundClip, declaration.backgroundClip);
+        this.backgroundColor = parse(backgroundColor, declaration.backgroundColor);
+        this.backgroundImage = parse(backgroundImage, declaration.backgroundImage);
+        this.backgroundOrigin = parse(backgroundOrigin, declaration.backgroundOrigin);
+        this.backgroundPosition = parse(backgroundPosition, declaration.backgroundPosition);
+        this.backgroundRepeat = parse(backgroundRepeat, declaration.backgroundRepeat);
+        this.backgroundSize = parse(backgroundSize, declaration.backgroundSize);
+        this.borderTopColor = parse(borderTopColor, declaration.borderTopColor);
+        this.borderRightColor = parse(borderRightColor, declaration.borderRightColor);
+        this.borderBottomColor = parse(borderBottomColor, declaration.borderBottomColor);
+        this.borderLeftColor = parse(borderLeftColor, declaration.borderLeftColor);
+        this.borderTopLeftRadius = parse(borderTopLeftRadius, declaration.borderTopLeftRadius);
+        this.borderTopRightRadius = parse(borderTopRightRadius, declaration.borderTopRightRadius);
+        this.borderBottomRightRadius = parse(borderBottomRightRadius, declaration.borderBottomRightRadius);
+        this.borderBottomLeftRadius = parse(borderBottomLeftRadius, declaration.borderBottomLeftRadius);
+        this.borderTopStyle = parse(borderTopStyle, declaration.borderTopStyle);
+        this.borderRightStyle = parse(borderRightStyle, declaration.borderRightStyle);
+        this.borderBottomStyle = parse(borderBottomStyle, declaration.borderBottomStyle);
+        this.borderLeftStyle = parse(borderLeftStyle, declaration.borderLeftStyle);
+        this.borderTopWidth = parse(borderTopWidth, declaration.borderTopWidth);
+        this.borderRightWidth = parse(borderRightWidth, declaration.borderRightWidth);
+        this.borderBottomWidth = parse(borderBottomWidth, declaration.borderBottomWidth);
+        this.borderLeftWidth = parse(borderLeftWidth, declaration.borderLeftWidth);
+        this.color = parse(color, declaration.color);
+        this.display = parse(display, declaration.display);
+        this.float = parse(float, declaration.cssFloat);
+        this.fontFamily = parse(fontFamily, declaration.fontFamily);
+        this.fontSize = parse(fontSize, declaration.fontSize);
+        this.fontStyle = parse(fontStyle, declaration.fontStyle);
+        this.fontVariant = parse(fontVariant, declaration.fontVariant);
+        this.fontWeight = parse(fontWeight, declaration.fontWeight);
+        this.letterSpacing = parse(letterSpacing, declaration.letterSpacing);
+        this.lineBreak = parse(lineBreak, declaration.lineBreak);
+        this.listStylePosition = parse(listStylePosition, declaration.listStylePosition);
+        this.listStyleType = parse(listStyleType, declaration.listStyleType);
+        this.marginTop = parse(marginTop, declaration.marginTop);
+        this.marginRight = parse(marginRight, declaration.marginRight);
+        this.marginBottom = parse(marginBottom, declaration.marginBottom);
+        this.marginLeft = parse(marginLeft, declaration.marginLeft);
+        this.opacity = parse(opacity, declaration.opacity);
+        this.overflow = parse(overflow, declaration.overflow);
+        this.overflowWrap = parse(overflowWrap, declaration.overflowWrap);
+        this.paddingTop = parse(paddingTop, declaration.paddingTop);
+        this.paddingRight = parse(paddingRight, declaration.paddingRight);
+        this.paddingBottom = parse(paddingBottom, declaration.paddingBottom);
+        this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
+        this.position = parse(position, declaration.position);
+        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
+        this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
+        this.textTransform = parse(textTransform, declaration.textTransform);
+        this.transform = parse(transform, declaration.transform);
+        this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
+        this.visibility = parse(visibility, declaration.visibility);
+        this.wordBreak = parse(wordBreak, declaration.wordBreak);
+        this.zIndex = parse(zIndex, declaration.zIndex);
     }
 
     isVisible(): boolean {
@@ -256,55 +218,53 @@ export class CSSParsedDeclaration {
     }
 }
 
-export class CSS {
-    static registeredPropertySet: {[key: string]: CSSPropertyDescriptor<any>} = {
-        backgroundClip,
-        backgroundColor,
-        backgroundImage,
-        backgroundOrigin,
-        backgroundPosition,
-        backgroundRepeat,
-        backgroundSize,
-        borderTopColor,
-        borderRightColor,
-        borderBottomColor,
-        borderLeftColor,
-        borderTopLeftRadius,
-        borderTopRightRadius,
-        borderBottomRightRadius,
-        borderBottomLeftRadius,
-        borderTopStyle,
-        borderRightStyle,
-        borderBottomStyle,
-        borderLeftStyle,
-        borderTopWidth,
-        borderRightWidth,
-        borderBottomWidth,
-        borderLeftWidth,
-        color,
-        display,
-        float,
-        letterSpacing,
-        lineBreak,
-        listStylePosition,
-        listStyleType,
-        marginTop,
-        marginRight,
-        marginBottom,
-        marginLeft,
-        overflow,
-        overflowWrap,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        position,
-        textTransform,
-        transform,
-        transformOrigin,
-        visibility,
-        wordBreak,
-        zIndex
-    };
+export class CSSParsedPseudoDeclaration {
+    content: ReturnType<typeof content.parse>;
+    quotes: ReturnType<typeof quotes.parse>;
+
+    constructor(declaration: CSSStyleDeclaration) {
+        this.content = parse(content, declaration.content);
+        this.quotes = parse(quotes, declaration.quotes);
+    }
 }
 
+export class CSSParsedCounterDeclaration {
+    counterIncrement: ReturnType<typeof counterIncrement.parse>;
+    counterReset: ReturnType<typeof counterReset.parse>;
+
+    constructor(declaration: CSSStyleDeclaration) {
+        this.counterIncrement = parse(counterIncrement, declaration.counterIncrement);
+        this.counterReset = parse(counterReset, declaration.counterReset);
+    }
+}
+
+const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) => {
+    const tokenizer = new Tokenizer();
+    tokenizer.write(typeof style === 'string' ? style : descriptor.initialValue);
+    const parser = new Parser(tokenizer.read());
+    switch(descriptor.type) {
+        case PropertyDescriptorParsingType.IDENT_VALUE:
+            const token = parser.parseComponentValue();
+            return descriptor.parse(isIdentToken(token) ? token.value : descriptor.initialValue);
+        case PropertyDescriptorParsingType.VALUE:
+            return descriptor.parse(parser.parseComponentValue());
+        case PropertyDescriptorParsingType.LIST:
+            return descriptor.parse(parser.parseComponentValues());
+        case PropertyDescriptorParsingType.TOKEN_VALUE:
+            return parser.parseComponentValue();
+        case PropertyDescriptorParsingType.TYPE_VALUE:
+            switch(descriptor.format) {
+                case 'angle': return angle.parse(parser.parseComponentValue());
+                case 'color': return colorType.parse(parser.parseComponentValue());
+                case 'image': return image.parse(parser.parseComponentValue());
+                case 'length':
+                    const length = parser.parseComponentValue();
+                    return isLength(length) ? length : ZERO_LENGTH;
+                case 'length-percentage':
+                    const value = parser.parseComponentValue();
+                    return isLengthPercentage(value) ? value : ZERO_LENGTH;
+            }
+    }
+
+    throw new Error(`Attempting to parse unsupported css format type ${descriptor.format}`);
+};

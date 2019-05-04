@@ -143,8 +143,10 @@ export class Parser {
 export const isDimensionToken = (token: CSSValue): token is DimensionToken => token.type === TokenType.DIMENSION_TOKEN;
 export const isNumberToken = (token: CSSValue): token is NumberValueToken => token.type === TokenType.NUMBER_TOKEN;
 export const isIdentToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.IDENT_TOKEN;
+export const isStringToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.STRING_TOKEN;
 export const isIdentWithValue = (token: CSSValue, value: string): boolean => isIdentToken(token) && token.value === value;
 
+export const nonWhiteSpace = (token: CSSValue) => token.type !== TokenType.WHITESPACE_TOKEN;
 export const nonFunctionArgSeperator = (token: CSSValue) => token.type !== TokenType.WHITESPACE_TOKEN && token.type !== TokenType.COMMA_TOKEN;
 
 export const parseFunctionArgs = (tokens: CSSValue[]): CSSValue[][] => {
