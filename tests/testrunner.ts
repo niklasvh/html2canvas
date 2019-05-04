@@ -6,7 +6,7 @@ const testRunnerUrl = location.href;
 const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
 
 const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: () => void, reject: (error: string) => void) => {
         // @ts-ignore
         const xhr = 'withCredentials' in new XMLHttpRequest() ? new XMLHttpRequest() : new XDomainRequest();
 
@@ -34,8 +34,7 @@ const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
     });
 };
 
-Object.keys(testList)
-    .filter(test => {
+testList.filter(test => {
         return (
             !Array.isArray(ignoredTests[test]) ||
             ignoredTests[test].indexOf(platform.name || '') === -1
