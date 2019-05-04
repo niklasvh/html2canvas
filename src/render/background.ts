@@ -1,12 +1,12 @@
-import {Bounds} from "../css/layout/bounds";
-import {BACKGROUND_ORIGIN} from "../css/property-descriptors/background-origin";
-import {ElementContainer} from "../dom/element-container";
-import {BACKGROUND_SIZE, BackgroundSizeInfo} from "../css/property-descriptors/background-size";
-import {Vector} from "./vector";
-import {BACKGROUND_REPEAT} from "../css/property-descriptors/background-repeat";
-import {getAbsoluteValue, isLengthPercentage} from "../css/types/length-percentage";
-import {CSSValue, isIdentToken} from "../css/syntax/parser";
-import {contentBox, paddingBox} from "./box-sizing";
+import {Bounds} from '../css/layout/bounds';
+import {BACKGROUND_ORIGIN} from '../css/property-descriptors/background-origin';
+import {ElementContainer} from '../dom/element-container';
+import {BACKGROUND_SIZE, BackgroundSizeInfo} from '../css/property-descriptors/background-size';
+import {Vector} from './vector';
+import {BACKGROUND_REPEAT} from '../css/property-descriptors/background-repeat';
+import {getAbsoluteValue, isLengthPercentage} from '../css/types/length-percentage';
+import {CSSValue, isIdentToken} from '../css/syntax/parser';
+import {contentBox, paddingBox} from './box-sizing';
 
 export const calculateBackgroungPositioningArea = (
     backgroundOrigin: BACKGROUND_ORIGIN,
@@ -34,7 +34,6 @@ export const calculateBackgroundSize = (
     let height = 0;
 
     const [first, second] = size;
-
 
     if (isIdentToken(first) && (first.value === BACKGROUND_SIZE.CONTAIN || first.value === BACKGROUND_SIZE.COVER)) {
         const targetRatio = bounds.width / bounds.height;
@@ -82,41 +81,23 @@ export const calculateBackgroundRepeatPath = (
     switch (repeat) {
         case BACKGROUND_REPEAT.REPEAT_X:
             return [
-                new Vector(
-                    Math.round(bounds.left),
-                    Math.round(backgroundPositioningArea.top + y)
-                ),
-                new Vector(
-                    Math.round(bounds.left + bounds.width),
-                    Math.round(backgroundPositioningArea.top + y)
-                ),
+                new Vector(Math.round(bounds.left), Math.round(backgroundPositioningArea.top + y)),
+                new Vector(Math.round(bounds.left + bounds.width), Math.round(backgroundPositioningArea.top + y)),
                 new Vector(
                     Math.round(bounds.left + bounds.width),
                     Math.round(height + backgroundPositioningArea.top + y)
                 ),
-                new Vector(
-                    Math.round(bounds.left),
-                    Math.round(height + backgroundPositioningArea.top + y)
-                )
+                new Vector(Math.round(bounds.left), Math.round(height + backgroundPositioningArea.top + y))
             ];
         case BACKGROUND_REPEAT.REPEAT_Y:
             return [
-                new Vector(
-                    Math.round(backgroundPositioningArea.left + x),
-                    Math.round(bounds.top)
-                ),
-                new Vector(
-                    Math.round(backgroundPositioningArea.left + x + width),
-                    Math.round(bounds.top)
-                ),
+                new Vector(Math.round(backgroundPositioningArea.left + x), Math.round(bounds.top)),
+                new Vector(Math.round(backgroundPositioningArea.left + x + width), Math.round(bounds.top)),
                 new Vector(
                     Math.round(backgroundPositioningArea.left + x + width),
                     Math.round(bounds.height + bounds.top)
                 ),
-                new Vector(
-                    Math.round(backgroundPositioningArea.left + x),
-                    Math.round(bounds.height + bounds.top)
-                )
+                new Vector(Math.round(backgroundPositioningArea.left + x), Math.round(bounds.height + bounds.top))
             ];
         case BACKGROUND_REPEAT.NO_REPEAT:
             return [
@@ -141,10 +122,7 @@ export const calculateBackgroundRepeatPath = (
             return [
                 new Vector(Math.round(bounds.left), Math.round(bounds.top)),
                 new Vector(Math.round(bounds.left + bounds.width), Math.round(bounds.top)),
-                new Vector(
-                    Math.round(bounds.left + bounds.width),
-                    Math.round(bounds.height + bounds.top)
-                ),
+                new Vector(Math.round(bounds.left + bounds.width), Math.round(bounds.height + bounds.top)),
                 new Vector(Math.round(bounds.left), Math.round(bounds.height + bounds.top))
             ];
     }

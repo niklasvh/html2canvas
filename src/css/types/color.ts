@@ -1,6 +1,5 @@
 // 'rgb( <percentage>{3} [ / <alpha-value> ]? ) | rgb( <number>{3} [ / <alpha-value> ]? ) | rgb( <percentage>#{3} , <alpha-value>? ) | rgb( <number>#{3} , <alpha-value>? )'
 
-
 /*
 const rgb: ITypeDescriptor = {
     name: 'rgb()',
@@ -21,9 +20,9 @@ export const color: ITypeDescriptor = {
 
  */
 
-import {CSSValue, nonFunctionArgSeperator} from "../syntax/parser";
-import {TokenType} from "../syntax/tokenizer";
-import {ITypeDescriptor} from "../ITypeDescriptor";
+import {CSSValue, nonFunctionArgSeperator} from '../syntax/parser';
+import {TokenType} from '../syntax/tokenizer';
+import {ITypeDescriptor} from '../ITypeDescriptor';
 export type Color = number;
 
 export const color: ITypeDescriptor<Color> = {
@@ -80,19 +79,18 @@ export const color: ITypeDescriptor<Color> = {
     }
 };
 
-export const isTransparent = (color: Color) => (0xFF & color) === 0;
+export const isTransparent = (color: Color) => (0xff & color) === 0;
 
 export const asString = (color: Color) => {
-    const alpha = 0xFF & color;
-    const blue = 0xFF & (color >> 8);
-    const green = 0xFF & (color >> 16);
-    const red = 0xFF & (color >> 24);
-    return alpha < 255
-        ? `rgba(${red},${green},${blue},${alpha / 255})`
-        : `rgb(${red},${green},${blue})`;
+    const alpha = 0xff & color;
+    const blue = 0xff & (color >> 8);
+    const green = 0xff & (color >> 16);
+    const red = 0xff & (color >> 24);
+    return alpha < 255 ? `rgba(${red},${green},${blue},${alpha / 255})` : `rgb(${red},${green},${blue})`;
 };
 
-export const pack = (r: number, g: number, b: number, a: number): Color => (r << 24 | g << 16 | b << 8 | Math.round(a * 255) << 0) >>> 0;
+export const pack = (r: number, g: number, b: number, a: number): Color =>
+    ((r << 24) | (g << 16) | (b << 8) | (Math.round(a * 255) << 0)) >>> 0;
 
 const getTokenColorValue = (token: CSSValue, i: number): number => {
     if (token.type === TokenType.NUMBER_TOKEN) {
@@ -101,7 +99,7 @@ const getTokenColorValue = (token: CSSValue, i: number): number => {
 
     if (token.type === TokenType.PERCENTAGE_TOKEN) {
         const max = i === 3 ? 1 : 255;
-        return i === 3 ? (token.number / 100) * max : Math.round((token.number / 100) * max);
+        return i === 3 ? token.number / 100 * max : Math.round(token.number / 100 * max);
     }
 
     return 0;
@@ -123,9 +121,11 @@ const rgb = (args: CSSValue[]): number => {
     return 0;
 };
 
-const SUPPORTED_COLOR_FUNCTIONS: {[key: string]: (args: CSSValue[]) => number} = {
-    'rgb': rgb,
-    'rgba': rgb
+const SUPPORTED_COLOR_FUNCTIONS: {
+    [key: string]: (args: CSSValue[]) => number;
+} = {
+    rgb: rgb,
+    rgba: rgb
 };
 
 export const COLORS: {[key: string]: Color} = {

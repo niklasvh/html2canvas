@@ -1,7 +1,7 @@
-import {CSSParsedDeclaration} from "../css/index";
-import {TextContainer} from "./text-container";
-import {Bounds, parseBounds} from "../css/layout/bounds";
-import {isHTMLElementNode} from "./node-parser";
+import {CSSParsedDeclaration} from '../css/index';
+import {TextContainer} from './text-container';
+import {Bounds, parseBounds} from '../css/layout/bounds';
+import {isHTMLElementNode} from './node-parser';
 
 export const enum FLAGS {
     CREATES_STACKING_CONTEXT = 1 << 1,
@@ -27,4 +27,3 @@ export class ElementContainer {
         this.flags = 0;
     }
 }
-

@@ -1,8 +1,5 @@
-import {
-     IPropertyListDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
-import {CSSValue, isIdentToken} from "../syntax/parser";
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isIdentToken} from '../syntax/parser';
 
 export const enum BACKGROUND_ORIGIN {
     BORDER_BOX = 0,
@@ -19,15 +16,15 @@ export const backgroundOrigin: IPropertyListDescriptor<BackgroundOrigin> = {
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]): BackgroundOrigin => {
         return tokens.map(token => {
-                if (isIdentToken(token)) {
-                    switch (token.value) {
-                        case 'padding-box':
-                            return BACKGROUND_ORIGIN.PADDING_BOX;
-                        case 'content-box':
-                            return BACKGROUND_ORIGIN.CONTENT_BOX;
-                    }
+            if (isIdentToken(token)) {
+                switch (token.value) {
+                    case 'padding-box':
+                        return BACKGROUND_ORIGIN.PADDING_BOX;
+                    case 'content-box':
+                        return BACKGROUND_ORIGIN.CONTENT_BOX;
                 }
-                return BACKGROUND_ORIGIN.BORDER_BOX;
-            });
+            }
+            return BACKGROUND_ORIGIN.BORDER_BOX;
+        });
     }
 };

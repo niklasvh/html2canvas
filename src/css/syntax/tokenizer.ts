@@ -35,15 +35,16 @@ export enum TokenType {
     RIGHT_SQUARE_BRACKET_TOKEN,
     UNICODE_RANGE_TOKEN,
     WHITESPACE_TOKEN,
-    EOF_TOKEN,
+    EOF_TOKEN
 }
 
 interface IToken {
-    type: TokenType
+    type: TokenType;
 }
 
 export interface Token extends IToken {
-    type: TokenType.BAD_URL_TOKEN
+    type:
+        | TokenType.BAD_URL_TOKEN
         | TokenType.BAD_STRING_TOKEN
         | TokenType.LEFT_PARENTHESIS_TOKEN
         | TokenType.RIGHT_PARENTHESIS_TOKEN
@@ -63,43 +64,43 @@ export interface Token extends IToken {
         | TokenType.WHITESPACE_TOKEN
         | TokenType.CDC_TOKEN
         | TokenType.CDO_TOKEN
-        | TokenType.EOF_TOKEN
+        | TokenType.EOF_TOKEN;
 }
 
 export interface StringValueToken extends IToken {
-    type: TokenType.STRING_TOKEN
+    type:
+        | TokenType.STRING_TOKEN
         | TokenType.DELIM_TOKEN
         | TokenType.FUNCTION_TOKEN
         | TokenType.IDENT_TOKEN
         | TokenType.URL_TOKEN
-        | TokenType.AT_KEYWORD_TOKEN
-    value: string
+        | TokenType.AT_KEYWORD_TOKEN;
+    value: string;
 }
 
 export interface HashToken extends IToken {
-    type: TokenType.HASH_TOKEN
-    flags: number
-    value: string
+    type: TokenType.HASH_TOKEN;
+    flags: number;
+    value: string;
 }
 
 export interface NumberValueToken extends IToken {
-    type: TokenType.PERCENTAGE_TOKEN
-        | TokenType.NUMBER_TOKEN
-    flags: number
-    number: number
+    type: TokenType.PERCENTAGE_TOKEN | TokenType.NUMBER_TOKEN;
+    flags: number;
+    number: number;
 }
 
 export interface DimensionToken extends IToken {
-    type: TokenType.DIMENSION_TOKEN
-    flags: number
-    unit: string
-    number: number
+    type: TokenType.DIMENSION_TOKEN;
+    flags: number;
+    unit: string;
+    number: number;
 }
 
 export interface UnicodeRangeToken extends IToken {
-    type: TokenType.UNICODE_RANGE_TOKEN
-    start: number
-    end: number
+    type: TokenType.UNICODE_RANGE_TOKEN;
+    start: number;
+    end: number;
 }
 
 export type CSSToken = Token | StringValueToken | NumberValueToken | DimensionToken | UnicodeRangeToken | HashToken;
@@ -109,72 +110,81 @@ export const FLAG_ID = 1 << 1;
 export const FLAG_INTEGER = 1 << 2;
 export const FLAG_NUMBER = 1 << 3;
 
-const LINE_FEED = 0x000A;
-const SOLIDUS = 0x002F;
-const REVERSE_SOLIDUS = 0x005C;
+const LINE_FEED = 0x000a;
+const SOLIDUS = 0x002f;
+const REVERSE_SOLIDUS = 0x005c;
 const CHARACTER_TABULATION = 0x0009;
 const SPACE = 0x0020;
 const QUOTATION_MARK = 0x0022;
-const EQUALS_SIGN = 0x003D;
+const EQUALS_SIGN = 0x003d;
 const NUMBER_SIGN = 0x0023;
 const DOLLAR_SIGN = 0x0024;
 const PERCENTAGE_SIGN = 0x0025;
-const APOSTROPHE  = 0x0027;
-const LEFT_PARENTHESIS  = 0x0028;
-const RIGHT_PARENTHESIS  = 0x0029;
-const LOW_LINE = 0x005F;
-const HYPHEN_MINUS = 0x002D;
+const APOSTROPHE = 0x0027;
+const LEFT_PARENTHESIS = 0x0028;
+const RIGHT_PARENTHESIS = 0x0029;
+const LOW_LINE = 0x005f;
+const HYPHEN_MINUS = 0x002d;
 const EXCLAMATION_MARK = 0x0021;
-const LESS_THAN_SIGN = 0x003C;
-const GREATER_THAN_SIGN = 0x003E;
+const LESS_THAN_SIGN = 0x003c;
+const GREATER_THAN_SIGN = 0x003e;
 const COMMERCIAL_AT = 0x0040;
-const LEFT_SQUARE_BRACKET = 0x005B;
-const RIGHT_SQUARE_BRACKET = 0x005D;
-const CIRCUMFLEX_ACCENT = 0x003D;
-const LEFT_CURLY_BRACKET = 0x007B;
-const QUESTION_MARK = 0x003F;
-const RIGHT_CURLY_BRACKET = 0x007D;
-const VERTICAL_LINE = 0x007C;
-const TILDE = 0x007E;
+const LEFT_SQUARE_BRACKET = 0x005b;
+const RIGHT_SQUARE_BRACKET = 0x005d;
+const CIRCUMFLEX_ACCENT = 0x003d;
+const LEFT_CURLY_BRACKET = 0x007b;
+const QUESTION_MARK = 0x003f;
+const RIGHT_CURLY_BRACKET = 0x007d;
+const VERTICAL_LINE = 0x007c;
+const TILDE = 0x007e;
 const CONTROL = 0x0080;
-const REPLACEMENT_CHARACTER = 0xFFFD;
-const ASTERISK = 0x002A;
-const PLUS_SIGN = 0x002B;
-const COMMA  = 0x002C;
-const COLON  = 0x003A;
-const SEMICOLON  = 0x003B;
-const FULL_STOP = 0x002E;
-const NULL  = 0x0000;
+const REPLACEMENT_CHARACTER = 0xfffd;
+const ASTERISK = 0x002a;
+const PLUS_SIGN = 0x002b;
+const COMMA = 0x002c;
+const COLON = 0x003a;
+const SEMICOLON = 0x003b;
+const FULL_STOP = 0x002e;
+const NULL = 0x0000;
 const BACKSPACE = 0x0008;
-const LINE_TABULATION = 0x000B;
-const SHIFT_OUT = 0x000E;
-const INFORMATION_SEPARATOR_ONE = 0x001F;
-const DELETE = 0x007F;
+const LINE_TABULATION = 0x000b;
+const SHIFT_OUT = 0x000e;
+const INFORMATION_SEPARATOR_ONE = 0x001f;
+const DELETE = 0x007f;
 const EOF = -1;
 const ZERO = 0x0030;
 const a = 0x0061;
 const e = 0x0065;
 const f = 0x0066;
 const u = 0x0075;
-const z = 0x007A;
+const z = 0x007a;
 const A = 0x0041;
 const E = 0x0045;
 const F = 0x0046;
 const U = 0x0055;
-const Z = 0x005A;
+const Z = 0x005a;
 
 const isDigit = (codePoint: number) => codePoint >= ZERO && codePoint <= 0x0039;
-const isSurrogateCodePoint = (codePoint: number) => codePoint >= 0xD800 && codePoint <= 0xDFFF;
-const isHex = (codePoint: number) => isDigit(codePoint) || (codePoint >= A && codePoint <= F) || (codePoint >= a && codePoint <= f);
+const isSurrogateCodePoint = (codePoint: number) => codePoint >= 0xd800 && codePoint <= 0xdfff;
+const isHex = (codePoint: number) =>
+    isDigit(codePoint) || (codePoint >= A && codePoint <= F) || (codePoint >= a && codePoint <= f);
 const isLowerCaseLetter = (codePoint: number) => codePoint >= a && codePoint <= z;
 const isUpperCaseLetter = (codePoint: number) => codePoint >= A && codePoint <= Z;
 const isLetter = (codePoint: number) => isLowerCaseLetter(codePoint) || isUpperCaseLetter(codePoint);
 const isNonASCIICodePoint = (codePoint: number) => codePoint >= CONTROL;
-const isWhiteSpace = (codePoint: number): boolean => codePoint === LINE_FEED || codePoint === CHARACTER_TABULATION || codePoint === SPACE;
-const isNameStartCodePoint = (codePoint: number): boolean => isLetter(codePoint) || isNonASCIICodePoint(codePoint) || codePoint === LOW_LINE;
-const isNameCodePoint = (codePoint: number): boolean => isNameStartCodePoint(codePoint) || isDigit(codePoint) || codePoint === HYPHEN_MINUS;
+const isWhiteSpace = (codePoint: number): boolean =>
+    codePoint === LINE_FEED || codePoint === CHARACTER_TABULATION || codePoint === SPACE;
+const isNameStartCodePoint = (codePoint: number): boolean =>
+    isLetter(codePoint) || isNonASCIICodePoint(codePoint) || codePoint === LOW_LINE;
+const isNameCodePoint = (codePoint: number): boolean =>
+    isNameStartCodePoint(codePoint) || isDigit(codePoint) || codePoint === HYPHEN_MINUS;
 const isNonPrintableCodePoint = (codePoint: number): boolean => {
-    return (codePoint >= NULL && codePoint <= BACKSPACE) || codePoint === LINE_TABULATION || (codePoint >= SHIFT_OUT && codePoint <= INFORMATION_SEPARATOR_ONE) || codePoint === DELETE
+    return (
+        (codePoint >= NULL && codePoint <= BACKSPACE) ||
+        codePoint === LINE_TABULATION ||
+        (codePoint >= SHIFT_OUT && codePoint <= INFORMATION_SEPARATOR_ONE) ||
+        codePoint === DELETE
+    );
 };
 const isValidEscape = (c1: number, c2: number): boolean => {
     if (c1 !== REVERSE_SOLIDUS) {
@@ -185,7 +195,7 @@ const isValidEscape = (c1: number, c2: number): boolean => {
 };
 const isIdentifierStart = (c1: number, c2: number, c3: number): boolean => {
     if (c1 === HYPHEN_MINUS) {
-        return (isNameStartCodePoint(c2) || isValidEscape(c2, c3));
+        return isNameStartCodePoint(c2) || isValidEscape(c2, c3);
     } else if (isNameStartCodePoint(c1)) {
         return true;
     } else if (c1 === REVERSE_SOLIDUS && isValidEscape(c1, c2)) {
@@ -200,7 +210,7 @@ const isNumberStart = (c1: number, c2: number, c3: number): boolean => {
             return true;
         }
 
-        return (c2 === FULL_STOP && isDigit(c3));
+        return c2 === FULL_STOP && isDigit(c3);
     }
 
     if (c1 === FULL_STOP) {
@@ -222,7 +232,7 @@ const stringToNumber = (codePoints: number[]): number => {
 
     const integers = [];
 
-    while(isDigit(codePoints[c])) {
+    while (isDigit(codePoints[c])) {
         integers.push(codePoints[c++]);
     }
 
@@ -233,7 +243,7 @@ const stringToNumber = (codePoints: number[]): number => {
     }
 
     const fraction = [];
-    while(isDigit(codePoints[c])) {
+    while (isDigit(codePoints[c])) {
         fraction.push(codePoints[c++]);
     }
 
@@ -255,25 +265,33 @@ const stringToNumber = (codePoints: number[]): number => {
 
     const exponent = [];
 
-    while(isDigit(codePoints[c])) {
+    while (isDigit(codePoints[c])) {
         exponent.push(codePoints[c++]);
     }
 
     const exp = exponent.length ? parseInt(fromCodePoint(...exponent), 10) : 0;
 
-    return sign * (int + frac * Math.pow(10, -fracd)) * Math.pow(10, expsign*exp);
+    return sign * (int + frac * Math.pow(10, -fracd)) * Math.pow(10, expsign * exp);
 };
 
-const LEFT_PARENTHESIS_TOKEN: Token = {type: TokenType.LEFT_PARENTHESIS_TOKEN};
-const RIGHT_PARENTHESIS_TOKEN: Token = {type: TokenType.RIGHT_PARENTHESIS_TOKEN};
+const LEFT_PARENTHESIS_TOKEN: Token = {
+    type: TokenType.LEFT_PARENTHESIS_TOKEN
+};
+const RIGHT_PARENTHESIS_TOKEN: Token = {
+    type: TokenType.RIGHT_PARENTHESIS_TOKEN
+};
 const COMMA_TOKEN: Token = {type: TokenType.COMMA_TOKEN};
 const SUFFIX_MATCH_TOKEN: Token = {type: TokenType.SUFFIX_MATCH_TOKEN};
 const PREFIX_MATCH_TOKEN: Token = {type: TokenType.PREFIX_MATCH_TOKEN};
 const COLUMN_TOKEN: Token = {type: TokenType.COLUMN_TOKEN};
 const DASH_MATCH_TOKEN: Token = {type: TokenType.DASH_MATCH_TOKEN};
 const INCLUDE_MATCH_TOKEN: Token = {type: TokenType.INCLUDE_MATCH_TOKEN};
-const LEFT_CURLY_BRACKET_TOKEN: Token = {type: TokenType.LEFT_CURLY_BRACKET_TOKEN};
-const RIGHT_CURLY_BRACKET_TOKEN: Token = {type: TokenType.RIGHT_CURLY_BRACKET_TOKEN};
+const LEFT_CURLY_BRACKET_TOKEN: Token = {
+    type: TokenType.LEFT_CURLY_BRACKET_TOKEN
+};
+const RIGHT_CURLY_BRACKET_TOKEN: Token = {
+    type: TokenType.RIGHT_CURLY_BRACKET_TOKEN
+};
 const SUBSTRING_MATCH_TOKEN: Token = {type: TokenType.SUBSTRING_MATCH_TOKEN};
 const BAD_URL_TOKEN: Token = {type: TokenType.BAD_URL_TOKEN};
 const BAD_STRING_TOKEN: Token = {type: TokenType.BAD_STRING_TOKEN};
@@ -281,8 +299,12 @@ const CDO_TOKEN: Token = {type: TokenType.CDO_TOKEN};
 const CDC_TOKEN: Token = {type: TokenType.CDC_TOKEN};
 const COLON_TOKEN: Token = {type: TokenType.COLON_TOKEN};
 const SEMICOLON_TOKEN: Token = {type: TokenType.SEMICOLON_TOKEN};
-const LEFT_SQUARE_BRACKET_TOKEN: Token = {type: TokenType.LEFT_SQUARE_BRACKET_TOKEN};
-const RIGHT_SQUARE_BRACKET_TOKEN: Token = {type: TokenType.RIGHT_SQUARE_BRACKET_TOKEN};
+const LEFT_SQUARE_BRACKET_TOKEN: Token = {
+    type: TokenType.LEFT_SQUARE_BRACKET_TOKEN
+};
+const RIGHT_SQUARE_BRACKET_TOKEN: Token = {
+    type: TokenType.RIGHT_SQUARE_BRACKET_TOKEN
+};
 const WHITESPACE_TOKEN: Token = {type: TokenType.WHITESPACE_TOKEN};
 export const EOF_TOKEN: Token = {type: TokenType.EOF_TOKEN};
 
@@ -300,7 +322,7 @@ export class Tokenizer {
     read(): CSSToken[] {
         const tokens = [];
         let token = this.consumeToken();
-        while(token !== EOF_TOKEN) {
+        while (token !== EOF_TOKEN) {
             tokens.push(token);
             token = this.consumeToken();
         }
@@ -310,7 +332,7 @@ export class Tokenizer {
     private consumeToken(): CSSToken {
         const codePoint = this.consumeCodePoint();
 
-        switch(codePoint) {
+        switch (codePoint) {
             case QUOTATION_MARK:
                 return this.consumeStringToken(QUOTATION_MARK);
             case NUMBER_SIGN:
@@ -348,7 +370,7 @@ export class Tokenizer {
                     return this.consumeNumericToken();
                 }
                 break;
-            break;
+                break;
             case COMMA:
                 return COMMA_TOKEN;
             case HYPHEN_MINUS:
@@ -382,7 +404,7 @@ export class Tokenizer {
             case SOLIDUS:
                 if (this.peekCodePoint(0) === ASTERISK) {
                     this.consumeCodePoint();
-                    while(true) {
+                    while (true) {
                         let c = this.consumeCodePoint();
                         if (c === ASTERISK) {
                             c = this.consumeCodePoint();
@@ -401,7 +423,11 @@ export class Tokenizer {
             case SEMICOLON:
                 return SEMICOLON_TOKEN;
             case LESS_THAN_SIGN:
-                if (this.peekCodePoint(0) === EXCLAMATION_MARK && this.peekCodePoint(1) === HYPHEN_MINUS && this.peekCodePoint(2) === HYPHEN_MINUS) {
+                if (
+                    this.peekCodePoint(0) === EXCLAMATION_MARK &&
+                    this.peekCodePoint(1) === HYPHEN_MINUS &&
+                    this.peekCodePoint(2) === HYPHEN_MINUS
+                ) {
                     this.consumeCodePoint();
                     this.consumeCodePoint();
                     return CDO_TOKEN;
@@ -506,20 +532,20 @@ export class Tokenizer {
     private consumeUnicodeRangeToken(): UnicodeRangeToken {
         const digits = [];
         let codePoint = this.consumeCodePoint();
-        while(isHex(codePoint) && digits.length < 6) {
+        while (isHex(codePoint) && digits.length < 6) {
             digits.push(codePoint);
             codePoint = this.consumeCodePoint();
         }
         let questionMarks = false;
-        while(codePoint === QUESTION_MARK && digits.length < 6) {
+        while (codePoint === QUESTION_MARK && digits.length < 6) {
             digits.push(codePoint);
             codePoint = this.consumeCodePoint();
             questionMarks = true;
         }
 
         if (questionMarks) {
-            const start = parseInt(fromCodePoint(...digits.map(digit => digit === QUESTION_MARK ? ZERO : digit)), 16);
-            const end = parseInt(fromCodePoint(...digits.map(digit => digit === QUESTION_MARK ? F : digit)), 16);
+            const start = parseInt(fromCodePoint(...digits.map(digit => (digit === QUESTION_MARK ? ZERO : digit))), 16);
+            const end = parseInt(fromCodePoint(...digits.map(digit => (digit === QUESTION_MARK ? F : digit))), 16);
             return {type: TokenType.UNICODE_RANGE_TOKEN, start, end};
         }
 
@@ -528,7 +554,7 @@ export class Tokenizer {
             this.consumeCodePoint();
             codePoint = this.consumeCodePoint();
             const endDigits = [];
-            while(isHex(codePoint) && endDigits.length < 6) {
+            while (isHex(codePoint) && endDigits.length < 6) {
                 endDigits.push(codePoint);
                 codePoint = this.consumeCodePoint();
             }
@@ -577,7 +603,7 @@ export class Tokenizer {
             return BAD_URL_TOKEN;
         }
 
-        while(true) {
+        while (true) {
             const codePoint = this.consumeCodePoint();
             if (codePoint === EOF || codePoint === RIGHT_PARENTHESIS) {
                 return {type: TokenType.URL_TOKEN, value: fromCodePoint(...value)};
@@ -589,7 +615,12 @@ export class Tokenizer {
                 }
                 this.consumeBadUrlRemnants();
                 return BAD_URL_TOKEN;
-            } else if (codePoint === QUOTATION_MARK || codePoint === APOSTROPHE || codePoint === LEFT_PARENTHESIS || isNonPrintableCodePoint(codePoint)) {
+            } else if (
+                codePoint === QUOTATION_MARK ||
+                codePoint === APOSTROPHE ||
+                codePoint === LEFT_PARENTHESIS ||
+                isNonPrintableCodePoint(codePoint)
+            ) {
                 this.consumeBadUrlRemnants();
                 return BAD_URL_TOKEN;
             } else if (codePoint === REVERSE_SOLIDUS) {
@@ -606,7 +637,7 @@ export class Tokenizer {
     }
 
     private consumeWhiteSpace(): void {
-        while(isWhiteSpace(this.peekCodePoint(0))) {
+        while (isWhiteSpace(this.peekCodePoint(0))) {
             this.consumeCodePoint();
         }
     }
@@ -650,9 +681,7 @@ export class Tokenizer {
             } else {
                 value += fromCodePoint(codePoint);
             }
-
-
-        } while(true);
+        } while (true);
     }
 
     private consumeNumber() {
@@ -663,7 +692,7 @@ export class Tokenizer {
             repr.push(this.consumeCodePoint());
         }
 
-        while(isDigit(this.peekCodePoint(0))) {
+        while (isDigit(this.peekCodePoint(0))) {
             repr.push(this.consumeCodePoint());
         }
         c1 = this.peekCodePoint(0);
@@ -671,7 +700,7 @@ export class Tokenizer {
         if (c1 === FULL_STOP && isDigit(c2)) {
             repr.push(this.consumeCodePoint(), this.consumeCodePoint());
             type = FLAG_NUMBER;
-            while(isDigit(this.peekCodePoint(0))) {
+            while (isDigit(this.peekCodePoint(0))) {
                 repr.push(this.consumeCodePoint());
             }
         }
@@ -682,7 +711,7 @@ export class Tokenizer {
         if ((c1 === E || c1 === e) && (((c2 === PLUS_SIGN || c2 === HYPHEN_MINUS) && isDigit(c3)) || isDigit(c2))) {
             repr.push(this.consumeCodePoint(), this.consumeCodePoint());
             type = FLAG_NUMBER;
-            while(isDigit(this.peekCodePoint(0))) {
+            while (isDigit(this.peekCodePoint(0))) {
                 repr.push(this.consumeCodePoint());
             }
         }
@@ -724,7 +753,7 @@ export class Tokenizer {
 
             const hexCodePoint = parseInt(hex, 16);
 
-            if (hexCodePoint === 0 || isSurrogateCodePoint(hexCodePoint) || hexCodePoint > 0x10FFFF) {
+            if (hexCodePoint === 0 || isSurrogateCodePoint(hexCodePoint) || hexCodePoint > 0x10ffff) {
                 return REPLACEMENT_CHARACTER;
             }
 
@@ -740,11 +769,11 @@ export class Tokenizer {
 
     private consumeName(): string {
         let result = '';
-        while(true) {
+        while (true) {
             const codePoint = this.consumeCodePoint();
             if (isNameCodePoint(codePoint)) {
                 result += fromCodePoint(codePoint);
-            } else if(isValidEscape(codePoint, this.peekCodePoint(0))) {
+            } else if (isValidEscape(codePoint, this.peekCodePoint(0))) {
                 result += fromCodePoint(this.consumeEscapedCodePoint());
             } else {
                 this.reconsumeCodePoint(codePoint);

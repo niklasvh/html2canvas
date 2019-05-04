@@ -1,4 +1,4 @@
-import {ElementContainer} from "../element-container";
+import {ElementContainer} from '../element-container';
 import {CacheStorage} from '../../core/cache-storage';
 
 export class SVGElementContainer extends ElementContainer {

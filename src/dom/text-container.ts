@@ -1,6 +1,6 @@
-import {CSSParsedDeclaration} from "../css/index";
-import {TEXT_TRANSFORM} from "../css/property-descriptors/text-transform";
-import {parseTextBounds, TextBounds} from "../css/layout/text";
+import {CSSParsedDeclaration} from '../css/index';
+import {TEXT_TRANSFORM} from '../css/property-descriptors/text-transform';
+import {parseTextBounds, TextBounds} from '../css/layout/text';
 
 export class TextContainer {
     text: string;

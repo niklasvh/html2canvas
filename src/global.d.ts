@@ -1,11 +1,11 @@
 interface CSSStyleDeclaration {
-    textDecorationColor: string | null
-    textDecorationLine: string | null
-    overflowWrap: string | null
+    textDecorationColor: string | null;
+    textDecorationLine: string | null;
+    overflowWrap: string | null;
 }
 
 interface Window {
-    HTMLElement: HTMLElement.prototype.constructor
+    HTMLElement: HTMLElement.prototype.constructor;
 }
 
 interface DocumentType extends Node, ChildNode {

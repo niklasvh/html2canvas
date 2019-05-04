@@ -1,9 +1,9 @@
-import {OVERFLOW_WRAP} from "../property-descriptors/overflow-wrap";
-import {CSSParsedDeclaration} from "../index";
+import {OVERFLOW_WRAP} from '../property-descriptors/overflow-wrap';
+import {CSSParsedDeclaration} from '../index';
 import {fromCodePoint, LineBreaker, toCodePoints} from 'css-line-break';
-import {Bounds, parseBounds} from "./bounds";
-import {TEXT_DECORATION_LINE} from "../property-descriptors/text-decoration-line";
-import {FEATURES} from "../../core/features";
+import {Bounds, parseBounds} from './bounds';
+import {TEXT_DECORATION_LINE} from '../property-descriptors/text-decoration-line';
+import {FEATURES} from '../../core/features';
 
 export class TextBounds {
     readonly text: string;
@@ -15,23 +15,14 @@ export class TextBounds {
     }
 }
 
-export const parseTextBounds = (
-    value: string,
-    styles: CSSParsedDeclaration,
-    node: Text
-): TextBounds[] => {
+export const parseTextBounds = (value: string, styles: CSSParsedDeclaration, node: Text): TextBounds[] => {
     const textList = breakText(value, styles);
     const textBounds: TextBounds[] = [];
     let offset = 0;
     textList.forEach(text => {
         if (styles.textDecorationLine !== TEXT_DECORATION_LINE.NONE || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                textBounds.push(
-                    new TextBounds(
-                        text,
-                        getRangeBounds(node, offset, text.length)
-                    )
-                );
+                textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
             } else {
                 const replacementNode = node.splitText(text.length);
                 textBounds.push(new TextBounds(text, getWrapperBounds(node)));
@@ -65,11 +56,7 @@ const getWrapperBounds = (node: Text): Bounds => {
     return new Bounds(0, 0, 0, 0);
 };
 
-const getRangeBounds = (
-    node: Text,
-    offset: number,
-    length: number
-): Bounds => {
+const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
     const ownerDocument = node.ownerDocument;
     if (!ownerDocument) {
         throw new Error('Node has no owner document');
@@ -81,18 +68,13 @@ const getRangeBounds = (
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0
-        ? toCodePoints(value).map(i => fromCodePoint(i))
-        : breakWords(value, styles);
+    return styles.letterSpacing !== 0 ? toCodePoints(value).map(i => fromCodePoint(i)) : breakWords(value, styles);
 };
 
 const breakWords = (str: string, styles: CSSParsedDeclaration): string[] => {
     const breaker = LineBreaker(str, {
         lineBreak: styles.lineBreak,
-        wordBreak:
-            styles.overflowWrap === OVERFLOW_WRAP.BREAK_WORD
-                ? 'break-word'
-                : styles.wordBreak
+        wordBreak: styles.overflowWrap === OVERFLOW_WRAP.BREAK_WORD ? 'break-word' : styles.wordBreak
     });
 
     const words = [];

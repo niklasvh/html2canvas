@@ -1,6 +1,6 @@
-import {getAbsoluteValue} from "../css/types/length-percentage";
-import {Bounds} from "../css/layout/bounds";
-import {ElementContainer} from "../dom/element-container";
+import {getAbsoluteValue} from '../css/types/length-percentage';
+import {Bounds} from '../css/layout/bounds';
+import {ElementContainer} from '../dom/element-container';
 
 export const paddingBox = (element: ElementContainer): Bounds => {
     const bounds = element.bounds;
@@ -13,9 +13,7 @@ export const paddingBox = (element: ElementContainer): Bounds => {
     );
 };
 
-export const contentBox = (
-    element: ElementContainer
-): Bounds => {
+export const contentBox = (element: ElementContainer): Bounds => {
     const styles = element.styles;
     const bounds = element.bounds;
 

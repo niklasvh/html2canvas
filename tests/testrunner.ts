@@ -1,7 +1,7 @@
 import {testList, ignoredTests} from '../build/reftests';
 import * as platform from 'platform';
 // @ts-ignore
-import Promise from "es6-promise/lib/es6-promise";
+import Promise from 'es6-promise/lib/es6-promise';
 
 const testRunnerUrl = location.href;
 const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
@@ -21,25 +21,25 @@ const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
         xhr.onerror = reject;
 
         xhr.open('POST', 'http://localhost:8000/screenshot', true);
-        xhr.send(JSON.stringify({
-            screenshot: canvas.toDataURL(),
-            test: url,
-            platform: {
-                name: platform.name,
-                version: platform.version
-            },
-            devicePixelRatio: window.devicePixelRatio || 1,
-            windowWidth: window.innerWidth,
-            windowHeight: window.innerHeight
-        }));
+        xhr.send(
+            JSON.stringify({
+                screenshot: canvas.toDataURL(),
+                test: url,
+                platform: {
+                    name: platform.name,
+                    version: platform.version
+                },
+                devicePixelRatio: window.devicePixelRatio || 1,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight
+            })
+        );
     });
 };
 
-testList.filter(test => {
-        return (
-            !Array.isArray(ignoredTests[test]) ||
-            ignoredTests[test].indexOf(platform.name || '') === -1
-        );
+testList
+    .filter(test => {
+        return !Array.isArray(ignoredTests[test]) || ignoredTests[test].indexOf(platform.name || '') === -1;
     })
     .forEach(url => {
         describe(url, function() {
@@ -82,17 +82,22 @@ testList.filter(test => {
                 }
 
                 // @ts-ignore
-                return contentWindow.html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
-                            removeContainer: true,
-                            backgroundColor: '#ffffff',
-                            proxy: 'http://localhost:8081/proxy',
-                            // @ts-ignore
-                            ...(contentWindow.h2cOptions || {})
-                        }
-                    )
+                return contentWindow
+                    .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
+                        removeContainer: true,
+                        backgroundColor: '#ffffff',
+                        proxy: 'http://localhost:8081/proxy',
+                        // @ts-ignore
+                        ...(contentWindow.h2cOptions || {})
+                    })
                     .then((canvas: HTMLCanvasElement) => {
                         try {
-                            (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(0, 0, canvas.width, canvas.height);
+                            (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(
+                                0,
+                                0,
+                                canvas.width,
+                                canvas.height
+                            );
                         } catch (e) {
                             return Promise.reject('Canvas is tainted');
                         }

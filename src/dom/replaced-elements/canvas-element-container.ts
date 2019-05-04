@@ -1,4 +1,4 @@
-import {ElementContainer} from "../element-container";
+import {ElementContainer} from '../element-container';
 
 export class CanvasElementContainer extends ElementContainer {
     canvas: HTMLCanvasElement;

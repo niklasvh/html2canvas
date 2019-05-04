@@ -45,7 +45,8 @@ const testSVG = (document: Document): boolean => {
     return true;
 };
 
-const isGreenPixel = (data: Uint8ClampedArray): boolean => data[0] === 0 && data[1] === 255 && data[2] === 0 && data[3] === 255;
+const isGreenPixel = (data: Uint8ClampedArray): boolean =>
+    data[0] === 0 && data[1] === 255 && data[2] === 0 && data[3] === 255;
 
 const testForeignObject = (document: Document): Promise<boolean> => {
     const canvas = document.createElement('canvas');
@@ -89,13 +90,7 @@ const testForeignObject = (document: Document): Promise<boolean> => {
         .catch(() => false);
 };
 
-export const createForeignObjectSVG = (
-    width: number,
-    height: number,
-    x: number,
-    y: number,
-    node: Node
-) => {
+export const createForeignObjectSVG = (width: number, height: number, x: number, y: number, node: Node) => {
     const xmlns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(xmlns, 'svg');
     const foreignObject = document.createElementNS(xmlns, 'foreignObject');
@@ -120,9 +115,7 @@ export const loadSerializedSVG = (svg: Node): Promise<HTMLImageElement> => {
         img.onload = () => resolve(img);
         img.onerror = reject;
 
-        img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-            new XMLSerializer().serializeToString(svg)
-        )}`;
+        img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}`;
     });
 };
 

@@ -1,26 +1,32 @@
-import {Bounds} from "../css/layout/bounds";
+import {Bounds} from '../css/layout/bounds';
 import {
-    isBodyElement, isCanvasElement, isElementNode, isHTMLElementNode, isIFrameElement, isScriptElement, isSelectElement,
+    isBodyElement,
+    isCanvasElement,
+    isElementNode,
+    isHTMLElementNode,
+    isIFrameElement,
+    isScriptElement,
+    isSelectElement,
     isStyleElement,
     isTextareaElement,
     isTextNode
-} from "./node-parser";
-import {Logger} from "../core/logger";
-import {isIdentToken, nonFunctionArgSeperator} from "../css/syntax/parser";
-import {TokenType} from "../css/syntax/tokenizer";
-import {CounterState, createCounterText} from "../css/types/functions/counter";
-import {LIST_STYLE_TYPE, listStyleType} from "../css/property-descriptors/list-style-type";
-import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from "../css/index";
-import {getQuote} from "../css/property-descriptors/quotes";
+} from './node-parser';
+import {Logger} from '../core/logger';
+import {isIdentToken, nonFunctionArgSeperator} from '../css/syntax/parser';
+import {TokenType} from '../css/syntax/tokenizer';
+import {CounterState, createCounterText} from '../css/types/functions/counter';
+import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-style-type';
+import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
+import {getQuote} from '../css/property-descriptors/quotes';
 
 export type CloneOptions = {
-    ignoreElements?: (element: Element) => boolean
-    onclone?: (document: Document) => void
+    ignoreElements?: (element: Element) => boolean;
+    onclone?: (document: Document) => void;
 };
 
 export type CloneConfigurations = CloneOptions & {
-    inlineImages: boolean
-    copyStyles: boolean
+    inlineImages: boolean;
+    copyStyles: boolean;
 };
 
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
@@ -28,7 +34,7 @@ const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 export class DocumentCloner {
     private readonly scrolledElements: Array<[Element, number, number]>;
     private readonly options: CloneConfigurations;
-    private readonly  referenceElement: HTMLElement;
+    private readonly referenceElement: HTMLElement;
     clonedReferenceElement?: HTMLElement;
     private readonly documentElement: HTMLElement;
     private readonly counters: CounterState;
@@ -49,7 +55,6 @@ export class DocumentCloner {
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
         const iframe: HTMLIFrameElement = createIFrameContainer(ownerDocument, windowSize);
-
 
         if (!iframe.contentWindow) {
             return Promise.reject(`Unable to find iframe window`);
@@ -83,7 +88,9 @@ export class DocumentCloner {
             }
 
             if (typeof onclone === 'function') {
-                return Promise.resolve().then(() => onclone(documentClone)).then(() => iframe);
+                return Promise.resolve()
+                    .then(() => onclone(documentClone))
+                    .then(() => iframe);
             }
 
             return iframe;
@@ -93,10 +100,7 @@ export class DocumentCloner {
         documentClone.write(`${serializeDoctype(document.doctype)}<html></html>`);
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         restoreOwnerScroll(this.referenceElement.ownerDocument, scrollX, scrollY);
-        documentClone.replaceChild(
-            documentClone.adoptNode(this.documentElement),
-            documentClone.documentElement
-        );
+        documentClone.replaceChild(documentClone.adoptNode(this.documentElement), documentClone.documentElement);
         documentClone.close();
 
         return iframeLoad;
@@ -106,7 +110,7 @@ export class DocumentCloner {
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
-/*
+        /*
         if (isIFrameElement(node)) {
             return this.createIFrameClone(node);
         }
@@ -115,11 +119,10 @@ export class DocumentCloner {
             return this.createStyleClone(node);
         }
 
-
         return <HTMLElement>node.cloneNode(false);
     }
 
-    createStyleClone(node: HTMLStyleElement):HTMLStyleElement {
+    createStyleClone(node: HTMLStyleElement): HTMLStyleElement {
         try {
             const sheet = <CSSStyleSheet | undefined>node.sheet;
             if (sheet && sheet.cssRules) {
@@ -169,12 +172,11 @@ export class DocumentCloner {
                 }
             }
             return clonedCanvas;
-
         } catch (e) {}
 
         return clonedCanvas;
     }
-/*
+    /*
     createIFrameClone(iframe: HTMLIFrameElement) {
         const tempIframe = <HTMLIFrameElement>iframe.cloneNode(false);
         const iframeKey = generateIframeKey();
@@ -260,7 +262,6 @@ export class DocumentCloner {
                 createPseudoHideStyles(clone);
             }
 
-
             const counters = this.counters.parse(new CSSParsedCounterDeclaration(style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
@@ -268,9 +269,8 @@ export class DocumentCloner {
                 if (
                     !isElementNode(child) ||
                     (!isScriptElement(child) &&
-                    !child.hasAttribute(IGNORE_ATTRIBUTE) &&
-                    (typeof this.options.ignoreElements !== 'function' ||
-                    !this.options.ignoreElements(child)))
+                        !child.hasAttribute(IGNORE_ATTRIBUTE) &&
+                        (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
                 ) {
                     if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
                         clone.appendChild(this.cloneNode(child));
@@ -299,7 +299,10 @@ export class DocumentCloner {
                 this.scrolledElements.push([clone, node.scrollLeft, node.scrollTop]);
             }
 
-            if ((isTextareaElement(node) || isSelectElement(node)) && (isTextareaElement(clone) || isSelectElement(clone))) {
+            if (
+                (isTextareaElement(node) || isSelectElement(node)) &&
+                (isTextareaElement(clone) || isSelectElement(clone))
+            ) {
                 clone.value = node.value;
             }
 
@@ -309,20 +312,19 @@ export class DocumentCloner {
         return node.cloneNode(false);
     }
 
-    resolvePseudoContent(node: Element, clone: Element, style: CSSStyleDeclaration, pseudoElt: PseudoElementType): HTMLElement | void {
+    resolvePseudoContent(
+        node: Element,
+        clone: Element,
+        style: CSSStyleDeclaration,
+        pseudoElt: PseudoElementType
+    ): HTMLElement | void {
         if (!style) {
             return;
         }
 
         const value = style.content;
         const document = clone.ownerDocument;
-        if (
-            !document ||
-            !value ||
-            value === 'none' ||
-            value === '-moz-alt-content' ||
-            style.display === 'none'
-        ) {
+        if (!document || !value || value === 'none' || value === '-moz-alt-content' || style.display === 'none') {
             return;
         }
 
@@ -344,42 +346,56 @@ export class DocumentCloner {
                 if (token.name === 'attr') {
                     const attr = token.values.filter(isIdentToken);
                     if (attr.length) {
-                        anonymousReplacedElement.appendChild(document.createTextNode(node.getAttribute(attr[0].value) || ''));
+                        anonymousReplacedElement.appendChild(
+                            document.createTextNode(node.getAttribute(attr[0].value) || '')
+                        );
                     }
                 } else if (token.name === 'counter') {
                     const [counter, counterStyle] = token.values.filter(nonFunctionArgSeperator);
                     if (counter && isIdentToken(counter)) {
                         const counterState = this.counters.getCounterValue(counter.value);
-                        const counterType = counterStyle && isIdentToken(counterStyle) ? listStyleType.parse(counterStyle.value) : LIST_STYLE_TYPE.DECIMAL;
+                        const counterType =
+                            counterStyle && isIdentToken(counterStyle)
+                                ? listStyleType.parse(counterStyle.value)
+                                : LIST_STYLE_TYPE.DECIMAL;
 
-                        anonymousReplacedElement.appendChild(document.createTextNode(createCounterText(counterState, counterType, false)));
+                        anonymousReplacedElement.appendChild(
+                            document.createTextNode(createCounterText(counterState, counterType, false))
+                        );
                     }
                 } else if (token.name === 'counters') {
                     const [counter, delim, counterStyle] = token.values.filter(nonFunctionArgSeperator);
                     if (counter && isIdentToken(counter)) {
                         const counterStates = this.counters.getCounterValues(counter.value);
-                        const counterType = counterStyle && isIdentToken(counterStyle) ? listStyleType.parse(counterStyle.value) : LIST_STYLE_TYPE.DECIMAL;
+                        const counterType =
+                            counterStyle && isIdentToken(counterStyle)
+                                ? listStyleType.parse(counterStyle.value)
+                                : LIST_STYLE_TYPE.DECIMAL;
                         const separator = delim && delim.type === TokenType.STRING_TOKEN ? delim.value : '';
-                        const text = counterStates.map(value => createCounterText(value, counterType, false)).join(separator);
+                        const text = counterStates
+                            .map(value => createCounterText(value, counterType, false))
+                            .join(separator);
 
                         anonymousReplacedElement.appendChild(document.createTextNode(text));
                     }
                 } else {
                     console.log('FUNCTION_TOKEN', token);
                 }
-
             } else if (token.type === TokenType.IDENT_TOKEN) {
                 switch (token.value) {
                     case 'open-quote':
-                        anonymousReplacedElement.appendChild(document.createTextNode(getQuote(declaration.quotes, this.quoteDepth++, true)));
+                        anonymousReplacedElement.appendChild(
+                            document.createTextNode(getQuote(declaration.quotes, this.quoteDepth++, true))
+                        );
                         break;
                     case 'close-quote':
-                        anonymousReplacedElement.appendChild(document.createTextNode(getQuote(declaration.quotes, --this.quoteDepth, false)));
+                        anonymousReplacedElement.appendChild(
+                            document.createTextNode(getQuote(declaration.quotes, --this.quoteDepth, false))
+                        );
                         break;
                     default:
                         console.log('ident', token, declaration);
                 }
-
             }
         });
 
@@ -390,7 +406,6 @@ export class DocumentCloner {
                 : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
         return anonymousReplacedElement;
     }
-
 }
 
 enum PseudoElementType {
@@ -398,10 +413,7 @@ enum PseudoElementType {
     AFTER
 }
 
-const createIFrameContainer = (
-    ownerDocument: Document,
-    bounds: Bounds
-): HTMLIFrameElement => {
+const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFrameElement => {
     const cloneIframeContainer = ownerDocument.createElement('iframe');
 
     cloneIframeContainer.className = 'html2canvas-container';
@@ -431,10 +443,7 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
 
         cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = () => {
             const interval = setInterval(() => {
-                if (
-                    documentClone.body.childNodes.length > 0 &&
-                    documentClone.readyState === 'complete'
-                ) {
+                if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
                     clearInterval(interval);
                     resolve(iframe);
                 }

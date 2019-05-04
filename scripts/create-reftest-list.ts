@@ -6,12 +6,12 @@ import {sync} from 'glob';
 
 const slash = require('slash');
 
-if (process.argv.length <= 2){
+if (process.argv.length <= 2) {
     console.log('No ignore.txt file provided');
     process.exit(1);
 }
 
-if (process.argv.length <= 3){
+if (process.argv.length <= 3) {
     console.log('No output file provided');
     process.exit(1);
 }
@@ -30,13 +30,18 @@ const ignoredTests = readFileSync(path)
         return acc;
     }, {});
 
-const files: string[] = sync('../tests/reftests/**/*.html', {cwd: __dirname, root: resolve(__dirname, '../../')});
+const files: string[] = sync('../tests/reftests/**/*.html', {
+    cwd: __dirname,
+    root: resolve(__dirname, '../../')
+});
 
 const testList = files.map((filename: string) => `/${slash(relative('../', filename))}`);
 writeFileSync(
     outputPath,
-    [`export const testList: string[] = ${JSON.stringify(testList, null, 4)};`,
-    `export const ignoredTests: {[key: string]: string[]} = ${JSON.stringify(ignoredTests, null, 4)};`].join('\n')
+    [
+        `export const testList: string[] = ${JSON.stringify(testList, null, 4)};`,
+        `export const ignoredTests: {[key: string]: string[]} = ${JSON.stringify(ignoredTests, null, 4)};`
+    ].join('\n')
 );
 
 console.log(`${outputPath} updated`);

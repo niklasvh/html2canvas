@@ -1,4 +1,4 @@
-import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum FLOAT {
     NONE = 0,
     LEFT = 1,

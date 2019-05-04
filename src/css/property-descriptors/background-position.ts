@@ -1,6 +1,6 @@
-import {PropertyDescriptorParsingType, IPropertyListDescriptor} from "../IPropertyDescriptor";
-import {CSSValue, parseFunctionArgs} from "../syntax/parser";
-import {isLengthPercentage, LengthPercentageTuple, parseLengthPercentageTuple} from "../types/length-percentage";
+import {PropertyDescriptorParsingType, IPropertyListDescriptor} from '../IPropertyDescriptor';
+import {CSSValue, parseFunctionArgs} from '../syntax/parser';
+import {isLengthPercentage, LengthPercentageTuple, parseLengthPercentageTuple} from '../types/length-percentage';
 export type BackgroundPosition = BackgroundImagePosition[];
 
 export type BackgroundImagePosition = LengthPercentageTuple;

@@ -1,4 +1,4 @@
-import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum WORD_BREAK {
     NORMAL = 'normal',
     BREAK_ALL = 'break-all',

@@ -1,5 +1,5 @@
-import {Vector} from "./vector";
-import {IPath, PathType, Path} from "./path";
+import {Vector} from './vector';
+import {IPath, PathType, Path} from './path';
 
 const lerp = (a: Vector, b: Vector, t: number): Vector => {
     return new Vector(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
@@ -27,9 +27,7 @@ export class BezierCurve implements IPath {
         const abbc = lerp(ab, bc, t);
         const bccd = lerp(bc, cd, t);
         const dest = lerp(abbc, bccd, t);
-        return firstHalf
-            ? new BezierCurve(this.start, ab, abbc, dest)
-            : new BezierCurve(dest, bccd, cd, this.end);
+        return firstHalf ? new BezierCurve(this.start, ab, abbc, dest) : new BezierCurve(dest, bccd, cd, this.end);
     }
 
     reverse(): BezierCurve {

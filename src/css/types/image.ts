@@ -1,9 +1,9 @@
-import {CSSValue} from "../syntax/parser";
-import {TokenType} from "../syntax/tokenizer";
-import {Color} from "./color";
-import {linearGradient} from "./functions/linear-gradient";
-import {prefixLinearGradient} from "./functions/-prefix-linear-gradient";
-import {ITypeDescriptor} from "../ITypeDescriptor";
+import {CSSValue} from '../syntax/parser';
+import {TokenType} from '../syntax/tokenizer';
+import {Color} from './color';
+import {linearGradient} from './functions/linear-gradient';
+import {prefixLinearGradient} from './functions/-prefix-linear-gradient';
+import {ITypeDescriptor} from '../ITypeDescriptor';
 import {CacheStorage} from '../../core/cache-storage';
 
 interface LengthPercentage {}
@@ -14,9 +14,9 @@ export enum CSSImageType {
 }
 
 export type UnprocessedGradientColorStop = {
-    color: Color
-    stop: LengthPercentage | null
-}
+    color: Color;
+    stop: LengthPercentage | null;
+};
 /*
 type GradientColorStop = {
     color: Color
@@ -24,25 +24,23 @@ type GradientColorStop = {
 }
 */
 export interface ICSSImage {
-    type: CSSImageType
+    type: CSSImageType;
 }
 
 export interface CSSURLImage extends ICSSImage {
-    url: string
-    type: CSSImageType.URL
+    url: string;
+    type: CSSImageType.URL;
 }
 
-interface ICSSGeneratedImage extends ICSSImage {
-
-}
+interface ICSSGeneratedImage extends ICSSImage {}
 
 interface ICSSGradientImage extends ICSSGeneratedImage {
-    angle: number
-    stops: UnprocessedGradientColorStop[]
+    angle: number;
+    stops: UnprocessedGradientColorStop[];
 }
 
 export interface CSSLinearGradientImage extends ICSSGradientImage {
-    type: CSSImageType.LINEAR_GRADIENT
+    type: CSSImageType.LINEAR_GRADIENT;
 }
 
 export const image: ITypeDescriptor<ICSSImage> = {
@@ -66,11 +64,12 @@ export const image: ITypeDescriptor<ICSSImage> = {
     }
 };
 
-
-const SUPPORTED_IMAGE_FUNCTIONS: {[key: string]: (args: CSSValue[]) => ICSSGeneratedImage} = {
+const SUPPORTED_IMAGE_FUNCTIONS: {
+    [key: string]: (args: CSSValue[]) => ICSSGeneratedImage;
+} = {
     'linear-gradient': linearGradient,
     '-moz-linear-gradient': prefixLinearGradient,
     '-ms-linear-gradient': prefixLinearGradient,
     '-o-linear-gradient': prefixLinearGradient,
-    '-webkit-linear-gradient': prefixLinearGradient,
+    '-webkit-linear-gradient': prefixLinearGradient
 };

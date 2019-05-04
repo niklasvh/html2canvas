@@ -1,5 +1,5 @@
-import {Matrix} from "../css/property-descriptors/transform";
-import {Path} from "./path";
+import {Matrix} from '../css/property-descriptors/transform';
+import {Path} from './path';
 
 export const enum EffectType {
     TRANSFORM = 0,
@@ -28,7 +28,7 @@ export class TransformEffect implements IElementEffect {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.matrix = matrix;
-        this.target = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT
+        this.target = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
     }
 }
 
@@ -44,5 +44,6 @@ export class ClipEffect implements IElementEffect {
     }
 }
 
-export const isTransformEffect = (effect: IElementEffect): effect is TransformEffect => effect.type === EffectType.TRANSFORM;
+export const isTransformEffect = (effect: IElementEffect): effect is TransformEffect =>
+    effect.type === EffectType.TRANSFORM;
 export const isClipEffect = (effect: IElementEffect): effect is ClipEffect => effect.type === EffectType.CLIP;

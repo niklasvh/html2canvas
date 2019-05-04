@@ -12,27 +12,15 @@ export class Bounds {
     }
 
     add(x: number, y: number, w: number, h: number): Bounds {
-        return new Bounds(
-            this.left + x,
-            this.top + y,
-            this.width + w,
-            this.height + h,
-        );
+        return new Bounds(this.left + x, this.top + y, this.width + w, this.height + h);
     }
 
     static fromClientRect(clientRect: ClientRect): Bounds {
-        return new Bounds(
-            clientRect.left,
-            clientRect.top,
-            clientRect.width,
-            clientRect.height
-        );
+        return new Bounds(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
     }
 }
 
-export const parseBounds = (
-    node: Element
-): Bounds => {
+export const parseBounds = (node: Element): Bounds => {
     return Bounds.fromClientRect(node.getBoundingClientRect());
 };
 

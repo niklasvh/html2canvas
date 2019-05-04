@@ -1,4 +1,4 @@
-import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum LIST_STYLE_TYPE {
     NONE = -1,
     DISC = 0,

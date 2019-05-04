@@ -1,67 +1,73 @@
+import {CSSPropertyDescriptor, PropertyDescriptorParsingType} from './IPropertyDescriptor';
+import {backgroundClip} from './property-descriptors/background-clip';
+import {backgroundColor} from './property-descriptors/background-color';
+import {backgroundImage} from './property-descriptors/background-image';
+import {backgroundOrigin} from './property-descriptors/background-origin';
+import {backgroundPosition} from './property-descriptors/background-position';
+import {backgroundRepeat} from './property-descriptors/background-repeat';
+import {backgroundSize} from './property-descriptors/background-size';
 import {
-    CSSPropertyDescriptor,
-    PropertyDescriptorParsingType
-} from "./IPropertyDescriptor";
-import {backgroundClip} from "./property-descriptors/background-clip";
-import {backgroundColor} from "./property-descriptors/background-color";
-import {backgroundImage} from "./property-descriptors/background-image";
-import {backgroundOrigin} from "./property-descriptors/background-origin";
-import {backgroundPosition} from "./property-descriptors/background-position";
-import {backgroundRepeat} from "./property-descriptors/background-repeat";
-import {backgroundSize} from "./property-descriptors/background-size";
-import {
-    borderBottomColor, borderLeftColor, borderRightColor,
+    borderBottomColor,
+    borderLeftColor,
+    borderRightColor,
     borderTopColor
-} from "./property-descriptors/border-color";
+} from './property-descriptors/border-color';
 import {
-    borderBottomLeftRadius, borderBottomRightRadius, borderTopLeftRadius, borderTopRightRadius
-} from "./property-descriptors/border-radius";
+    borderBottomLeftRadius,
+    borderBottomRightRadius,
+    borderTopLeftRadius,
+    borderTopRightRadius
+} from './property-descriptors/border-radius';
 import {
-    borderBottomStyle, borderLeftStyle, borderRightStyle,
+    borderBottomStyle,
+    borderLeftStyle,
+    borderRightStyle,
     borderTopStyle
-} from "./property-descriptors/border-style";
+} from './property-descriptors/border-style';
 import {
-    borderBottomWidth, borderLeftWidth, borderRightWidth,
+    borderBottomWidth,
+    borderLeftWidth,
+    borderRightWidth,
     borderTopWidth
-} from "./property-descriptors/border-width";
-import {color} from "./property-descriptors/color";
-import {display, DISPLAY} from "./property-descriptors/display";
-import {float, FLOAT} from "./property-descriptors/float";
-import {letterSpacing} from "./property-descriptors/letter-spacing";
-import {lineBreak} from "./property-descriptors/line-break";
-import {listStylePosition} from "./property-descriptors/list-style-position";
-import {listStyleType} from "./property-descriptors/list-style-type";
-import {marginBottom, marginLeft, marginRight, marginTop} from "./property-descriptors/margin";
-import {overflow} from "./property-descriptors/overflow";
-import {overflowWrap} from "./property-descriptors/overflow-wrap";
-import {paddingBottom, paddingLeft, paddingRight, paddingTop} from "./property-descriptors/padding";
-import {position, POSITION} from "./property-descriptors/position";
-import {textTransform} from "./property-descriptors/text-transform";
-import {transform} from "./property-descriptors/transform";
-import {transformOrigin} from "./property-descriptors/transform-origin";
-import {visibility, VISIBILITY} from "./property-descriptors/visibility";
-import {wordBreak} from "./property-descriptors/word-break";
-import {zIndex} from "./property-descriptors/z-index";
-import {CSSValue, isIdentToken, Parser} from "./syntax/parser";
-import {Tokenizer} from "./syntax/tokenizer";
-import {Color, color as colorType, isTransparent} from "./types/color";
-import {angle} from "./types/angle";
-import {image} from "./types/image";
-import {opacity} from "./property-descriptors/opacity";
-import {textDecorationColor} from "./property-descriptors/text-decoration-color";
-import {textDecorationLine} from "./property-descriptors/text-decoration-line";
-import {isLengthPercentage, LengthPercentage, ZERO_LENGTH} from "./types/length-percentage";
-import {fontFamily} from "./property-descriptors/font-family";
-import {fontSize} from "./property-descriptors/font-size";
-import {isLength} from "./types/length";
-import {fontWeight} from "./property-descriptors/font-weight";
-import {fontVariant} from "./property-descriptors/font-variant";
-import {fontStyle} from "./property-descriptors/font-style";
-import {contains} from "../core/bitwise";
-import {content} from "./property-descriptors/content";
-import {counterIncrement} from "./property-descriptors/counter-increment";
-import {counterReset} from "./property-descriptors/counter-reset";
-import {quotes} from "./property-descriptors/quotes";
+} from './property-descriptors/border-width';
+import {color} from './property-descriptors/color';
+import {display, DISPLAY} from './property-descriptors/display';
+import {float, FLOAT} from './property-descriptors/float';
+import {letterSpacing} from './property-descriptors/letter-spacing';
+import {lineBreak} from './property-descriptors/line-break';
+import {listStylePosition} from './property-descriptors/list-style-position';
+import {listStyleType} from './property-descriptors/list-style-type';
+import {marginBottom, marginLeft, marginRight, marginTop} from './property-descriptors/margin';
+import {overflow} from './property-descriptors/overflow';
+import {overflowWrap} from './property-descriptors/overflow-wrap';
+import {paddingBottom, paddingLeft, paddingRight, paddingTop} from './property-descriptors/padding';
+import {position, POSITION} from './property-descriptors/position';
+import {textTransform} from './property-descriptors/text-transform';
+import {transform} from './property-descriptors/transform';
+import {transformOrigin} from './property-descriptors/transform-origin';
+import {visibility, VISIBILITY} from './property-descriptors/visibility';
+import {wordBreak} from './property-descriptors/word-break';
+import {zIndex} from './property-descriptors/z-index';
+import {CSSValue, isIdentToken, Parser} from './syntax/parser';
+import {Tokenizer} from './syntax/tokenizer';
+import {Color, color as colorType, isTransparent} from './types/color';
+import {angle} from './types/angle';
+import {image} from './types/image';
+import {opacity} from './property-descriptors/opacity';
+import {textDecorationColor} from './property-descriptors/text-decoration-color';
+import {textDecorationLine} from './property-descriptors/text-decoration-line';
+import {isLengthPercentage, LengthPercentage, ZERO_LENGTH} from './types/length-percentage';
+import {fontFamily} from './property-descriptors/font-family';
+import {fontSize} from './property-descriptors/font-size';
+import {isLength} from './types/length';
+import {fontWeight} from './property-descriptors/font-weight';
+import {fontVariant} from './property-descriptors/font-variant';
+import {fontStyle} from './property-descriptors/font-style';
+import {contains} from '../core/bitwise';
+import {content} from './property-descriptors/content';
+import {counterIncrement} from './property-descriptors/counter-increment';
+import {counterReset} from './property-descriptors/counter-reset';
+import {quotes} from './property-descriptors/quotes';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -179,15 +185,11 @@ export class CSSParsedDeclaration {
     }
 
     isVisible(): boolean {
-        return (
-            this.display > 0 &&
-            this.opacity > 0 &&
-            this.visibility === VISIBILITY.VISIBLE
-        );
+        return this.display > 0 && this.opacity > 0 && this.visibility === VISIBILITY.VISIBLE;
     }
 
     isTransparent(): boolean {
-        return isTransparent(this.backgroundColor)
+        return isTransparent(this.backgroundColor);
     }
 
     isTransformed(): boolean {
@@ -242,7 +244,7 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
     const tokenizer = new Tokenizer();
     tokenizer.write(typeof style === 'string' ? style : descriptor.initialValue);
     const parser = new Parser(tokenizer.read());
-    switch(descriptor.type) {
+    switch (descriptor.type) {
         case PropertyDescriptorParsingType.IDENT_VALUE:
             const token = parser.parseComponentValue();
             return descriptor.parse(isIdentToken(token) ? token.value : descriptor.initialValue);
@@ -253,10 +255,13 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
         case PropertyDescriptorParsingType.TOKEN_VALUE:
             return parser.parseComponentValue();
         case PropertyDescriptorParsingType.TYPE_VALUE:
-            switch(descriptor.format) {
-                case 'angle': return angle.parse(parser.parseComponentValue());
-                case 'color': return colorType.parse(parser.parseComponentValue());
-                case 'image': return image.parse(parser.parseComponentValue());
+            switch (descriptor.format) {
+                case 'angle':
+                    return angle.parse(parser.parseComponentValue());
+                case 'color':
+                    return colorType.parse(parser.parseComponentValue());
+                case 'image':
+                    return image.parse(parser.parseComponentValue());
                 case 'length':
                     const length = parser.parseComponentValue();
                     return isLength(length) ? length : ZERO_LENGTH;

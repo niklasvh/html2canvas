@@ -1,13 +1,10 @@
-import {
-    IPropertyValueDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
-import {CSSValue, isNumberToken} from "../syntax/parser";
-import {TokenType} from "../syntax/tokenizer";
+import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isNumberToken} from '../syntax/parser';
+import {TokenType} from '../syntax/tokenizer';
 
 export type zIndex = {
-    order: number,
-    auto: boolean
+    order: number;
+    auto: boolean;
 };
 
 export const zIndex: IPropertyValueDescriptor<zIndex> = {
@@ -16,7 +13,7 @@ export const zIndex: IPropertyValueDescriptor<zIndex> = {
     prefix: false,
     type: PropertyDescriptorParsingType.VALUE,
     parse: (token: CSSValue): zIndex => {
-        if (token.type ===  TokenType.IDENT_TOKEN) {
+        if (token.type === TokenType.IDENT_TOKEN) {
             return {auto: true, order: 0};
         }
 

@@ -1,9 +1,9 @@
-import {ElementContainer, FLAGS} from "../dom/element-container";
-import {contains} from "../core/bitwise";
-import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from "./bound-curves";
-import {ClipEffect, EffectTarget, IElementEffect, TransformEffect} from "./effects";
-import {OVERFLOW} from "../css/property-descriptors/overflow";
-import {equalPath} from "./path";
+import {ElementContainer, FLAGS} from '../dom/element-container';
+import {contains} from '../core/bitwise';
+import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
+import {ClipEffect, EffectTarget, IElementEffect, TransformEffect} from './effects';
+import {OVERFLOW} from '../css/property-descriptors/overflow';
+import {equalPath} from './path';
 
 export class StackingContext {
     element: ElementPaint;
@@ -76,16 +76,19 @@ export const parseStackingContexts = (container: ElementContainer): StackingCont
     return root;
 };
 
-const parseStackTree = (parent: ElementPaint, stackingContext: StackingContext, realStackingContext: StackingContext) => {
+const parseStackTree = (
+    parent: ElementPaint,
+    stackingContext: StackingContext,
+    realStackingContext: StackingContext
+) => {
     parent.container.elements.forEach(child => {
         const treatAsRealStackingContext = contains(child.flags, FLAGS.CREATES_REAL_STACKING_CONTEXT);
         const createsStackingContext = contains(child.flags, FLAGS.CREATES_STACKING_CONTEXT);
         const paintContainer = new ElementPaint(child, parent.getParentEffects());
 
         if (treatAsRealStackingContext || createsStackingContext) {
-            const parentStack = treatAsRealStackingContext || child.styles.isPositioned()
-                ? realStackingContext
-                : stackingContext;
+            const parentStack =
+                treatAsRealStackingContext || child.styles.isPositioned() ? realStackingContext : stackingContext;
 
             const stack = new StackingContext(paintContainer);
 

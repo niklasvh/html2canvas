@@ -1,5 +1,5 @@
-import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
-import {CSSValue, isNumberToken} from "../syntax/parser";
+import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isNumberToken} from '../syntax/parser';
 export const opacity: IPropertyValueDescriptor<number> = {
     name: 'opacity',
     initialValue: '1',

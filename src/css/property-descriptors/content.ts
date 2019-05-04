@@ -1,6 +1,6 @@
-import {TokenType} from "../syntax/tokenizer";
-import {IPropertyListDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
-import {CSSValue} from "../syntax/parser";
+import {TokenType} from '../syntax/tokenizer';
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue} from '../syntax/parser';
 
 export type Content = CSSValue[];
 
@@ -16,8 +16,8 @@ export const content: IPropertyListDescriptor<Content> = {
 
         const first = tokens[0];
 
-        if (first.type ===  TokenType.IDENT_TOKEN && first.value === 'none') {
-            return []
+        if (first.type === TokenType.IDENT_TOKEN && first.value === 'none') {
+            return [];
         }
 
         return tokens;

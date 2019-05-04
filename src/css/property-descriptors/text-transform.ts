@@ -1,4 +1,4 @@
-import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum TEXT_TRANSFORM {
     NONE = 0,
     LOWERCASE = 1,

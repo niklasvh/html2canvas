@@ -1,5 +1,5 @@
-import {IPropertyListDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
-import {CSSValue, isIdentToken, isNumberToken, nonWhiteSpace} from "../syntax/parser";
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isIdentToken, isNumberToken, nonWhiteSpace} from '../syntax/parser';
 
 export type COUNTER_RESET = {
     counter: string;

@@ -1,43 +1,45 @@
-import {ElementPaint, parseStackingContexts, StackingContext} from "../render/stacking-context";
-import {asString, Color, isTransparent} from "../css/types/color";
-import {Logger} from "./logger";
-import {ElementContainer} from "../dom/element-container";
-import {BORDER_STYLE} from "../css/property-descriptors/border-style";
-import {CSSParsedDeclaration} from "../css/index";
-import {TextContainer} from "../dom/text-container";
-import {Path} from "../render/path";
-import {BACKGROUND_CLIP} from "../css/property-descriptors/background-clip";
-import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from "../render/bound-curves";
-import {isBezierCurve} from "../render/bezier-curve";
-import {Vector} from "../render/vector";
-import {CSSImageType, CSSURLImage} from "../css/types/image";
-import {parsePathForBorder} from "../render/border";
-import {Cache} from "./cache-storage";
+import {ElementPaint, parseStackingContexts, StackingContext} from '../render/stacking-context';
+import {asString, Color, isTransparent} from '../css/types/color';
+import {Logger} from './logger';
+import {ElementContainer} from '../dom/element-container';
+import {BORDER_STYLE} from '../css/property-descriptors/border-style';
+import {CSSParsedDeclaration} from '../css/index';
+import {TextContainer} from '../dom/text-container';
+import {Path} from '../render/path';
+import {BACKGROUND_CLIP} from '../css/property-descriptors/background-clip';
+import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from '../render/bound-curves';
+import {isBezierCurve} from '../render/bezier-curve';
+import {Vector} from '../render/vector';
+import {CSSImageType, CSSURLImage} from '../css/types/image';
+import {parsePathForBorder} from '../render/border';
+import {Cache} from './cache-storage';
 import {
-    calculateBackgroundRepeatPath, calculateBackgroundSize,
-    calculateBackgroungPositioningArea, getBackgroundValueForIndex
-} from "../render/background";
-import {getAbsoluteValueForTuple} from "../css/types/length-percentage";
-import {isDimensionToken} from "../css/syntax/parser";
-import {TextBounds} from "../css/layout/text";
-import {fromCodePoint, toCodePoints} from "css-line-break";
-import {ImageElementContainer} from "../dom/replaced-elements/image-element-container";
-import {contentBox} from "../render/box-sizing";
-import {CanvasElementContainer} from "../dom/replaced-elements/canvas-element-container";
-import {SVGElementContainer} from "../dom/replaced-elements/svg-element-container";
-import {ReplacedElementContainer} from "../dom/replaced-elements/index";
-import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from "../render/effects";
-import {contains} from "./bitwise";
+    calculateBackgroundRepeatPath,
+    calculateBackgroundSize,
+    calculateBackgroungPositioningArea,
+    getBackgroundValueForIndex
+} from '../render/background';
+import {getAbsoluteValueForTuple} from '../css/types/length-percentage';
+import {isDimensionToken} from '../css/syntax/parser';
+import {TextBounds} from '../css/layout/text';
+import {fromCodePoint, toCodePoints} from 'css-line-break';
+import {ImageElementContainer} from '../dom/replaced-elements/image-element-container';
+import {contentBox} from '../render/box-sizing';
+import {CanvasElementContainer} from '../dom/replaced-elements/canvas-element-container';
+import {SVGElementContainer} from '../dom/replaced-elements/svg-element-container';
+import {ReplacedElementContainer} from '../dom/replaced-elements/index';
+import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../render/effects';
+import {contains} from './bitwise';
 
 export type RenderOptions = {
-    scale: number,
-    canvas?: HTMLCanvasElement,
-    backgroundColor: Color | null,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    cache: Cache
+    scale: number;
+    canvas?: HTMLCanvasElement;
+    backgroundColor: Color | null;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    cache: Cache;
 };
 
 export class CanvasRenderer {
@@ -60,7 +62,9 @@ export class CanvasRenderer {
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
         Logger.debug(
-            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
+            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${
+                options.scale
+            }`
         );
     }
 
@@ -76,7 +80,14 @@ export class CanvasRenderer {
         this.ctx.save();
         if (isTransformEffect(effect)) {
             this.ctx.translate(effect.offsetX, effect.offsetY);
-            this.ctx.transform(effect.matrix[0], effect.matrix[1], effect.matrix[2], effect.matrix[3], effect.matrix[4], effect.matrix[5]);
+            this.ctx.transform(
+                effect.matrix[0],
+                effect.matrix[1],
+                effect.matrix[2],
+                effect.matrix[3],
+                effect.matrix[4],
+                effect.matrix[5]
+            );
             this.ctx.translate(-effect.offsetX, -effect.offsetY);
         }
 
@@ -110,29 +121,18 @@ export class CanvasRenderer {
 
     renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number) {
         if (letterSpacing === 0) {
-            this.ctx.fillText(
-                text.text,
-                text.bounds.left,
-                text.bounds.top + text.bounds.height
-            );
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
         } else {
             const letters = toCodePoints(text.text).map(i => fromCodePoint(i));
             letters.reduce((left, letter) => {
-                this.ctx.fillText(
-                    letter,
-                    left,
-                    text.bounds.top + text.bounds.height
-                );
+                this.ctx.fillText(letter, left, text.bounds.top + text.bounds.height);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
         }
     }
 
-    async renderTextNode(
-        text: TextContainer,
-        styles: CSSParsedDeclaration
-    ) {
+    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
         /*this.ctx.font = [
             font.fontStyle,
             font.fontVariant,
@@ -144,22 +144,21 @@ export class CanvasRenderer {
 
 
 */
-console.log(text.textBounds);
-        const fontVariant = styles.fontVariant.filter(variant => variant === 'normal' || variant === 'small-caps').join('');
-        const fontSize = isDimensionToken(styles.fontSize) ? `${styles.fontSize.number}${styles.fontSize.unit}` : styles.fontSize.number;
+        console.log(text.textBounds);
+        const fontVariant = styles.fontVariant
+            .filter(variant => variant === 'normal' || variant === 'small-caps')
+            .join('');
+        const fontSize = isDimensionToken(styles.fontSize)
+            ? `${styles.fontSize.number}${styles.fontSize.unit}`
+            : styles.fontSize.number;
 
-        this.ctx.font = [
-            styles.fontStyle,
-            fontVariant,
-            styles.fontWeight,
-            fontSize,
-            styles.fontFamily.join(', ')
-        ].join(' ');
+        this.ctx.font = [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, styles.fontFamily.join(', ')].join(
+            ' '
+        );
 
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = asString(styles.color);
             this.renderTextWithLetterSpacing(text, styles.letterSpacing);
-
 
             /*if (textShadows && text.text.trim().length) {
                 textShadows.slice(0).reverse().forEach(textShadow => {
@@ -181,8 +180,8 @@ console.log(text.textBounds);
                 this.ctx.shadowBlur = 0;
             } else {*/
 
-          //  }
-/*
+            //  }
+            /*
             if (textDecoration !== null) {
                 const textDecorationColor = textDecoration.textDecorationColor || color;
                 textDecoration.textDecorationLine.forEach(textDecorationLine => {
@@ -226,7 +225,11 @@ console.log(text.textBounds);
         });
     }
 
-    renderReplacedElement(container: ReplacedElementContainer, curves: BoundCurves, image: HTMLImageElement | HTMLCanvasElement) {
+    renderReplacedElement(
+        container: ReplacedElementContainer,
+        curves: BoundCurves,
+        image: HTMLImageElement | HTMLCanvasElement
+    ) {
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
             console.log(image, this._activeEffects);
             const box = contentBox(container);
@@ -262,7 +265,7 @@ console.log(text.textBounds);
             try {
                 const image = await this.options.cache.match(container.src);
                 this.renderReplacedElement(container, curves, image);
-            } catch(e) {
+            } catch (e) {
                 Logger.error(`Error loading image ${container.src}`);
             }
         }
@@ -275,8 +278,7 @@ console.log(text.textBounds);
             try {
                 const image = await this.options.cache.match(container.svg);
                 this.renderReplacedElement(container, curves, image);
-
-            } catch(e) {
+            } catch (e) {
                 Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
         }
@@ -404,7 +406,10 @@ console.log(text.textBounds);
         offsetY: number
     ) {
         this.path(path);
-        this.ctx.fillStyle = <CanvasPattern>this.ctx.createPattern(this.resizeImage(image, imageWidth, imageHeight), 'repeat');
+        this.ctx.fillStyle = <CanvasPattern>this.ctx.createPattern(
+            this.resizeImage(image, imageWidth, imageHeight),
+            'repeat'
+        );
         this.ctx.translate(offsetX, offsetY);
         this.ctx.fill();
         this.ctx.translate(-offsetX, -offsetY);
@@ -423,7 +428,6 @@ console.log(text.textBounds);
         return canvas;
     }
 
-
     async renderBackgroundImage(container: ElementContainer) {
         let index = container.styles.backgroundImage.length - 1;
         for (const backgroundImage of container.styles.backgroundImage.slice(0).reverse()) {
@@ -432,7 +436,7 @@ console.log(text.textBounds);
                 const url = (backgroundImage as CSSURLImage).url;
                 try {
                     image = await this.options.cache.match(url);
-                } catch(e) {
+                } catch (e) {
                     Logger.error(`Error loading background-image ${url}`);
                 }
 
@@ -440,8 +444,15 @@ console.log(text.textBounds);
                     return;
                 }
 
-                const backgroundPositioningArea = calculateBackgroungPositioningArea(getBackgroundValueForIndex(container.styles.backgroundOrigin, index), container);
-                const backgroundImageSize = calculateBackgroundSize(getBackgroundValueForIndex(container.styles.backgroundSize, index), image, backgroundPositioningArea);
+                const backgroundPositioningArea = calculateBackgroungPositioningArea(
+                    getBackgroundValueForIndex(container.styles.backgroundOrigin, index),
+                    container
+                );
+                const backgroundImageSize = calculateBackgroundSize(
+                    getBackgroundValueForIndex(container.styles.backgroundSize, index),
+                    image,
+                    backgroundPositioningArea
+                );
                 const [sizeWidth, sizeHeight] = backgroundImageSize;
 
                 const position = getAbsoluteValueForTuple(
@@ -484,7 +495,10 @@ console.log(text.textBounds);
             {style: styles.borderLeftStyle, color: styles.borderLeftColor}
         ];
 
-        const backgroundPaintingArea = calculateBackgroungPaintingArea(getBackgroundValueForIndex(styles.backgroundClip, 0), paint.curves);
+        const backgroundPaintingArea = calculateBackgroungPaintingArea(
+            getBackgroundValueForIndex(styles.backgroundClip, 0),
+            paint.curves
+        );
         if (hasBackground) {
             this.ctx.save();
             this.path(backgroundPaintingArea);
@@ -512,10 +526,7 @@ console.log(text.textBounds);
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {
         if (this.options.backgroundColor) {
             this.ctx.fillStyle = asString(this.options.backgroundColor);
-            this.ctx.fillRect(this.options.x,
-                this.options.y,
-                this.options.width,
-                this.options.height);
+            this.ctx.fillRect(this.options.x, this.options.y, this.options.width, this.options.height);
         }
 
         const stack = parseStackingContexts(element);
@@ -527,10 +538,7 @@ console.log(text.textBounds);
     }
 }
 
-const calculateBackgroungPaintingArea = (
-    clip: BACKGROUND_CLIP,
-    curves: BoundCurves
-): Path[] => {
+const calculateBackgroungPaintingArea = (clip: BACKGROUND_CLIP, curves: BoundCurves): Path[] => {
     switch (clip) {
         case BACKGROUND_CLIP.BORDER_BOX:
             return calculateBorderBoxPath(curves);
@@ -539,4 +547,3 @@ const calculateBackgroungPaintingArea = (
             return calculatePaddingBoxPath(curves);
     }
 };
-

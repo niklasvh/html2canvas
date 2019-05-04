@@ -1,6 +1,6 @@
-import {CSSValue} from "../syntax/parser";
-import {TokenType} from "../syntax/tokenizer";
-import {ITypeDescriptor} from "../ITypeDescriptor";
+import {CSSValue} from '../syntax/parser';
+import {TokenType} from '../syntax/tokenizer';
+import {ITypeDescriptor} from '../ITypeDescriptor';
 
 export const angle: ITypeDescriptor<number> = {
     name: 'angle',
@@ -45,7 +45,7 @@ export const parseNamedSide = (idents: CSSValue[]): number => {
         }
         return angle;
     }, 0);
-    return deg(namedAngleSum === 450 ? 45 : namedAngleSum / idents.length % 360);
+    return deg(namedAngleSum === 450 ? 45 : (namedAngleSum / idents.length) % 360);
 };
 
 export const deg = (deg: number): number => Math.PI * deg / 180;

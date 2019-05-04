@@ -51,7 +51,10 @@ class XMLHttpRequestMock {
 }
 
 Object.defineProperty(global, 'Image', {value: ImageMock, writable: true});
-Object.defineProperty(global, 'XMLHttpRequest', {value: XMLHttpRequestMock, writable: true});
+Object.defineProperty(global, 'XMLHttpRequest', {
+    value: XMLHttpRequestMock,
+    writable: true
+});
 
 const setFeatures = (opts: {[key: string]: boolean} = {}) => {
     const defaults: {[key: string]: boolean} = {
@@ -62,7 +65,10 @@ const setFeatures = (opts: {[key: string]: boolean} = {}) => {
     };
 
     Object.keys(defaults).forEach(key => {
-        Object.defineProperty(FEATURES, key, {value: typeof opts[key] === 'boolean' ? opts[key] : defaults[key], writable: true});
+        Object.defineProperty(FEATURES, key, {
+            value: typeof opts[key] === 'boolean' ? opts[key] : defaults[key],
+            writable: true
+        });
     });
 };
 
@@ -155,13 +161,18 @@ describe('cache-storage', () => {
 
     describe('cross-origin', () => {
         it('addImage should not add images it cannot load/render', async () => {
-            const cache = createMockContext('http://example.com', {proxy: undefined});
+            const cache = createMockContext('http://example.com', {
+                proxy: undefined
+            });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 0);
         });
 
         it('addImage should add images if tainting enabled', async () => {
-            const cache = createMockContext('http://example.com', {allowTaint: true, proxy: undefined});
+            const cache = createMockContext('http://example.com', {
+                allowTaint: true,
+                proxy: undefined
+            });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
@@ -179,7 +190,10 @@ describe('cache-storage', () => {
         it('addImage should not add images if cors enabled but not supported', async () => {
             setFeatures({SUPPORT_CORS_IMAGES: false});
 
-            const cache = createMockContext('http://example.com', {useCORS: true, proxy: undefined});
+            const cache = createMockContext('http://example.com', {
+                useCORS: true,
+                proxy: undefined
+            });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 0);
         });
@@ -196,7 +210,10 @@ describe('cache-storage', () => {
             const cache = createMockContext('http://example.com');
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(xhr.length, 1);
-            deepStrictEqual(xhr[0].url, `${proxy}?url=${encodeURIComponent('http://html2canvas.hertzen.com/test.jpg')}&responseType=text`);
+            deepStrictEqual(
+                xhr[0].url,
+                `${proxy}?url=${encodeURIComponent('http://html2canvas.hertzen.com/test.jpg')}&responseType=text`
+            );
             await xhr[0].load(200, '<data response>');
 
             deepStrictEqual(images.length, 1);
@@ -204,19 +221,24 @@ describe('cache-storage', () => {
         });
 
         it('proxy should respect imageTimeout', async () => {
-            const cache = createMockContext('http://example.com', {imageTimeout: 10});
+            const cache = createMockContext('http://example.com', {
+                imageTimeout: 10
+            });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
 
             deepStrictEqual(xhr.length, 1);
-            deepStrictEqual(xhr[0].url, `${proxy}?url=${encodeURIComponent('http://html2canvas.hertzen.com/test.jpg')}&responseType=text`);
+            deepStrictEqual(
+                xhr[0].url,
+                `${proxy}?url=${encodeURIComponent('http://html2canvas.hertzen.com/test.jpg')}&responseType=text`
+            );
             deepStrictEqual(xhr[0].timeout, 10);
             if (xhr[0].ontimeout) {
                 xhr[0].ontimeout();
             }
             try {
                 await cache.match('http://html2canvas.hertzen.com/test.jpg');
-                fail("Expected result to timeout");
-            } catch(e) {}
+                fail('Expected result to timeout');
+            } catch (e) {}
         });
     });
 
@@ -239,7 +261,7 @@ describe('cache-storage', () => {
 
         try {
             await cache.match('http://example.com/test.jpg');
-            fail("Expected result to timeout");
-        } catch(e) {}
+            fail('Expected result to timeout');
+        } catch (e) {}
     });
 });

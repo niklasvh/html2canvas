@@ -1,30 +1,40 @@
 import {
-    CSSToken, DimensionToken, EOF_TOKEN, NumberValueToken, StringValueToken, Tokenizer,
+    CSSToken,
+    DimensionToken,
+    EOF_TOKEN,
+    NumberValueToken,
+    StringValueToken,
+    Tokenizer,
     TokenType
-} from "./tokenizer";
+} from './tokenizer';
 
 interface IFunctionDescriptor<T> {
-    name: string
-    parser: (value: CSSValue) => T
+    name: string;
+    parser: (value: CSSValue) => T;
 }
 
-export type CSSBlockType = TokenType.LEFT_PARENTHESIS_TOKEN | TokenType.LEFT_SQUARE_BRACKET_TOKEN | TokenType.LEFT_CURLY_BRACKET_TOKEN;
+export type CSSBlockType =
+    | TokenType.LEFT_PARENTHESIS_TOKEN
+    | TokenType.LEFT_SQUARE_BRACKET_TOKEN
+    | TokenType.LEFT_CURLY_BRACKET_TOKEN;
 
 export interface CSSBlock {
-    type: CSSBlockType
-    values: CSSValue[]
+    type: CSSBlockType;
+    values: CSSValue[];
 }
 
 export interface CSSFunction {
-    type: TokenType.FUNCTION
-    name: string
-    values: CSSValue[]
+    type: TokenType.FUNCTION;
+    name: string;
+    values: CSSValue[];
 }
 
 export type CSSValue = CSSFunction | CSSToken | CSSBlock;
 
 export class Parser {
-    private static registeredFunctions: {[key: string]: IFunctionDescriptor<any>} = {};
+    private static registeredFunctions: {
+        [key: string]: IFunctionDescriptor<any>;
+    } = {};
     private _tokens: CSSToken[];
 
     constructor(tokens: CSSToken[]) {
@@ -76,13 +86,13 @@ export class Parser {
 
     parseComponentValues(): CSSValue[] {
         const values = [];
-        while(true) {
+        while (true) {
             let value = this.consumeComponentValue();
             if (value.type === TokenType.EOF_TOKEN) {
                 return values;
             }
             values.push(value);
-            values.push()
+            values.push();
         }
     }
 
@@ -105,7 +115,7 @@ export class Parser {
         const block: CSSBlock = {type, values: []};
 
         let token = this.consumeToken();
-        while(true) {
+        while (true) {
             if (token.type === TokenType.EOF_TOKEN || isEndingTokenFor(token, type)) {
                 return block;
             }
@@ -117,9 +127,13 @@ export class Parser {
     }
 
     private consumeFunction(functionToken: StringValueToken): CSSFunction {
-        const cssFunction: CSSFunction = {name: functionToken.value, values: [], type: TokenType.FUNCTION};
+        const cssFunction: CSSFunction = {
+            name: functionToken.value,
+            values: [],
+            type: TokenType.FUNCTION
+        };
 
-        while(true) {
+        while (true) {
             const token = this.consumeToken();
             if (token.type === TokenType.EOF_TOKEN || token.type === TokenType.RIGHT_PARENTHESIS_TOKEN) {
                 return cssFunction;
@@ -144,10 +158,12 @@ export const isDimensionToken = (token: CSSValue): token is DimensionToken => to
 export const isNumberToken = (token: CSSValue): token is NumberValueToken => token.type === TokenType.NUMBER_TOKEN;
 export const isIdentToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.IDENT_TOKEN;
 export const isStringToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.STRING_TOKEN;
-export const isIdentWithValue = (token: CSSValue, value: string): boolean => isIdentToken(token) && token.value === value;
+export const isIdentWithValue = (token: CSSValue, value: string): boolean =>
+    isIdentToken(token) && token.value === value;
 
 export const nonWhiteSpace = (token: CSSValue) => token.type !== TokenType.WHITESPACE_TOKEN;
-export const nonFunctionArgSeperator = (token: CSSValue) => token.type !== TokenType.WHITESPACE_TOKEN && token.type !== TokenType.COMMA_TOKEN;
+export const nonFunctionArgSeperator = (token: CSSValue) =>
+    token.type !== TokenType.WHITESPACE_TOKEN && token.type !== TokenType.COMMA_TOKEN;
 
 export const parseFunctionArgs = (tokens: CSSValue[]): CSSValue[][] => {
     const args: CSSValue[][] = [];
@@ -191,6 +207,5 @@ const rgb = {
         return 0;
     }
 };
-
 
 Parser.registerFunction<number>(rgb);

@@ -1,12 +1,12 @@
 import {readdirSync, readFileSync, writeFileSync} from 'fs';
 import {resolve} from 'path';
 
-if (process.argv.length <= 2){
+if (process.argv.length <= 2) {
     console.log('No metadata path provided');
     process.exit(1);
 }
 
-if (process.argv.length <= 3){
+if (process.argv.length <= 3) {
     console.log('No output file given');
     process.exit(1);
 }
@@ -14,16 +14,14 @@ if (process.argv.length <= 3){
 const path = resolve(__dirname, '../', process.argv[2]);
 const files = readdirSync(path);
 
-interface RefTestMetadata {
+interface RefTestMetadata {}
 
-}
-
-interface RefTestSingleMetadata extends RefTestMetadata{
+interface RefTestSingleMetadata extends RefTestMetadata {
     test: string;
 }
 
 interface RefTestResults {
-    [key: string]: Array<RefTestMetadata>
+    [key: string]: Array<RefTestMetadata>;
 }
 
 const result: RefTestResults = files.reduce((result: RefTestResults, file) => {

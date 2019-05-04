@@ -1,7 +1,4 @@
-import {
-    IPropertyIdentValueDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum POSITION {
     STATIC = 0,
     RELATIVE = 1,

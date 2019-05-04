@@ -1,10 +1,14 @@
-import {IPropertyListDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
-import {CSSValue} from "../syntax/parser";
-import {isLengthPercentage, LengthPercentage} from "../types/length-percentage";
-import {FLAG_INTEGER, TokenType} from "../syntax/tokenizer";
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue} from '../syntax/parser';
+import {isLengthPercentage, LengthPercentage} from '../types/length-percentage';
+import {FLAG_INTEGER, TokenType} from '../syntax/tokenizer';
 export type TransformOrigin = [LengthPercentage, LengthPercentage];
 
-const DEFAULT_VALUE: LengthPercentage = {type: TokenType.PERCENTAGE_TOKEN, number: 50, flags: FLAG_INTEGER};
+const DEFAULT_VALUE: LengthPercentage = {
+    type: TokenType.PERCENTAGE_TOKEN,
+    number: 50,
+    flags: FLAG_INTEGER
+};
 const DEFAULT: TransformOrigin = [DEFAULT_VALUE, DEFAULT_VALUE];
 
 export const transformOrigin: IPropertyListDescriptor<TransformOrigin> = {

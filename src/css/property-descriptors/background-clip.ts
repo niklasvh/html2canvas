@@ -1,8 +1,5 @@
-import {
-    IPropertyListDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
-import {CSSValue, isIdentToken} from "../syntax/parser";
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isIdentToken} from '../syntax/parser';
 export enum BACKGROUND_CLIP {
     BORDER_BOX = 0,
     PADDING_BOX = 1,

@@ -1,8 +1,8 @@
-import {ElementContainer} from "../dom/element-container";
-import {getAbsoluteValueForTuple} from "../css/types/length-percentage";
-import {Vector} from "./vector";
-import {BezierCurve} from "./bezier-curve";
-import {Path} from "./path";
+import {ElementContainer} from '../dom/element-container';
+import {getAbsoluteValueForTuple} from '../css/types/length-percentage';
+import {Vector} from './vector';
+import {BezierCurve} from './bezier-curve';
+import {Path} from './path';
 
 export class BoundCurves {
     readonly topLeftOuter: Path;
@@ -58,16 +58,13 @@ export class BoundCurves {
         this.topLeftInner =
             tlh > 0 || tlv > 0
                 ? getCurvePoints(
-                bounds.left + borderLeftWidth,
-                bounds.top + borderTopWidth,
-                Math.max(0, tlh - borderLeftWidth),
-                Math.max(0, tlv - borderTopWidth),
-                CORNER.TOP_LEFT
-            )
-                : new Vector(
-                bounds.left + borderLeftWidth,
-                bounds.top + borderTopWidth
-            );
+                      bounds.left + borderLeftWidth,
+                      bounds.top + borderTopWidth,
+                      Math.max(0, tlh - borderLeftWidth),
+                      Math.max(0, tlv - borderTopWidth),
+                      CORNER.TOP_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth, bounds.top + borderTopWidth);
         this.topRightOuter =
             trh > 0 || trv > 0
                 ? getCurvePoints(bounds.left + topWidth, bounds.top, trh, trv, CORNER.TOP_RIGHT)
@@ -75,41 +72,30 @@ export class BoundCurves {
         this.topRightInner =
             trh > 0 || trv > 0
                 ? getCurvePoints(
-                bounds.left + Math.min(topWidth, bounds.width + borderLeftWidth),
-                bounds.top + borderTopWidth,
-                topWidth > bounds.width + borderLeftWidth
-                    ? 0
-                    : trh - borderLeftWidth,
-                trv - borderTopWidth,
-                CORNER.TOP_RIGHT
-            )
-                : new Vector(
-                bounds.left + bounds.width - borderRightWidth,
-                bounds.top + borderTopWidth
-            );
+                      bounds.left + Math.min(topWidth, bounds.width + borderLeftWidth),
+                      bounds.top + borderTopWidth,
+                      topWidth > bounds.width + borderLeftWidth ? 0 : trh - borderLeftWidth,
+                      trv - borderTopWidth,
+                      CORNER.TOP_RIGHT
+                  )
+                : new Vector(bounds.left + bounds.width - borderRightWidth, bounds.top + borderTopWidth);
         this.bottomRightOuter =
             brh > 0 || brv > 0
-                ? getCurvePoints(
-                bounds.left + bottomWidth,
-                bounds.top + rightHeight,
-                brh,
-                brv,
-                CORNER.BOTTOM_RIGHT
-            )
+                ? getCurvePoints(bounds.left + bottomWidth, bounds.top + rightHeight, brh, brv, CORNER.BOTTOM_RIGHT)
                 : new Vector(bounds.left + bounds.width, bounds.top + bounds.height);
         this.bottomRightInner =
             brh > 0 || brv > 0
                 ? getCurvePoints(
-                bounds.left + Math.min(bottomWidth, bounds.width - borderLeftWidth),
-                bounds.top + Math.min(rightHeight, bounds.height + borderTopWidth),
-                Math.max(0, brh - borderRightWidth),
-                brv - borderBottomWidth,
-                CORNER.BOTTOM_RIGHT
-            )
+                      bounds.left + Math.min(bottomWidth, bounds.width - borderLeftWidth),
+                      bounds.top + Math.min(rightHeight, bounds.height + borderTopWidth),
+                      Math.max(0, brh - borderRightWidth),
+                      brv - borderBottomWidth,
+                      CORNER.BOTTOM_RIGHT
+                  )
                 : new Vector(
-                bounds.left + bounds.width - borderRightWidth,
-                bounds.top + bounds.height - borderBottomWidth
-            );
+                      bounds.left + bounds.width - borderRightWidth,
+                      bounds.top + bounds.height - borderBottomWidth
+                  );
         this.bottomLeftOuter =
             blh > 0 || blv > 0
                 ? getCurvePoints(bounds.left, bounds.top + leftHeight, blh, blv, CORNER.BOTTOM_LEFT)
@@ -117,16 +103,13 @@ export class BoundCurves {
         this.bottomLeftInner =
             blh > 0 || blv > 0
                 ? getCurvePoints(
-                bounds.left + borderLeftWidth,
-                bounds.top + leftHeight,
-                Math.max(0, blh - borderLeftWidth),
-                blv - borderBottomWidth,
-                CORNER.BOTTOM_LEFT
-            )
-                : new Vector(
-                bounds.left + borderLeftWidth,
-                bounds.top + bounds.height - borderBottomWidth
-            );
+                      bounds.left + borderLeftWidth,
+                      bounds.top + leftHeight,
+                      Math.max(0, blh - borderLeftWidth),
+                      blv - borderBottomWidth,
+                      CORNER.BOTTOM_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth, bounds.top + bounds.height - borderBottomWidth);
     }
 }
 
@@ -137,13 +120,7 @@ enum CORNER {
     BOTTOM_LEFT = 3
 }
 
-const getCurvePoints = (
-    x: number,
-    y: number,
-    r1: number,
-    r2: number,
-    position: CORNER
-): BezierCurve => {
+const getCurvePoints = (x: number, y: number, r1: number, r2: number, position: CORNER): BezierCurve => {
     const kappa = 4 * ((Math.sqrt(2) - 1) / 3);
     const ox = r1 * kappa; // control point offset horizontal
     const oy = r2 * kappa; // control point offset vertical
@@ -184,19 +161,9 @@ const getCurvePoints = (
 };
 
 export const calculateBorderBoxPath = (curves: BoundCurves): Path[] => {
-    return [
-        curves.topLeftOuter,
-        curves.topRightOuter,
-        curves.bottomRightOuter,
-        curves.bottomLeftOuter
-    ];
+    return [curves.topLeftOuter, curves.topRightOuter, curves.bottomRightOuter, curves.bottomLeftOuter];
 };
 
 export const calculatePaddingBoxPath = (curves: BoundCurves): Path[] => {
-    return [
-        curves.topLeftInner,
-        curves.topRightInner,
-        curves.bottomRightInner,
-        curves.bottomLeftInner
-    ];
+    return [curves.topLeftInner, curves.topRightInner, curves.bottomRightInner, curves.bottomLeftInner];
 };

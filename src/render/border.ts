@@ -1,6 +1,6 @@
-import {Path} from "./path";
-import {BoundCurves} from "./bound-curves";
-import {isBezierCurve} from "./bezier-curve";
+import {Path} from './path';
+import {BoundCurves} from './bound-curves';
+import {isBezierCurve} from './bezier-curve';
 
 export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Path[] => {
     switch (borderSide) {
@@ -36,12 +36,7 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Pat
     }
 };
 
-const createPathFromCurves = (
-    outer1: Path,
-    inner1: Path,
-    outer2: Path,
-    inner2: Path
-): Path[] => {
+const createPathFromCurves = (outer1: Path, inner1: Path, outer2: Path, inner2: Path): Path[] => {
     const path = [];
     if (isBezierCurve(outer1)) {
         path.push(outer1.subdivide(0.5, false));

@@ -1,9 +1,9 @@
-import {CSSParsedDeclaration} from "../css/index";
-import {ElementContainer, FLAGS} from "./element-container";
-import {TextContainer} from "./text-container";
-import {ImageElementContainer} from "./replaced-elements/image-element-container";
-import {CanvasElementContainer} from "./replaced-elements/canvas-element-container";
-import {SVGElementContainer} from "./replaced-elements/svg-element-container";
+import {CSSParsedDeclaration} from '../css/index';
+import {ElementContainer, FLAGS} from './element-container';
+import {TextContainer} from './text-container';
+import {ImageElementContainer} from './replaced-elements/image-element-container';
+import {CanvasElementContainer} from './replaced-elements/canvas-element-container';
+import {SVGElementContainer} from './replaced-elements/svg-element-container';
 
 const parseNodeTree = (node: Node, parent: ElementContainer, root: ElementContainer) => {
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
@@ -51,7 +51,6 @@ export const parseTree = (element: HTMLElement): ElementContainer => {
     parseNodeTree(element, container, container);
     return container;
 };
-
 
 /*
 export class NodeParser {
@@ -108,7 +107,6 @@ export class NodeParser {
 }
 */
 
-
 const createsRealStackingContext = (node: Element, container: ElementContainer, root: ElementContainer): boolean => {
     return (
         container.styles.isPositionedWithZIndex() ||
@@ -122,7 +120,8 @@ const createsStackingContext = (styles: CSSParsedDeclaration): boolean => styles
 
 export const isTextNode = (node: Node): node is Text => node.nodeType === Node.TEXT_NODE;
 export const isElementNode = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
-export const isHTMLElementNode = (node: Node): node is HTMLElement => typeof (node as HTMLElement).style !== 'undefined';
+export const isHTMLElementNode = (node: Node): node is HTMLElement =>
+    typeof (node as HTMLElement).style !== 'undefined';
 
 export const isHTMLElement = (node: Element): node is HTMLHtmlElement => node.tagName === 'HTML';
 export const isSVGElement = (node: Element): node is SVGSVGElement => node.tagName === 'svg';

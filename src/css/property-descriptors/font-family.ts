@@ -1,9 +1,6 @@
-import {
-    IPropertyListDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
-import {CSSValue} from "../syntax/parser";
-import {StringValueToken, TokenType} from "../syntax/tokenizer";
+import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue} from '../syntax/parser';
+import {StringValueToken, TokenType} from '../syntax/tokenizer';
 
 export type FONT_FAMILY = string;
 
@@ -19,4 +16,5 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
     }
 };
 
-const isStringToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.STRING_TOKEN || token.type === TokenType.IDENT_TOKEN;
+const isStringToken = (token: CSSValue): token is StringValueToken =>
+    token.type === TokenType.STRING_TOKEN || token.type === TokenType.IDENT_TOKEN;

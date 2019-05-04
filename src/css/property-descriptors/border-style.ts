@@ -1,7 +1,4 @@
-import {
-    IPropertyIdentValueDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
+import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum BORDER_STYLE {
     NONE = 0,
     SOLID = 1

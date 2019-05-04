@@ -1,6 +1,6 @@
-import {CSSValue} from "../../syntax/parser";
-import {UnprocessedGradientColorStop} from "../image";
-import {color} from "../color";
+import {CSSValue} from '../../syntax/parser';
+import {UnprocessedGradientColorStop} from '../image';
+import {color} from '../color';
 
 export const parseColorStop = (args: CSSValue[]): UnprocessedGradientColorStop => {
     const c = color.parse(args[0]);

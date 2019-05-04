@@ -1,8 +1,5 @@
-import {
-    IPropertyValueDescriptor,
-    PropertyDescriptorParsingType
-} from "../IPropertyDescriptor";
-import {CSSValue, isDimensionToken} from "../syntax/parser";
+import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isDimensionToken} from '../syntax/parser';
 const borderWidthForSide = (side: string): IPropertyValueDescriptor<number> => ({
     name: `border-${side}-width`,
     initialValue: '0',

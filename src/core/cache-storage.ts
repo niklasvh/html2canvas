@@ -1,14 +1,14 @@
-import {FEATURES} from "./features";
-import {Logger} from "./logger";
+import {FEATURES} from './features';
+import {Logger} from './logger';
 
 export class CacheStorage {
     private static _caches: {[key: string]: Cache} = {};
     private static _link?: HTMLAnchorElement;
-    private static _origin: string = "about:blank";
+    private static _origin: string = 'about:blank';
     private static _current: Cache | null = null;
 
     static create(name: string, options: ResourceOptions): Cache {
-        return CacheStorage._caches[name] = new Cache(options);
+        return (CacheStorage._caches[name] = new Cache(options));
     }
 
     static open(name: string): Cache {
@@ -23,7 +23,7 @@ export class CacheStorage {
     static getOrigin(url: string): string {
         const link = CacheStorage._link;
         if (!link) {
-            return "about:blank";
+            return 'about:blank';
         }
 
         link.href = url;
@@ -62,7 +62,7 @@ type ResourceOptions = {
     useCORS: boolean;
     allowTaint: boolean;
     proxy?: string;
-}
+};
 
 export class Cache {
     private readonly _cache: {[key: string]: Promise<any>};
@@ -73,7 +73,7 @@ export class Cache {
         this._cache = {};
     }
 
-    addImage(src: string):Promise<void> {
+    addImage(src: string): Promise<void> {
         const result = Promise.resolve();
         if (this.has(src)) {
             return result;
@@ -93,8 +93,14 @@ export class Cache {
 
     private async loadImage(key: string) {
         const isSameOrigin = CacheStorage.isSameOrigin(key);
-        const useCORS = !isInlineImage(key) && this._options.useCORS === true && FEATURES.SUPPORT_CORS_IMAGES && !isSameOrigin;
-        const useProxy = !isInlineImage(key) && !isSameOrigin && typeof this._options.proxy === 'string' && FEATURES.SUPPORT_CORS_XHR && !useCORS;
+        const useCORS =
+            !isInlineImage(key) && this._options.useCORS === true && FEATURES.SUPPORT_CORS_IMAGES && !isSameOrigin;
+        const useProxy =
+            !isInlineImage(key) &&
+            !isSameOrigin &&
+            typeof this._options.proxy === 'string' &&
+            FEATURES.SUPPORT_CORS_XHR &&
+            !useCORS;
         if (!isSameOrigin && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
             return;
         }
@@ -159,9 +165,7 @@ export class Cache {
                         reader.readAsDataURL(xhr.response);
                     }
                 } else {
-                    reject(
-                        `Failed to proxy resource ${key} with status code ${xhr.status}`
-                    );
+                    reject(`Failed to proxy resource ${key} with status code ${xhr.status}`);
                 }
             };
 
@@ -187,10 +191,9 @@ const INLINE_SVG = /^data:image\/svg\+xml/i;
 const INLINE_BASE64 = /^data:image\/.*;base64,/i;
 const INLINE_IMG = /^data:image\/.*/i;
 
-const isRenderable = (src: string): boolean => (FEATURES.SUPPORT_SVG_DRAWING || !isSVG(src));
+const isRenderable = (src: string): boolean => FEATURES.SUPPORT_SVG_DRAWING || !isSVG(src);
 const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
 const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
 const isBlobImage = (src: string): boolean => src.substr(0, 4) === 'blob';
 
-const isSVG = (src: string): boolean =>
-src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
+const isSVG = (src: string): boolean => src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);

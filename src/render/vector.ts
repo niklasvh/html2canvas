@@ -1,4 +1,4 @@
-import {IPath, Path, PathType} from "./path";
+import {IPath, Path, PathType} from './path';
 
 export class Vector implements IPath {
     type: PathType;

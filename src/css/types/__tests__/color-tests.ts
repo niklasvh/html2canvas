@@ -1,6 +1,6 @@
 import {strictEqual} from 'assert';
-import {asString, color, isTransparent, pack} from "../color";
-import {Parser} from "../../syntax/parser";
+import {asString, color, isTransparent, pack} from '../color';
+import {Parser} from '../../syntax/parser';
 
 const parse = (value: string) => color.parse(Parser.parseValue(value));
 
@@ -27,7 +27,8 @@ describe('types', () => {
             it('rgb(100% 100% 100%)', () => strictEqual(parse('rgb(100% 100% 100%)'), pack(255, 255, 255, 1)));
             it('rgb(222 111 50)', () => strictEqual(parse('rgb(222 111 50)'), pack(222, 111, 50, 1)));
             it('rgba(200, 3, 5, 1)', () => strictEqual(parse('rgba(200, 3, 5, 1)'), pack(200, 3, 5, 1)));
-            it('rgba(222, 111, 50, 0.22)', () => strictEqual(parse('rgba(222, 111, 50, 0.22)'), pack(222, 111, 50, 0.22)));
+            it('rgba(222, 111, 50, 0.22)', () =>
+                strictEqual(parse('rgba(222, 111, 50, 0.22)'), pack(222, 111, 50, 0.22)));
             it('rgba(222 111 50 0.123)', () => strictEqual(parse('rgba(222 111 50 0.123)'), pack(222, 111, 50, 0.123)));
         });
         describe('util', () => {

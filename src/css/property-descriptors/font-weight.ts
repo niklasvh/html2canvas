@@ -1,5 +1,5 @@
-import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from "../IPropertyDescriptor";
-import {CSSValue, isIdentToken, isNumberToken} from "../syntax/parser";
+import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {CSSValue, isIdentToken, isNumberToken} from '../syntax/parser';
 export const fontWeight: IPropertyValueDescriptor<number> = {
     name: 'font-weight',
     initialValue: 'normal',
@@ -12,7 +12,8 @@ export const fontWeight: IPropertyValueDescriptor<number> = {
 
         if (isIdentToken(token)) {
             switch (token.value) {
-                case 'bold': return 700;
+                case 'bold':
+                    return 700;
                 case 'normal':
                 default:
                     return 400;
