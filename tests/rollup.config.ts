@@ -35,7 +35,8 @@ export default {
         commonjs({
             include: 'node_modules/**',
             namedModules: {
-                'node_modules/platform/platform.js': ['name', 'version']
+                'node_modules/platform/platform.js': ['name', 'version'],
+                'node_modules/es6-promise/dist/es6-promise.js': ['Promise']
             }
         }),
 
