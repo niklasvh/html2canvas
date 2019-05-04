@@ -172,7 +172,6 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'build/testrunner.js',
-            'build/RefTestRenderer.js',
             { pattern: './tests/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './dist/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true},
