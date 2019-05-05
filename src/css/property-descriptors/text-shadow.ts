@@ -4,12 +4,12 @@ import {isLengthPercentage, LengthPercentage, ZERO_LENGTH} from '../types/length
 import {color, Color, COLORS} from '../types/color';
 
 export type TextShadow = TextShadowItem[];
-export type TextShadowItem = {
+interface TextShadowItem {
     color: Color;
     offsetX: LengthPercentage;
     offsetY: LengthPercentage;
     blur: LengthPercentage;
-};
+}
 
 export const textShadow: IPropertyListDescriptor<TextShadow> = {
     name: 'text-shadow',

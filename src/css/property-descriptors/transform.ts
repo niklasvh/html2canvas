@@ -29,7 +29,7 @@ export const transform: IPropertyValueDescriptor<Transform> = {
 const matrix = (args: CSSValue[]): Transform => {
     const values = args.filter(arg => arg.type === TokenType.NUMBER_TOKEN).map((arg: NumberValueToken) => arg.number);
 
-    return values.length === 6 ? <Matrix>values : null;
+    return values.length === 6 ? (values as Matrix) : null;
 };
 
 // doesn't support 3D transforms at the moment

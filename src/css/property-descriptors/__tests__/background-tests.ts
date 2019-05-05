@@ -4,18 +4,26 @@ import {backgroundImage} from '../background-image';
 import {CSSImageType} from '../../types/image';
 import {pack} from '../../types/color';
 import {deg} from '../../types/angle';
+import {createMockContext} from '../../../core/__tests__/mock-context';
+import {CacheStorage} from '../../../core/cache-storage';
 
 const backgroundImageParse = (value: string) => backgroundImage.parse(Parser.parseValues(value));
 
 describe('property-descriptors', () => {
+    before(() => {
+        CacheStorage.attachInstance(createMockContext('http://example.com'));
+    });
     describe('background-image', () => {
-        it('none', () => deepStrictEqual(backgroundImageParse('none'), null));
+        it('none', () => deepStrictEqual(backgroundImageParse('none'), []));
 
         it('url(test.jpg), url(test2.jpg)', () =>
-            deepStrictEqual(backgroundImageParse('url(test.jpg), url(test2.jpg)'), [
-                {url: 'test.jpg', type: CSSImageType.URL},
-                {url: 'test2.jpg', type: CSSImageType.URL}
-            ]));
+            deepStrictEqual(
+                backgroundImageParse('url(http://example.com/test.jpg), url(http://example.com/test2.jpg)'),
+                [
+                    {url: 'http://example.com/test.jpg', type: CSSImageType.URL},
+                    {url: 'http://example.com/test2.jpg', type: CSSImageType.URL}
+                ]
+            ));
 
         it(`linear-gradient(to bottom, rgba(255,255,0,0.5), rgba(0,0,255,0.5)), url('https://html2canvas.hertzen.com')`, () =>
             deepStrictEqual(

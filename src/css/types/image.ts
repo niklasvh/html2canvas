@@ -5,18 +5,17 @@ import {linearGradient} from './functions/linear-gradient';
 import {prefixLinearGradient} from './functions/-prefix-linear-gradient';
 import {ITypeDescriptor} from '../ITypeDescriptor';
 import {CacheStorage} from '../../core/cache-storage';
-
-interface LengthPercentage {}
+import {LengthPercentage} from './length-percentage';
 
 export enum CSSImageType {
     URL,
     LINEAR_GRADIENT
 }
 
-export type UnprocessedGradientColorStop = {
+export interface UnprocessedGradientColorStop {
     color: Color;
     stop: LengthPercentage | null;
-};
+}
 /*
 type GradientColorStop = {
     color: Color
@@ -32,9 +31,9 @@ export interface CSSURLImage extends ICSSImage {
     type: CSSImageType.URL;
 }
 
-interface ICSSGeneratedImage extends ICSSImage {}
+// interface ICSSGeneratedImage extends ICSSImage {}
 
-interface ICSSGradientImage extends ICSSGeneratedImage {
+interface ICSSGradientImage extends ICSSImage {
     angle: number;
     stops: UnprocessedGradientColorStop[];
 }
@@ -65,7 +64,7 @@ export const image: ITypeDescriptor<ICSSImage> = {
 };
 
 const SUPPORTED_IMAGE_FUNCTIONS: {
-    [key: string]: (args: CSSValue[]) => ICSSGeneratedImage;
+    [key: string]: (args: CSSValue[]) => ICSSImage;
 } = {
     'linear-gradient': linearGradient,
     '-moz-linear-gradient': prefixLinearGradient,

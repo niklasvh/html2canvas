@@ -8,9 +8,9 @@ export const angle: ITypeDescriptor<number> = {
         if (value.type === TokenType.DIMENSION_TOKEN) {
             switch (value.unit) {
                 case 'deg':
-                    return Math.PI * value.number / 180;
+                    return (Math.PI * value.number) / 180;
                 case 'grad':
-                    return Math.PI / 200 * value.number;
+                    return (Math.PI / 200) * value.number;
                 case 'rad':
                     return value.number;
                 case 'turn':
@@ -48,4 +48,4 @@ export const parseNamedSide = (idents: CSSValue[]): number => {
     return deg(namedAngleSum === 450 ? 45 : (namedAngleSum / idents.length) % 360);
 };
 
-export const deg = (deg: number): number => Math.PI * deg / 180;
+export const deg = (deg: number): number => (Math.PI * deg) / 180;

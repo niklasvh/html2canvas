@@ -57,14 +57,15 @@ export class CacheStorage {
     }
 }
 
-type ResourceOptions = {
+interface ResourceOptions {
     imageTimeout: number;
     useCORS: boolean;
     allowTaint: boolean;
     proxy?: string;
-};
+}
 
 export class Cache {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private readonly _cache: {[key: string]: Promise<any>};
     private readonly _options: ResourceOptions;
 
@@ -87,6 +88,7 @@ export class Cache {
         return result;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     match(src: string): Promise<any> {
         return this._cache[src];
     }
@@ -160,7 +162,7 @@ export class Cache {
                         resolve(xhr.response);
                     } else {
                         const reader = new FileReader();
-                        reader.addEventListener('load', () => resolve(<string>reader.result), false);
+                        reader.addEventListener('load', () => resolve(reader.result as string), false);
                         reader.addEventListener('error', e => reject(e), false);
                         reader.readAsDataURL(xhr.response);
                     }

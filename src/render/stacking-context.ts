@@ -69,13 +69,6 @@ export class ElementPaint {
     }
 }
 
-export const parseStackingContexts = (container: ElementContainer): StackingContext => {
-    const paintContainer = new ElementPaint(container, []);
-    const root = new StackingContext(paintContainer);
-    parseStackTree(paintContainer, root, root);
-    return root;
-};
-
 const parseStackTree = (
     parent: ElementPaint,
     stackingContext: StackingContext,
@@ -138,4 +131,11 @@ const parseStackTree = (
             parseStackTree(paintContainer, stackingContext, realStackingContext);
         }
     });
+};
+
+export const parseStackingContexts = (container: ElementContainer): StackingContext => {
+    const paintContainer = new ElementPaint(container, []);
+    const root = new StackingContext(paintContainer);
+    parseStackTree(paintContainer, root, root);
+    return root;
 };

@@ -1,7 +1,6 @@
 import {deepStrictEqual, fail} from 'assert';
-import {CacheStorage} from '../cache-storage';
 import {FEATURES} from '../features';
-import {URL} from 'url';
+import {createMockContext, proxy} from './mock-context';
 
 const images: ImageMock[] = [];
 const xhr: XMLHttpRequestMock[] = [];
@@ -69,47 +68,6 @@ const setFeatures = (opts: {[key: string]: boolean} = {}) => {
             value: typeof opts[key] === 'boolean' ? opts[key] : defaults[key],
             writable: true
         });
-    });
-};
-
-const proxy = 'http://example.com/proxy';
-
-const createMockContext = (origin: string, opts = {}) => {
-    const context = {
-        location: {
-            href: origin
-        },
-        document: {
-            createElement(_name: string) {
-                let _href = '';
-                return {
-                    set href(value: string) {
-                        _href = value;
-                    },
-                    get href() {
-                        return _href;
-                    },
-                    get protocol() {
-                        return new URL(_href).protocol;
-                    },
-                    get hostname() {
-                        return new URL(_href).hostname;
-                    },
-                    get port() {
-                        return new URL(_href).port;
-                    }
-                };
-            }
-        }
-    };
-
-    CacheStorage.setContext(<Window>context);
-    return CacheStorage.create('test', {
-        imageTimeout: 0,
-        useCORS: false,
-        allowTaint: false,
-        proxy,
-        ...opts
     });
 };
 

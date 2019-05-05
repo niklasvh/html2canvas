@@ -19,10 +19,10 @@ import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-s
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
 
-export type CloneOptions = {
+export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document) => void;
-};
+}
 
 export type CloneConfigurations = CloneOptions & {
     inlineImages: boolean;
@@ -32,7 +32,7 @@ export type CloneConfigurations = CloneOptions & {
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 
 export class DocumentCloner {
-    private readonly scrolledElements: Array<[Element, number, number]>;
+    private readonly scrolledElements: [Element, number, number][];
     private readonly options: CloneConfigurations;
     private readonly referenceElement: HTMLElement;
     clonedReferenceElement?: HTMLElement;
@@ -50,7 +50,7 @@ export class DocumentCloner {
             throw new Error('Cloned element does not have an owner document');
         }
 
-        this.documentElement = <HTMLElement>this.cloneNode(element.ownerDocument.documentElement);
+        this.documentElement = this.cloneNode(element.ownerDocument.documentElement) as HTMLElement;
     }
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
@@ -119,12 +119,12 @@ export class DocumentCloner {
             return this.createStyleClone(node);
         }
 
-        return <HTMLElement>node.cloneNode(false);
+        return node.cloneNode(false) as HTMLElement;
     }
 
     createStyleClone(node: HTMLStyleElement): HTMLStyleElement {
         try {
-            const sheet = <CSSStyleSheet | undefined>node.sheet;
+            const sheet = node.sheet as CSSStyleSheet | undefined;
             if (sheet && sheet.cssRules) {
                 const css: string = [].slice.call(sheet.cssRules, 0).reduce((css: string, rule: CSSRule) => {
                     if (rule && rule.cssText) {
@@ -132,7 +132,7 @@ export class DocumentCloner {
                     }
                     return css;
                 }, '');
-                const style = <HTMLStyleElement>node.cloneNode(false);
+                const style = node.cloneNode(false) as HTMLStyleElement;
                 style.textContent = css;
                 return style;
             }
@@ -143,7 +143,7 @@ export class DocumentCloner {
                 throw e;
             }
         }
-        return <HTMLStyleElement>node.cloneNode(false);
+        return node.cloneNode(false) as HTMLStyleElement;
     }
 
     createCanvasClone(canvas: HTMLCanvasElement): HTMLImageElement | HTMLCanvasElement {
@@ -157,7 +157,7 @@ export class DocumentCloner {
             }
         }
 
-        const clonedCanvas = <HTMLCanvasElement>canvas.cloneNode(false);
+        const clonedCanvas = canvas.cloneNode(false) as HTMLCanvasElement;
 
         try {
             clonedCanvas.width = canvas.width;
@@ -379,7 +379,7 @@ export class DocumentCloner {
                         anonymousReplacedElement.appendChild(document.createTextNode(text));
                     }
                 } else {
-                    console.log('FUNCTION_TOKEN', token);
+                    //   console.log('FUNCTION_TOKEN', token);
                 }
             } else if (token.type === TokenType.IDENT_TOKEN) {
                 switch (token.value) {
@@ -394,7 +394,7 @@ export class DocumentCloner {
                         );
                         break;
                     default:
-                        console.log('ident', token, declaration);
+                    //    console.log('ident', token, declaration);
                 }
             }
         });

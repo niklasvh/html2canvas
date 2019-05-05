@@ -99,7 +99,7 @@ const getTokenColorValue = (token: CSSValue, i: number): number => {
 
     if (token.type === TokenType.PERCENTAGE_TOKEN) {
         const max = i === 3 ? 1 : 255;
-        return i === 3 ? token.number / 100 * max : Math.round(token.number / 100 * max);
+        return i === 3 ? (token.number / 100) * max : Math.round((token.number / 100) * max);
     }
 
     return 0;

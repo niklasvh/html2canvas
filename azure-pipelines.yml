@@ -51,9 +51,7 @@ jobs:
       displayName: Build
     - script: npm run lint
       displayName: Lint
-    - script: npm run flow
-      displayName: Flow
-    - script: npm run test:node
+    - script: npm run unittest
       displayName: Unit tests
 
   - template: ci/browser-tests.yml

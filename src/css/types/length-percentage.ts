@@ -23,7 +23,7 @@ export const getAbsoluteValueForTuple = (
 };
 export const getAbsoluteValue = (token: LengthPercentage, parent: number) => {
     if (token.type === TokenType.PERCENTAGE_TOKEN) {
-        return token.number / 100 * parent;
+        return (token.number / 100) * parent;
     }
 
     return token.number;

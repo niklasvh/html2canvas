@@ -2,10 +2,10 @@ import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IProper
 import {CSSValue, isNumberToken, nonWhiteSpace} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 
-export type COUNTER_INCREMENT = {
+export interface COUNTER_INCREMENT {
     counter: string;
     increment: number;
-};
+}
 
 export type CounterIncrement = COUNTER_INCREMENT[] | null;
 

@@ -7,7 +7,7 @@ import {Logger} from './logger';
 import {CacheStorage} from './cache-storage';
 import {CanvasRenderer} from './canvas-renderer';
 
-export type Options = {
+export interface Options {
     allowTaint: boolean;
     backgroundColor: string;
     canvas?: HTMLCanvasElement;
@@ -26,7 +26,7 @@ export type Options = {
     scrollY: number;
     windowWidth: number;
     windowHeight: number;
-};
+}
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
 
@@ -75,20 +75,24 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
 
     // http://www.w3.org/TR/css3-background/#special-backgrounds
     const documentBackgroundColor = ownerDocument.documentElement
-        ? parseColor(<string>getComputedStyle(ownerDocument.documentElement).backgroundColor)
+        ? parseColor(getComputedStyle(ownerDocument.documentElement).backgroundColor as string)
         : COLORS.TRANSPARENT;
     const bodyBackgroundColor = ownerDocument.body
-        ? parseColor(<string>getComputedStyle(ownerDocument.body).backgroundColor)
+        ? parseColor(getComputedStyle(ownerDocument.body).backgroundColor as string)
         : COLORS.TRANSPARENT;
 
     const backgroundColor =
         element === ownerDocument.documentElement
             ? isTransparent(documentBackgroundColor)
-              ? isTransparent(bodyBackgroundColor)
-                ? options.backgroundColor ? parseColor(options.backgroundColor) : null
-                : bodyBackgroundColor
-              : documentBackgroundColor
-            : options.backgroundColor ? parseColor(options.backgroundColor) : null;
+                ? isTransparent(bodyBackgroundColor)
+                    ? options.backgroundColor
+                        ? parseColor(options.backgroundColor)
+                        : null
+                    : bodyBackgroundColor
+                : documentBackgroundColor
+            : options.backgroundColor
+            ? parseColor(options.backgroundColor)
+            : null;
 
     const instanceName = 'html2canvas:' + instance++;
     const cache = CacheStorage.create(instanceName, options);

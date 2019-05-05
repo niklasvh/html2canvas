@@ -2,10 +2,10 @@ import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPrope
 import {CSSValue, isNumberToken} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 
-export type zIndex = {
+interface zIndex {
     order: number;
     auto: boolean;
-};
+}
 
 export const zIndex: IPropertyValueDescriptor<zIndex> = {
     name: 'z-index',

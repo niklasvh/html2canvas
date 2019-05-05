@@ -13,13 +13,13 @@ describe('types', () => {
         describe('parsing', () => {
             describe('url', () => {
                 it('url(test.jpg)', () =>
-                    deepStrictEqual(parse('url(test.jpg)'), {
-                        url: 'test.jpg',
+                    deepStrictEqual(parse('url(http://example.com/test.jpg)'), {
+                        url: 'http://example.com/test.jpg',
                         type: CSSImageType.URL
                     }));
                 it('url("test.jpg")', () =>
-                    deepStrictEqual(parse('url("test.jpg")'), {
-                        url: 'test.jpg',
+                    deepStrictEqual(parse('url("http://example.com/test.jpg")'), {
+                        url: 'http://example.com/test.jpg',
                         type: CSSImageType.URL
                     }));
             });

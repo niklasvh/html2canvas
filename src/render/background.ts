@@ -50,13 +50,13 @@ export const calculateBackgroundSize = (
     if (isAuto(first) && (!second || isAuto(second))) {
         height = image.height;
     } else if (!second || isAuto(second)) {
-        height = width / image.width * image.height;
+        height = (width / image.width) * image.height;
     } else if (second && isLengthPercentage(second)) {
         height = getAbsoluteValue(second, bounds.height);
     }
 
     if (isAuto(first)) {
-        width = height / image.height * image.width;
+        width = (height / image.height) * image.width;
     }
 
     return [width, height];

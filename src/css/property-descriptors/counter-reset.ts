@@ -1,10 +1,10 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken, isNumberToken, nonWhiteSpace} from '../syntax/parser';
 
-export type COUNTER_RESET = {
+export interface COUNTER_RESET {
     counter: string;
     reset: number;
-};
+}
 
 export type CounterReset = COUNTER_RESET[];
 

@@ -31,7 +31,7 @@ import {ReplacedElementContainer} from '../dom/replaced-elements/index';
 import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../render/effects';
 import {contains} from './bitwise';
 
-export type RenderOptions = {
+export interface RenderOptions {
     scale: number;
     canvas?: HTMLCanvasElement;
     backgroundColor: Color | null;
@@ -40,7 +40,7 @@ export type RenderOptions = {
     width: number;
     height: number;
     cache: Cache;
-};
+}
 
 export class CanvasRenderer {
     canvas: HTMLCanvasElement;
@@ -50,7 +50,7 @@ export class CanvasRenderer {
 
     constructor(options: RenderOptions) {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
-        this.ctx = <CanvasRenderingContext2D>this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.options = options;
         this.canvas.width = Math.floor(options.width * options.scale);
         this.canvas.height = Math.floor(options.height * options.scale);
@@ -144,7 +144,6 @@ export class CanvasRenderer {
 
 
 */
-        console.log(text.textBounds);
         const fontVariant = styles.fontVariant
             .filter(variant => variant === 'normal' || variant === 'small-caps')
             .join('');
@@ -231,7 +230,6 @@ export class CanvasRenderer {
         image: HTMLImageElement | HTMLCanvasElement
     ) {
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
-            console.log(image, this._activeEffects);
             const box = contentBox(container);
             const path = calculatePaddingBoxPath(curves);
             this.path(path);
@@ -406,10 +404,10 @@ export class CanvasRenderer {
         offsetY: number
     ) {
         this.path(path);
-        this.ctx.fillStyle = <CanvasPattern>this.ctx.createPattern(
+        this.ctx.fillStyle = this.ctx.createPattern(
             this.resizeImage(image, imageWidth, imageHeight),
             'repeat'
-        );
+        ) as CanvasPattern;
         this.ctx.translate(offsetX, offsetY);
         this.ctx.fill();
         this.ctx.translate(-offsetX, -offsetY);
@@ -533,7 +531,6 @@ export class CanvasRenderer {
 
         await this.renderStack(stack);
         this.applyEffects([], EffectTarget.BACKGROUND_BORDERS);
-        console.log(stack);
         return this.canvas;
     }
 }

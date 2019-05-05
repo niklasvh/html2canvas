@@ -8,11 +8,6 @@ import {
     TokenType
 } from './tokenizer';
 
-interface IFunctionDescriptor<T> {
-    name: string;
-    parser: (value: CSSValue) => T;
-}
-
 export type CSSBlockType =
     | TokenType.LEFT_PARENTHESIS_TOKEN
     | TokenType.LEFT_SQUARE_BRACKET_TOKEN
@@ -32,17 +27,10 @@ export interface CSSFunction {
 export type CSSValue = CSSFunction | CSSToken | CSSBlock;
 
 export class Parser {
-    private static registeredFunctions: {
-        [key: string]: IFunctionDescriptor<any>;
-    } = {};
     private _tokens: CSSToken[];
 
     constructor(tokens: CSSToken[]) {
         this._tokens = tokens;
-    }
-
-    static registerFunction<T>(descriptior: IFunctionDescriptor<T>): void {
-        Parser.registeredFunctions[descriptior.name] = descriptior;
     }
 
     static create(value: string): Parser {
@@ -80,7 +68,6 @@ export class Parser {
             return value;
         }
 
-        console.log(value);
         throw new SyntaxError(`Error parsing CSS component value, multiple values found when expecting only one`);
     }
 
@@ -199,13 +186,3 @@ const isEndingTokenFor = (token: CSSToken, type: CSSBlockType): boolean => {
 
     return type === TokenType.LEFT_PARENTHESIS_TOKEN && token.type === TokenType.RIGHT_PARENTHESIS_TOKEN;
 };
-
-const rgb = {
-    name: 'rgb',
-    parser: (value: CSSValue) => {
-        console.log(value);
-        return 0;
-    }
-};
-
-Parser.registerFunction<number>(rgb);

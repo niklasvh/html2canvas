@@ -2,10 +2,10 @@ import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IProper
 import {CSSValue, isStringToken} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 
-export type QUOTE = {
+export interface QUOTE {
     open: string;
     close: string;
-};
+}
 
 export type Quotes = QUOTE[] | null;
 
@@ -43,7 +43,6 @@ export const quotes: IPropertyListDescriptor<Quotes> = {
 };
 
 export const getQuote = (quotes: Quotes, depth: number, open: boolean): string => {
-    console.log('get', quotes, depth, open);
     if (!quotes) {
         return '';
     }
