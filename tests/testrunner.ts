@@ -1,7 +1,7 @@
 import {testList, ignoredTests} from '../build/reftests';
 import * as platform from 'platform';
 // @ts-ignore
-import Promise from 'es6-promise/lib/es6-promise';
+import Promise from 'es6-promise';
 
 const testRunnerUrl = location.href;
 const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
