@@ -81,32 +81,34 @@ testList
                     throw new Error('Window not found for iframe');
                 }
 
-                // @ts-ignore
-                return contentWindow
-                    .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
-                        removeContainer: true,
-                        backgroundColor: '#ffffff',
-                        proxy: 'http://localhost:8081/proxy',
+                return (
+                    contentWindow
                         // @ts-ignore
-                        ...(contentWindow.h2cOptions || {})
-                    })
-                    .then((canvas: HTMLCanvasElement) => {
-                        try {
-                            (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(
-                                0,
-                                0,
-                                canvas.width,
-                                canvas.height
-                            );
-                        } catch (e) {
-                            return Promise.reject('Canvas is tainted');
-                        }
+                        .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
+                            removeContainer: true,
+                            backgroundColor: '#ffffff',
+                            proxy: 'http://localhost:8081/proxy',
+                            // @ts-ignore
+                            ...(contentWindow.h2cOptions || {})
+                        })
+                        .then((canvas: HTMLCanvasElement) => {
+                            try {
+                                (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(
+                                    0,
+                                    0,
+                                    canvas.width,
+                                    canvas.height
+                                );
+                            } catch (e) {
+                                return Promise.reject('Canvas is tainted');
+                            }
 
-                        // @ts-ignore
-                        if (window.__karma__) {
-                            return uploadResults(canvas, url);
-                        }
-                    });
+                            // @ts-ignore
+                            if (window.__karma__) {
+                                return uploadResults(canvas, url);
+                            }
+                        })
+                );
             });
         });
     });
