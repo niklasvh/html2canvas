@@ -7,19 +7,18 @@ import {CSSParsedDeclaration} from '../css/index';
 import {TextContainer} from '../dom/text-container';
 import {Path} from '../render/path';
 import {BACKGROUND_CLIP} from '../css/property-descriptors/background-clip';
-import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from '../render/bound-curves';
+import {
+    BoundCurves,
+    calculateBorderBoxPath,
+    calculateContentBoxPath,
+    calculatePaddingBoxPath
+} from '../render/bound-curves';
 import {isBezierCurve} from '../render/bezier-curve';
 import {Vector} from '../render/vector';
-import {CSSImageType, CSSURLImage} from '../css/types/image';
+import {CSSImageType, CSSURLImage, isLinearGradient} from '../css/types/image';
 import {parsePathForBorder} from '../render/border';
 import {Cache} from './cache-storage';
-import {
-    calculateBackgroundRepeatPath,
-    calculateBackgroundSize,
-    calculateBackgroungPositioningArea,
-    getBackgroundValueForIndex
-} from '../render/background';
-import {getAbsoluteValueForTuple} from '../css/types/length-percentage';
+import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../render/background';
 import {isDimensionToken} from '../css/syntax/parser';
 import {TextBounds} from '../css/layout/text';
 import {fromCodePoint, toCodePoints} from 'css-line-break';
@@ -30,6 +29,7 @@ import {SVGElementContainer} from '../dom/replaced-elements/svg-element-containe
 import {ReplacedElementContainer} from '../dom/replaced-elements/index';
 import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../render/effects';
 import {contains} from './bitwise';
+import {calculateGradientDirection, processColorStops} from '../css/types/functions/gradient';
 
 export interface RenderOptions {
     scale: number;
@@ -395,19 +395,9 @@ export class CanvasRenderer {
         this.ctx.closePath();
     }
 
-    renderRepeat(
-        path: Path[],
-        image: HTMLImageElement,
-        imageWidth: number,
-        imageHeight: number,
-        offsetX: number,
-        offsetY: number
-    ) {
+    renderRepeat(path: Path[], pattern: CanvasPattern | CanvasGradient, offsetX: number, offsetY: number) {
         this.path(path);
-        this.ctx.fillStyle = this.ctx.createPattern(
-            this.resizeImage(image, imageWidth, imageHeight),
-            'repeat'
-        ) as CanvasPattern;
+        this.ctx.fillStyle = pattern;
         this.ctx.translate(offsetX, offsetY);
         this.ctx.fill();
         this.ctx.translate(-offsetX, -offsetY);
@@ -438,38 +428,36 @@ export class CanvasRenderer {
                     Logger.error(`Error loading background-image ${url}`);
                 }
 
-                if (!image) {
-                    return;
+                if (image) {
+                    const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [
+                        image.width,
+                        image.height,
+                        image.width / image.height
+                    ]);
+                    const pattern = this.ctx.createPattern(
+                        this.resizeImage(image, width, height),
+                        'repeat'
+                    ) as CanvasPattern;
+                    this.renderRepeat(path, pattern, x, y);
                 }
+            } else if (isLinearGradient(backgroundImage)) {
+                const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
+                const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
 
-                const backgroundPositioningArea = calculateBackgroungPositioningArea(
-                    getBackgroundValueForIndex(container.styles.backgroundOrigin, index),
-                    container
-                );
-                const backgroundImageSize = calculateBackgroundSize(
-                    getBackgroundValueForIndex(container.styles.backgroundSize, index),
-                    image,
-                    backgroundPositioningArea
-                );
-                const [sizeWidth, sizeHeight] = backgroundImageSize;
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+                const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 
-                const position = getAbsoluteValueForTuple(
-                    getBackgroundValueForIndex(container.styles.backgroundPosition, index),
-                    backgroundPositioningArea.width - sizeWidth,
-                    backgroundPositioningArea.height - sizeHeight
+                processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
+                    gradient.addColorStop(colorStop.stop, asString(colorStop.color))
                 );
 
-                const path = calculateBackgroundRepeatPath(
-                    getBackgroundValueForIndex(container.styles.backgroundRepeat, index),
-                    position,
-                    backgroundImageSize,
-                    backgroundPositioningArea,
-                    container.bounds
-                );
-
-                const offsetX = Math.round(backgroundPositioningArea.left + position[0]);
-                const offsetY = Math.round(backgroundPositioningArea.top + position[1]);
-                this.renderRepeat(path, image, sizeWidth, sizeHeight, offsetX, offsetY);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+                const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                this.renderRepeat(path, pattern, x, y);
             }
             index--;
         }
@@ -493,14 +481,14 @@ export class CanvasRenderer {
             {style: styles.borderLeftStyle, color: styles.borderLeftColor}
         ];
 
-        const backgroundPaintingArea = calculateBackgroungPaintingArea(
+        const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
             getBackgroundValueForIndex(styles.backgroundClip, 0),
             paint.curves
         );
+
         if (hasBackground) {
             this.ctx.save();
             this.path(backgroundPaintingArea);
-
             this.ctx.clip();
 
             if (!isTransparent(styles.backgroundColor)) {
@@ -535,10 +523,12 @@ export class CanvasRenderer {
     }
 }
 
-const calculateBackgroungPaintingArea = (clip: BACKGROUND_CLIP, curves: BoundCurves): Path[] => {
+const calculateBackgroundCurvedPaintingArea = (clip: BACKGROUND_CLIP, curves: BoundCurves): Path[] => {
     switch (clip) {
         case BACKGROUND_CLIP.BORDER_BOX:
             return calculateBorderBoxPath(curves);
+        case BACKGROUND_CLIP.CONTENT_BOX:
+            return calculateContentBoxPath(curves);
         case BACKGROUND_CLIP.PADDING_BOX:
         default:
             return calculatePaddingBoxPath(curves);

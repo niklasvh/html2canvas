@@ -12,16 +12,20 @@ export enum CSSImageType {
     LINEAR_GRADIENT
 }
 
+export const isLinearGradient = (background: ICSSImage): background is CSSLinearGradientImage => {
+    return background.type === CSSImageType.LINEAR_GRADIENT;
+};
+
 export interface UnprocessedGradientColorStop {
     color: Color;
     stop: LengthPercentage | null;
 }
-/*
-type GradientColorStop = {
-    color: Color
-    stop: LengthPercentage
+
+export interface GradientColorStop {
+    color: Color;
+    stop: number;
 }
-*/
+
 export interface ICSSImage {
     type: CSSImageType;
 }

@@ -23,5 +23,5 @@ export const linearGradient = (tokens: CSSValue[]): CSSLinearGradientImage => {
         stops.push(colorStop);
     });
 
-    return {angle, stops, type: CSSImageType.LINEAR_GRADIENT};
+    return {angle: angle, stops, type: CSSImageType.LINEAR_GRADIENT};
 };

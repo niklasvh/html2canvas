@@ -1,5 +1,5 @@
 import {DimensionToken, FLAG_INTEGER, NumberValueToken, TokenType} from '../syntax/tokenizer';
-import {CSSValue} from '../syntax/parser';
+import {CSSValue, isDimensionToken} from '../syntax/parser';
 import {isLength} from './length';
 export type LengthPercentage = DimensionToken | NumberValueToken;
 export type LengthPercentageTuple = [LengthPercentage] | [LengthPercentage, LengthPercentage];
@@ -13,6 +13,13 @@ export const ZERO_LENGTH: NumberValueToken = {
     number: 0,
     flags: FLAG_INTEGER
 };
+
+export const HUNDRED_PERCENT: NumberValueToken = {
+    type: TokenType.PERCENTAGE_TOKEN,
+    number: 100,
+    flags: FLAG_INTEGER
+};
+
 export const getAbsoluteValueForTuple = (
     tuple: LengthPercentageTuple,
     width: number,
@@ -24,6 +31,16 @@ export const getAbsoluteValueForTuple = (
 export const getAbsoluteValue = (token: LengthPercentage, parent: number) => {
     if (token.type === TokenType.PERCENTAGE_TOKEN) {
         return (token.number / 100) * parent;
+    }
+
+    if (isDimensionToken(token)) {
+        switch (token.unit) {
+            case 'em':
+                return 16 * token.number; // TODO use correct font-size
+            case 'px':
+            default:
+                return token.number;
+        }
     }
 
     return token.number;

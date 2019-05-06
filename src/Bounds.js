@@ -115,32 +115,32 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: BorderSide):
     switch (borderSide) {
         case TOP:
             return createPathFromCurves(
-                curves.topLeftOuter,
-                curves.topLeftInner,
-                curves.topRightOuter,
-                curves.topRightInner
+                curves.topLeftBorderBox,
+                curves.topLeftPaddingBox,
+                curves.topRightBorderBox,
+                curves.topRightPaddingBox
             );
         case RIGHT:
             return createPathFromCurves(
-                curves.topRightOuter,
-                curves.topRightInner,
-                curves.bottomRightOuter,
-                curves.bottomRightInner
+                curves.topRightBorderBox,
+                curves.topRightPaddingBox,
+                curves.bottomRightBorderBox,
+                curves.bottomRightPaddingBox
             );
         case BOTTOM:
             return createPathFromCurves(
-                curves.bottomRightOuter,
-                curves.bottomRightInner,
-                curves.bottomLeftOuter,
-                curves.bottomLeftInner
+                curves.bottomRightBorderBox,
+                curves.bottomRightPaddingBox,
+                curves.bottomLeftBorderBox,
+                curves.bottomLeftPaddingBox
             );
         case LEFT:
         default:
             return createPathFromCurves(
-                curves.bottomLeftOuter,
-                curves.bottomLeftInner,
-                curves.topLeftOuter,
-                curves.topLeftInner
+                curves.bottomLeftBorderBox,
+                curves.bottomLeftPaddingBox,
+                curves.topLeftBorderBox,
+                curves.topLeftPaddingBox
             );
     }
 };
@@ -181,19 +181,19 @@ const createPathFromCurves = (
 
 export const calculateBorderBoxPath = (curves: BoundCurves): Path => {
     return [
-        curves.topLeftOuter,
-        curves.topRightOuter,
-        curves.bottomRightOuter,
-        curves.bottomLeftOuter
+        curves.topLeftBorderBox,
+        curves.topRightBorderBox,
+        curves.bottomRightBorderBox,
+        curves.bottomLeftBorderBox
     ];
 };
 
 export const calculatePaddingBoxPath = (curves: BoundCurves): Path => {
     return [
-        curves.topLeftInner,
-        curves.topRightInner,
-        curves.bottomRightInner,
-        curves.bottomLeftInner
+        curves.topLeftPaddingBox,
+        curves.topRightPaddingBox,
+        curves.bottomRightPaddingBox,
+        curves.bottomLeftPaddingBox
     ];
 };
 

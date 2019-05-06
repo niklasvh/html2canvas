@@ -6,32 +6,32 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Pat
     switch (borderSide) {
         case 0:
             return createPathFromCurves(
-                curves.topLeftOuter,
-                curves.topLeftInner,
-                curves.topRightOuter,
-                curves.topRightInner
+                curves.topLeftBorderBox,
+                curves.topLeftPaddingBox,
+                curves.topRightBorderBox,
+                curves.topRightPaddingBox
             );
         case 1:
             return createPathFromCurves(
-                curves.topRightOuter,
-                curves.topRightInner,
-                curves.bottomRightOuter,
-                curves.bottomRightInner
+                curves.topRightBorderBox,
+                curves.topRightPaddingBox,
+                curves.bottomRightBorderBox,
+                curves.bottomRightPaddingBox
             );
         case 2:
             return createPathFromCurves(
-                curves.bottomRightOuter,
-                curves.bottomRightInner,
-                curves.bottomLeftOuter,
-                curves.bottomLeftInner
+                curves.bottomRightBorderBox,
+                curves.bottomRightPaddingBox,
+                curves.bottomLeftBorderBox,
+                curves.bottomLeftPaddingBox
             );
         case 3:
         default:
             return createPathFromCurves(
-                curves.bottomLeftOuter,
-                curves.bottomLeftInner,
-                curves.topLeftOuter,
-                curves.topLeftInner
+                curves.bottomLeftBorderBox,
+                curves.bottomLeftPaddingBox,
+                curves.topLeftBorderBox,
+                curves.topLeftPaddingBox
             );
     }
 };

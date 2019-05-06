@@ -18,7 +18,7 @@ export const prefixLinearGradient = (tokens: CSSValue[]): CSSLinearGradientImage
                 angle = parseNamedSide(arg);
                 return;
             } else if (isAngle(firstToken)) {
-                angle = angleType.parse(firstToken);
+                angle = angleType.parse(firstToken) + deg(90);
                 return;
             }
         }
