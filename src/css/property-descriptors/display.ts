@@ -62,6 +62,7 @@ const parseDisplayValue = (display: string): Display => {
         case 'table':
             return DISPLAY.TABLE;
         case 'flex':
+        case '-webkit-flex':
             return DISPLAY.FLEX;
         case 'grid':
             return DISPLAY.GRID;
