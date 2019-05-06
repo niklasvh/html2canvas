@@ -1,11 +1,11 @@
 import {CSSValue, parseFunctionArgs} from '../../syntax/parser';
-import {CSSImageType, CSSLinearGradientImage, UnprocessedGradientColorStop} from '../image';
+import {CSSImageType, CSSLinearGradientImage, GradientCorner, UnprocessedGradientColorStop} from '../image';
 import {TokenType} from '../../syntax/tokenizer';
 import {isAngle, angle as angleType, parseNamedSide, deg} from '../angle';
 import {parseColorStop} from './gradient';
 
 export const prefixLinearGradient = (tokens: CSSValue[]): CSSLinearGradientImage => {
-    let angle = deg(180);
+    let angle: number | GradientCorner = deg(180);
     const stops: UnprocessedGradientColorStop[] = [];
 
     parseFunctionArgs(tokens).forEach((arg, i) => {
@@ -18,7 +18,7 @@ export const prefixLinearGradient = (tokens: CSSValue[]): CSSLinearGradientImage
                 angle = parseNamedSide(arg);
                 return;
             } else if (isAngle(firstToken)) {
-                angle = angleType.parse(firstToken) + deg(90);
+                angle = (angleType.parse(firstToken) + deg(270)) % deg(360);
                 return;
             }
         }
@@ -27,7 +27,7 @@ export const prefixLinearGradient = (tokens: CSSValue[]): CSSLinearGradientImage
     });
 
     return {
-        angle: (angle + deg(180)) % deg(360),
+        angle,
         stops,
         type: CSSImageType.LINEAR_GRADIENT
     };

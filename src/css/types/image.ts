@@ -6,6 +6,7 @@ import {prefixLinearGradient} from './functions/-prefix-linear-gradient';
 import {ITypeDescriptor} from '../ITypeDescriptor';
 import {CacheStorage} from '../../core/cache-storage';
 import {LengthPercentage} from './length-percentage';
+import {webkitGradient} from './functions/-webkit-gradient';
 
 export enum CSSImageType {
     URL,
@@ -37,8 +38,10 @@ export interface CSSURLImage extends ICSSImage {
 
 // interface ICSSGeneratedImage extends ICSSImage {}
 
+export type GradientCorner = [LengthPercentage, LengthPercentage];
+
 interface ICSSGradientImage extends ICSSImage {
-    angle: number;
+    angle: number | GradientCorner;
     stops: UnprocessedGradientColorStop[];
 }
 
@@ -74,5 +77,6 @@ const SUPPORTED_IMAGE_FUNCTIONS: {
     '-moz-linear-gradient': prefixLinearGradient,
     '-ms-linear-gradient': prefixLinearGradient,
     '-o-linear-gradient': prefixLinearGradient,
-    '-webkit-linear-gradient': prefixLinearGradient
+    '-webkit-linear-gradient': prefixLinearGradient,
+    '-webkit-gradient': webkitGradient
 };

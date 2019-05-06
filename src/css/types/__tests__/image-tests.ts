@@ -59,7 +59,10 @@ describe('types', () => {
                     }));
                 it('linear-gradient(to top right, blue, yellow)', () =>
                     deepStrictEqual(parse('linear-gradient(to top right, blue, yellow)'), {
-                        angle: deg(45),
+                        angle: [
+                            {type: TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4},
+                            {type: TokenType.NUMBER_TOKEN, number: 0, flags: 4}
+                        ],
                         type: CSSImageType.LINEAR_GRADIENT,
                         stops: [{color: colorParse('blue'), stop: null}, {color: colorParse('yellow'), stop: null}]
                     }));
@@ -90,7 +93,10 @@ describe('types', () => {
                     deepStrictEqual(
                         parse('linear-gradient(to top left, lightpink, lightpink 5px, white 5px, white 10px)'),
                         {
-                            angle: deg(315),
+                            angle: [
+                                {type: TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4},
+                                {type: TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4}
+                            ],
                             type: CSSImageType.LINEAR_GRADIENT,
                             stops: [
                                 {color: colorParse('lightpink'), stop: null},

@@ -1,6 +1,8 @@
-import {CSSValue} from '../syntax/parser';
+import {CSSValue, isIdentToken} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';
+import {HUNDRED_PERCENT, ZERO_LENGTH} from './length-percentage';
+import {GradientCorner} from './image';
 
 export const angle: ITypeDescriptor<number> = {
     name: 'angle',
@@ -31,21 +33,48 @@ export const isAngle = (value: CSSValue): boolean => {
     return false;
 };
 
-const SIDE_ANGLES: {[key: string]: number} = {
-    top: 360,
-    right: 90,
-    bottom: 180,
-    left: 270
-};
+export const parseNamedSide = (tokens: CSSValue[]): number | GradientCorner => {
+    const sideOrCorner = tokens
+        .filter(isIdentToken)
+        .map(ident => ident.value)
+        .join(' ');
 
-export const parseNamedSide = (idents: CSSValue[]): number => {
-    const namedAngleSum = idents.reduce((angle, sideToken) => {
-        if (sideToken.type === TokenType.IDENT_TOKEN && typeof SIDE_ANGLES[sideToken.value] !== 'undefined') {
-            return angle + SIDE_ANGLES[sideToken.value];
-        }
-        return angle;
-    }, 0);
-    return deg(namedAngleSum === 450 ? 45 : (namedAngleSum / idents.length) % 360);
+    switch (sideOrCorner) {
+        case 'to bottom right':
+        case 'to right bottom':
+        case 'left top':
+        case 'top left':
+            return [ZERO_LENGTH, ZERO_LENGTH];
+        case 'to top':
+        case 'bottom':
+            return deg(0);
+        case 'to bottom left':
+        case 'to left bottom':
+        case 'right top':
+        case 'top right':
+            return [ZERO_LENGTH, HUNDRED_PERCENT];
+        case 'to right':
+        case 'left':
+            return deg(90);
+        case 'to top left':
+        case 'to left top':
+        case 'right bottom':
+        case 'bottom right':
+            return [HUNDRED_PERCENT, HUNDRED_PERCENT];
+        case 'to bottom':
+        case 'top':
+            return deg(180);
+        case 'to top right':
+        case 'to right top':
+        case 'left bottom':
+        case 'bottom left':
+            return [HUNDRED_PERCENT, ZERO_LENGTH];
+        case 'to left':
+        case 'right':
+            return deg(270);
+    }
+
+    return 0;
 };
 
 export const deg = (deg: number): number => (Math.PI * deg) / 180;

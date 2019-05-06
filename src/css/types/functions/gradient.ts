@@ -1,5 +1,5 @@
 import {CSSValue} from '../../syntax/parser';
-import {GradientColorStop, UnprocessedGradientColorStop} from '../image';
+import {GradientColorStop, GradientCorner, UnprocessedGradientColorStop} from '../image';
 import {color as colorType} from '../color';
 import {getAbsoluteValue, HUNDRED_PERCENT, isLengthPercentage, ZERO_LENGTH} from '../length-percentage';
 
@@ -60,18 +60,30 @@ export const processColorStops = (stops: UnprocessedGradientColorStop[], lineLen
     });
 };
 
+const getAngleFromCorner = (corner: GradientCorner, width: number, height: number): number => {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const x = getAbsoluteValue(corner[0], width) - centerX;
+    const y = centerY - getAbsoluteValue(corner[1], height);
+
+    return (Math.atan2(y, x) + Math.PI * 2) % (Math.PI * 2);
+};
+
 export const calculateGradientDirection = (
-    radian: number,
+    angle: number | GradientCorner,
     width: number,
     height: number
 ): [number, number, number, number, number] => {
+    const radian = typeof angle === 'number' ? angle : getAngleFromCorner(angle, width, height);
+
     const lineLength = Math.abs(width * Math.sin(radian)) + Math.abs(height * Math.cos(radian));
 
     const halfWidth = width / 2;
     const halfHeight = height / 2;
+    const halfLineLength = lineLength / 2;
 
-    const yDiff = (Math.sin(radian - Math.PI / 2) * lineLength) / 2;
-    const xDiff = (Math.cos(radian - Math.PI / 2) * lineLength) / 2;
+    const yDiff = Math.sin(radian - Math.PI / 2) * halfLineLength;
+    const xDiff = Math.cos(radian - Math.PI / 2) * halfLineLength;
 
     return [lineLength, halfWidth - xDiff, halfWidth + xDiff, halfHeight - yDiff, halfHeight + yDiff];
 };
