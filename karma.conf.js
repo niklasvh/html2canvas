@@ -132,6 +132,7 @@ module.exports = function(config) {
 
                 if (!d) {
                     log.error(`No device found for sdk ${args.sdk} with name ${args.name}`);
+                    log.info(`Available devices:`, devices);
                     this._process.kill();
                     return;
                 }
