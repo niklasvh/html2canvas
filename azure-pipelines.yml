@@ -86,10 +86,10 @@ jobs:
 
   - template: ci/browser-tests.yml
     parameters:
-      name: Browser_Tests_OSX_Safari_IOS_11
-      displayName: iOS Simulator Safari 11
+      name: Browser_Tests_OSX_Safari_IOS_12
+      displayName: iOS Simulator Safari 12
       vmImage: 'macOS-10.13'
-      targetBrowser: Safari_IOS_11
+      targetBrowser: Safari_IOS_12
 
   - template: ci/browser-tests.yml
     parameters:
