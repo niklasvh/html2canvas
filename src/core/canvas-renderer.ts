@@ -31,6 +31,8 @@ import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../
 import {contains} from './bitwise';
 import {calculateGradientDirection, calculateRadius, processColorStops} from '../css/types/functions/gradient';
 import {FIFTY_PERCENT, getAbsoluteValue} from '../css/types/length-percentage';
+import {TEXT_DECORATION_LINE} from '../css/property-descriptors/text-decoration-line';
+import {FontMetrics} from '../render/font-metrics';
 
 export interface RenderOptions {
     scale: number;
@@ -48,6 +50,7 @@ export class CanvasRenderer {
     ctx: CanvasRenderingContext2D;
     options: RenderOptions;
     private readonly _activeEffects: IElementEffect[] = [];
+    private readonly fontMetrics: FontMetrics;
 
     constructor(options: RenderOptions) {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
@@ -57,7 +60,7 @@ export class CanvasRenderer {
         this.canvas.height = Math.floor(options.height * options.scale);
         this.canvas.style.width = `${options.width}px`;
         this.canvas.style.height = `${options.height}px`;
-
+        this.fontMetrics = new FontMetrics(document);
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.translate(-options.x, -options.y);
         this.ctx.textBaseline = 'bottom';
@@ -134,27 +137,15 @@ export class CanvasRenderer {
     }
 
     async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
-        /*this.ctx.font = [
-            font.fontStyle,
-            font.fontVariant,
-            font.fontWeight,
-            font.fontSize,
-            font.fontFamily
-        ].join(' ');
-
-
-
-*/
         const fontVariant = styles.fontVariant
             .filter(variant => variant === 'normal' || variant === 'small-caps')
             .join('');
+        const fontFamily = styles.fontFamily.join(', ');
         const fontSize = isDimensionToken(styles.fontSize)
             ? `${styles.fontSize.number}${styles.fontSize.unit}`
-            : styles.fontSize.number;
+            : `${styles.fontSize.number}px`;
 
-        this.ctx.font = [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, styles.fontFamily.join(', ')].join(
-            ' '
-        );
+        this.ctx.font = [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, fontFamily].join(' ');
 
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = asString(styles.color);
@@ -181,47 +172,40 @@ export class CanvasRenderer {
             } else {*/
 
             //  }
-            /*
-            if (textDecoration !== null) {
-                const textDecorationColor = textDecoration.textDecorationColor || color;
-                textDecoration.textDecorationLine.forEach(textDecorationLine => {
+
+            if (styles.textDecorationLine.length) {
+                this.ctx.fillStyle = asString(styles.textDecorationColor || styles.color);
+                styles.textDecorationLine.forEach(textDecorationLine => {
                     switch (textDecorationLine) {
                         case TEXT_DECORATION_LINE.UNDERLINE:
                             // Draws a line at the baseline of the font
                             // TODO As some browsers display the line as more than 1px if the font-size is big,
                             // need to take that into account both in position and size
-                            const {baseline} = this.options.fontMetrics.getMetrics(font);
-                            this.rectangle(
+                            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+                            this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.round(text.bounds.top + baseline),
                                 text.bounds.width,
-                                1,
-                                textDecorationColor
+                                1
                             );
+
                             break;
                         case TEXT_DECORATION_LINE.OVERLINE:
-                            this.rectangle(
-                                text.bounds.left,
-                                Math.round(text.bounds.top),
-                                text.bounds.width,
-                                1,
-                                textDecorationColor
-                            );
+                            this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, 1);
                             break;
                         case TEXT_DECORATION_LINE.LINE_THROUGH:
                             // TODO try and find exact position for line-through
-                            const {middle} = this.options.fontMetrics.getMetrics(font);
-                            this.rectangle(
+                            const {middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+                            this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.ceil(text.bounds.top + middle),
                                 text.bounds.width,
-                                1,
-                                textDecorationColor
+                                1
                             );
                             break;
                     }
                 });
-            }*/
+            }
         });
     }
 

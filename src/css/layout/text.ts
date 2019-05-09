@@ -2,7 +2,6 @@ import {OVERFLOW_WRAP} from '../property-descriptors/overflow-wrap';
 import {CSSParsedDeclaration} from '../index';
 import {fromCodePoint, LineBreaker, toCodePoints} from 'css-line-break';
 import {Bounds, parseBounds} from './bounds';
-import {TEXT_DECORATION_LINE} from '../property-descriptors/text-decoration-line';
 import {FEATURES} from '../../core/features';
 
 export class TextBounds {
@@ -20,7 +19,7 @@ export const parseTextBounds = (value: string, styles: CSSParsedDeclaration, nod
     const textBounds: TextBounds[] = [];
     let offset = 0;
     textList.forEach(text => {
-        if (styles.textDecorationLine !== TEXT_DECORATION_LINE.NONE || text.trim().length > 0) {
+        if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
             } else {
