@@ -2,7 +2,7 @@ export class Logger {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static debug(...args: any) {
         // eslint-disable-next-line no-console
-        if (window.console && typeof console.debug === 'function') {
+        if (typeof window !== 'undefined' && window.console && typeof console.debug === 'function') {
             // eslint-disable-next-line no-console
             console.debug(...args);
         } else {
@@ -13,7 +13,7 @@ export class Logger {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static info(...args: any) {
         // eslint-disable-next-line no-console
-        if (window.console && typeof console.info === 'function') {
+        if (typeof window !== 'undefined' && window.console && typeof console.info === 'function') {
             // eslint-disable-next-line no-console
             console.info(...args);
         }
@@ -22,7 +22,7 @@ export class Logger {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static error(...args: any) {
         // eslint-disable-next-line no-console
-        if (window.console && typeof console.error === 'function') {
+        if (typeof window !== 'undefined' && window.console && typeof console.error === 'function') {
             // eslint-disable-next-line no-console
             console.error(...args);
         } else {
