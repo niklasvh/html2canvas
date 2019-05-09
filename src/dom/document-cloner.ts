@@ -60,6 +60,9 @@ export class DocumentCloner {
             return Promise.reject(`Unable to find iframe window`);
         }
 
+        const scrollX = (ownerDocument.defaultView as Window).pageXOffset;
+        const scrollY = (ownerDocument.defaultView as Window).pageYOffset;
+
         const cloneWindow = iframe.contentWindow;
         const documentClone: Document = cloneWindow.document;
 
