@@ -128,7 +128,7 @@ jobs:
       - Browser_Tests_Linux_Chrome_Stable
       - Browser_Tests_OSX_Safari_IOS_9
       - Browser_Tests_OSX_Safari_IOS_10
-      - Browser_Tests_OSX_Safari_IOS_11
+      - Browser_Tests_OSX_Safari_IOS_12
       - Browser_Tests_OSX_Safari_Stable
       - Browser_Tests_Windows_IE9
       - Browser_Tests_Windows_IE10
