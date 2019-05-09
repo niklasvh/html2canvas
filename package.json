@@ -102,6 +102,7 @@
     "unittest": "mocha --require ts-node/register src/**/__tests__/*.ts",
     "karma": "node karma",
     "watch": "rollup -c rollup.config.ts -w",
+    "watch:unittest": "mocha --require ts-node/register --watch-extensions ts -w src/**/__tests__/*.ts",
     "start": "node tests/server"
   },
   "homepage": "https://html2canvas.hertzen.com",

@@ -1,19 +1,33 @@
 import {CSSValue, isIdentToken, isNumberToken, nonFunctionArgSeperator, parseFunctionArgs} from '../../syntax/parser';
-import {CSSImageType, CSSLinearGradientImage, UnprocessedGradientColorStop} from '../image';
+import {
+    CSSImageType,
+    CSSLinearGradientImage,
+    CSSRadialExtent,
+    CSSRadialGradientImage,
+    CSSRadialShape,
+    CSSRadialSize,
+    UnprocessedGradientColorStop
+} from '../image';
 import {deg} from '../angle';
 import {TokenType} from '../../syntax/tokenizer';
 import {color as colorType} from '../color';
-import {HUNDRED_PERCENT, ZERO_LENGTH} from '../length-percentage';
+import {HUNDRED_PERCENT, LengthPercentage, ZERO_LENGTH} from '../length-percentage';
 
-export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage => {
+export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage | CSSRadialGradientImage => {
     let angle = deg(180);
     const stops: UnprocessedGradientColorStop[] = [];
     let type = CSSImageType.LINEAR_GRADIENT;
+    let shape: CSSRadialShape = CSSRadialShape.CIRCLE;
+    let size: CSSRadialSize = CSSRadialExtent.FARTHEST_CORNER;
+    const position: LengthPercentage[] = [];
     parseFunctionArgs(tokens).forEach((arg, i) => {
         const firstToken = arg[0];
         if (i === 0) {
             if (isIdentToken(firstToken) && firstToken.value === 'linear') {
                 type = CSSImageType.LINEAR_GRADIENT;
+                return;
+            } else if (isIdentToken(firstToken) && firstToken.value === 'radial') {
+                type = CSSImageType.RADIAL_GRADIENT;
                 return;
             }
         }
@@ -41,9 +55,11 @@ export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage => {
         }
     });
 
-    return {
-        angle: (angle + deg(180)) % deg(360),
-        stops,
-        type
-    };
+    return type === CSSImageType.LINEAR_GRADIENT
+        ? {
+              angle: (angle + deg(180)) % deg(360),
+              stops,
+              type
+          }
+        : {size, shape, stops, position, type};
 };

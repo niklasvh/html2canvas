@@ -7,14 +7,21 @@ import {ITypeDescriptor} from '../ITypeDescriptor';
 import {CacheStorage} from '../../core/cache-storage';
 import {LengthPercentage} from './length-percentage';
 import {webkitGradient} from './functions/-webkit-gradient';
+import {radialGradient} from './functions/radial-gradient';
+import {prefixRadialGradient} from './functions/-prefix-radial-gradient';
 
 export enum CSSImageType {
     URL,
-    LINEAR_GRADIENT
+    LINEAR_GRADIENT,
+    RADIAL_GRADIENT
 }
 
 export const isLinearGradient = (background: ICSSImage): background is CSSLinearGradientImage => {
     return background.type === CSSImageType.LINEAR_GRADIENT;
+};
+
+export const isRadialGradient = (background: ICSSImage): background is CSSRadialGradientImage => {
+    return background.type === CSSImageType.RADIAL_GRADIENT;
 };
 
 export interface UnprocessedGradientColorStop {
@@ -41,12 +48,33 @@ export interface CSSURLImage extends ICSSImage {
 export type GradientCorner = [LengthPercentage, LengthPercentage];
 
 interface ICSSGradientImage extends ICSSImage {
-    angle: number | GradientCorner;
     stops: UnprocessedGradientColorStop[];
 }
 
 export interface CSSLinearGradientImage extends ICSSGradientImage {
+    angle: number | GradientCorner;
     type: CSSImageType.LINEAR_GRADIENT;
+}
+
+export enum CSSRadialShape {
+    CIRCLE,
+    ELLIPSE
+}
+
+export enum CSSRadialExtent {
+    CLOSEST_SIDE,
+    FARTHEST_SIDE,
+    CLOSEST_CORNER,
+    FARTHEST_CORNER
+}
+
+export type CSSRadialSize = CSSRadialExtent | LengthPercentage[];
+
+export interface CSSRadialGradientImage extends ICSSGradientImage {
+    type: CSSImageType.RADIAL_GRADIENT;
+    shape: CSSRadialShape;
+    size: CSSRadialSize;
+    position: LengthPercentage[];
 }
 
 export const image: ITypeDescriptor<ICSSImage> = {
@@ -78,5 +106,10 @@ const SUPPORTED_IMAGE_FUNCTIONS: {
     '-ms-linear-gradient': prefixLinearGradient,
     '-o-linear-gradient': prefixLinearGradient,
     '-webkit-linear-gradient': prefixLinearGradient,
+    'radial-gradient': radialGradient,
+    '-moz-radial-gradient': prefixRadialGradient,
+    '-ms-radial-gradient': prefixRadialGradient,
+    '-o-radial-gradient': prefixRadialGradient,
+    '-webkit-radial-gradient': prefixRadialGradient,
     '-webkit-gradient': webkitGradient
 };

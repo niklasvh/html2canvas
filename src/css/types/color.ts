@@ -1,25 +1,3 @@
-// 'rgb( <percentage>{3} [ / <alpha-value> ]? ) | rgb( <number>{3} [ / <alpha-value> ]? ) | rgb( <percentage>#{3} , <alpha-value>? ) | rgb( <number>#{3} , <alpha-value>? )'
-
-/*
-const rgb: ITypeDescriptor = {
-    name: 'rgb()',
-    definition: 'rgb( <percentage>{3} [ / <alpha-value> ]? )',
-    parser: args => {
-
-    }
-};
-
-
-import {ITypeDescriptor} from "../ITypeDescriptor";
-export const color: ITypeDescriptor = {
-    name: 'color',
-    parser: (value: CSSValue) => {
-
-    }
-};
-
- */
-
 import {CSSValue, nonFunctionArgSeperator} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';

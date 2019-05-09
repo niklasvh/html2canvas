@@ -1,5 +1,12 @@
 import {CSSValue} from '../../syntax/parser';
-import {GradientColorStop, GradientCorner, UnprocessedGradientColorStop} from '../image';
+import {
+    CSSRadialExtent,
+    CSSRadialGradientImage,
+    CSSRadialShape,
+    GradientColorStop,
+    GradientCorner,
+    UnprocessedGradientColorStop
+} from '../image';
 import {color as colorType} from '../color';
 import {getAbsoluteValue, HUNDRED_PERCENT, isLengthPercentage, ZERO_LENGTH} from '../length-percentage';
 
@@ -86,4 +93,108 @@ export const calculateGradientDirection = (
     const xDiff = Math.cos(radian - Math.PI / 2) * halfLineLength;
 
     return [lineLength, halfWidth - xDiff, halfWidth + xDiff, halfHeight - yDiff, halfHeight + yDiff];
+};
+
+const distance = (a: number, b: number): number => Math.sqrt(a * a + b * b);
+
+const findCorner = (width: number, height: number, x: number, y: number, closest: boolean): [number, number] => {
+    const corners = [[0, 0], [0, height], [width, 0], [width, height]];
+
+    return corners.reduce(
+        (stat, corner) => {
+            const [cx, cy] = corner;
+            const d = distance(x - cx, y - cy);
+            if (closest ? d < stat.optimumDistance : d > stat.optimumDistance) {
+                return {
+                    optimumCorner: corner,
+                    optimumDistance: d
+                };
+            }
+
+            return stat;
+        },
+        {
+            optimumDistance: closest ? Infinity : -Infinity,
+            optimumCorner: null
+        }
+    ).optimumCorner as [number, number];
+};
+
+export const calculateRadius = (
+    gradient: CSSRadialGradientImage,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+): [number, number] => {
+    let rx = 0;
+    let ry = 0;
+
+    switch (gradient.size) {
+        case CSSRadialExtent.CLOSEST_SIDE:
+            // The ending shape is sized so that that it exactly meets the side of the gradient box closest to the gradient’s center.
+            // If the shape is an ellipse, it exactly meets the closest side in each dimension.
+            if (gradient.shape === CSSRadialShape.CIRCLE) {
+                rx = ry = Math.min(Math.abs(x), Math.abs(x - width), Math.abs(y), Math.abs(y - height));
+            } else if (gradient.shape === CSSRadialShape.ELLIPSE) {
+                rx = Math.min(Math.abs(x), Math.abs(x - width));
+                ry = Math.min(Math.abs(y), Math.abs(y - height));
+            }
+            break;
+
+        case CSSRadialExtent.CLOSEST_CORNER:
+            // The ending shape is sized so that that it passes through the corner of the gradient box closest to the gradient’s center.
+            // If the shape is an ellipse, the ending shape is given the same aspect-ratio it would have if closest-side were specified.
+            if (gradient.shape === CSSRadialShape.CIRCLE) {
+                rx = ry = Math.min(
+                    distance(x, y),
+                    distance(x, y - height),
+                    distance(x - width, y),
+                    distance(x - width, y - height)
+                );
+            } else if (gradient.shape === CSSRadialShape.ELLIPSE) {
+                // Compute the ratio ry/rx (which is to be the same as for "closest-side")
+                const c = Math.min(Math.abs(y), Math.abs(y - height)) / Math.min(Math.abs(x), Math.abs(x - width));
+                const [cx, cy] = findCorner(width, height, x, y, true);
+                rx = distance(cx - x, (cy - y) / c);
+                ry = c * rx;
+            }
+            break;
+
+        case CSSRadialExtent.FARTHEST_SIDE:
+            // Same as closest-side, except the ending shape is sized based on the farthest side(s)
+            if (gradient.shape === CSSRadialShape.CIRCLE) {
+                rx = ry = Math.max(Math.abs(x), Math.abs(x - width), Math.abs(y), Math.abs(y - height));
+            } else if (gradient.shape === CSSRadialShape.ELLIPSE) {
+                rx = Math.max(Math.abs(x), Math.abs(x - width));
+                ry = Math.max(Math.abs(y), Math.abs(y - height));
+            }
+            break;
+
+        case CSSRadialExtent.FARTHEST_CORNER:
+            // Same as closest-corner, except the ending shape is sized based on the farthest corner.
+            // If the shape is an ellipse, the ending shape is given the same aspect ratio it would have if farthest-side were specified.
+            if (gradient.shape === CSSRadialShape.CIRCLE) {
+                rx = ry = Math.max(
+                    distance(x, y),
+                    distance(x, y - height),
+                    distance(x - width, y),
+                    distance(x - width, y - height)
+                );
+            } else if (gradient.shape === CSSRadialShape.ELLIPSE) {
+                // Compute the ratio ry/rx (which is to be the same as for "farthest-side")
+                const c = Math.max(Math.abs(y), Math.abs(y - height)) / Math.max(Math.abs(x), Math.abs(x - width));
+                const [cx, cy] = findCorner(width, height, x, y, false);
+                rx = distance(cx - x, (cy - y) / c);
+                ry = c * rx;
+            }
+            break;
+    }
+
+    if (Array.isArray(gradient.size)) {
+        rx = getAbsoluteValue(gradient.size[0], width);
+        ry = gradient.size.length === 2 ? getAbsoluteValue(gradient.size[1], height) : rx;
+    }
+
+    return [rx, ry];
 };

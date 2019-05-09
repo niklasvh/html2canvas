@@ -15,7 +15,7 @@ import {
 } from '../render/bound-curves';
 import {isBezierCurve} from '../render/bezier-curve';
 import {Vector} from '../render/vector';
-import {CSSImageType, CSSURLImage, isLinearGradient} from '../css/types/image';
+import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../css/types/image';
 import {parsePathForBorder} from '../render/border';
 import {Cache} from './cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../render/background';
@@ -29,7 +29,8 @@ import {SVGElementContainer} from '../dom/replaced-elements/svg-element-containe
 import {ReplacedElementContainer} from '../dom/replaced-elements/index';
 import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../render/effects';
 import {contains} from './bitwise';
-import {calculateGradientDirection, processColorStops} from '../css/types/functions/gradient';
+import {calculateGradientDirection, calculateRadius, processColorStops} from '../css/types/functions/gradient';
+import {FIFTY_PERCENT, getAbsoluteValue} from '../css/types/length-percentage';
 
 export interface RenderOptions {
     scale: number;
@@ -280,45 +281,6 @@ export class CanvasRenderer {
                 Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
         }
-
-        /*
-        const callback = () => {
-
-
-            if (container.image) {
-                const image = this.options.imageStore.get(container.image);
-                if (image) {
-                    const contentBox = calculateContentBox(
-                        container.bounds,
-                        container.style.padding,
-                        container.style.border
-                    );
-                    const width =
-                        typeof image.width === 'number' && image.width > 0
-                            ? image.width
-                            : contentBox.width;
-                    const height =
-                        typeof image.height === 'number' && image.height > 0
-                            ? image.height
-                            : contentBox.height;
-                    if (width > 0 && height > 0) {
-                        this.target.clip([calculatePaddingBoxPath(container.curvedBounds)], () => {
-                            this.target.drawImage(
-                                image,
-                                new Bounds(0, 0, width, height),
-                                contentBox
-                            );
-                        });
-                    }
-                }
-            }
-        };
-        const paths = container.getClipPaths();
-        if (paths.length) {
-            this.target.clip(paths, callback);
-        } else {
-            callback();
-        }*/
     }
 
     async renderStackContent(stack: StackingContext) {
@@ -458,6 +420,44 @@ export class CanvasRenderer {
                 ctx.fillRect(0, 0, width, height);
                 const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
                 this.renderRepeat(path, pattern, x, y);
+            } else if (isRadialGradient(backgroundImage)) {
+                const [path, left, top, width, height] = calculateBackgroundRendering(container, index, [
+                    null,
+                    null,
+                    null
+                ]);
+                const position = backgroundImage.position.length === 0 ? [FIFTY_PERCENT] : backgroundImage.position;
+                const x = getAbsoluteValue(position[0], width);
+                const y = getAbsoluteValue(position[position.length - 1], height);
+
+                const [rx, ry] = calculateRadius(backgroundImage, x, y, width, height);
+                if (rx > 0 && rx > 0) {
+                    const radialGradient = this.ctx.createRadialGradient(left + x, top + y, 0, left + x, top + y, rx);
+
+                    processColorStops(backgroundImage.stops, rx * 2).forEach(colorStop =>
+                        radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                    );
+
+                    this.path(path);
+                    this.ctx.fillStyle = radialGradient;
+                    if (rx !== ry) {
+                        // transforms for elliptical radial gradient
+                        const midX = container.bounds.left + 0.5 * container.bounds.width;
+                        const midY = container.bounds.top + 0.5 * container.bounds.height;
+                        const f = ry / rx;
+                        const invF = 1 / f;
+
+                        this.ctx.save();
+                        this.ctx.translate(midX, midY);
+                        this.ctx.transform(1, 0, 0, f, 0, 0);
+                        this.ctx.translate(-midX, -midY);
+
+                        this.ctx.fillRect(left, invF * (top - midY) + midY, width, height * invF);
+                        this.ctx.restore();
+                    } else {
+                        this.ctx.fill();
+                    }
+                }
             }
             index--;
         }

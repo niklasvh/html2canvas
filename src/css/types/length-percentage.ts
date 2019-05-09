@@ -14,6 +14,12 @@ export const ZERO_LENGTH: NumberValueToken = {
     flags: FLAG_INTEGER
 };
 
+export const FIFTY_PERCENT: NumberValueToken = {
+    type: TokenType.PERCENTAGE_TOKEN,
+    number: 50,
+    flags: FLAG_INTEGER
+};
+
 export const HUNDRED_PERCENT: NumberValueToken = {
     type: TokenType.PERCENTAGE_TOKEN,
     number: 100,
@@ -35,6 +41,7 @@ export const getAbsoluteValue = (token: LengthPercentage, parent: number) => {
 
     if (isDimensionToken(token)) {
         switch (token.unit) {
+            case 'rem':
             case 'em':
                 return 16 * token.number; // TODO use correct font-size
             case 'px':
