@@ -4,18 +4,23 @@ import {ITypeDescriptor} from '../ITypeDescriptor';
 import {HUNDRED_PERCENT, ZERO_LENGTH} from './length-percentage';
 import {GradientCorner} from './image';
 
+const DEG = 'deg';
+const GRAD = 'grad';
+const RAD = 'rad';
+const TURN = 'turn';
+
 export const angle: ITypeDescriptor<number> = {
     name: 'angle',
     parse: (value: CSSValue): number => {
         if (value.type === TokenType.DIMENSION_TOKEN) {
             switch (value.unit) {
-                case 'deg':
+                case DEG:
                     return (Math.PI * value.number) / 180;
-                case 'grad':
+                case GRAD:
                     return (Math.PI / 200) * value.number;
-                case 'rad':
+                case RAD:
                     return value.number;
-                case 'turn':
+                case TURN:
                     return Math.PI * 2 * value.number;
             }
         }
@@ -26,7 +31,7 @@ export const angle: ITypeDescriptor<number> = {
 
 export const isAngle = (value: CSSValue): boolean => {
     if (value.type === TokenType.DIMENSION_TOKEN) {
-        if (value.unit === 'deg' || value.unit === 'grad' || value.unit === 'rad' || value.unit === 'turn') {
+        if (value.unit === DEG || value.unit === GRAD || value.unit === RAD || value.unit === TURN) {
             return true;
         }
     }

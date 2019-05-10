@@ -1,6 +1,8 @@
 import {CSSValue, nonFunctionArgSeperator} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';
+import {angle, deg} from './angle';
+import {getAbsoluteValue, isLengthPercentage} from './length-percentage';
 export type Color = number;
 
 export const color: ITypeDescriptor<Color> = {
@@ -99,9 +101,52 @@ const rgb = (args: CSSValue[]): number => {
     return 0;
 };
 
+function hue2rgb(t1: number, t2: number, hue: number): number {
+    if (hue < 0) {
+        hue += 1;
+    }
+    if (hue >= 1) {
+        hue -= 1;
+    }
+
+    if (hue < 1 / 6) {
+        return (t2 - t1) * hue * 6 + t1;
+    } else if (hue < 1 / 2) {
+        return t2;
+    } else if (hue < 2 / 3) {
+        return (t2 - t1) * 6 * (2 / 3 - hue) + t1;
+    } else {
+        return t1;
+    }
+}
+
+const hsl = (args: CSSValue[]): number => {
+    const tokens = args.filter(nonFunctionArgSeperator);
+    const [hue, saturation, lightness, alpha] = tokens;
+
+    const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(hue)) / (Math.PI * 2);
+    const s = isLengthPercentage(saturation) ? saturation.number / 100 : 0;
+    const l = isLengthPercentage(lightness) ? lightness.number / 100 : 0;
+    const a = typeof alpha !== 'undefined' && isLengthPercentage(alpha) ? getAbsoluteValue(alpha, 1) : 1;
+
+    if (s === 0) {
+        return pack(l * 255, l * 255, l * 255, 1);
+    }
+
+    const t2 = l <= 0.5 ? l * (s + 1) : l + s - l * s;
+
+    const t1 = l * 2 - t2;
+    const r = hue2rgb(t1, t2, h + 1 / 3);
+    const g = hue2rgb(t1, t2, h);
+    const b = hue2rgb(t1, t2, h - 1 / 3);
+    return pack(r * 255, g * 255, b * 255, a);
+};
+
 const SUPPORTED_COLOR_FUNCTIONS: {
     [key: string]: (args: CSSValue[]) => number;
 } = {
+    hsl: hsl,
+    hsla: hsl,
     rgb: rgb,
     rgba: rgb
 };

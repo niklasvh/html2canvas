@@ -6,7 +6,7 @@ const parse = (value: string) => color.parse(Parser.parseValue(value));
 
 describe('types', () => {
     describe('<color>', () => {
-        describe('parsing', () => {
+        describe.only('parsing', () => {
             it('#000', () => strictEqual(parse('#000'), pack(0, 0, 0, 1)));
             it('#0000', () => strictEqual(parse('#0000'), pack(0, 0, 0, 0)));
             it('#000f', () => strictEqual(parse('#000f'), pack(0, 0, 0, 1)));
@@ -30,6 +30,15 @@ describe('types', () => {
             it('rgba(222, 111, 50, 0.22)', () =>
                 strictEqual(parse('rgba(222, 111, 50, 0.22)'), pack(222, 111, 50, 0.22)));
             it('rgba(222 111 50 0.123)', () => strictEqual(parse('rgba(222 111 50 0.123)'), pack(222, 111, 50, 0.123)));
+            it('hsl(270,60%,70%)', () => strictEqual(parse('hsl(270,60%,70%)'), parse('rgb(178,132,224)')));
+            it('hsl(270, 60%, 70%)', () => strictEqual(parse('hsl(270, 60%, 70%)'), parse('rgb(178,132,224)')));
+            it('hsl(270 60% 70%)', () => strictEqual(parse('hsl(270 60% 70%)'), parse('rgb(178,132,224)')));
+            it('hsl(270deg, 60%, 70%)', () => strictEqual(parse('hsl(270deg, 60%, 70%)'), parse('rgb(178,132,224)')));
+            it('hsl(4.71239rad, 60%, 70%)', () =>
+                strictEqual(parse('hsl(4.71239rad, 60%, 70%)'), parse('rgb(178,132,224)')));
+            it('hsl(.75turn, 60%, 70%)', () => strictEqual(parse('hsl(.75turn, 60%, 70%)'), parse('rgb(178,132,224)')));
+            it('hsla(.75turn, 60%, 70%, 50%)', () =>
+                strictEqual(parse('hsl(.75turn, 60%, 70%, 50%)'), parse('rgba(178,132,224, 0.5)')));
         });
         describe('util', () => {
             describe('isTransparent', () => {
