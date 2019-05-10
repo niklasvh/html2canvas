@@ -236,7 +236,7 @@ export class DocumentCloner {
         try {
             if (node instanceof HTMLStyleElement && node.sheet && node.sheet.cssRules) {
                 const css = [].slice.call(node.sheet.cssRules, 0).reduce((css, rule) => {
-                    if (rule && rule.cssText) {
+                    if (rule && typeof rule.cssText === 'string') {
                         return css + rule.cssText;
                     }
                     return css;
