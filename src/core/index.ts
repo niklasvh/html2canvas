@@ -1,29 +1,21 @@
 import {Bounds, parseBounds, parseDocumentSize} from '../css/layout/bounds';
 import {color, Color, COLORS, isTransparent} from '../css/types/color';
 import {Parser} from '../css/syntax/parser';
-import {DocumentCloner} from '../dom/document-cloner';
+import {CloneOptions, DocumentCloner} from '../dom/document-cloner';
 import {isBodyElement, isHTMLElement, parseTree} from '../dom/node-parser';
 import {Logger} from './logger';
 import {CacheStorage} from './cache-storage';
-import {CanvasRenderer} from './canvas-renderer';
+import {CanvasRenderer, RenderOptions} from './canvas-renderer';
 
-export interface Options {
+export type Options = CloneOptions & RenderOptions & {
     allowTaint: boolean;
     backgroundColor: string;
-    canvas?: HTMLCanvasElement;
     foreignObjectRendering: boolean;
     imageTimeout: number;
     logging: boolean;
     proxy?: string;
     removeContainer?: boolean;
-    scale: number;
     useCORS: boolean;
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-    scrollX: number;
-    scrollY: number;
     windowWidth: number;
     windowHeight: number;
 }
@@ -98,6 +90,8 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     const cache = CacheStorage.create(instanceName, options);
 
     const documentCloner = new DocumentCloner(element, {
+        onclone: options.onclone,
+        ignoreElements: options.ignoreElements,
         inlineImages: false,
         copyStyles: false
     });
@@ -113,13 +107,11 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     CacheStorage.attachInstance(cache);
     const root = parseTree(clonedElement);
     CacheStorage.detachInstance();
-    // const clonedDocument = clonedElement.ownerDocument;
 
     if (backgroundColor === root.styles.backgroundColor) {
         root.styles.backgroundColor = COLORS.TRANSPARENT;
     }
 
-    //const fontMetrics = new FontMetrics(clonedDocument);
     Logger.debug(`Starting renderer`);
 
     const {width, height, left, top} =
@@ -130,10 +122,11 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     const renderOptions = {
         cache,
         backgroundColor,
-        //     fontMetrics,
         scale: options.scale,
         x: typeof options.x === 'number' ? options.x : left,
         y: typeof options.y === 'number' ? options.y : top,
+        scrollX: options.scrollX,
+        scrollY: options.scrollY,
         width: typeof options.width === 'number' ? options.width : Math.ceil(width),
         height: typeof options.height === 'number' ? options.height : Math.ceil(height)
     };

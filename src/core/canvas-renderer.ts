@@ -40,6 +40,8 @@ export interface RenderOptions {
     backgroundColor: Color | null;
     x: number;
     y: number;
+    scrollX: number;
+    scrollY: number;
     width: number;
     height: number;
     cache: Cache;
@@ -62,7 +64,7 @@ export class CanvasRenderer {
         this.canvas.style.height = `${options.height}px`;
         this.fontMetrics = new FontMetrics(document);
         this.ctx.scale(this.options.scale, this.options.scale);
-        this.ctx.translate(-options.x, -options.y);
+        this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
         Logger.debug(
