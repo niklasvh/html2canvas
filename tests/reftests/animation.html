@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../test.js"></script>
+    <style>
+        span {
+            color:blue;
+        }
+        p {
+            background-color: green;
+        }
+        div {
+            background: red;
+            border: 5px solid blue;
+            animation: spin 3s linear 1s infinite;
+        }
+        body {
+            font-family: Arial;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+                /* Firefox 16+, IE 10+, Opera */ }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+                /* Firefox 16+, IE 10+, Opera */ } }
+
+        @keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+                /* Firefox 16+, IE 10+, Opera */ }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+                /* Firefox 16+, IE 10+, Opera */ } }
+    </style>
+
+</head>
+<body>
+<div style="clip: rect(0px, 400px, 50px, 200px); ">Some inline text <span> followed by text in span </span> followed by more inline text.
+    <p>Then a block level element.</p>
+    Then more inline text.</div>
+</body>
+</html>

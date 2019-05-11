@@ -130,7 +130,7 @@ export class DocumentCloner {
             const sheet = node.sheet as CSSStyleSheet | undefined;
             if (sheet && sheet.cssRules) {
                 const css: string = [].slice.call(sheet.cssRules, 0).reduce((css: string, rule: CSSRule) => {
-                    if (rule && rule.cssText) {
+                    if (rule && typeof rule.cssText === 'string') {
                         return css + rule.cssText;
                     }
                     return css;
