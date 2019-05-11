@@ -7,18 +7,19 @@ import {Logger} from './logger';
 import {CacheStorage} from './cache-storage';
 import {CanvasRenderer, RenderOptions} from './canvas-renderer';
 
-export type Options = CloneOptions & RenderOptions & {
-    allowTaint: boolean;
-    backgroundColor: string;
-    foreignObjectRendering: boolean;
-    imageTimeout: number;
-    logging: boolean;
-    proxy?: string;
-    removeContainer?: boolean;
-    useCORS: boolean;
-    windowWidth: number;
-    windowHeight: number;
-}
+export type Options = CloneOptions &
+    RenderOptions & {
+        allowTaint: boolean;
+        backgroundColor: string;
+        foreignObjectRendering: boolean;
+        imageTimeout: number;
+        logging: boolean;
+        proxy?: string;
+        removeContainer?: boolean;
+        useCORS: boolean;
+        windowWidth: number;
+        windowHeight: number;
+    };
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
 
