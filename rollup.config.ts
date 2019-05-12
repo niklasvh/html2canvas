@@ -6,7 +6,7 @@ import json from 'rollup-plugin-json';
 
 const pkg = require('./package.json');
 
-const banner = `/*
+const banner = `/*!
  * ${pkg.title} ${pkg.version} <${pkg.homepage}>
  * Copyright (c) ${(new Date()).getFullYear()} ${pkg.author.name} <${pkg.author.url}>
  * Released under ${pkg.license} License
