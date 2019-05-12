@@ -1,5 +1,6 @@
 import {testList, ignoredTests} from '../build/reftests';
-import * as platform from 'platform';
+// @ts-ignore
+import {default as platform} from 'platform';
 // @ts-ignore
 import Promise from 'es6-promise';
 
