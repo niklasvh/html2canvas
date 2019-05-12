@@ -4,6 +4,10 @@ import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bo
 import {ClipEffect, EffectTarget, IElementEffect, TransformEffect} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
+import {DISPLAY} from '../css/property-descriptors/display';
+import {OLElementContainer} from '../dom/elements/ol-element-container';
+import {LIElementContainer} from '../dom/elements/li-element-container';
+import {createCounterText} from '../css/types/functions/counter';
 
 export class StackingContext {
     element: ElementPaint;
@@ -31,6 +35,7 @@ export class ElementPaint {
     container: ElementContainer;
     effects: IElementEffect[];
     curves: BoundCurves;
+    listValue?: string;
 
     constructor(element: ElementContainer, parentStack: IElementEffect[]) {
         this.container = element;
@@ -72,12 +77,18 @@ export class ElementPaint {
 const parseStackTree = (
     parent: ElementPaint,
     stackingContext: StackingContext,
-    realStackingContext: StackingContext
+    realStackingContext: StackingContext,
+    listItems: ElementPaint[]
 ) => {
     parent.container.elements.forEach(child => {
         const treatAsRealStackingContext = contains(child.flags, FLAGS.CREATES_REAL_STACKING_CONTEXT);
         const createsStackingContext = contains(child.flags, FLAGS.CREATES_STACKING_CONTEXT);
         const paintContainer = new ElementPaint(child, parent.getParentEffects());
+        if (contains(child.styles.display, DISPLAY.LIST_ITEM)) {
+            listItems.push(paintContainer);
+        }
+
+        const listOwnerItems = contains(child.flags, FLAGS.IS_LIST_OWNER) ? [] : listItems;
 
         if (treatAsRealStackingContext || createsStackingContext) {
             const parentStack =
@@ -120,7 +131,12 @@ const parseStackTree = (
                 }
             }
 
-            parseStackTree(paintContainer, stack, treatAsRealStackingContext ? stack : realStackingContext);
+            parseStackTree(
+                paintContainer,
+                stack,
+                treatAsRealStackingContext ? stack : realStackingContext,
+                listOwnerItems
+            );
         } else {
             if (child.styles.isInlineLevel()) {
                 stackingContext.inlineLevel.push(paintContainer);
@@ -128,14 +144,39 @@ const parseStackTree = (
                 stackingContext.nonInlineLevel.push(paintContainer);
             }
 
-            parseStackTree(paintContainer, stackingContext, realStackingContext);
+            parseStackTree(paintContainer, stackingContext, realStackingContext, listOwnerItems);
+        }
+
+        if (contains(child.flags, FLAGS.IS_LIST_OWNER)) {
+            processListItems(child, listOwnerItems);
         }
     });
+};
+
+const processListItems = (owner: ElementContainer, elements: ElementPaint[]) => {
+    let numbering = owner instanceof OLElementContainer ? owner.start : 1;
+    const reversed = owner instanceof OLElementContainer ? owner.reversed : false;
+    for (let i = 0; i < elements.length; i++) {
+        const item = elements[i];
+        if (
+            item.container instanceof LIElementContainer &&
+            typeof item.container.value === 'number' &&
+            item.container.value !== 0
+        ) {
+            numbering = item.container.value;
+        }
+
+        item.listValue = createCounterText(numbering, item.container.styles.listStyleType, true);
+
+        numbering += reversed ? -1 : 1;
+    }
 };
 
 export const parseStackingContexts = (container: ElementContainer): StackingContext => {
     const paintContainer = new ElementPaint(container, []);
     const root = new StackingContext(paintContainer);
-    parseStackTree(paintContainer, root, root);
+    const listItems: ElementPaint[] = [];
+    parseStackTree(paintContainer, root, root, listItems);
+    processListItems(paintContainer.container, listItems);
     return root;
 };

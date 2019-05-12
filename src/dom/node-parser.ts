@@ -4,6 +4,10 @@ import {TextContainer} from './text-container';
 import {ImageElementContainer} from './replaced-elements/image-element-container';
 import {CanvasElementContainer} from './replaced-elements/canvas-element-container';
 import {SVGElementContainer} from './replaced-elements/svg-element-container';
+import {LIElementContainer} from './elements/li-element-container';
+import {OLElementContainer} from './elements/ol-element-container';
+
+const LIST_OWNERS = ['OL', 'UL', 'MENU'];
 
 const parseNodeTree = (node: Node, parent: ElementContainer, root: ElementContainer) => {
     for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
@@ -18,6 +22,10 @@ const parseNodeTree = (node: Node, parent: ElementContainer, root: ElementContai
                     container.flags |= FLAGS.CREATES_REAL_STACKING_CONTEXT;
                 } else if (createsStackingContext(container.styles)) {
                     container.flags |= FLAGS.CREATES_STACKING_CONTEXT;
+                }
+
+                if (LIST_OWNERS.indexOf(childNode.tagName) !== -1) {
+                    container.flags |= FLAGS.IS_LIST_OWNER;
                 }
 
                 parent.elements.push(container);
@@ -40,6 +48,14 @@ const createContainer = (element: Element): ElementContainer => {
 
     if (isSVGElement(element)) {
         return new SVGElementContainer(element);
+    }
+
+    if (isLIElement(element)) {
+        return new LIElementContainer(element);
+    }
+
+    if (isOLElement(element)) {
+        return new OLElementContainer(element);
     }
 
     return new ElementContainer(element);
@@ -123,6 +139,8 @@ export const isElementNode = (node: Node): node is Element => node.nodeType === 
 export const isHTMLElementNode = (node: Node): node is HTMLElement =>
     typeof (node as HTMLElement).style !== 'undefined';
 
+export const isLIElement = (node: Element): node is HTMLLIElement => node.tagName === 'LI';
+export const isOLElement = (node: Element): node is HTMLOListElement => node.tagName === 'OL';
 export const isHTMLElement = (node: Element): node is HTMLHtmlElement => node.tagName === 'HTML';
 export const isSVGElement = (node: Element): node is SVGSVGElement => node.tagName === 'svg';
 export const isBodyElement = (node: Element): node is HTMLBodyElement => node.tagName === 'BODY';

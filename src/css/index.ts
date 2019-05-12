@@ -35,6 +35,8 @@ import {display, DISPLAY} from './property-descriptors/display';
 import {float, FLOAT} from './property-descriptors/float';
 import {letterSpacing} from './property-descriptors/letter-spacing';
 import {lineBreak} from './property-descriptors/line-break';
+import {lineHeight} from './property-descriptors/line-height';
+import {listStyleImage} from './property-descriptors/list-style-image';
 import {listStylePosition} from './property-descriptors/list-style-position';
 import {listStyleType} from './property-descriptors/list-style-type';
 import {marginBottom, marginLeft, marginRight, marginTop} from './property-descriptors/margin';
@@ -103,6 +105,8 @@ export class CSSParsedDeclaration {
     fontWeight: ReturnType<typeof fontWeight.parse>;
     letterSpacing: ReturnType<typeof letterSpacing.parse>;
     lineBreak: ReturnType<typeof lineBreak.parse>;
+    lineHeight: CSSValue;
+    listStyleImage: ReturnType<typeof listStyleImage.parse>;
     listStylePosition: ReturnType<typeof listStylePosition.parse>;
     listStyleType: ReturnType<typeof listStyleType.parse>;
     marginTop: CSSValue;
@@ -160,6 +164,8 @@ export class CSSParsedDeclaration {
         this.fontWeight = parse(fontWeight, declaration.fontWeight);
         this.letterSpacing = parse(letterSpacing, declaration.letterSpacing);
         this.lineBreak = parse(lineBreak, declaration.lineBreak);
+        this.lineHeight = parse(lineHeight, declaration.lineHeight);
+        this.listStyleImage = parse(listStyleImage, declaration.listStyleImage);
         this.listStylePosition = parse(listStylePosition, declaration.listStylePosition);
         this.listStyleType = parse(listStyleType, declaration.listStyleType);
         this.marginTop = parse(marginTop, declaration.marginTop);

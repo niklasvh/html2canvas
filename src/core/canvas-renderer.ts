@@ -33,6 +33,10 @@ import {calculateGradientDirection, calculateRadius, processColorStops} from '..
 import {FIFTY_PERCENT, getAbsoluteValue} from '../css/types/length-percentage';
 import {TEXT_DECORATION_LINE} from '../css/property-descriptors/text-decoration-line';
 import {FontMetrics} from '../render/font-metrics';
+import {DISPLAY} from '../css/property-descriptors/display';
+import {Bounds} from '../css/layout/bounds';
+import {LIST_STYLE_TYPE} from '../css/property-descriptors/list-style-type';
+import {computeLineHeight} from '../css/property-descriptors/line-height';
 
 export interface RenderOptions {
     scale: number;
@@ -138,7 +142,7 @@ export class CanvasRenderer {
         }
     }
 
-    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
+    private createFontStyle(styles: CSSParsedDeclaration): string[] {
         const fontVariant = styles.fontVariant
             .filter(variant => variant === 'normal' || variant === 'small-caps')
             .join('');
@@ -147,7 +151,17 @@ export class CanvasRenderer {
             ? `${styles.fontSize.number}${styles.fontSize.unit}`
             : `${styles.fontSize.number}px`;
 
-        this.ctx.font = [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, fontFamily].join(' ');
+        return [
+            [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, fontFamily].join(' '),
+            fontFamily,
+            fontSize
+        ];
+    }
+
+    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
+        const [font, fontFamily, fontSize] = this.createFontStyle(styles);
+
+        this.ctx.font = font;
 
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = asString(styles.color);
@@ -265,6 +279,38 @@ export class CanvasRenderer {
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
                 Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
+            }
+        }
+
+        if (contains(container.styles.display, DISPLAY.LIST_ITEM)) {
+            if (container.styles.listStyleImage !== null) {
+                const img = container.styles.listStyleImage;
+                if (img.type === CSSImageType.URL) {
+                    let image;
+                    const url = (img as CSSURLImage).url;
+                    try {
+                        image = await this.options.cache.match(url);
+                        this.ctx.drawImage(image, container.bounds.left - (image.width + 10), container.bounds.top);
+                    } catch (e) {
+                        Logger.error(`Error loading list-style-image ${url}`);
+                    }
+                }
+            } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
+                [this.ctx.font] = this.createFontStyle(styles);
+                this.ctx.fillStyle = asString(styles.color);
+
+                this.ctx.textBaseline = 'middle';
+                this.ctx.textAlign = 'right';
+                const bounds = new Bounds(
+                    container.bounds.left,
+                    container.bounds.top + getAbsoluteValue(container.styles.paddingTop, container.bounds.width),
+                    container.bounds.width,
+                    computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
+                );
+
+                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles.letterSpacing);
+                this.ctx.textBaseline = 'bottom';
+                this.ctx.textAlign = 'left';
             }
         }
     }
@@ -498,7 +544,12 @@ export class CanvasRenderer {
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {
         if (this.options.backgroundColor) {
             this.ctx.fillStyle = asString(this.options.backgroundColor);
-            this.ctx.fillRect(this.options.x, this.options.y, this.options.width, this.options.height);
+            this.ctx.fillRect(
+                this.options.x - this.options.scrollX,
+                this.options.y - this.options.scrollY,
+                this.options.width,
+                this.options.height
+            );
         }
 
         const stack = parseStackingContexts(element);

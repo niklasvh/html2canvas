@@ -431,13 +431,14 @@ export const createCounterText = (value: number, type: LIST_STYLE_TYPE, appendSu
     const defaultSuffix = appendSuffix ? '. ' : '';
     const cjkSuffix = appendSuffix ? '、' : '';
     const koreanSuffix = appendSuffix ? ', ' : '';
+    const spaceSuffix = appendSuffix ? ' ' : '';
     switch (type) {
         case LIST_STYLE_TYPE.DISC:
-            return '•';
+            return '•' + spaceSuffix;
         case LIST_STYLE_TYPE.CIRCLE:
-            return '◦';
+            return '◦' + spaceSuffix;
         case LIST_STYLE_TYPE.SQUARE:
-            return '◾';
+            return '◾' + spaceSuffix;
         case LIST_STYLE_TYPE.DECIMAL_LEADING_ZERO:
             const string = createCounterStyleFromRange(value, 48, 57, true, defaultSuffix);
             return string.length < 4 ? `0${string}` : string;
