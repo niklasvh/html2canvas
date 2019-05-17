@@ -33,6 +33,15 @@ const addColorStops = (
     });
 };
 
+const computedRenderTextLine = (
+    top: Number,
+    height: Number,
+    fontSize: String
+): Number => {
+    let _fontSize = fontSize.replace('px');
+    return top + (height - _fontSize) / 2;
+}
+
 export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -232,7 +241,8 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                     this.ctx.fillText(
                         text.text,
                         text.bounds.left,
-                        text.bounds.top + text.bounds.height
+                        computedRenderTextLine(text.bounds.top, text.bounds.height, Font.fontSize)
+                        
                     );
                 });
 
@@ -244,7 +254,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
                 this.ctx.fillText(
                     text.text,
                     text.bounds.left,
-                    text.bounds.top + text.bounds.height
+                    computedRenderTextLine(text.bounds.top, text.bounds.height, Font.fontSize)
                 );
             }
 
