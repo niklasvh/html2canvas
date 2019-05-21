@@ -13,7 +13,7 @@ export class ElementContainer {
     readonly styles: CSSParsedDeclaration;
     readonly textNodes: TextContainer[];
     readonly elements: ElementContainer[];
-    readonly bounds: Bounds;
+    bounds: Bounds;
     flags: number;
 
     constructor(element: Element) {

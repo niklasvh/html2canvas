@@ -43,6 +43,7 @@ import {marginBottom, marginLeft, marginRight, marginTop} from './property-descr
 import {overflow} from './property-descriptors/overflow';
 import {overflowWrap} from './property-descriptors/overflow-wrap';
 import {paddingBottom, paddingLeft, paddingRight, paddingTop} from './property-descriptors/padding';
+import {textAlign} from './property-descriptors/text-align';
 import {position, POSITION} from './property-descriptors/position';
 import {textTransform} from './property-descriptors/text-transform';
 import {transform} from './property-descriptors/transform';
@@ -121,6 +122,7 @@ export class CSSParsedDeclaration {
     paddingBottom: LengthPercentage;
     paddingLeft: LengthPercentage;
     position: ReturnType<typeof position.parse>;
+    textAlign: ReturnType<typeof textAlign.parse>;
     textDecorationColor: Color;
     textDecorationLine: ReturnType<typeof textDecorationLine.parse>;
     textTransform: ReturnType<typeof textTransform.parse>;
@@ -180,6 +182,7 @@ export class CSSParsedDeclaration {
         this.paddingBottom = parse(paddingBottom, declaration.paddingBottom);
         this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
         this.position = parse(position, declaration.position);
+        this.textAlign = parse(textAlign, declaration.textAlign);
         this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
         this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
         this.textTransform = parse(textTransform, declaration.textTransform);

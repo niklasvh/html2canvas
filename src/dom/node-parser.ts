@@ -6,6 +6,9 @@ import {CanvasElementContainer} from './replaced-elements/canvas-element-contain
 import {SVGElementContainer} from './replaced-elements/svg-element-container';
 import {LIElementContainer} from './elements/li-element-container';
 import {OLElementContainer} from './elements/ol-element-container';
+import {InputElementContainer} from './replaced-elements/input-element-container';
+import {SelectElementContainer} from './elements/select-element-container';
+import {TextareaElementContainer} from './elements/textarea-element-container';
 
 const LIST_OWNERS = ['OL', 'UL', 'MENU'];
 
@@ -58,6 +61,18 @@ const createContainer = (element: Element): ElementContainer => {
         return new OLElementContainer(element);
     }
 
+    if (isInputElement(element)) {
+        return new InputElementContainer(element);
+    }
+
+    if (isSelectElement(element)) {
+        return new SelectElementContainer(element);
+    }
+
+    if (isTextareaElement(element)) {
+        return new TextareaElementContainer(element);
+    }
+
     return new ElementContainer(element);
 };
 
@@ -67,61 +82,6 @@ export const parseTree = (element: HTMLElement): ElementContainer => {
     parseNodeTree(element, container, container);
     return container;
 };
-
-/*
-export class NodeParser {
-    readonly _root: StackingContext;
-
-    constructor(element: HTMLElement) {
-        this._root = new StackingContext(new ElementContainer(element, 0));
-        this.parseNodeTree(element, this._root.element, this._root, this._root, 1);
-    }
-
-    parseNodeTree(node: Node, parent: ElementContainer, stackingContext: StackingContext, realStackingContext: StackingContext, index: number) {
-        for (let childNode = node.firstChild, nextNode; childNode; childNode = nextNode) {
-            nextNode = childNode.nextSibling;
-
-            if (isTextNode(childNode) && childNode.data.trim().length > 0) {
-                parent.textNodes.push(new TextContainer(childNode, parent.styles));
-            } else if (isHTMLElementNode(childNode)) {
-                const container = new ElementContainer(childNode, index++);
-
-                if (container.styles.isVisible()) {
-                    const treatAsRealStackingContext = this.createsRealStackingContext(childNode, container);
-                    let parentRealStackingContext = realStackingContext;
-                    let currentStackingContext = stackingContext;
-                    if (treatAsRealStackingContext || createsStackingContext(container.styles)) {
-                        const parentStack = treatAsRealStackingContext || container.styles.isPositioned()
-                            ? realStackingContext
-                            : stackingContext;
-
-                        currentStackingContext = new StackingContext(container);
-                        if (treatAsRealStackingContext) {
-                            parentRealStackingContext = currentStackingContext;
-                        }
-                        parentStack.contexts.push(currentStackingContext);
-                    } else {
-                        currentStackingContext.children.push(container);
-                    }
-
-                    if (childNode.tagName !== 'TEXTAREA') {
-                        this.parseNodeTree(childNode, container, currentStackingContext, parentRealStackingContext, index);
-                    }
-                }
-            }
-        }
-    }
-
-    private createsRealStackingContext(node: Element, container: ElementContainer): boolean  {
-        return (
-            container.styles.isPositionedWithZIndex() ||
-            container.styles.opacity < 1 ||
-            container.styles.isTransformed() ||
-            (isBodyElement(node) && this._root.element.styles.isTransparent())
-        );
-    };
-}
-*/
 
 const createsRealStackingContext = (node: Element, container: ElementContainer, root: ElementContainer): boolean => {
     return (
@@ -141,6 +101,7 @@ export const isHTMLElementNode = (node: Node): node is HTMLElement =>
 
 export const isLIElement = (node: Element): node is HTMLLIElement => node.tagName === 'LI';
 export const isOLElement = (node: Element): node is HTMLOListElement => node.tagName === 'OL';
+export const isInputElement = (node: Element): node is HTMLInputElement => node.tagName === 'INPUT';
 export const isHTMLElement = (node: Element): node is HTMLHtmlElement => node.tagName === 'HTML';
 export const isSVGElement = (node: Element): node is SVGSVGElement => node.tagName === 'svg';
 export const isBodyElement = (node: Element): node is HTMLBodyElement => node.tagName === 'BODY';

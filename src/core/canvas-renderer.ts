@@ -37,6 +37,10 @@ import {DISPLAY} from '../css/property-descriptors/display';
 import {Bounds} from '../css/layout/bounds';
 import {LIST_STYLE_TYPE} from '../css/property-descriptors/list-style-type';
 import {computeLineHeight} from '../css/property-descriptors/line-height';
+import {CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO} from '../dom/replaced-elements/input-element-container';
+import {TEXT_ALIGN} from '../css/property-descriptors/text-align';
+import {TextareaElementContainer} from '../dom/elements/textarea-element-container';
+import {SelectElementContainer} from '../dom/elements/select-element-container';
 
 export interface RenderOptions {
     scale: number;
@@ -280,6 +284,82 @@ export class CanvasRenderer {
             } catch (e) {
                 Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
+        }
+
+        if (container instanceof InputElementContainer) {
+            const size = Math.min(container.bounds.width, container.bounds.height);
+
+            if (container.type === CHECKBOX) {
+                if (container.checked) {
+                    this.ctx.save();
+                    this.path([
+                        new Vector(container.bounds.left + size * 0.39363, container.bounds.top + size * 0.79),
+                        new Vector(container.bounds.left + size * 0.16, container.bounds.top + size * 0.5549),
+                        new Vector(container.bounds.left + size * 0.27347, container.bounds.top + size * 0.44071),
+                        new Vector(container.bounds.left + size * 0.39694, container.bounds.top + size * 0.5649),
+                        new Vector(container.bounds.left + size * 0.72983, container.bounds.top + size * 0.23),
+                        new Vector(container.bounds.left + size * 0.84, container.bounds.top + size * 0.34085),
+                        new Vector(container.bounds.left + size * 0.39363, container.bounds.top + size * 0.79)
+                    ]);
+
+                    this.ctx.fillStyle = asString(INPUT_COLOR);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                }
+            } else if (container.type === RADIO) {
+                if (container.checked) {
+                    this.ctx.save();
+                    this.ctx.beginPath();
+                    this.ctx.arc(
+                        container.bounds.left + size / 2,
+                        container.bounds.top + size / 2,
+                        size / 4,
+                        0,
+                        Math.PI * 2,
+                        true
+                    );
+                    this.ctx.fillStyle = asString(INPUT_COLOR);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                }
+            }
+        }
+
+        if (isTextInputElement(container) && container.value.length) {
+            [this.ctx.font] = this.createFontStyle(styles);
+            this.ctx.fillStyle = asString(styles.color);
+
+            this.ctx.textBaseline = 'middle';
+            this.ctx.textAlign = canvasTextAlign(container.styles.textAlign);
+
+            const bounds = contentBox(container);
+
+            let x = 0;
+
+            switch (container.styles.textAlign) {
+                case TEXT_ALIGN.CENTER:
+                    x += bounds.width / 2;
+                    break;
+                case TEXT_ALIGN.RIGHT:
+                    x += bounds.width;
+                    break;
+            }
+
+            const textBounds = bounds.add(x, 0, 0, -bounds.height / 2 + 1);
+
+            this.ctx.save();
+            this.path([
+                new Vector(bounds.left, bounds.top),
+                new Vector(bounds.left + bounds.width, bounds.top),
+                new Vector(bounds.left + bounds.width, bounds.top + bounds.height),
+                new Vector(bounds.left, bounds.top + bounds.height)
+            ]);
+
+            this.ctx.clip();
+            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing);
+            this.ctx.restore();
+            this.ctx.textBaseline = 'bottom';
+            this.ctx.textAlign = 'left';
         }
 
         if (contains(container.styles.display, DISPLAY.LIST_ITEM)) {
@@ -560,6 +640,19 @@ export class CanvasRenderer {
     }
 }
 
+const isTextInputElement = (
+    container: ElementContainer
+): container is InputElementContainer | TextareaElementContainer | SelectElementContainer => {
+    if (container instanceof TextareaElementContainer) {
+        return true;
+    } else if (container instanceof SelectElementContainer) {
+        return true;
+    } else if (container instanceof InputElementContainer && container.type !== RADIO && container.type !== CHECKBOX) {
+        return true;
+    }
+    return false;
+};
+
 const calculateBackgroundCurvedPaintingArea = (clip: BACKGROUND_CLIP, curves: BoundCurves): Path[] => {
     switch (clip) {
         case BACKGROUND_CLIP.BORDER_BOX:
@@ -569,5 +662,17 @@ const calculateBackgroundCurvedPaintingArea = (clip: BACKGROUND_CLIP, curves: Bo
         case BACKGROUND_CLIP.PADDING_BOX:
         default:
             return calculatePaddingBoxPath(curves);
+    }
+};
+
+const canvasTextAlign = (textAlign: TEXT_ALIGN): CanvasTextAlign => {
+    switch (textAlign) {
+        case TEXT_ALIGN.CENTER:
+            return 'center';
+        case TEXT_ALIGN.RIGHT:
+            return 'right';
+        case TEXT_ALIGN.LEFT:
+        default:
+            return 'left';
     }
 };
