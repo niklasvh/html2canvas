@@ -37,6 +37,7 @@ import {TEXT_ALIGN} from '../../css/property-descriptors/text-align';
 import {TextareaElementContainer} from '../../dom/elements/textarea-element-container';
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
+import {TextShadow} from "../../css/property-descriptors/text-shadow";
 
 export interface RenderOptions {
     scale: number;
@@ -168,13 +169,14 @@ export class CanvasRenderer {
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = asString(styles.color);
             this.renderTextWithLetterSpacing(text, styles.letterSpacing);
+            const textShadows: TextShadow = styles.textShadow;
 
-            /*if (textShadows && text.text.trim().length) {
+            if (textShadows.length && text.text.trim().length) {
                 textShadows.slice(0).reverse().forEach(textShadow => {
-                    this.ctx.shadowColor = textShadow.color.toString();
-                    this.ctx.shadowOffsetX = textShadow.offsetX * this.options.scale;
-                    this.ctx.shadowOffsetY = textShadow.offsetY * this.options.scale;
-                    this.ctx.shadowBlur = textShadow.blur;
+                    this.ctx.shadowColor = asString(textShadow.color);
+                    this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
+                    this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
+                    this.ctx.shadowBlur = textShadow.blur.number;
 
                     this.ctx.fillText(
                         text.text,
@@ -187,9 +189,7 @@ export class CanvasRenderer {
                 this.ctx.shadowOffsetX = 0;
                 this.ctx.shadowOffsetY = 0;
                 this.ctx.shadowBlur = 0;
-            } else {*/
-
-            //  }
+            }
 
             if (styles.textDecorationLine.length) {
                 this.ctx.fillStyle = asString(styles.textDecorationColor || styles.color);

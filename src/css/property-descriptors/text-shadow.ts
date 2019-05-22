@@ -1,14 +1,15 @@
 import {PropertyDescriptorParsingType, IPropertyListDescriptor} from '../IPropertyDescriptor';
 import {CSSValue, isIdentWithValue, parseFunctionArgs} from '../syntax/parser';
-import {isLengthPercentage, LengthPercentage, ZERO_LENGTH} from '../types/length-percentage';
+import {ZERO_LENGTH} from '../types/length-percentage';
 import {color, Color, COLORS} from '../types/color';
+import {isLength, Length} from "../types/length";
 
 export type TextShadow = TextShadowItem[];
 interface TextShadowItem {
     color: Color;
-    offsetX: LengthPercentage;
-    offsetY: LengthPercentage;
-    blur: LengthPercentage;
+    offsetX: Length;
+    offsetY: Length;
+    blur: Length;
 }
 
 export const textShadow: IPropertyListDescriptor<TextShadow> = {
@@ -31,7 +32,7 @@ export const textShadow: IPropertyListDescriptor<TextShadow> = {
             let c = 0;
             for (let i = 0; i < values.length; i++) {
                 const token = values[i];
-                if (isLengthPercentage(token)) {
+                if (isLength(token)) {
                     if (c === 0) {
                         shadow.offsetX = token;
                     } else if (c === 1) {
