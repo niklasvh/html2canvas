@@ -1,47 +1,42 @@
-import {ElementPaint, parseStackingContexts, StackingContext} from '../render/stacking-context';
-import {asString, Color, isTransparent} from '../css/types/color';
-import {Logger} from './logger';
-import {ElementContainer} from '../dom/element-container';
-import {BORDER_STYLE} from '../css/property-descriptors/border-style';
-import {CSSParsedDeclaration} from '../css/index';
-import {TextContainer} from '../dom/text-container';
-import {Path} from '../render/path';
-import {BACKGROUND_CLIP} from '../css/property-descriptors/background-clip';
-import {
-    BoundCurves,
-    calculateBorderBoxPath,
-    calculateContentBoxPath,
-    calculatePaddingBoxPath
-} from '../render/bound-curves';
-import {isBezierCurve} from '../render/bezier-curve';
-import {Vector} from '../render/vector';
-import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../css/types/image';
-import {parsePathForBorder} from '../render/border';
-import {Cache} from './cache-storage';
-import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../render/background';
-import {isDimensionToken} from '../css/syntax/parser';
-import {TextBounds} from '../css/layout/text';
+import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
+import {asString, Color, isTransparent} from '../../css/types/color';
+import {Logger} from '../../core/logger';
+import {ElementContainer} from '../../dom/element-container';
+import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
+import {CSSParsedDeclaration} from '../../css/index';
+import {TextContainer} from '../../dom/text-container';
+import {Path} from '../path';
+import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
+import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
+import {isBezierCurve} from '../bezier-curve';
+import {Vector} from '../vector';
+import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
+import {parsePathForBorder} from '../border';
+import {Cache} from '../../core/cache-storage';
+import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
+import {isDimensionToken} from '../../css/syntax/parser';
+import {TextBounds} from '../../css/layout/text';
 import {fromCodePoint, toCodePoints} from 'css-line-break';
-import {ImageElementContainer} from '../dom/replaced-elements/image-element-container';
-import {contentBox} from '../render/box-sizing';
-import {CanvasElementContainer} from '../dom/replaced-elements/canvas-element-container';
-import {SVGElementContainer} from '../dom/replaced-elements/svg-element-container';
-import {ReplacedElementContainer} from '../dom/replaced-elements/index';
-import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../render/effects';
-import {contains} from './bitwise';
-import {calculateGradientDirection, calculateRadius, processColorStops} from '../css/types/functions/gradient';
-import {FIFTY_PERCENT, getAbsoluteValue} from '../css/types/length-percentage';
-import {TEXT_DECORATION_LINE} from '../css/property-descriptors/text-decoration-line';
-import {FontMetrics} from '../render/font-metrics';
-import {DISPLAY} from '../css/property-descriptors/display';
-import {Bounds} from '../css/layout/bounds';
-import {LIST_STYLE_TYPE} from '../css/property-descriptors/list-style-type';
-import {computeLineHeight} from '../css/property-descriptors/line-height';
-import {CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO} from '../dom/replaced-elements/input-element-container';
-import {TEXT_ALIGN} from '../css/property-descriptors/text-align';
-import {TextareaElementContainer} from '../dom/elements/textarea-element-container';
-import {SelectElementContainer} from '../dom/elements/select-element-container';
-import {IFrameElementContainer} from '../dom/replaced-elements/iframe-element-container';
+import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
+import {contentBox} from '../box-sizing';
+import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
+import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
+import {ReplacedElementContainer} from '../../dom/replaced-elements/index';
+import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../effects';
+import {contains} from '../../core/bitwise';
+import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
+import {FIFTY_PERCENT, getAbsoluteValue} from '../../css/types/length-percentage';
+import {TEXT_DECORATION_LINE} from '../../css/property-descriptors/text-decoration-line';
+import {FontMetrics} from '../font-metrics';
+import {DISPLAY} from '../../css/property-descriptors/display';
+import {Bounds} from '../../css/layout/bounds';
+import {LIST_STYLE_TYPE} from '../../css/property-descriptors/list-style-type';
+import {computeLineHeight} from '../../css/property-descriptors/line-height';
+import {CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO} from '../../dom/replaced-elements/input-element-container';
+import {TEXT_ALIGN} from '../../css/property-descriptors/text-align';
+import {TextareaElementContainer} from '../../dom/elements/textarea-element-container';
+import {SelectElementContainer} from '../../dom/elements/select-element-container';
+import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 
 export interface RenderOptions {
     scale: number;
@@ -53,6 +48,8 @@ export interface RenderOptions {
     scrollY: number;
     width: number;
     height: number;
+    windowWidth: number;
+    windowHeight: number;
     cache: Cache;
 }
 
@@ -297,7 +294,9 @@ export class CanvasRenderer {
                 scrollY: 0,
                 width: container.width,
                 height: container.height,
-                cache: this.options.cache
+                cache: this.options.cache,
+                windowWidth: container.width,
+                windowHeight: container.height
             });
 
             const canvas = await iframeRenderer.render(container.tree);

@@ -5,7 +5,8 @@ import {CloneOptions, DocumentCloner} from '../dom/document-cloner';
 import {isBodyElement, isHTMLElement, parseTree} from '../dom/node-parser';
 import {Logger} from './logger';
 import {CacheStorage} from './cache-storage';
-import {CanvasRenderer, RenderOptions} from './canvas-renderer';
+import {CanvasRenderer, RenderOptions} from '../render/canvas/canvas-renderer';
+import {ForeignObjectRenderer} from '../render/canvas/foreignobject-renderer';
 
 export type Options = CloneOptions &
     RenderOptions & {
@@ -17,8 +18,6 @@ export type Options = CloneOptions &
         proxy?: string;
         removeContainer?: boolean;
         useCORS: boolean;
-        windowWidth: number;
-        windowHeight: number;
     };
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
@@ -93,8 +92,8 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     const documentCloner = new DocumentCloner(element, {
         onclone: options.onclone,
         ignoreElements: options.ignoreElements,
-        inlineImages: false,
-        copyStyles: false
+        inlineImages: options.foreignObjectRendering,
+        copyStyles: options.foreignObjectRendering
     });
     const clonedElement = documentCloner.clonedReferenceElement;
     if (!clonedElement) {
@@ -102,18 +101,6 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     }
 
     const container = await documentCloner.toIFrame(ownerDocument, windowBounds);
-
-    Logger.debug(`Document cloned, using computed rendering`);
-
-    CacheStorage.attachInstance(cache);
-    const root = parseTree(clonedElement);
-    CacheStorage.detachInstance();
-
-    if (backgroundColor === root.styles.backgroundColor) {
-        root.styles.backgroundColor = COLORS.TRANSPARENT;
-    }
-
-    Logger.debug(`Starting renderer`);
 
     const {width, height, left, top} =
         isBodyElement(clonedElement) || isHTMLElement(clonedElement)
@@ -129,11 +116,34 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
         scrollX: options.scrollX,
         scrollY: options.scrollY,
         width: typeof options.width === 'number' ? options.width : Math.ceil(width),
-        height: typeof options.height === 'number' ? options.height : Math.ceil(height)
+        height: typeof options.height === 'number' ? options.height : Math.ceil(height),
+        windowWidth: options.windowWidth,
+        windowHeight: options.windowHeight
     };
 
-    const renderer = new CanvasRenderer(renderOptions);
-    const canvas = await renderer.render(root);
+    let canvas;
+
+    if (options.foreignObjectRendering) {
+        Logger.debug(`Document cloned, using foreign object rendering`);
+        const renderer = new ForeignObjectRenderer(renderOptions);
+        canvas = await renderer.render(clonedElement);
+    } else {
+        Logger.debug(`Document cloned, using computed rendering`);
+
+        CacheStorage.attachInstance(cache);
+        const root = parseTree(clonedElement);
+        CacheStorage.detachInstance();
+
+        if (backgroundColor === root.styles.backgroundColor) {
+            root.styles.backgroundColor = COLORS.TRANSPARENT;
+        }
+
+        Logger.debug(`Starting renderer`);
+
+        const renderer = new CanvasRenderer(renderOptions);
+        canvas = await renderer.render(root);
+    }
+
     if (options.removeContainer === true) {
         cleanContainer(container);
     }
