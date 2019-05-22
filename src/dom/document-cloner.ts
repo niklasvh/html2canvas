@@ -20,6 +20,7 @@ import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/in
 import {getQuote} from '../css/property-descriptors/quotes';
 
 export interface CloneOptions {
+    id: string;
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document) => void;
 }
@@ -141,7 +142,7 @@ export class DocumentCloner {
             }
         } catch (e) {
             // accessing node.sheet.cssRules throws a DOMException
-            Logger.error('Unable to access cssRules property', e);
+            Logger.getInstance(this.options.id).error('Unable to access cssRules property', e);
             if (e.name !== 'SecurityError') {
                 throw e;
             }
@@ -156,7 +157,7 @@ export class DocumentCloner {
                 img.src = canvas.toDataURL();
                 return img;
             } catch (e) {
-                Logger.info(`Unable to clone canvas contents, canvas is tainted`);
+                Logger.getInstance(this.options.id).info(`Unable to clone canvas contents, canvas is tainted`);
             }
         }
 

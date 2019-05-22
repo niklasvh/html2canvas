@@ -37,9 +37,10 @@ import {TEXT_ALIGN} from '../../css/property-descriptors/text-align';
 import {TextareaElementContainer} from '../../dom/elements/textarea-element-container';
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
-import {TextShadow} from "../../css/property-descriptors/text-shadow";
+import {TextShadow} from '../../css/property-descriptors/text-shadow';
 
 export interface RenderOptions {
+    id: string;
     scale: number;
     canvas?: HTMLCanvasElement;
     backgroundColor: Color | null;
@@ -74,7 +75,7 @@ export class CanvasRenderer {
         this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
-        Logger.debug(
+        Logger.getInstance(options.id).debug(
             `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${
                 options.scale
             }`
@@ -172,18 +173,17 @@ export class CanvasRenderer {
             const textShadows: TextShadow = styles.textShadow;
 
             if (textShadows.length && text.text.trim().length) {
-                textShadows.slice(0).reverse().forEach(textShadow => {
-                    this.ctx.shadowColor = asString(textShadow.color);
-                    this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
-                    this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
-                    this.ctx.shadowBlur = textShadow.blur.number;
+                textShadows
+                    .slice(0)
+                    .reverse()
+                    .forEach(textShadow => {
+                        this.ctx.shadowColor = asString(textShadow.color);
+                        this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
+                        this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
+                        this.ctx.shadowBlur = textShadow.blur.number;
 
-                    this.ctx.fillText(
-                        text.text,
-                        text.bounds.left,
-                        text.bounds.top + text.bounds.height
-                    );
-                });
+                        this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+                    });
 
                 this.ctx.shadowColor = '';
                 this.ctx.shadowOffsetX = 0;
@@ -267,7 +267,7 @@ export class CanvasRenderer {
                 const image = await this.options.cache.match(container.src);
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
-                Logger.error(`Error loading image ${container.src}`);
+                Logger.getInstance(this.options.id).error(`Error loading image ${container.src}`);
             }
         }
 
@@ -280,12 +280,13 @@ export class CanvasRenderer {
                 const image = await this.options.cache.match(container.svg);
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
-                Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
+                Logger.getInstance(this.options.id).error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
         }
 
         if (container instanceof IFrameElementContainer && container.tree) {
             const iframeRenderer = new CanvasRenderer({
+                id: this.options.id,
                 scale: this.options.scale,
                 backgroundColor: container.backgroundColor,
                 x: 0,
@@ -399,7 +400,7 @@ export class CanvasRenderer {
                         image = await this.options.cache.match(url);
                         this.ctx.drawImage(image, container.bounds.left - (image.width + 10), container.bounds.top);
                     } catch (e) {
-                        Logger.error(`Error loading list-style-image ${url}`);
+                        Logger.getInstance(this.options.id).error(`Error loading list-style-image ${url}`);
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
@@ -526,7 +527,7 @@ export class CanvasRenderer {
                 try {
                     image = await this.options.cache.match(url);
                 } catch (e) {
-                    Logger.error(`Error loading background-image ${url}`);
+                    Logger.getInstance(this.options.id).error(`Error loading background-image ${url}`);
                 }
 
                 if (image) {

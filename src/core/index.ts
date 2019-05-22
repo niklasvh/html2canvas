@@ -22,8 +22,6 @@ export type Options = CloneOptions &
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
 
-let instance = 1;
-
 const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvasElement> => {
     return renderElement(element, options);
 };
@@ -86,10 +84,12 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
             ? parseColor(options.backgroundColor)
             : null;
 
-    const instanceName = 'html2canvas:' + instance++;
+    const instanceName = (Math.round(Math.random() * 1000) + Date.now()).toString(16);
+    Logger.create(instanceName);
     const cache = CacheStorage.create(instanceName, options);
-
+    Logger.getInstance(instanceName).debug(`Starting document clone`);
     const documentCloner = new DocumentCloner(element, {
+        id: instanceName,
         onclone: options.onclone,
         ignoreElements: options.ignoreElements,
         inlineImages: options.foreignObjectRendering,
@@ -108,6 +108,7 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
             : parseBounds(clonedElement);
 
     const renderOptions = {
+        id: instanceName,
         cache,
         backgroundColor,
         scale: options.scale,
@@ -124,13 +125,14 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     let canvas;
 
     if (options.foreignObjectRendering) {
-        Logger.debug(`Document cloned, using foreign object rendering`);
+        Logger.getInstance(instanceName).debug(`Document cloned, using foreign object rendering`);
         const renderer = new ForeignObjectRenderer(renderOptions);
         canvas = await renderer.render(clonedElement);
     } else {
-        Logger.debug(`Document cloned, using computed rendering`);
+        Logger.getInstance(instanceName).debug(`Document cloned, using computed rendering`);
 
         CacheStorage.attachInstance(cache);
+        Logger.getInstance(instanceName).debug(`Starting DOM parsing`);
         const root = parseTree(clonedElement);
         CacheStorage.detachInstance();
 
@@ -138,23 +140,28 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
             root.styles.backgroundColor = COLORS.TRANSPARENT;
         }
 
-        Logger.debug(`Starting renderer`);
+        Logger.getInstance(instanceName).debug(`Starting renderer`);
 
         const renderer = new CanvasRenderer(renderOptions);
         canvas = await renderer.render(root);
     }
 
     if (options.removeContainer === true) {
-        cleanContainer(container);
+        if (!cleanContainer(container)) {
+            Logger.getInstance(instanceName).error(`Cannot detach cloned iframe as it is not in the DOM anymore`);
+        }
     }
+
+    Logger.getInstance(instanceName).debug(`Finished rendering`);
+    Logger.destroy(instanceName);
 
     return canvas;
 };
 
-const cleanContainer = (container: HTMLIFrameElement): void => {
+const cleanContainer = (container: HTMLIFrameElement): boolean => {
     if (container.parentNode) {
         container.parentNode.removeChild(container);
-    } else {
-        Logger.error(`Cannot detach cloned iframe as it is not in the DOM anymore`);
+        return true;
     }
+    return false;
 };

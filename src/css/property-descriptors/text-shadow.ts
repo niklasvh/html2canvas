@@ -2,7 +2,7 @@ import {PropertyDescriptorParsingType, IPropertyListDescriptor} from '../IProper
 import {CSSValue, isIdentWithValue, parseFunctionArgs} from '../syntax/parser';
 import {ZERO_LENGTH} from '../types/length-percentage';
 import {color, Color, COLORS} from '../types/color';
-import {isLength, Length} from "../types/length";
+import {isLength, Length} from '../types/length';
 
 export type TextShadow = TextShadowItem[];
 interface TextShadowItem {

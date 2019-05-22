@@ -19,7 +19,7 @@ export class ForeignObjectRenderer {
 
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
-        Logger.debug(
+        Logger.getInstance(options.id).debug(
             `EXPERIMENTAL ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${
                 options.y
             }) with scale ${options.scale}`

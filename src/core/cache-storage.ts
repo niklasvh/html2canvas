@@ -8,7 +8,7 @@ export class CacheStorage {
     private static _current: Cache | null = null;
 
     static create(name: string, options: ResourceOptions): Cache {
-        return (CacheStorage._caches[name] = new Cache(options));
+        return (CacheStorage._caches[name] = new Cache(name, options));
     }
 
     static open(name: string): Cache {
@@ -68,8 +68,10 @@ export class Cache {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private readonly _cache: {[key: string]: Promise<any>};
     private readonly _options: ResourceOptions;
+    private readonly id: string;
 
-    constructor(options: ResourceOptions) {
+    constructor(id: string, options: ResourceOptions) {
+        this.id = id;
         this._options = options;
         this._cache = {};
     }
@@ -112,7 +114,7 @@ export class Cache {
             src = await this.proxy(src);
         }
 
-        Logger.debug(`Added image ${key.substring(0, 256)}`);
+        Logger.getInstance(this.id).debug(`Added image ${key.substring(0, 256)}`);
 
         return await new Promise((resolve, reject) => {
             const img = new Image();
