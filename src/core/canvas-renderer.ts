@@ -41,6 +41,7 @@ import {CHECKBOX, INPUT_COLOR, InputElementContainer, RADIO} from '../dom/replac
 import {TEXT_ALIGN} from '../css/property-descriptors/text-align';
 import {TextareaElementContainer} from '../dom/elements/textarea-element-container';
 import {SelectElementContainer} from '../dom/elements/select-element-container';
+import {IFrameElementContainer} from '../dom/replaced-elements/iframe-element-container';
 
 export interface RenderOptions {
     scale: number;
@@ -284,6 +285,33 @@ export class CanvasRenderer {
             } catch (e) {
                 Logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
+        }
+
+        if (container instanceof IFrameElementContainer && container.tree) {
+            const iframeRenderer = new CanvasRenderer({
+                scale: this.options.scale,
+                backgroundColor: container.backgroundColor,
+                x: 0,
+                y: 0,
+                scrollX: 0,
+                scrollY: 0,
+                width: container.width,
+                height: container.height,
+                cache: this.options.cache
+            });
+
+            const canvas = await iframeRenderer.render(container.tree);
+            this.ctx.drawImage(
+                canvas,
+                0,
+                0,
+                container.width,
+                container.width,
+                container.bounds.left,
+                container.bounds.top,
+                container.bounds.width,
+                container.bounds.height
+            );
         }
 
         if (container instanceof InputElementContainer) {

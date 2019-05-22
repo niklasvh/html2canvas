@@ -9,6 +9,7 @@ import {OLElementContainer} from './elements/ol-element-container';
 import {InputElementContainer} from './replaced-elements/input-element-container';
 import {SelectElementContainer} from './elements/select-element-container';
 import {TextareaElementContainer} from './elements/textarea-element-container';
+import {IFrameElementContainer} from './replaced-elements/iframe-element-container';
 
 const LIST_OWNERS = ['OL', 'UL', 'MENU'];
 
@@ -71,6 +72,10 @@ const createContainer = (element: Element): ElementContainer => {
 
     if (isTextareaElement(element)) {
         return new TextareaElementContainer(element);
+    }
+
+    if (isIFrameElement(element)) {
+        return new IFrameElementContainer(element);
     }
 
     return new ElementContainer(element);
