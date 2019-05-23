@@ -1,5 +1,6 @@
 import {CacheStorage} from '../cache-storage';
 import {URL} from 'url';
+import {Logger} from '../logger';
 
 export const proxy = 'http://example.com/proxy';
 
@@ -33,6 +34,7 @@ export const createMockContext = (origin: string, opts = {}) => {
     };
 
     CacheStorage.setContext(context as Window);
+    Logger.create('test');
     return CacheStorage.create('test', {
         imageTimeout: 0,
         useCORS: false,

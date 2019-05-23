@@ -6,7 +6,7 @@ const parse = (value: string) => color.parse(Parser.parseValue(value));
 
 describe('types', () => {
     describe('<color>', () => {
-        describe.only('parsing', () => {
+        describe('parsing', () => {
             it('#000', () => strictEqual(parse('#000'), pack(0, 0, 0, 1)));
             it('#0000', () => strictEqual(parse('#0000'), pack(0, 0, 0, 0)));
             it('#000f', () => strictEqual(parse('#000f'), pack(0, 0, 0, 1)));
