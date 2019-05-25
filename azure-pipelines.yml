@@ -51,9 +51,7 @@ jobs:
       displayName: Build
     - script: npm run lint
       displayName: Lint
-    - script: npm run flow
-      displayName: Flow
-    - script: npm run test:node
+    - script: npm run unittest
       displayName: Unit tests
 
   - template: ci/browser-tests.yml
@@ -88,10 +86,10 @@ jobs:
 
   - template: ci/browser-tests.yml
     parameters:
-      name: Browser_Tests_OSX_Safari_IOS_11
-      displayName: iOS Simulator Safari 11
+      name: Browser_Tests_OSX_Safari_IOS_12
+      displayName: iOS Simulator Safari 12
       vmImage: 'macOS-10.13'
-      targetBrowser: Safari_IOS_11
+      targetBrowser: Safari_IOS_12
 
   - template: ci/browser-tests.yml
     parameters:
@@ -130,7 +128,7 @@ jobs:
       - Browser_Tests_Linux_Chrome_Stable
       - Browser_Tests_OSX_Safari_IOS_9
       - Browser_Tests_OSX_Safari_IOS_10
-      - Browser_Tests_OSX_Safari_IOS_11
+      - Browser_Tests_OSX_Safari_IOS_12
       - Browser_Tests_OSX_Safari_Stable
       - Browser_Tests_Windows_IE9
       - Browser_Tests_Windows_IE10
@@ -153,7 +151,7 @@ jobs:
       inputs:
         artifactName: dist
         downloadPath: $(System.DefaultWorkingDirectory)
-    - script: cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp -R ReftestResults ./www/static/results
+    - script: cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp tests/test.js www/static/tests/test.js && cp -R ReftestResults ./www/static/results
       displayName: Copy reftests to docs website
     - script: cp -R dist ./www/static/dist
       displayName: Copy dist to docs website

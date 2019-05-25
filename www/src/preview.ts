@@ -1,4 +1,4 @@
-import * as results from './results.json' ;
+import * as results from './results.json';
 const testList: TestList = results;
 
 const testSelector: HTMLSelectElement | null = document.querySelector('#test_selector');
@@ -12,10 +12,10 @@ interface Test {
     platform: {
         name: string;
         version: string;
-    }
-    "devicePixelRatio": number;
-    "id": string;
-    "screenshot": string;
+    };
+    devicePixelRatio: number;
+    id: string;
+    screenshot: string;
 }
 
 type TestList = {[key: string]: Test[]};
@@ -76,7 +76,10 @@ window.addEventListener('keydown', e => {
             browserSelector.dispatchEvent(event);
             e.preventDefault();
         } else if (e.keyCode === RIGHT_ARROW) {
-            browserSelector.selectedIndex = Math.min(browserSelector.children.length - 1, browserSelector.selectedIndex + 1);
+            browserSelector.selectedIndex = Math.min(
+                browserSelector.children.length - 1,
+                browserSelector.selectedIndex + 1
+            );
             const event = new Event('change');
             browserSelector.dispatchEvent(event);
             e.preventDefault();
@@ -85,21 +88,29 @@ window.addEventListener('keydown', e => {
 });
 
 if (testSelector && browserSelector) {
-    testSelector.addEventListener('change', () => {
-        selectTest(testSelector.value);
-    }, false);
+    testSelector.addEventListener(
+        'change',
+        () => {
+            selectTest(testSelector.value);
+        },
+        false
+    );
 
-    browserSelector.addEventListener('change', () => {
-        testList[testSelector.value].some(browser => {
-            if (browser.id === browserSelector.value) {
-                if (browser) {
-                    onBrowserChange(browser);
+    browserSelector.addEventListener(
+        'change',
+        () => {
+            testList[testSelector.value].some(browser => {
+                if (browser.id === browserSelector.value) {
+                    if (browser) {
+                        onBrowserChange(browser);
+                    }
+                    return true;
                 }
-                return true;
-            }
-            return false;
-        });
-    }, false);
+                return false;
+            });
+        },
+        false
+    );
 
     const tests: string[] = Object.keys(testList);
     tests.forEach((testName, i) => {

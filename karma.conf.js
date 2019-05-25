@@ -20,10 +20,10 @@ module.exports = function(config) {
             name: 'iPhone 5s',
             sdk: '10.0'
         },
-        Safari_IOS_11: {
+        Safari_IOS_12: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
-            sdk: '11.4'
+            sdk: '12.1'
         },
         SauceLabs_IE9: {
             base: 'SauceLabs',
@@ -132,6 +132,7 @@ module.exports = function(config) {
 
                 if (!d) {
                     log.error(`No device found for sdk ${args.sdk} with name ${args.name}`);
+                    log.info(`Available devices:`, devices);
                     this._process.kill();
                     return;
                 }
@@ -172,7 +173,6 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'build/testrunner.js',
-            'build/RefTestRenderer.js',
             { pattern: './tests/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './dist/**/*', 'watched': true, 'included': false, 'served': true},
             { pattern: './node_modules/**/*', 'watched': true, 'included': false, 'served': true},

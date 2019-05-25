@@ -19,3 +19,4 @@ karma.js
 karma.conf.js
 rollup.config.js
 webpack.config.js
+.rpt2_cache

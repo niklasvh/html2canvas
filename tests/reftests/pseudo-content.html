@@ -1,104 +1,167 @@
 <!doctype html>
 <html>
-	<head>
-        <script type="text/javascript" src="../test.js"></script>
+<head>
+    <script type="text/javascript" src="../test.js"></script>
 
-		<style>
-			body {
-				quotes: "<{" "}>" "->" "<-" "(" ")" "-:" ":-";
-			}
+    <style>
+        body {
+            quotes: "<{" "}>" "->" "<-" "(" ")" "-:" ":-";
+        }
 
-			.counter1,
-			.counter2,
-			.quotes1,
-			.attr-url {
-				border: 1px solid deepskyblue;
-				padding: 5px;
-				margin-bottom: 10px;			
-			}
+        .counter1,
+        .counter2,
+        .quotes1,
+        .attr-url {
+            border: 1px solid deepskyblue;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
 
-			.counter1 {
-				counter-reset: c1 3;
-			}
+        .counter1 {
+            counter-reset: c1 3;
+        }
 
-			.counter1 > div::before {
-				content: "«\"" counter(c1) "\»";
-				counter-increment: c1 -1;
-			}
+        .counter1 > div::before {
+            content: "«\"" counter(c1) "\»";
+            counter-increment: c1 -1;
+        }
 
-			.counter2 {
-				counter-reset: c2;
-			}
+        .counter2 {
+            counter-reset: c2;
+        }
 
-			.counter2 > div::before {
-				content: "["counters(c2, " < ", upper-roman) ']';
-				counter-increment: c2 2;
-			}
+        .counter2 > div::before {
+            content: "["counters(c2, " < ", upper-roman) ']';
+            counter-increment: c2 2;
+        }
 
-			.quotes1::before {
-				content: open-quote "!" open-quote close-quote open-quote;
-			}
+        .counter-divs {
+            counter-reset: c5 3;
+        }
 
-			.quotes1::after {
-				content: "!" close-quote close-quote;
-			}
+        .counter-divs div {
+            counter-increment: c5 1;
+        }
 
-			.quotes2 {
-				quotes: "«" "»" "“" "”";
-			}
+        .counter-divs > div::before {
+            content: "["counter(c5) ']';
+            counter-increment: c5 2;
+        }
 
-			.quotes2::before {
-				content: open-quote;
-			}
+        .quotes1::before {
+            content: open-quote "!" open-quote close-quote open-quote;
+        }
 
-			.quotes2::after {
-				content: close-quote;
-			}
+        .quotes1::after {
+            content: "!" close-quote close-quote;
+        }
 
-			.attr-url > div::after {
-				content: url(../assets/image.jpg) "///" attr(data-text);
-			}
-		</style>
-	</head>
-	<body>
-		<div class="counter1">
-			<div>A</div>
-			<div>B</div>
-			<div>C</div>
-			<div>D</div>
-		</div>
+        .quotes2 {
+            quotes: "«" "»" "“" "”";
+        }
 
-		<div class="counter2">
-			<div>A</div>
-			<div>B</div>
-			<div>
-				C
-				<div class="counter2">
-					<div>a</div>
-					<div>b</div>
-					<div>
-						c
-						<div class="counter2">
-							<div>Aa</div>
-							<div>Bb</div>
-							<div>Cc</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div>D</div>
-		</div>
+        .quotes2::before {
+            content: open-quote;
+        }
 
-		<div class="quotes1">
-			Hello
-			<div class="quotes2">
-				Quoted
-				<div class="quotes2">World</div>
-			</div>
-		</div>
+        .quotes2::after {
+            content: close-quote close-quote close-quote close-quote;
+        }
 
-		<div class="attr-url">
-			<div data-text="Hello World"></div>
-		</div>
-	</body>
+        .attr-url > div::after {
+            content: url(../assets/image.jpg) "///" attr(data-text);
+        }
+
+        ol {
+            counter-reset: section;                /* Creates a new instance of the
+                                            section counter with each ol
+                                            element */
+            list-style-type: none;
+        }
+
+        li::before {
+            counter-increment: section;            /* Increments only this instance
+                                            of the section counter */
+            content: counters(section, ".") " ";   /* Combines the values of all instances
+                                            of the section counter, separated
+                                            by a period */
+        }
+    </style>
+</head>
+<body>
+<div class="counter1">
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+</div>
+
+<div class="counter2">
+    <div>A</div>
+    <div>B</div>
+    <div>
+        C
+        <div class="counter2">
+            <div>a</div>
+            <div>b</div>
+            <div>
+                c
+                <div class="counter2">
+                    <div>Aa</div>
+                    <div>Bb</div>
+                    <div>Cc</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>D</div>
+</div>
+
+<div class="quotes1">
+    Hello
+    <div class="quotes2">
+        Quoted
+        <div class="quotes2">World</div>
+    </div>
+</div>
+
+<div class="attr-url">
+    <div data-text="Hello World"></div>
+</div>
+
+<div class="counter-divs">
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+</div>
+<ol>
+    <li>item</li>          <!-- 1     -->
+    <li>item               <!-- 2     -->
+        <ol>
+            <li>item</li>      <!-- 2.1   -->
+            <li>item</li>      <!-- 2.2   -->
+            <li>item           <!-- 2.3   -->
+                <ol>
+                    <li>item</li>  <!-- 2.3.1 -->
+                    <li>item</li>  <!-- 2.3.2 -->
+                </ol>
+                <ol>
+                    <li>item</li>  <!-- 2.3.1 -->
+                    <li>item</li>  <!-- 2.3.2 -->
+                    <li>item</li>  <!-- 2.3.3 -->
+                </ol>
+            </li>
+            <li>item</li>      <!-- 2.4   -->
+        </ol>
+    </li>
+    <li>item</li>          <!-- 3     -->
+    <li>item</li>          <!-- 4     -->
+</ol>
+<ol>
+    <li>item</li>          <!-- 1     -->
+    <li>item</li>          <!-- 2     -->
+</ol>
+
+</body>
 </html>
