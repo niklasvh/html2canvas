@@ -1,12 +1,12 @@
-import {Bounds, parseBounds, parseDocumentSize} from '../css/layout/bounds';
-import {color, Color, COLORS, isTransparent} from '../css/types/color';
-import {Parser} from '../css/syntax/parser';
-import {CloneOptions, DocumentCloner} from '../dom/document-cloner';
-import {isBodyElement, isHTMLElement, parseTree} from '../dom/node-parser';
-import {Logger} from './logger';
-import {CacheStorage} from './cache-storage';
-import {CanvasRenderer, RenderOptions} from '../render/canvas/canvas-renderer';
-import {ForeignObjectRenderer} from '../render/canvas/foreignobject-renderer';
+import {Bounds, parseBounds, parseDocumentSize} from './css/layout/bounds';
+import {color, Color, COLORS, isTransparent} from './css/types/color';
+import {Parser} from './css/syntax/parser';
+import {CloneOptions, DocumentCloner} from './dom/document-cloner';
+import {isBodyElement, isHTMLElement, parseTree} from './dom/node-parser';
+import {Logger} from './core/logger';
+import {CacheStorage} from './core/cache-storage';
+import {CanvasRenderer, RenderOptions} from './render/canvas/canvas-renderer';
+import {ForeignObjectRenderer} from './render/canvas/foreignobject-renderer';
 
 export type Options = CloneOptions &
     RenderOptions & {
@@ -154,7 +154,7 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
 
     Logger.getInstance(instanceName).debug(`Finished rendering`);
     Logger.destroy(instanceName);
-
+    CacheStorage.destroy(instanceName);
     return canvas;
 };
 

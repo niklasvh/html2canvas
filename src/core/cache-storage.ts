@@ -11,6 +11,10 @@ export class CacheStorage {
         return (CacheStorage._caches[name] = new Cache(name, options));
     }
 
+    static destroy(name: string): void {
+        delete CacheStorage._caches[name];
+    }
+
     static open(name: string): Cache {
         const cache = CacheStorage._caches[name];
         if (typeof cache !== 'undefined') {

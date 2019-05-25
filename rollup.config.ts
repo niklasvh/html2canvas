@@ -13,7 +13,7 @@ const banner = `/*!
  */`;
 
 export default {
-    input: `src/core/index.ts`,
+    input: `src/index.ts`,
     output: [
         { file: pkg.main, name: pkg.name, format: 'umd', banner, sourcemap: true },
         { file: pkg.module, format: 'esm', banner, sourcemap: true },
@@ -33,10 +33,7 @@ export default {
         typescript({ useTsconfigDeclarationDir: true }),
         // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
         commonjs({
-            include: 'node_modules/**',
-            namedModules: {
-                'node_modules/css-line-break/dist/index.js': ['fromCodePoint', 'toCodePoints']
-            }
+            include: 'node_modules/**'
         }),
 
         // Resolve source maps to the original source

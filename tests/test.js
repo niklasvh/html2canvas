@@ -141,7 +141,7 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
                         logging: true,
                         proxy: 'http://localhost:8081/proxy',
                         useCORS: false,
-                        removeContainer: false
+                        removeContainer: true
                     },
                     h2cOptions,
                     REFTEST ? {windowWidth: 800, windowHeight: 600} : {}

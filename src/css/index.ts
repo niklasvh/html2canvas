@@ -255,7 +255,8 @@ export class CSSParsedCounterDeclaration {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) => {
     const tokenizer = new Tokenizer();
-    tokenizer.write(style !== null && typeof style !== 'undefined' ? style.toString() : descriptor.initialValue);
+    const value = style !== null && typeof style !== 'undefined' ? style.toString() : descriptor.initialValue;
+    tokenizer.write(value);
     const parser = new Parser(tokenizer.read());
     switch (descriptor.type) {
         case PropertyDescriptorParsingType.IDENT_VALUE:
