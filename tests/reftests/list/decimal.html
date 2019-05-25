@@ -8,7 +8,7 @@
     <script type="text/javascript">
       function setUp() {
         var supportedTypes = ["decimal","decimal-leading-zero","upper-roman","lower-roman","lower-alpha","upper-alpha"];
-        for (var i = 1;i<=15;i++){
+        for (var i = 1;i<=15;i+=3){
           $('#dynamic').append($('<li />').text(i).css('list-style-type',supportedTypes[0]));
         }
       }
