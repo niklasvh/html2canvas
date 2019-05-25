@@ -6,6 +6,16 @@
         "noUnusedParameters": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
-        "resolveJsonModule": true
-    }
+        "resolveJsonModule": true,
+        "typeRoots": [ "./types", "./node_modules/@types"],
+        "target": "es5",
+        "lib": ["es2015", "dom"],
+        "sourceMap": true,
+        "outDir": "dist/lib",
+        "declaration": true,
+        "declarationDir": "dist/types"
+    },
+    "include": [
+        "src"
+    ]
 }
