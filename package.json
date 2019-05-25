@@ -89,7 +89,7 @@
   },
   "scripts": {
     "prebuild": "rimraf dist/ && rimraf build/ && mkdirp dist && mkdirp build",
-    "build": "rollup -c rollup.config.ts && npm run build:create-reftest-list && npm run build:testrunner && npm run build:minify",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && npm run build:create-reftest-list && npm run build:testrunner && npm run build:minify",
     "build:testrunner": "rollup -c tests/rollup.config.ts",
     "build:npm": "babel src/ -d dist/npm/ --plugins=dev-expression && replace-in-file __VERSION__ '\"$npm_package_version\"' dist/npm/index.js",
     "build:browser": "webpack",
