@@ -6,7 +6,7 @@
   "author": "Niklas von Hertzen",
   "dependencies": {
     "cpy-cli": "^2.0.0",
-    "gatsby": "^2.3.14",
+    "gatsby": "^2.7.1",
     "gatsby-link": "^2.0.16",
     "gatsby-plugin-catch-links": "^2.0.13",
     "gatsby-plugin-glamor": "^2.0.9",
