@@ -151,7 +151,7 @@ jobs:
       inputs:
         artifactName: dist
         downloadPath: $(System.DefaultWorkingDirectory)
-    - script: cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp -R ReftestResults ./www/static/results
+    - script: cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp tests/test.js www/static/tests/test.js && cp -R ReftestResults ./www/static/results
       displayName: Copy reftests to docs website
     - script: cp -R dist ./www/static/dist
       displayName: Copy dist to docs website
