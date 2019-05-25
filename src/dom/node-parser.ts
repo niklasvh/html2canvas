@@ -33,7 +33,7 @@ const parseNodeTree = (node: Node, parent: ElementContainer, root: ElementContai
                 }
 
                 parent.elements.push(container);
-                if (!isTextareaElement(childNode) && !isSVGElement(childNode)) {
+                if (!isTextareaElement(childNode) && !isSVGElement(childNode) && !isSelectElement(childNode)) {
                     parseNodeTree(childNode, container, root);
                 }
             }
