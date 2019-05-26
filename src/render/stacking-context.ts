@@ -48,7 +48,7 @@ export class ElementPaint {
             this.effects.push(new TransformEffect(offsetX, offsetY, matrix));
         }
 
-        if (element.styles.overflow !== OVERFLOW.VISIBLE) {
+        if (element.styles.overflowX !== OVERFLOW.VISIBLE) {
             const borderBox = calculateBorderBoxPath(this.curves);
             const paddingBox = calculatePaddingBoxPath(this.curves);
 
@@ -63,7 +63,7 @@ export class ElementPaint {
 
     getParentEffects(): IElementEffect[] {
         const effects = this.effects.slice(0);
-        if (this.container.styles.overflow !== OVERFLOW.VISIBLE) {
+        if (this.container.styles.overflowX !== OVERFLOW.VISIBLE) {
             const borderBox = calculateBorderBoxPath(this.curves);
             const paddingBox = calculatePaddingBoxPath(this.curves);
             if (!equalPath(borderBox, paddingBox)) {
