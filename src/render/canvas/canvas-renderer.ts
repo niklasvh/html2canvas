@@ -5,7 +5,7 @@ import {ElementContainer} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css/index';
 import {TextContainer} from '../../dom/text-container';
-import {Path} from '../path';
+import {Path, transformPath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
 import {isBezierCurve} from '../bezier-curve';
@@ -54,6 +54,8 @@ export interface RenderOptions {
     windowHeight: number;
     cache: Cache;
 }
+
+const MASK_OFFSET = 10000;
 
 export class CanvasRenderer {
     canvas: HTMLCanvasElement;
@@ -471,9 +473,24 @@ export class CanvasRenderer {
         }
     }
 
+    mask(paths: Path[]) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(this.canvas.width, 0);
+        this.ctx.lineTo(this.canvas.width, this.canvas.height);
+        this.ctx.lineTo(0, this.canvas.height);
+        this.ctx.lineTo(0, 0);
+        this.formatPath(paths.slice(0).reverse());
+        this.ctx.closePath();
+    }
+
     path(paths: Path[]) {
         this.ctx.beginPath();
+        this.formatPath(paths);
+        this.ctx.closePath();
+    }
 
+    formatPath(paths: Path[]) {
         paths.forEach((point, index) => {
             const start: Vector = isBezierCurve(point) ? point.start : point;
             if (index === 0) {
@@ -493,8 +510,6 @@ export class CanvasRenderer {
                 );
             }
         });
-
-        this.ctx.closePath();
     }
 
     renderRepeat(path: Path[], pattern: CanvasPattern | CanvasGradient, offsetX: number, offsetY: number) {
@@ -626,7 +641,7 @@ export class CanvasRenderer {
             paint.curves
         );
 
-        if (hasBackground) {
+        if (hasBackground || styles.boxShadow.length) {
             this.ctx.save();
             this.path(backgroundPaintingArea);
             this.ctx.clip();
@@ -639,6 +654,41 @@ export class CanvasRenderer {
             await this.renderBackgroundImage(paint.container);
 
             this.ctx.restore();
+
+            styles.boxShadow
+                .slice(0)
+                .reverse()
+                .forEach(shadow => {
+                    this.ctx.save();
+                    const borderBoxArea = calculateBorderBoxPath(paint.curves);
+                    const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
+                    const shadowPaintingArea = transformPath(
+                        borderBoxArea,
+                        -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.spread.number * (shadow.inset ? -2 : 2),
+                        shadow.spread.number * (shadow.inset ? -2 : 2)
+                    );
+
+                    if (shadow.inset) {
+                        this.path(borderBoxArea);
+                        this.ctx.clip();
+                        this.mask(shadowPaintingArea);
+                    } else {
+                        this.mask(borderBoxArea);
+                        this.ctx.clip();
+                        this.path(shadowPaintingArea);
+                    }
+
+                    this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
+                    this.ctx.shadowOffsetY = shadow.offsetY.number;
+                    this.ctx.shadowColor = asString(shadow.color);
+                    this.ctx.shadowBlur = shadow.blur.number;
+                    this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
+
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
         }
 
         let side = 0;

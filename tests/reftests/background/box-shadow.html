@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>box-shadow tests</title>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        .boxshadow {
+            margin: 10px;
+            display: inline-block;
+            min-height: 50px;
+       //     border-radius: 10px;
+        }
+
+        body {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+<div style="box-shadow: 0 0 0 0.5em;" class="boxshadow">0 0 0 0.5em;</div>
+<div style="box-shadow: 0 0 1em;" class="boxshadow">0 0 1em;</div>
+<div style="box-shadow: 1em 0.5em;" class="boxshadow">1em 0.5em;</div>
+<div style="box-shadow: 1em 0.5em 1em;" class="boxshadow">1em 0.5em 1em;</div>
+<div style="box-shadow: 0 2em 1em -0.7em;" class="boxshadow">0 2em 1em -0.7em;</div>
+<div style="box-shadow: 0.3em 0.3em lightgreen;" class="boxshadow">0.3em 0.3em lightgreen;</div>
+<div style="box-shadow: 0.3em 0.3em 0 0.6em lightgreen;" class="boxshadow">0.3em 0.3em 0 0.6em lightgreen;</div>
+<div style="box-shadow: 0 2em 0 -0.9em lightgreen;" class="boxshadow">0 2em 0 -0.9em lightgreen;</div>
+<div style="box-shadow: 2em 1.5em 0 -0.7em lightgreen;" class="boxshadow">2em 1.5em 0 -0.7em lightgreen;</div>
+<div style="box-shadow: 9em 1.2em 0 -0.6em lightgreen;" class="boxshadow">9em 1.2em 0 -0.6em lightgreen;</div>
+<div style="box-shadow: -27.3em 0 lightgreen;" class="boxshadow">-27.3em 0 lightgreen;</div>
+<div style="box-shadow: 0 2em 0 -1em lightgreen;" class="boxshadow">0 2em 0 -1em lightgreen;</div>
+<div style="box-shadow: 0 0 1em maroon;" class="boxshadow">0 0 1em maroon;</div>
+<div style="box-shadow: 0 0 1em 0.5em maroon;" class="boxshadow">0 0 1em 0.5em maroon;</div>
+<div style="margin-top:3em;box-shadow: 0 0 1em 1em maroon;" class="boxshadow">0 0 1em 1em maroon;</div>
+<div style="box-shadow: -0.4em -0.4em 1em olive;" class="boxshadow">-0.4em -0.4em 1em olive;</div>
+<div style="box-shadow: 0.4em 0.4em 1em olive;" class="boxshadow">0.4em 0.4em 1em olive;</div>
+<div style="box-shadow: 0.4em 0.4em 1em -0.2em olive;" class="boxshadow">0.4em 0.4em 1em -0.2em olive;</div>
+<div style="box-shadow: 0.4em 0.4em 1em 0.4em olive;" class="boxshadow">0.4em 0.4em 1em 0.4em olive;</div>
+<div style="box-shadow: 0 1.5em 0.5em -1em olive;" class="boxshadow">0 1.5em 0.5em -1em olive;</div>
+<div style="box-shadow: inset 0.2em 0.4em red, inset -1em -0.7em red;" class="boxshadow">inset 0.2em 0.4em red, inset
+    -1em -0.7em red;
+</div>
+<div style="box-shadow: inset 11em 0 red;" class="boxshadow">inset 11em 0 red;</div>
+<div style="box-shadow: inset -1em 0 red;" class="boxshadow">inset -1em 0 red;</div>
+<div style="box-shadow: inset 13em 0 3em -3em orange, inset -3em 0 3em -3em blue;" class="boxshadow">inset 13em 0 3em
+    -3em orange,inset -3em 0 3em -3em blue;
+</div>
+<div style="box-shadow: inset 11em 0 2em orange;" class="boxshadow">inset 11em 0 2em orange;</div>
+<div style="box-shadow: inset 0 0.3em red;" class="boxshadow">inset 0 0.3em red;</div>
+<div style="box-shadow: inset 0 -1.1em red;" class="boxshadow">inset 0 -1.1em red;</div>
+<div style="box-shadow: inset 1em 0 1em -1em blue;" class="boxshadow">inset 1em 0 1em -1em blue;</div>
+<div style="box-shadow: inset 0 0 0.5em blue;" class="boxshadow">inset 0 0 0.5em blue;</div>
+<div style="box-shadow: inset 0 0 2em blue;" class="boxshadow">inset 0 0 2em blue;</div>
+<div style="box-shadow: inset 0 2em 3em -1em green;" class="boxshadow">inset 0 2em 3em -1em green;</div>
+<div style="box-shadow: inset 0 2em 3em -2em green;" class="boxshadow">inset 0 2em 3em -2em green;</div>
+<div style="box-shadow: inset 0 2em 3em -3em green;" class="boxshadow">inset 0 2em 3em -3em green;</div>
+<div style="box-shadow: inset 0 0 1em khaki;" class="boxshadow">inset 0 0 1em khaki;</div>
+<div style="box-shadow: inset 0 0 1em khaki, inset 0 0 1em khaki, inset 0 0 1em khaki, inset 0 0 1em khaki;"
+     class="boxshadow">inset 0 0 1em khaki, inset 0 0 1em khaki, inset 0 0 1em khaki, inset 0 0 1em khaki;
+</div>
+<div style="box-shadow: inset 0 0 0.5em 0.5em khaki;" class="boxshadow">inset 0 0 0.5em 0.5em khaki;</div>
+<div class="boxshadow">/* seamless if &lt;blur-radius> ≤ &lt;spread-radius> */</div>
+<div style="box-shadow: inset 0 0 0.5em 0.5em khaki;background:black;color:gold;" class="boxshadow">inset 0 0 0.5em
+    0.5em khaki;
+</div>
+<div style="box-shadow: inset 0 0 2em 2em khaki;background:red;padding:2em;" class="boxshadow">inset 0 0 2em 2em
+    khaki;
+</div>
+<div style="box-shadow: 0 0 0.5em 0.5em teal;background:teal;color:gold;" class="boxshadow">0 0 0.5em 0.5em teal;</div>
+<div style="box-shadow: inset 0 0 0.5em 0.5em indigo, 0 0 0.5em 0.5em indigo;padding:1em;margin-top:3em;"
+     class="boxshadow">inset 0 0 0.5em 0.5em indigo,
+    0 0 0.5em 0.5em indigo;
+</div>
+<div style="box-shadow: inset 0 0 1em black, inset 0 0 1em black, inset 0 0 1em black, inset 0 0 1em black;"
+     class="boxshadow">inset 0 0 1em black, inset 0 0 1em black,
+    inset 0 0 1em black, inset 0 0 1em black;
+</div>
+<div style="box-shadow: inset 0 0 0.7em 0.5em black;" class="boxshadow">inset 0 0 0.7em 0.5em black;
+    /* should be very similar to above */
+</div>
+<div style="box-shadow: inset 0 2em 3em -1.5em green, inset 0 -2em 3em -2em blue;" class="boxshadow">inset 0 2em 3em
+    -1.5em green,
+    inset 0 -2em 3em -2em blue;
+</div>
+<div style="box-shadow: inset 1em 1em 2em -1em blue;" class="boxshadow">inset 1em 1em 2em -1em blue;</div>
+<div style="box-shadow: inset 1em 1em 2em -1em blue, inset -1em -1em 2em -1em red;" class="boxshadow">inset 1em 1em 2em
+    -1em blue,
+    inset -1em -1em 2em -1em red;
+</div>
+<div style="box-shadow: inset 0 2em 3em -2em white, inset 0 -2em 3em -2.5em black;background:red;" class="boxshadow">
+    inset 0 2em 3em -2em white,
+    inset 0 -2em 3em -2.5em black;
+</div>
+<div style="box-shadow: inset 1em 1em 1em -1em white, inset -1em -1em 1em -1em black;background:red;" class="boxshadow">
+    inset 1em 1em 1em -1em white,
+    inset -1em -1em 1em -1em black;
+</div>
+<div style="box-shadow: inset -1em -1em 1em -1em black, inset 1em 1em 1em -1em white;background:red;" class="boxshadow">
+    inset -1em -1em 1em -1em black,
+    inset 1em 1em 1em -1em white;
+</div>
+<div
+    style="box-shadow: inset -0.3em -0.3em 0.6em rgba(0,0,0,0.5), inset 0.3em 0.3em 0.6em rgba(256,256,256,0.7);background:red;"
+    class="boxshadow">inset -0.3em -0.3em 0.6em rgba(0,0,0,0.5),
+    inset 0.3em 0.3em 0.6em rgba(256,256,256,0.7);
+</div>
+<div
+    style="box-shadow: inset 0.3em 0.3em 0.6em rgba(256,256,256,0.5), inset -0.3em -0.3em 0.6em rgba(0,0,0,0.5);background:red;"
+    class="boxshadow">inset 0.3em 0.3em 0.6em rgba(256,256,256,0.5),
+    inset -0.3em -0.3em 0.6em rgba(0,0,0,0.5);
+</div>
+<div style="box-shadow: 0.2em 0.2em 0.7em black, inset 0 0 0.7em red;" class="boxshadow">0.2em 0.2em 0.7em black, inset
+    0 0 0.7em red;
+</div>
+
+</body>
+</html>
