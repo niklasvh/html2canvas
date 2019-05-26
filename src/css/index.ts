@@ -72,6 +72,7 @@ import {content} from './property-descriptors/content';
 import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
+import {boxShadow} from './property-descriptors/box-shadow';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -97,6 +98,7 @@ export class CSSParsedDeclaration {
     borderRightWidth: ReturnType<typeof borderRightWidth.parse>;
     borderBottomWidth: ReturnType<typeof borderBottomWidth.parse>;
     borderLeftWidth: ReturnType<typeof borderLeftWidth.parse>;
+    boxShadow: ReturnType<typeof boxShadow.parse>;
     color: Color;
     display: ReturnType<typeof display.parse>;
     float: ReturnType<typeof float.parse>;
@@ -158,6 +160,7 @@ export class CSSParsedDeclaration {
         this.borderRightWidth = parse(borderRightWidth, declaration.borderRightWidth);
         this.borderBottomWidth = parse(borderBottomWidth, declaration.borderBottomWidth);
         this.borderLeftWidth = parse(borderLeftWidth, declaration.borderLeftWidth);
+        this.boxShadow = parse(boxShadow, declaration.boxShadow);
         this.color = parse(color, declaration.color);
         this.display = parse(display, declaration.display);
         this.float = parse(float, declaration.cssFloat);

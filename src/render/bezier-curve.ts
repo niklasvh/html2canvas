@@ -30,6 +30,15 @@ export class BezierCurve implements IPath {
         return firstHalf ? new BezierCurve(this.start, ab, abbc, dest) : new BezierCurve(dest, bccd, cd, this.end);
     }
 
+    add(deltaX: number, deltaY: number): BezierCurve {
+        return new BezierCurve(
+            this.start.add(deltaX, deltaY),
+            this.startControl.add(deltaX, deltaY),
+            this.endControl.add(deltaX, deltaY),
+            this.end.add(deltaX, deltaY)
+        );
+    }
+
     reverse(): BezierCurve {
         return new BezierCurve(this.end, this.endControl, this.startControl, this.start);
     }
