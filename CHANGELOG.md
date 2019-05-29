@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.2](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2019-05-29)
+
+
+### ci
+
+* refactor browser tests (#1804) ([a7d881019bfe1fd6404c341ca1c6fa69e0274ef5](https://github.com/niklasvh/html2canvas/commit/a7d881019bfe1fd6404c341ca1c6fa69e0274ef5)), closes [#1804](https://github.com/niklasvh/html2canvas/issues/1804)
+
+### docs
+
+* fix README documentation ([20a797cbeb21baca4ce5b9a0642a5959cdf94a51](https://github.com/niklasvh/html2canvas/commit/20a797cbeb21baca4ce5b9a0642a5959cdf94a51))
+* remove dead donation link (fix #1802) ([43058241b420a5dabe94b0a4e4f6534d16a75ec0](https://github.com/niklasvh/html2canvas/commit/43058241b420a5dabe94b0a4e4f6534d16a75ec0)), closes [#1802](https://github.com/niklasvh/html2canvas/issues/1802)
+
+### fix
+
+* multi token overflow #1850 (#1851) ([409674fba6f8038eb174b9c89360ef8b342971e9](https://github.com/niklasvh/html2canvas/commit/409674fba6f8038eb174b9c89360ef8b342971e9)), closes [#1850](https://github.com/niklasvh/html2canvas/issues/1850) [#1851](https://github.com/niklasvh/html2canvas/issues/1851)
+
+### test
+
+* include reftests previewer with docs website (#1799) ([cdc4ca8296570bf842e937c6fb7cc32a1ce2bc09](https://github.com/niklasvh/html2canvas/commit/cdc4ca8296570bf842e937c6fb7cc32a1ce2bc09)), closes [#1799](https://github.com/niklasvh/html2canvas/issues/1799)
+
+
+
 # [1.0.0-rc.1](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.0...v1.0.0-rc.1) (2019-04-10)
 
 
