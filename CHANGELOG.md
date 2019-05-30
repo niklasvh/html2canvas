@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.3](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2019-05-30)
+
+
+### fix
+
+* stack exceeding for css tokenizer (#1862) ([cbaecdca28cfaf9bd854e1b0c005cc8058208b36](https://github.com/niklasvh/html2canvas/commit/cbaecdca28cfaf9bd854e1b0c005cc8058208b36)), closes [#1862](https://github.com/niklasvh/html2canvas/issues/1862)
+* typescript options type definition (#1861) ([cae44a6f0a6649bd8a7c4250a20792bb5c2e5b42](https://github.com/niklasvh/html2canvas/commit/cae44a6f0a6649bd8a7c4250a20792bb5c2e5b42)), closes [#1861](https://github.com/niklasvh/html2canvas/issues/1861)
+
+
+
 # [1.0.0-rc.2](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2019-05-29)
 
 
