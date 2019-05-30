@@ -316,7 +316,7 @@ export class Tokenizer {
     }
 
     write(chunk: string) {
-        this._value.push(...toCodePoints(chunk));
+        this._value = this._value.concat(toCodePoints(chunk));
     }
 
     read(): CSSToken[] {
@@ -369,7 +369,6 @@ export class Tokenizer {
                     this.reconsumeCodePoint(codePoint);
                     return this.consumeNumericToken();
                 }
-                break;
                 break;
             case COMMA:
                 return COMMA_TOKEN;
@@ -472,7 +471,6 @@ export class Tokenizer {
                 }
                 this.reconsumeCodePoint(codePoint);
                 return this.consumeIdentLikeToken();
-                break;
             case VERTICAL_LINE:
                 if (this.peekCodePoint(0) === EQUALS_SIGN) {
                     this.consumeCodePoint();
@@ -655,31 +653,49 @@ export class Tokenizer {
         }
     }
 
+    private consumeStringSlice(count: number): string {
+        const SLICE_STACK_SIZE = 60000;
+        let value = '';
+        while (count > 0) {
+            const amount = Math.min(SLICE_STACK_SIZE, count);
+            value += fromCodePoint(...this._value.splice(0, amount));
+            count -= amount;
+        }
+        return value;
+    }
+
     private consumeStringToken(endingCodePoint: number): StringValueToken | Token {
         let value = '';
+        let i = 0;
 
         do {
-            const codePoint = this.consumeCodePoint();
+            const codePoint = this._value[i];
             if (codePoint === EOF || codePoint === endingCodePoint) {
+                value += this.consumeStringSlice(i);
+                this._value.splice(0, 1);
                 return {type: TokenType.STRING_TOKEN, value};
             }
 
             if (codePoint === LINE_FEED) {
-                this.reconsumeCodePoint(codePoint);
+                this._value.splice(0, i);
                 return BAD_STRING_TOKEN;
             }
 
             if (codePoint === REVERSE_SOLIDUS) {
-                const next = this.peekCodePoint(0);
+                const next = this._value[i + 1];
                 if (next !== EOF) {
                     if (next === LINE_FEED) {
+                        value += this.consumeStringSlice(i);
                         this.consumeCodePoint();
+                        i = 0;
                     } else if (isValidEscape(codePoint, next)) {
+                        value += this.consumeStringSlice(i);
                         value += fromCodePoint(this.consumeEscapedCodePoint());
+                        i = 0;
                     }
                 }
             } else {
-                value += fromCodePoint(codePoint);
+                i++;
             }
         } while (true);
     }
