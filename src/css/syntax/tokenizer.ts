@@ -661,6 +661,8 @@ export class Tokenizer {
             value += fromCodePoint(...this._value.splice(0, amount));
             count -= amount;
         }
+        this._value.shift();
+
         return value;
     }
 
@@ -670,9 +672,8 @@ export class Tokenizer {
 
         do {
             const codePoint = this._value[i];
-            if (codePoint === EOF || codePoint === endingCodePoint) {
+            if (codePoint === EOF || codePoint === undefined || codePoint === endingCodePoint) {
                 value += this.consumeStringSlice(i);
-                this._value.splice(0, 1);
                 return {type: TokenType.STRING_TOKEN, value};
             }
 
@@ -683,20 +684,20 @@ export class Tokenizer {
 
             if (codePoint === REVERSE_SOLIDUS) {
                 const next = this._value[i + 1];
-                if (next !== EOF) {
+                if (next !== EOF && next !== undefined) {
                     if (next === LINE_FEED) {
                         value += this.consumeStringSlice(i);
-                        this.consumeCodePoint();
-                        i = 0;
+                        i = -1;
+                        this._value.shift();
                     } else if (isValidEscape(codePoint, next)) {
                         value += this.consumeStringSlice(i);
                         value += fromCodePoint(this.consumeEscapedCodePoint());
-                        i = 0;
+                        i = -1;
                     }
                 }
-            } else {
-                i++;
             }
+            
+            i++;
         } while (true);
     }
 
