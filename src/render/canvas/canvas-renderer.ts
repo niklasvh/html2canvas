@@ -306,17 +306,19 @@ export class CanvasRenderer {
             });
 
             const canvas = await iframeRenderer.render(container.tree);
-            this.ctx.drawImage(
-                canvas,
-                0,
-                0,
-                container.width,
-                container.width,
-                container.bounds.left,
-                container.bounds.top,
-                container.bounds.width,
-                container.bounds.height
-            );
+            if (container.width && container.height) {
+                this.ctx.drawImage(
+                    canvas,
+                    0,
+                    0,
+                    container.width,
+                    container.height,
+                    container.bounds.left,
+                    container.bounds.top,
+                    container.bounds.width,
+                    container.bounds.height
+                );
+            }
         }
 
         if (container instanceof InputElementContainer) {

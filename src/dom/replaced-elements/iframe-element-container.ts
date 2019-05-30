@@ -15,8 +15,8 @@ export class IFrameElementContainer extends ElementContainer {
     constructor(iframe: HTMLIFrameElement) {
         super(iframe);
         this.src = iframe.src;
-        this.width = parseInt(iframe.width, 10);
-        this.height = parseInt(iframe.height, 10);
+        this.width = parseInt(iframe.width, 10) || 0;
+        this.height = parseInt(iframe.height, 10) || 0;
         this.backgroundColor = this.styles.backgroundColor;
         try {
             if (
