@@ -39,11 +39,14 @@ import {SelectElementContainer} from '../../dom/elements/select-element-containe
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
 
+export type RenderConfigurations = RenderOptions & {
+    backgroundColor: Color | null;
+};
+
 export interface RenderOptions {
     id: string;
     scale: number;
     canvas?: HTMLCanvasElement;
-    backgroundColor: Color | null;
     x: number;
     y: number;
     scrollX: number;
@@ -60,11 +63,11 @@ const MASK_OFFSET = 10000;
 export class CanvasRenderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    options: RenderOptions;
+    options: RenderConfigurations;
     private readonly _activeEffects: IElementEffect[] = [];
     private readonly fontMetrics: FontMetrics;
 
-    constructor(options: RenderOptions) {
+    constructor(options: RenderConfigurations) {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.options = options;

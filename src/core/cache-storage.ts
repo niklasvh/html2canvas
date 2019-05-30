@@ -61,7 +61,7 @@ export class CacheStorage {
     }
 }
 
-interface ResourceOptions {
+export interface ResourceOptions {
     imageTimeout: number;
     useCORS: boolean;
     allowTaint: boolean;
