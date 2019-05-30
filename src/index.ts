@@ -4,25 +4,22 @@ import {Parser} from './css/syntax/parser';
 import {CloneOptions, DocumentCloner} from './dom/document-cloner';
 import {isBodyElement, isHTMLElement, parseTree} from './dom/node-parser';
 import {Logger} from './core/logger';
-import {CacheStorage} from './core/cache-storage';
+import {CacheStorage, ResourceOptions} from './core/cache-storage';
 import {CanvasRenderer, RenderOptions} from './render/canvas/canvas-renderer';
 import {ForeignObjectRenderer} from './render/canvas/foreignobject-renderer';
 
 export type Options = CloneOptions &
-    RenderOptions & {
-        allowTaint: boolean;
+    RenderOptions &
+    ResourceOptions & {
         backgroundColor: string;
         foreignObjectRendering: boolean;
-        imageTimeout: number;
         logging: boolean;
-        proxy?: string;
         removeContainer?: boolean;
-        useCORS: boolean;
     };
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
 
-const html2canvas = (element: HTMLElement, options: Options): Promise<HTMLCanvasElement> => {
+const html2canvas = (element: HTMLElement, options: Partial<Options> = {}): Promise<HTMLCanvasElement> => {
     return renderElement(element, options);
 };
 
@@ -30,7 +27,7 @@ export default html2canvas;
 
 CacheStorage.setContext(window);
 
-const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLCanvasElement> => {
+const renderElement = async (element: HTMLElement, opts: Partial<Options>): Promise<HTMLCanvasElement> => {
     const ownerDocument = element.ownerDocument;
 
     if (!ownerDocument) {
@@ -43,50 +40,43 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
         throw new Error(`Document is not attached to a Window`);
     }
 
-    const defaultOptions = {
+    const instanceName = (Math.round(Math.random() * 1000) + Date.now()).toString(16);
+
+    const {width, height, left, top} =
+        isBodyElement(element) || isHTMLElement(element) ? parseDocumentSize(ownerDocument) : parseBounds(element);
+
+    const defaultResourceOptions = {
         allowTaint: false,
-        backgroundColor: '#ffffff',
         imageTimeout: 15000,
-        logging: true,
         proxy: undefined,
+        useCORS: false
+    };
+
+    const resourceOptions: ResourceOptions = {...defaultResourceOptions, ...opts};
+
+    const defaultOptions = {
+        backgroundColor: '#ffffff',
+        cache: opts.cache ? opts.cache : CacheStorage.create(instanceName, resourceOptions),
+        logging: true,
         removeContainer: true,
         foreignObjectRendering: false,
         scale: defaultView.devicePixelRatio || 1,
-        useCORS: false,
         windowWidth: defaultView.innerWidth,
         windowHeight: defaultView.innerHeight,
         scrollX: defaultView.pageXOffset,
-        scrollY: defaultView.pageYOffset
+        scrollY: defaultView.pageYOffset,
+        x: left,
+        y: top,
+        width: Math.ceil(width),
+        height: Math.ceil(height),
+        id: instanceName
     };
 
-    const options: Options = {...defaultOptions, ...opts};
+    const options: Options = {...defaultOptions, ...resourceOptions, ...opts};
 
     const windowBounds = new Bounds(options.scrollX, options.scrollY, options.windowWidth, options.windowHeight);
 
-    // http://www.w3.org/TR/css3-background/#special-backgrounds
-    const documentBackgroundColor = ownerDocument.documentElement
-        ? parseColor(getComputedStyle(ownerDocument.documentElement).backgroundColor as string)
-        : COLORS.TRANSPARENT;
-    const bodyBackgroundColor = ownerDocument.body
-        ? parseColor(getComputedStyle(ownerDocument.body).backgroundColor as string)
-        : COLORS.TRANSPARENT;
-
-    const backgroundColor =
-        element === ownerDocument.documentElement
-            ? isTransparent(documentBackgroundColor)
-                ? isTransparent(bodyBackgroundColor)
-                    ? options.backgroundColor
-                        ? parseColor(options.backgroundColor)
-                        : null
-                    : bodyBackgroundColor
-                : documentBackgroundColor
-            : options.backgroundColor
-            ? parseColor(options.backgroundColor)
-            : null;
-
-    const instanceName = (Math.round(Math.random() * 1000) + Date.now()).toString(16);
     Logger.create(instanceName);
-    const cache = CacheStorage.create(instanceName, options);
     Logger.getInstance(instanceName).debug(`Starting document clone`);
     const documentCloner = new DocumentCloner(element, {
         id: instanceName,
@@ -102,22 +92,37 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
 
     const container = await documentCloner.toIFrame(ownerDocument, windowBounds);
 
-    const {width, height, left, top} =
-        isBodyElement(clonedElement) || isHTMLElement(clonedElement)
-            ? parseDocumentSize(ownerDocument)
-            : parseBounds(clonedElement);
+    // http://www.w3.org/TR/css3-background/#special-backgrounds
+    const documentBackgroundColor = ownerDocument.documentElement
+        ? parseColor(getComputedStyle(ownerDocument.documentElement).backgroundColor as string)
+        : COLORS.TRANSPARENT;
+    const bodyBackgroundColor = ownerDocument.body
+        ? parseColor(getComputedStyle(ownerDocument.body).backgroundColor as string)
+        : COLORS.TRANSPARENT;
+
+    const bgColor = opts.backgroundColor;
+    const defaultBackgroundColor = typeof bgColor === 'string' ? parseColor(bgColor) : 0xffffffff;
+
+    const backgroundColor =
+        element === ownerDocument.documentElement
+            ? isTransparent(documentBackgroundColor)
+                ? isTransparent(bodyBackgroundColor)
+                    ? defaultBackgroundColor
+                    : bodyBackgroundColor
+                : documentBackgroundColor
+            : defaultBackgroundColor;
 
     const renderOptions = {
         id: instanceName,
-        cache,
+        cache: options.cache,
         backgroundColor,
         scale: options.scale,
-        x: typeof options.x === 'number' ? options.x : left,
-        y: typeof options.y === 'number' ? options.y : top,
+        x: options.x,
+        y: options.y,
         scrollX: options.scrollX,
         scrollY: options.scrollY,
-        width: typeof options.width === 'number' ? options.width : Math.ceil(width),
-        height: typeof options.height === 'number' ? options.height : Math.ceil(height),
+        width: options.width,
+        height: options.height,
         windowWidth: options.windowWidth,
         windowHeight: options.windowHeight
     };
@@ -131,7 +136,7 @@ const renderElement = async (element: HTMLElement, opts: Options): Promise<HTMLC
     } else {
         Logger.getInstance(instanceName).debug(`Document cloned, using computed rendering`);
 
-        CacheStorage.attachInstance(cache);
+        CacheStorage.attachInstance(options.cache);
         Logger.getInstance(instanceName).debug(`Starting DOM parsing`);
         const root = parseTree(clonedElement);
         CacheStorage.detachInstance();

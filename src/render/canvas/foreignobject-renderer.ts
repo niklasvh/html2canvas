@@ -1,4 +1,4 @@
-import {RenderOptions} from './canvas-renderer';
+import {RenderConfigurations} from './canvas-renderer';
 import {Logger} from '../../core/logger';
 import {createForeignObjectSVG} from '../../core/features';
 import {asString} from '../../css/types/color';
@@ -6,9 +6,9 @@ import {asString} from '../../css/types/color';
 export class ForeignObjectRenderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    options: RenderOptions;
+    options: RenderConfigurations;
 
-    constructor(options: RenderOptions) {
+    constructor(options: RenderConfigurations) {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.options = options;
