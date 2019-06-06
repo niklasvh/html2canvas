@@ -12,7 +12,7 @@ import {
     isTextNode
 } from './node-parser';
 import {Logger} from '../core/logger';
-import {isIdentToken, nonFunctionArgSeperator} from '../css/syntax/parser';
+import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
 import {TokenType} from '../css/syntax/tokenizer';
 import {CounterState, createCounterText} from '../css/types/functions/counter';
 import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-style-type';
@@ -355,7 +355,7 @@ export class DocumentCloner {
                         );
                     }
                 } else if (token.name === 'counter') {
-                    const [counter, counterStyle] = token.values.filter(nonFunctionArgSeperator);
+                    const [counter, counterStyle] = token.values.filter(nonFunctionArgSeparator);
                     if (counter && isIdentToken(counter)) {
                         const counterState = this.counters.getCounterValue(counter.value);
                         const counterType =
@@ -368,7 +368,7 @@ export class DocumentCloner {
                         );
                     }
                 } else if (token.name === 'counters') {
-                    const [counter, delim, counterStyle] = token.values.filter(nonFunctionArgSeperator);
+                    const [counter, delim, counterStyle] = token.values.filter(nonFunctionArgSeparator);
                     if (counter && isIdentToken(counter)) {
                         const counterStates = this.counters.getCounterValues(counter.value);
                         const counterType =
