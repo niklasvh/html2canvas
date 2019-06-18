@@ -42,7 +42,7 @@ support [older browsers](http://caniuse.com/#search=promise) that do not nativel
 To render an `element` with html2canvas, simply call:
 ` html2canvas(element[, options]);`
 
-The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fullfillment handler to the promise using `then`:
+The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fulfillment handler to the promise using `then`:
 
     html2canvas(document.body).then(function(canvas) {
         document.body.appendChild(canvas);
