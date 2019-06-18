@@ -696,7 +696,7 @@ export class Tokenizer {
                     }
                 }
             }
-            
+
             i++;
         } while (true);
     }

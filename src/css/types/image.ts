@@ -98,9 +98,11 @@ export const image: ITypeDescriptor<ICSSImage> = {
     }
 };
 
-const SUPPORTED_IMAGE_FUNCTIONS: {
-    [key: string]: (args: CSSValue[]) => ICSSImage;
-} = {
+export function isSupportedImage(value: CSSValue) {
+    return value.type !== TokenType.FUNCTION || SUPPORTED_IMAGE_FUNCTIONS[value.name];
+}
+
+const SUPPORTED_IMAGE_FUNCTIONS: Record<string, (args: CSSValue[]) => ICSSImage> = {
     'linear-gradient': linearGradient,
     '-moz-linear-gradient': prefixLinearGradient,
     '-ms-linear-gradient': prefixLinearGradient,
