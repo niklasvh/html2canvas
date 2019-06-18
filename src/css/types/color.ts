@@ -1,4 +1,4 @@
-import {CSSValue, nonFunctionArgSeperator} from '../syntax/parser';
+import {CSSValue, nonFunctionArgSeparator} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';
 import {angle, deg} from './angle';
@@ -86,7 +86,7 @@ const getTokenColorValue = (token: CSSValue, i: number): number => {
 };
 
 const rgb = (args: CSSValue[]): number => {
-    const tokens = args.filter(nonFunctionArgSeperator);
+    const tokens = args.filter(nonFunctionArgSeparator);
 
     if (tokens.length === 3) {
         const [r, g, b] = tokens.map(getTokenColorValue);
@@ -121,7 +121,7 @@ function hue2rgb(t1: number, t2: number, hue: number): number {
 }
 
 const hsl = (args: CSSValue[]): number => {
-    const tokens = args.filter(nonFunctionArgSeperator);
+    const tokens = args.filter(nonFunctionArgSeparator);
     const [hue, saturation, lightness, alpha] = tokens;
 
     const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(hue)) / (Math.PI * 2);

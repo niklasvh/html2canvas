@@ -1,7 +1,7 @@
 import {TokenType} from '../syntax/tokenizer';
-import {ICSSImage, image} from '../types/image';
+import {ICSSImage, image, isSupportedImage} from '../types/image';
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
-import {CSSValue, nonFunctionArgSeperator} from '../syntax/parser';
+import {CSSValue, nonFunctionArgSeparator} from '../syntax/parser';
 
 export const backgroundImage: IPropertyListDescriptor<ICSSImage[]> = {
     name: 'background-image',
@@ -19,6 +19,6 @@ export const backgroundImage: IPropertyListDescriptor<ICSSImage[]> = {
             return [];
         }
 
-        return tokens.filter(nonFunctionArgSeperator).map(image.parse);
+        return tokens.filter(value => nonFunctionArgSeparator(value) && isSupportedImage(value)).map(image.parse);
     }
 };

@@ -1,4 +1,4 @@
-import {CSSValue, isIdentToken, isNumberToken, nonFunctionArgSeperator, parseFunctionArgs} from '../../syntax/parser';
+import {CSSValue, isIdentToken, isNumberToken, nonFunctionArgSeparator, parseFunctionArgs} from '../../syntax/parser';
 import {
     CSSImageType,
     CSSLinearGradientImage,
@@ -40,7 +40,7 @@ export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage | CSS
                 const color = colorType.parse(firstToken.values[0]);
                 stops.push({stop: HUNDRED_PERCENT, color});
             } else if (firstToken.name === 'color-stop') {
-                const values = firstToken.values.filter(nonFunctionArgSeperator);
+                const values = firstToken.values.filter(nonFunctionArgSeparator);
                 if (values.length === 2) {
                     const color = colorType.parse(values[1]);
                     const stop = values[0];
