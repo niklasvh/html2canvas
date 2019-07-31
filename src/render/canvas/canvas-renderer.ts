@@ -696,10 +696,11 @@ export class CanvasRenderer {
                 });
         }
 
-        let side = 0;
+        let side = -1;
         for (const border of borders) {
+            side++
             if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side++, paint.curves);
+                await this.renderBorder(border.color, side, paint.curves);
             }
         }
     }
