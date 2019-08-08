@@ -16,8 +16,8 @@ export class ElementContainer {
     bounds: Bounds;
     flags: number;
 
-    constructor(element: Element) {
-        this.styles = new CSSParsedDeclaration(window.getComputedStyle(element, null));
+    constructor(element: Element, styles?: CSSParsedDeclaration) {
+        this.styles = styles || new CSSParsedDeclaration(window.getComputedStyle(element, null));
         this.textNodes = [];
         this.elements = [];
         if (this.styles.transform !== null && isHTMLElementNode(element)) {

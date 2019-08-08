@@ -9,7 +9,8 @@ import {
     isSelectElement,
     isStyleElement,
     isTextareaElement,
-    isTextNode
+    isTextNode,
+    isVideoElement
 } from './node-parser';
 import {Logger} from '../core/logger';
 import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
@@ -31,6 +32,8 @@ export type CloneConfigurations = CloneOptions & {
 };
 
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
+
+export const NO_COMPUTE_STYLES = 'html2canvas-no-compute-styles';
 
 export class DocumentCloner {
     private readonly scrolledElements: [Element, number, number][];
@@ -121,6 +124,21 @@ export class DocumentCloner {
 */
         if (isStyleElement(node)) {
             return this.createStyleClone(node);
+        }
+
+        // convert <video> to <img> so that both canvas rendering and foreignObject rendering process can deal with it
+        if (isVideoElement(node)) {
+            const canvas = document.createElement('canvas');
+            const image = new Image();
+            const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+            const style = window.getComputedStyle(node);
+            canvas.width = parseFloat(style.getPropertyValue('width'));
+            canvas.height = parseFloat(style.getPropertyValue('height'));
+            ctx.drawImage(node, 0, 0, canvas.width, canvas.height);
+            copyCSSStyles(style, image, 'important');
+            image.src = canvas.toDataURL();
+            image.title = NO_COMPUTE_STYLES;
+            return image;
         }
 
         return node.cloneNode(false) as HTMLElement;
@@ -457,13 +475,13 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
     });
 };
 
-export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement): HTMLElement => {
+export const copyCSSStyles = (style: CSSStyleDeclaration, target: HTMLElement, priority: string = ''): HTMLElement => {
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
         // Safari shows pseudoelements if content is set
         if (property !== 'content') {
-            target.style.setProperty(property, style.getPropertyValue(property));
+            target.style.setProperty(property, style.getPropertyValue(property), priority);
         }
     }
     return target;

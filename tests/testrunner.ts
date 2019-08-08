@@ -82,7 +82,16 @@ testList
                     throw new Error('Window not found for iframe');
                 }
 
-                return (
+                // support delay
+                return new Promise((resolve: () => void) => {
+                    // @ts-ignore
+                    const delay = contentWindow.delay;
+                    if (delay) {
+                        setTimeout(() => resolve(), delay);
+                    } else {
+                        resolve();
+                    }
+                }).then(() =>
                     contentWindow
                         // @ts-ignore
                         .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
