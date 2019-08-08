@@ -97,7 +97,8 @@ const createsRealStackingContext = (node: Element, container: ElementContainer, 
     );
 };
 
-const createsStackingContext = (styles: CSSParsedDeclaration): boolean => styles.isPositioned() || styles.isFloating();
+const createsStackingContext = (styles: CSSParsedDeclaration): boolean =>
+    styles.isPositioned() || styles.isFloating() || styles.isInlineBlockOrInlineTable();
 
 export const isTextNode = (node: Node): node is Text => node.nodeType === Node.TEXT_NODE;
 export const isElementNode = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;

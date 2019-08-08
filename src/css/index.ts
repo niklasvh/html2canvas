@@ -236,6 +236,10 @@ export class CSSParsedDeclaration {
             contains(this.display, DISPLAY.INLINE_TABLE)
         );
     }
+
+    isInlineBlockOrInlineTable(): boolean {
+        return contains(this.display, DISPLAY.INLINE_BLOCK) || contains(this.display, DISPLAY.INLINE_TABLE);
+    }
 }
 
 export class CSSParsedPseudoDeclaration {
