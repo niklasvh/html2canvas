@@ -74,6 +74,25 @@ export class ElementPaint {
     }
 }
 
+const findInsertionIndex = (collection: StackingContext[], order: number): number => {
+    for (let i = 0; i < collection.length; i++) {
+        const nextIndex = i + 1;
+        const currentOrder = collection[i].element.container.styles.zIndex.order;
+        if (order < currentOrder) {
+            return i;
+        }
+        if (nextIndex < collection.length) {
+            const nextOrder = collection[nextIndex].element.container.styles.zIndex.order;
+            if (currentOrder <= order && nextOrder > order) {
+                return nextIndex;
+            }
+            continue;
+        }
+        return collection.length;
+    }
+    return 0;
+};
+
 const parseStackTree = (
     parent: ElementPaint,
     stackingContext: StackingContext,
@@ -99,27 +118,9 @@ const parseStackTree = (
             if (child.styles.isPositioned() || child.styles.opacity < 1 || child.styles.isTransformed()) {
                 const order = child.styles.zIndex.order;
                 if (order < 0) {
-                    let index = 0;
-
-                    parentStack.negativeZIndex.some((current, i) => {
-                        if (order > current.element.container.styles.zIndex.order) {
-                            index = i;
-                            return true;
-                        }
-                        return false;
-                    });
-                    parentStack.negativeZIndex.splice(index, 0, stack);
+                    parentStack.negativeZIndex.splice(findInsertionIndex(parentStack.negativeZIndex, order), 0, stack);
                 } else if (order > 0) {
-                    let index = 0;
-                    parentStack.positiveZIndex.some((current, i) => {
-                        if (order > current.element.container.styles.zIndex.order) {
-                            index = i + 1;
-                            return true;
-                        }
-
-                        return false;
-                    });
-                    parentStack.positiveZIndex.splice(index, 0, stack);
+                    parentStack.positiveZIndex.splice(findInsertionIndex(parentStack.positiveZIndex, order), 0, stack);
                 } else {
                     parentStack.zeroOrAutoZIndexOrTransformedOrOpacity.push(stack);
                 }
