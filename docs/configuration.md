@@ -12,7 +12,7 @@ These are all of the available configuration options.
 | Name          | Default  | Description |
 | ------------- | :------: | ----------- |
 | allowTaint | `false` | Whether to allow cross-origin images to taint the canvas
-| backgroundColor | `#ffffff` | Canvas background color, if none is specified in DOM. Set `null` for transparent
+| backgroundColor | `#ffffff` | Canvas background color, if none is specified in DOM. Set `transparent` for transparent
 | canvas | `null` | Existing `canvas` element to use as a base for drawing on
 | foreignObjectRendering | `false` | Whether to use ForeignObject rendering if the browser supports it
 | imageTimeout | `15000` | Timeout for loading an image (in milliseconds). Set to `0` to disable timeout.
