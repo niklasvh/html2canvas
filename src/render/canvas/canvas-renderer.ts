@@ -66,6 +66,7 @@ export class CanvasRenderer {
     options: RenderConfigurations;
     private readonly _activeEffects: IElementEffect[] = [];
     private readonly fontMetrics: FontMetrics;
+    private _globalAlpha: number;
 
     constructor(options: RenderConfigurations) {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
@@ -80,6 +81,7 @@ export class CanvasRenderer {
         this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
+        this._globalAlpha = this.ctx.globalAlpha;
         Logger.getInstance(options.id).debug(
             `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${
                 options.scale
@@ -121,12 +123,15 @@ export class CanvasRenderer {
     popEffect() {
         this._activeEffects.pop();
         this.ctx.restore();
+        // restore canvas context may affect globalAlpha
+        this.ctx.globalAlpha = this._globalAlpha;
     }
 
     async renderStack(stack: StackingContext) {
         const styles = stack.element.container.styles;
         if (styles.isVisible()) {
             this.ctx.globalAlpha = styles.opacity;
+            this._globalAlpha = styles.opacity;
             await this.renderStackContent(stack);
         }
     }
