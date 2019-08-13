@@ -287,15 +287,17 @@ export class DocumentCloner {
             const counters = this.counters.parse(new CSSParsedCounterDeclaration(style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
-            for (let child = node.firstChild; child; child = child.nextSibling) {
-                if (
-                    !isElementNode(child) ||
-                    (!isScriptElement(child) &&
-                        !child.hasAttribute(IGNORE_ATTRIBUTE) &&
-                        (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
-                ) {
-                    if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
-                        clone.appendChild(this.cloneNode(child));
+            if (!isVideoElement(node)) {
+                for (let child = node.firstChild; child; child = child.nextSibling) {
+                    if (
+                        !isElementNode(child) ||
+                        (!isScriptElement(child) &&
+                            !child.hasAttribute(IGNORE_ATTRIBUTE) &&
+                            (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
+                    ) {
+                        if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
+                            clone.appendChild(this.cloneNode(child));
+                        }
                     }
                 }
             }
