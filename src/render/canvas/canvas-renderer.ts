@@ -624,6 +624,7 @@ export class CanvasRenderer {
     }
 
     async renderBorder(color: Color, side: number, curvePoints: BoundCurves) {
+        console.log(color, side, curvePoints)
         this.path(parsePathForBorder(curvePoints, side));
         this.ctx.fillStyle = asString(color);
         this.ctx.fill();
