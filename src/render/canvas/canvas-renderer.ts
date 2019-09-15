@@ -11,7 +11,7 @@ import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculateP
 import {isBezierCurve} from '../bezier-curve';
 import {Vector} from '../vector';
 import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
-import {parsePathForBorder} from '../border';
+import {parsePathForBorder, parseWidthForDottedBorder} from '../border';
 import {Cache} from '../../core/cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
@@ -496,8 +496,10 @@ export class CanvasRenderer {
     }
 
     formatPath(paths: Path[]) {
+        console.log('paths', paths)
         paths.forEach((point, index) => {
             const start: Vector = isBezierCurve(point) ? point.start : point;
+            console.log(start)
             if (index === 0) {
                 this.ctx.moveTo(start.x, start.y);
             } else {
@@ -624,7 +626,6 @@ export class CanvasRenderer {
     }
 
     async renderBorder(color: Color, side: number, curvePoints: BoundCurves) {
-        console.log(color, side, curvePoints)
         this.path(parsePathForBorder(curvePoints, side));
         this.ctx.fillStyle = asString(color);
         this.ctx.fill();
@@ -641,7 +642,7 @@ export class CanvasRenderer {
             {style: styles.borderBottomStyle, color: styles.borderBottomColor},
             {style: styles.borderLeftStyle, color: styles.borderLeftColor}
         ];
-
+        console.log(borders)
         const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
             getBackgroundValueForIndex(styles.backgroundClip, 0),
             paint.curves
@@ -700,9 +701,33 @@ export class CanvasRenderer {
         let side = 0;
         for (const border of borders) {
             if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side++, paint.curves);
+                if (border.style === BORDER_STYLE.DASHED) {
+                    await this.renderDashedBorder(border.color, side++, paint.curves);
+                } else {
+                    await this.renderBorder(border.color, side++, paint.curves);
+                }
             }
         }
+    }
+
+    async renderDashedBorder(color: Color, side: number, curvePoints: BoundCurves) {
+        const paths = parsePathForBorder(curvePoints, side)
+        const data = parseWidthForDottedBorder(paths, side);
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = asString(color);
+        const dash = data.space;
+        this.ctx.setLineDash([dash * 2, dash]);
+        paths.forEach((point, index) => {
+            const start: Vector = isBezierCurve(point) ? point.start : point;
+            if (index === 0) {
+                this.ctx.moveTo(start.x, start.y);
+            } else if (index === 1) {
+                this.ctx.lineTo(start.x, start.y);
+            }
+        });
+        this.ctx.lineWidth = dash;
+        this.ctx.stroke();
+        this.ctx.closePath();
     }
 
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {

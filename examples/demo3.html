@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+  <head>
+    <title>
+      display/box/float/clear test
+    </title>
+    <style type="text/css">
+        div{
+            border: 5px dashed blue;
+        }
+    </style>
+  </head>
+  <body>
+    <div>this is boder style dotted</div>
+    <script type="text/javascript" src="../dist/html2canvas.js"></script>
+    <script type="text/javascript">
+        html2canvas(document.body).then(function(canvas) {
+            document.body.appendChild(canvas);
+        });
+    </script>
+  </body>
+</html>

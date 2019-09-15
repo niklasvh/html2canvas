@@ -1,6 +1,7 @@
 import {Path} from './path';
 import {BoundCurves} from './bound-curves';
 import {isBezierCurve} from './bezier-curve';
+import {Vector} from './vector';
 
 export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Path[] => {
     switch (borderSide) {
@@ -36,6 +37,36 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Pat
     }
 };
 
+export const parseWidthForDottedBorder = (paths: any[], borderSide: number): any => {
+    const topLeft: Vector = isBezierCurve(paths[0]) ? paths[0].start : paths[0];
+    const topRight: Vector = isBezierCurve(paths[1]) ? paths[1].start : paths[1];
+    const bottomRight: Vector = isBezierCurve(paths[2]) ? paths[2].start : paths[2];
+    const bottomLeft: Vector = isBezierCurve(paths[3]) ? paths[3].start : paths[3];
+    switch (borderSide) {
+        case 0:
+            return {
+                width: topRight['x'] - topLeft['x'],
+                space: bottomRight['y'] - topRight['y']
+            }
+        case 1:
+            return {
+                width: topRight['y'] - bottomLeft['y'],
+                space: topRight['x'] - bottomRight['x']
+            }
+        case 2:
+            return {
+                width: topLeft['x'] - topRight['x'],
+                space: topRight['y'] - bottomRight['y']
+            }
+        case 3:
+            return {
+                width: topLeft['y'] - bottomRight['y'],
+                space: topLeft['y'] - bottomLeft['y']
+            }
+    }
+    return 1
+
+}
 const createPathFromCurves = (outer1: Path, inner1: Path, outer2: Path, inner2: Path): Path[] => {
     const path = [];
     if (isBezierCurve(outer1)) {
