@@ -37,7 +37,7 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Pat
     }
 };
 
-export const parseWidthForDottedBorder = (paths: any[], borderSide: number): any => {
+export const parseWidthForDashedAndDottedBorder = (paths: any[], borderSide: number): any => {
     const topLeft: Vector = isBezierCurve(paths[0]) ? paths[0].start : paths[0];
     const topRight: Vector = isBezierCurve(paths[1]) ? paths[1].start : paths[1];
     const bottomRight: Vector = isBezierCurve(paths[2]) ? paths[2].start : paths[2];
@@ -46,26 +46,58 @@ export const parseWidthForDottedBorder = (paths: any[], borderSide: number): any
         case 0:
             return {
                 width: topRight['x'] - topLeft['x'],
-                space: bottomRight['y'] - topRight['y']
+                space: bottomRight['y'] - topRight['y'],
+                startPos: topLeft
             }
         case 1:
             return {
                 width: topRight['y'] - bottomLeft['y'],
-                space: topRight['x'] - bottomRight['x']
+                space: topRight['x'] - bottomRight['x'],
+                startPos: topLeft
             }
         case 2:
             return {
                 width: topLeft['x'] - topRight['x'],
-                space: topRight['y'] - bottomRight['y']
+                space: topRight['y'] - bottomRight['y'],
+                startPos: topLeft
             }
         case 3:
             return {
                 width: topLeft['y'] - bottomRight['y'],
-                space: topLeft['y'] - bottomLeft['y']
+                space: topLeft['y'] - bottomLeft['y'],
+                startPos: topLeft
             }
     }
-    return 1
+}
 
+
+export const renderDottedLine = (x1: number, y1: number, x2: number, y2: number, interval: number, context: any, color: string) => {
+    if (!interval) {
+        interval = 5;
+    }
+    let isHorizontal: boolean = true;
+    if (x1 == x2) {
+        isHorizontal = false;
+    }
+    const len = isHorizontal ? x2 - x1 : y2 - y1;
+    context.moveTo(x1, y1);
+    let progress = 0;
+    context.fillStyle = color;
+    while (len > progress) {
+        progress += interval;
+        if (progress > len) {
+            progress = len;
+        }
+        if (isHorizontal) {
+            context.moveTo(x1 + progress, y1);
+            context.arc(x1 + progress, y1, interval / 2, 0, Math.PI * 2, true);
+            context.fill();
+        } else {
+            context.moveTo(x1, y1 + progress);
+            context.arc(x1, y1 + progress, 1, interval / 2, Math.PI * 2, true);
+            context.fill();
+        }
+    }
 }
 const createPathFromCurves = (outer1: Path, inner1: Path, outer2: Path, inner2: Path): Path[] => {
     const path = [];
