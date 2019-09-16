@@ -6,9 +6,13 @@
     </title>
     <style type="text/css">
         div.dotted{
-            border: 5px dotted blue;
+            /* border: 8px dotted rgb(223, 17, 17); */
+            border-style: dotted dashed;
+            border-width: 8px;
+            border-color: red;
             width: 100px;
             margin-bottom: 20px;
+            background-color: rgb(255, 255, 255);
         }
         div.dashed{
             border: 5px dashed blue;
@@ -17,8 +21,13 @@
     </style>
   </head>
   <body>
-    <div class="dotted">this is boder style dotted</div>
-    <div class="dashed">this is boder style dashed</div>
+    <div class="dotted">
+        this is boder style dotted
+        <div>test teset test</div>
+        <div>test teset test</div>
+        <div>test teset test</div>
+    </div>
+    <!-- <div class="dashed">this is boder style dashed</div> -->
     <script type="text/javascript" src="../dist/html2canvas.js"></script>
     <script type="text/javascript">
         html2canvas(document.body).then(function(canvas) {

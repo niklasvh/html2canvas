@@ -51,7 +51,7 @@ export const parseWidthForDashedAndDottedBorder = (paths: any[], borderSide: num
             };
         case 1:
             return {
-                width: topRight['y'] - bottomLeft['y'],
+                width: topRight['y'] - topLeft['y'],
                 space: topRight['x'] - bottomRight['x'],
                 startPos: topLeft
             };
@@ -63,7 +63,7 @@ export const parseWidthForDashedAndDottedBorder = (paths: any[], borderSide: num
             };
         case 3:
             return {
-                width: topLeft['y'] - bottomRight['y'],
+                width: topLeft['y'] - topRight['y'],
                 space: topLeft['y'] - bottomLeft['y'],
                 startPos: topLeft
             };
@@ -88,21 +88,23 @@ export const renderDottedLine = (
     }
     const len = isHorizontal ? x2 - x1 : y2 - y1;
     context.moveTo(x1, y1);
-    let progress = 0;
     context.fillStyle = color;
+    let progress = 0;
     const r = Math.abs(interval) / 2;
+    
     while (Math.abs(len) > Math.abs(progress)) {
-        if (Math.abs(progress) > Math.abs(len)) {
-            progress = len;
-        }
         if (isHorizontal) {
+            context.beginPath()
             context.moveTo(x1 + progress, y1);
             context.arc(x1 + progress, y1, r, 0, Math.PI * 2, true);
             context.fill();
+            context.closePath()
         } else {
+            context.beginPath()
             context.moveTo(x1, y1 + progress);
             context.arc(x1, y1 + progress, r, 0, Math.PI * 2, true);
             context.fill();
+            context.closePath()
         }
         progress += interval * 2;
     }
