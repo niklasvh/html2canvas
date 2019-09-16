@@ -496,10 +496,8 @@ export class CanvasRenderer {
     }
 
     formatPath(paths: Path[]) {
-        console.log('paths', paths);
         paths.forEach((point, index) => {
             const start: Vector = isBezierCurve(point) ? point.start : point;
-            console.log(start);
             if (index === 0) {
                 this.ctx.moveTo(start.x, start.y);
             } else {
