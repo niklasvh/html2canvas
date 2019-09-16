@@ -717,20 +717,25 @@ export class CanvasRenderer {
         let x2;
         let y2;
         let interval = side > 1 ? -data['space'] : data['space'];
+        let offset = 0;
         if (side === 0) {
             y2 = y1;
             x2 = x1 + data['width'];
+            offset = interval / 2;
         } else if (side === 1) {
             x2 = x1;
             y2 = y1 + data['width'];
+            offset = -interval / 2;
         } else if (side === 2) {
             y2 = y1;
             x2 = x1 - data['width'];
+            offset = interval / 2;
         } else if (side === 3) {
             x2 = x1;
             y2 = y1 - data['width'];
+            offset = -interval / 2;
         }
-        renderDottedLine(x1, y1, x2, y2, interval, this.ctx, asString(color));
+        renderDottedLine(x1, y1, x2, y2, interval, this.ctx, asString(color), offset);
     }
 
     async renderDashedBorder(color: Color, side: number, curvePoints: BoundCurves) {
