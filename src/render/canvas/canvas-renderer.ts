@@ -496,10 +496,10 @@ export class CanvasRenderer {
     }
 
     formatPath(paths: Path[]) {
-        console.log('paths', paths)
+        console.log('paths', paths);
         paths.forEach((point, index) => {
             const start: Vector = isBezierCurve(point) ? point.start : point;
-            console.log(start)
+            console.log(start);
             if (index === 0) {
                 this.ctx.moveTo(start.x, start.y);
             } else {
@@ -718,7 +718,7 @@ export class CanvasRenderer {
         const y1 = data['startPos']['y'];
         let x2;
         let y2;
-        let interval = side > 1 ? - data['space'] : data['space'];
+        let interval = side > 1 ? -data['space'] : data['space'];
         if (side === 0) {
             y2 = y1;
             x2 = x1 + data['width'];
@@ -736,7 +736,7 @@ export class CanvasRenderer {
     }
 
     async renderDashedBorder(color: Color, side: number, curvePoints: BoundCurves) {
-        const paths = parsePathForBorder(curvePoints, side)
+        const paths = parsePathForBorder(curvePoints, side);
         const data = parseWidthForDashedAndDottedBorder(paths, side);
         this.ctx.beginPath();
         this.ctx.strokeStyle = asString(color);

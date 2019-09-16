@@ -48,34 +48,41 @@ export const parseWidthForDashedAndDottedBorder = (paths: any[], borderSide: num
                 width: topRight['x'] - topLeft['x'],
                 space: bottomRight['y'] - topRight['y'],
                 startPos: topLeft
-            }
+            };
         case 1:
             return {
                 width: topRight['y'] - bottomLeft['y'],
                 space: topRight['x'] - bottomRight['x'],
                 startPos: topLeft
-            }
+            };
         case 2:
             return {
                 width: topLeft['x'] - topRight['x'],
                 space: topRight['y'] - bottomRight['y'],
                 startPos: topLeft
-            }
+            };
         case 3:
             return {
                 width: topLeft['y'] - bottomRight['y'],
                 space: topLeft['y'] - bottomLeft['y'],
                 startPos: topLeft
-            }
+            };
     }
-}
+};
 
-
-export const renderDottedLine = (x1: number, y1: number, x2: number, y2: number, interval: number, context: any, color: string) => {
+export const renderDottedLine = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    interval: number,
+    context: CanvasRenderingContext2D,
+    color: string
+) => {
     if (!interval) {
         interval = 5;
     }
-    let isHorizontal: boolean = true;
+    let isHorizontal = true;
     if (x1 == x2) {
         isHorizontal = false;
     }
@@ -83,7 +90,7 @@ export const renderDottedLine = (x1: number, y1: number, x2: number, y2: number,
     context.moveTo(x1, y1);
     let progress = 0;
     context.fillStyle = color;
-    const r = Math.abs(interval) / 2
+    const r = Math.abs(interval) / 2;
     while (Math.abs(len) > Math.abs(progress)) {
         if (Math.abs(progress) > Math.abs(len)) {
             progress = len;
@@ -99,7 +106,7 @@ export const renderDottedLine = (x1: number, y1: number, x2: number, y2: number,
         }
         progress += interval * 2;
     }
-}
+};
 const createPathFromCurves = (outer1: Path, inner1: Path, outer2: Path, inner2: Path): Path[] => {
     const path = [];
     if (isBezierCurve(outer1)) {
