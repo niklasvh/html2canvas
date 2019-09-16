@@ -625,7 +625,7 @@ export class CanvasRenderer {
         }
     }
 
-    async renderBorder(color: Color, side: number, curvePoints: BoundCurves) {
+    async renderSolidBorder(color: Color, side: number, curvePoints: BoundCurves) {
         this.path(parsePathForBorder(curvePoints, side));
         this.ctx.fillStyle = asString(color);
         this.ctx.fill();
@@ -701,9 +701,11 @@ export class CanvasRenderer {
         for (const border of borders) {
             if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
                 if (border.style === BORDER_STYLE.DASHED) {
+                    await this.renderDashedBorder(border.color, side++, paint.curves);
+                } else if (border.style === BORDER_STYLE.DOTTED) {
                     await this.renderDottedBorder(border.color, side++, paint.curves);
                 } else {
-                    await this.renderBorder(border.color, side++, paint.curves);
+                    await this.renderSolidBorder(border.color, side++, paint.curves);
                 }
             }
         }
@@ -712,32 +714,30 @@ export class CanvasRenderer {
     async renderDottedBorder(color: Color, side: number, curvePoints: BoundCurves) {
         const paths = parsePathForBorder(curvePoints, side);
         const data = parseWidthForDashedAndDottedBorder(paths, side);
-        const x1 = data['startPos']['x']
-        const y1 = data['startPos']['y']
+        const x1 = data['startPos']['x'];
+        const y1 = data['startPos']['y'];
         let x2;
         let y2;
+        let interval = side > 1 ? - data['space'] : data['space'];
         if (side === 0) {
             y2 = y1;
-            x2 = x1 + data['width']
+            x2 = x1 + data['width'];
         } else if (side === 1) {
             x2 = x1;
-            y2 = y1 + data['width']
+            y2 = y1 + data['width'];
         } else if (side === 2) {
             y2 = y1;
-            x2 = x1 - data['width']
-        } else if (side == 3) {
+            x2 = x1 - data['width'];
+        } else if (side === 3) {
             x2 = x1;
-            y2 = y1 - data['width']
+            y2 = y1 - data['width'];
         }
-        const interval = data['space'];
-        console.log(x1, y1, x2, y2, interval, this.ctx)
         renderDottedLine(x1, y1, x2, y2, interval, this.ctx, asString(color));
     }
 
     async renderDashedBorder(color: Color, side: number, curvePoints: BoundCurves) {
         const paths = parsePathForBorder(curvePoints, side)
         const data = parseWidthForDashedAndDottedBorder(paths, side);
-        console.log(data)
         this.ctx.beginPath();
         this.ctx.strokeStyle = asString(color);
         const dash = data.space;

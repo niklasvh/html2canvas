@@ -83,20 +83,21 @@ export const renderDottedLine = (x1: number, y1: number, x2: number, y2: number,
     context.moveTo(x1, y1);
     let progress = 0;
     context.fillStyle = color;
-    while (len > progress) {
-        progress += interval;
-        if (progress > len) {
+    const r = Math.abs(interval) / 2
+    while (Math.abs(len) > Math.abs(progress)) {
+        if (Math.abs(progress) > Math.abs(len)) {
             progress = len;
         }
         if (isHorizontal) {
             context.moveTo(x1 + progress, y1);
-            context.arc(x1 + progress, y1, interval / 2, 0, Math.PI * 2, true);
+            context.arc(x1 + progress, y1, r, 0, Math.PI * 2, true);
             context.fill();
         } else {
             context.moveTo(x1, y1 + progress);
-            context.arc(x1, y1 + progress, 1, interval / 2, Math.PI * 2, true);
+            context.arc(x1, y1 + progress, r, 0, Math.PI * 2, true);
             context.fill();
         }
+        progress += interval * 2;
     }
 }
 const createPathFromCurves = (outer1: Path, inner1: Path, outer2: Path, inner2: Path): Path[] => {

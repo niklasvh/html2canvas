@@ -5,13 +5,20 @@
       display/box/float/clear test
     </title>
     <style type="text/css">
-        div{
+        div.dotted{
+            border: 5px dotted blue;
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        div.dashed{
             border: 5px dashed blue;
+            width: 100px;
         }
     </style>
   </head>
   <body>
-    <div>this is boder style dotted</div>
+    <div class="dotted">this is boder style dotted</div>
+    <div class="dashed">this is boder style dashed</div>
     <script type="text/javascript" src="../dist/html2canvas.js"></script>
     <script type="text/javascript">
         html2canvas(document.body).then(function(canvas) {

@@ -82,7 +82,6 @@ const createContainer = (element: Element): ElementContainer => {
 
 export const parseTree = (element: HTMLElement): ElementContainer => {
     const container = createContainer(element);
-    console.log('container', container)
     container.flags |= FLAGS.CREATES_REAL_STACKING_CONTEXT;
     parseNodeTree(element, container, container);
     return container;
