@@ -58,13 +58,13 @@ export const parseWidthForDashedAndDottedBorder = (paths: any[], borderSide: num
         case 2:
             return {
                 width: topLeft['x'] - topRight['x'],
-                space: topRight['y'] - bottomRight['y'],
+                space: topRight['y'] - bottomLeft['y'],
                 startPos: topLeft
             };
         case 3:
             return {
                 width: topLeft['y'] - topRight['y'],
-                space: topLeft['y'] - bottomLeft['y'],
+                space: bottomLeft['x'] - topRight['x'],
                 startPos: topLeft
             };
     }
@@ -91,7 +91,6 @@ export const renderDottedLine = (
     context.fillStyle = color;
     let progress = 0;
     const r = Math.abs(interval) / 2;
-    
     while (Math.abs(len) > Math.abs(progress)) {
         if (isHorizontal) {
             context.beginPath()
