@@ -94,17 +94,17 @@ export const renderDottedLine = (
     const r = Math.abs(interval) / 2;
     while (Math.abs(len) > Math.abs(progress)) {
         if (isHorizontal) {
-            context.beginPath()
+            context.beginPath();
             context.moveTo(x1 + progress, y1 + offset);
             context.arc(x1 + progress, y1 + offset, r, 0, Math.PI * 2, true);
             context.fill();
-            context.closePath()
+            context.closePath();
         } else {
-            context.beginPath()
+            context.beginPath();
             context.moveTo(x1 + offset, y1 + progress);
             context.arc(x1 + offset, y1 + progress, r, 0, Math.PI * 2, true);
             context.fill();
-            context.closePath()
+            context.closePath();
         }
         progress += interval * 2;
     }
