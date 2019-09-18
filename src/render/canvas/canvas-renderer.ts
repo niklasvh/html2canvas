@@ -629,6 +629,13 @@ export class CanvasRenderer {
         this.ctx.fill();
     }
 
+    async renderDoubleBorder(color: Color, side: number, curvePoints: BoundCurves) {
+        this.path(parsePathForBorder(curvePoints, side));
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = asString(color);
+        this.ctx.stroke();
+    }
+
     async renderNodeBackgroundAndBorders(paint: ElementPaint) {
         this.applyEffects(paint.effects, EffectTarget.BACKGROUND_BORDERS);
         const styles = paint.container.styles;
@@ -702,6 +709,8 @@ export class CanvasRenderer {
                     await this.renderDashedBorder(border.color, side++, paint.curves);
                 } else if (border.style === BORDER_STYLE.DOTTED) {
                     await this.renderDottedBorder(border.color, side++, paint.curves);
+                } else if (border.style === BORDER_STYLE.DOUBLE) {
+                    await this.renderDoubleBorder(border.color, side++, paint.curves);
                 } else {
                     await this.renderSolidBorder(border.color, side++, paint.curves);
                 }
@@ -755,6 +764,7 @@ export class CanvasRenderer {
         });
         this.ctx.lineWidth = dash;
         this.ctx.stroke();
+        this.ctx.restore();
         this.ctx.closePath();
     }
 
