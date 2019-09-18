@@ -630,12 +630,26 @@ export class CanvasRenderer {
     }
 
     async renderDoubleBorder(color: Color, side: number, curvePoints: BoundCurves) {
-        this.path(parsePathForBorder(curvePoints, side));
         const paths = parsePathForBorder(curvePoints, side);
         const data = parseWidthForDashedAndDottedBorder(paths, side);
-        this.ctx.lineWidth = data.space / 2;
-        this.ctx.strokeStyle = asString(color);
-        this.ctx.stroke();
+        let cur: Vector;
+        paths.forEach((point, index) => {
+            const start: Vector = isBezierCurve(point) ? point.start : point;
+            this.ctx.beginPath();
+            this.ctx.lineWidth = data.space / 3;
+            if (index === 2) {
+                this.ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
+            } else {
+                this.ctx.strokeStyle = asString(color);
+            }
+            if (cur) {
+                this.ctx.lineTo(cur.x, cur.y);
+            }
+            this.ctx.lineTo(start.x, start.y);
+            this.ctx.stroke();
+            this.ctx.closePath();
+            cur = isBezierCurve(point) ? point.start : point;
+        });
     }
 
     async renderNodeBackgroundAndBorders(paint: ElementPaint) {
