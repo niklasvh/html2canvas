@@ -699,8 +699,9 @@ export class CanvasRenderer {
         let side = 0;
         for (const border of borders) {
             if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side++, paint.curves);
+                await this.renderBorder(border.color, side, paint.curves);
             }
+            side++;
         }
     }
 
