@@ -101,7 +101,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         : COLORS.TRANSPARENT;
 
     const bgColor = opts.backgroundColor;
-    const defaultBackgroundColor = typeof bgColor === 'string' ? parseColor(bgColor) : 0xffffffff;
+    const defaultBackgroundColor = typeof bgColor === 'string' ? parseColor(bgColor) : bgColor === null ? COLORS.TRANSPARENT : 0xffffffff;
 
     const backgroundColor =
         element === ownerDocument.documentElement
