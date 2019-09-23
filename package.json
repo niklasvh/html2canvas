@@ -30,7 +30,6 @@
     "@types/chai": "^4.1.7",
     "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.18",
-    "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.2",
     "@types/platform": "^1.3.2",
     "@types/promise-polyfill": "^6.0.3",
