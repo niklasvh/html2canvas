@@ -11,7 +11,7 @@ import {ForeignObjectRenderer} from './render/canvas/foreignobject-renderer';
 export type Options = CloneOptions &
     RenderOptions &
     ResourceOptions & {
-        backgroundColor: string;
+        backgroundColor: string | null;
         foreignObjectRendering: boolean;
         logging: boolean;
         removeContainer?: boolean;
@@ -101,7 +101,8 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         : COLORS.TRANSPARENT;
 
     const bgColor = opts.backgroundColor;
-    const defaultBackgroundColor = typeof bgColor === 'string' ? parseColor(bgColor) : bgColor === null ? COLORS.TRANSPARENT : 0xffffffff;
+    const defaultBackgroundColor =
+        typeof bgColor === 'string' ? parseColor(bgColor) : bgColor === null ? COLORS.TRANSPARENT : 0xffffffff;
 
     const backgroundColor =
         element === ownerDocument.documentElement
