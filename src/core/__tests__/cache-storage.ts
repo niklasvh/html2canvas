@@ -35,7 +35,7 @@ const createMockContext = (origin: string, opts = {}) => {
     };
 
     CacheStorage.setContext(context as Window);
-    Logger.create('test');
+    Logger.create({id: 'test', enabled: false});
     return CacheStorage.create('test', {
         imageTimeout: 0,
         useCORS: false,

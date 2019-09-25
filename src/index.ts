@@ -76,7 +76,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
 
     const windowBounds = new Bounds(options.scrollX, options.scrollY, options.windowWidth, options.windowHeight);
 
-    Logger.create(instanceName);
+    Logger.create({id: instanceName, enabled: options.logging});
     Logger.getInstance(instanceName).debug(`Starting document clone`);
     const documentCloner = new DocumentCloner(element, {
         id: instanceName,
