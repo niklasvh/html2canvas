@@ -1,4 +1,4 @@
-export type LoggerOptions = {
+export interface LoggerOptions {
     id: string;
     enabled: boolean;
 };
