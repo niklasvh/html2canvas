@@ -42,6 +42,8 @@ function onBrowserChange(browserTest: Test) {
         previewImage.src = `/results/${browserTest.screenshot}.png`;
         if (browserTest.devicePixelRatio > 1) {
             previewImage.style.transform = `scale(${1 / browserTest.devicePixelRatio})`;
+        } else {
+            previewImage.style.transform = '';
         }
     }
 }

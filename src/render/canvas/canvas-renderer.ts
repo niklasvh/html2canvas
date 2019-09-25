@@ -578,10 +578,10 @@ export class CanvasRenderer {
 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, width, height);
-                if ((width > 0) && (height > 0)) {
-					const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
-					this.renderRepeat(path, pattern, x, y);
-				}
+                if (width > 0 && height > 0) {
+                    const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                    this.renderRepeat(path, pattern, x, y);
+                }
             } else if (isRadialGradient(backgroundImage)) {
                 const [path, left, top, width, height] = calculateBackgroundRendering(container, index, [
                     null,
