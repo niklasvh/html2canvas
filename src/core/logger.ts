@@ -1,7 +1,7 @@
 export interface LoggerOptions {
     id: string;
     enabled: boolean;
-};
+}
 
 export class Logger {
     static instances: {[key: string]: Logger} = {};
