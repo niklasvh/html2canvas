@@ -7,7 +7,7 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "resolveJsonModule": true,
-        "typeRoots": [ "./types", "./node_modules/@types"],
+        "types": ["node", "jest"],
         "target": "es5",
         "lib": ["es2015", "dom"],
         "sourceMap": true,

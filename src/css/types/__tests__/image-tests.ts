@@ -8,6 +8,9 @@ import {deg} from '../angle';
 const parse = (value: string) => image.parse(Parser.parseValue(value));
 const colorParse = (value: string) => color.parse(Parser.parseValue(value));
 
+jest.mock('../../../core/cache-storage');
+jest.mock('../../../core/features');
+
 describe('types', () => {
     describe('<image>', () => {
         describe('parsing', () => {
