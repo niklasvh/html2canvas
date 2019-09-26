@@ -410,6 +410,14 @@ export class DocumentCloner {
                 : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
         return anonymousReplacedElement;
     }
+
+    static destroy(container: HTMLIFrameElement): boolean {
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+            return true;
+        }
+        return false;
+    }
 }
 
 enum PseudoElementType {

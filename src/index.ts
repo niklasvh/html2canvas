@@ -116,6 +116,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     const renderOptions = {
         id: instanceName,
         cache: options.cache,
+        canvas: options.canvas,
         backgroundColor,
         scale: options.scale,
         x: options.x,
@@ -153,7 +154,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     }
 
     if (options.removeContainer === true) {
-        if (!cleanContainer(container)) {
+        if (!DocumentCloner.destroy(container)) {
             Logger.getInstance(instanceName).error(`Cannot detach cloned iframe as it is not in the DOM anymore`);
         }
     }
@@ -162,12 +163,4 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     Logger.destroy(instanceName);
     CacheStorage.destroy(instanceName);
     return canvas;
-};
-
-const cleanContainer = (container: HTMLIFrameElement): boolean => {
-    if (container.parentNode) {
-        container.parentNode.removeChild(container);
-        return true;
-    }
-    return false;
 };
