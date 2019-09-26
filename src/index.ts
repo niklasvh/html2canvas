@@ -116,6 +116,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     const renderOptions = {
         id: instanceName,
         cache: options.cache,
+        canvas: options.canvas,
         backgroundColor,
         scale: options.scale,
         x: options.x,
