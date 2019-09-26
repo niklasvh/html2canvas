@@ -21,6 +21,7 @@ jest.mock('../render/stacking-context');
 jest.mock('../render/canvas/canvas-renderer');
 
 describe('html2canvas', () => {
+    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     const element = {
         ownerDocument: {
             defaultView: {
@@ -59,6 +60,7 @@ describe('html2canvas', () => {
     });
 
     it('should use existing canvas when given as option', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
         const canvas = {} as HTMLCanvasElement;
         await html2canvas(element, {canvas});
         expect(CanvasRenderer).toHaveBeenLastCalledWith(
