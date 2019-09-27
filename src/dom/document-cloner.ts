@@ -20,6 +20,7 @@ import {CounterState, createCounterText} from '../css/types/functions/counter';
 import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-style-type';
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
+import {nodeListToArr} from '../core/util';
 
 export interface CloneOptions {
     id: string;
@@ -294,14 +295,14 @@ export class DocumentCloner {
             const counters = this.counters.parse(new CSSParsedCounterDeclaration(style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
-            let children = node.shadowRoot ? Array.from(node.shadowRoot.childNodes) : Array.from(node.childNodes);
+            let children = node.shadowRoot ? nodeListToArr(node.shadowRoot.childNodes) : nodeListToArr(node.childNodes);
             for (let i = 0; i < children.length; i++) {
                 let child = children[i] as Node;
                 if (isSlotElement(child)) {
                     let assignedNodes = child.assignedNodes() as ChildNode[];
                     if (assignedNodes.length > 0) {
                         // replace the slot element with its assigned nodes, and then process them immediately
-                        children.splice(i, 1, ...Array.from(assignedNodes));
+                        children.splice(i, 1, ...assignedNodes);
                         i -= 1;
                         continue;
                     }
