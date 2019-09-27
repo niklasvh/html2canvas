@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.5](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2019-09-27)
+
+
+### fix
+
+* correctly respect logging option (#2013) ([34b06d6365603c3b16664ab7804efe94c7945946](https://github.com/niklasvh/html2canvas/commit/34b06d6365603c3b16664ab7804efe94c7945946)), closes [#2013](https://github.com/niklasvh/html2canvas/issues/2013)
+* safari pseudo element content parsing (#2018) ([3f599103fb139f218ffe917800e74af2c7cc7ad5](https://github.com/niklasvh/html2canvas/commit/3f599103fb139f218ffe917800e74af2c7cc7ad5)), closes [#2018](https://github.com/niklasvh/html2canvas/issues/2018)
+* using existing canvas option (#2017) ([076492042a73d67b30e4562f2964200e07d25f5e](https://github.com/niklasvh/html2canvas/commit/076492042a73d67b30e4562f2964200e07d25f5e)), closes [#2017](https://github.com/niklasvh/html2canvas/issues/2017)
+
+
+
 # [1.0.0-rc.4](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2019-09-22)
 
 
