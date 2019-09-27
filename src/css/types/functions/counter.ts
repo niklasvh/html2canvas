@@ -30,25 +30,29 @@ export class CounterState {
     parse(style: CSSParsedCounterDeclaration): string[] {
         const counterIncrement = style.counterIncrement;
         const counterReset = style.counterReset;
+        let canReset = true;
 
         if (counterIncrement !== null) {
             counterIncrement.forEach(entry => {
                 const counter = this.counters[entry.counter];
-                if (counter) {
+                if (counter && entry.increment !== 0) {
+                    canReset = false;
                     counter[Math.max(0, counter.length - 1)] += entry.increment;
                 }
             });
         }
 
         const counterNames: string[] = [];
-        counterReset.forEach(entry => {
-            let counter = this.counters[entry.counter];
-            counterNames.push(entry.counter);
-            if (!counter) {
-                counter = this.counters[entry.counter] = [];
-            }
-            counter.push(entry.reset);
-        });
+        if (canReset) {
+            counterReset.forEach(entry => {
+                let counter = this.counters[entry.counter];
+                counterNames.push(entry.counter);
+                if (!counter) {
+                    counter = this.counters[entry.counter] = [];
+                }
+                counter.push(entry.reset);
+            });
+        }
 
         return counterNames;
     }
