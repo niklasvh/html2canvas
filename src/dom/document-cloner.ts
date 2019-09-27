@@ -71,7 +71,7 @@ export class DocumentCloner {
          if window url is about:blank, we can assign the url to current by writing onto the document
          */
 
-        const iframeLoad = iframeLoader(iframe).then(() => {
+        const iframeLoad = iframeLoader(iframe).then(async () => {
             this.scrolledElements.forEach(restoreNodeScroll);
             if (cloneWindow) {
                 cloneWindow.scrollTo(windowSize.left, windowSize.top);
@@ -89,6 +89,10 @@ export class DocumentCloner {
 
             if (typeof this.clonedReferenceElement === 'undefined') {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
+            }
+
+            if (documentClone.fonts && documentClone.fonts.ready) {
+                await documentClone.fonts.ready;
             }
 
             if (typeof onclone === 'function') {
@@ -398,7 +402,8 @@ export class DocumentCloner {
                         );
                         break;
                     default:
-                    //    console.log('ident', token, declaration);
+                        // safari doesn't parse string tokens correctly because of lack of quotes
+                        anonymousReplacedElement.appendChild(document.createTextNode(token.value));
                 }
             }
         });
