@@ -402,7 +402,8 @@ export class DocumentCloner {
                         );
                         break;
                     default:
-                    //    console.log('ident', token, declaration);
+                        // safari doesn't parse string tokens correctly because of lack of quotes
+                        anonymousReplacedElement.appendChild(document.createTextNode(token.value));
                 }
             }
         });
