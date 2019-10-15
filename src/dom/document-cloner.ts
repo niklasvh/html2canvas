@@ -322,7 +322,7 @@ export class DocumentCloner {
 
     resolvePseudoContent(
         node: Element,
-        clone: Element,
+        clone: Element | SVGElement,
         style: CSSStyleDeclaration,
         pseudoElt: PseudoElementType
     ): HTMLElement | void {
@@ -409,10 +409,17 @@ export class DocumentCloner {
         });
 
         anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
-        clone.className +=
+        const newClassName =
             pseudoElt === PseudoElementType.BEFORE
                 ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
                 : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+
+        if (isSVGElement(clone)) {
+            clone.className.baseValue += newClassName;
+        } else {
+            clone.className += newClassName;
+        }
+
         return anonymousReplacedElement;
     }
 
@@ -423,6 +430,10 @@ export class DocumentCloner {
         }
         return false;
     }
+}
+
+function isSVGElement(element: Element | SVGElement): element is SVGElement {
+    return typeof (element as SVGElement).className === 'object';
 }
 
 enum PseudoElementType {
