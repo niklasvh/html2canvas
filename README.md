@@ -60,7 +60,7 @@ Install dependencies:
 
     $ npm install
 
-Build browser bundle
+Build browser bundle:
 
     $ npm run build
 
