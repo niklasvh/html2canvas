@@ -127,7 +127,13 @@ export class Cache {
             //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
             if (isInlineBase64Image(src) || useCORS) {
                 img.crossOrigin = 'anonymous';
+                img.setAttribute('crossOrigin', 'anonymous');
+                src  = src +'?v='+new Date().getTime();
+                img.src = src;
             }
+            img.crossOrigin = 'anonymous';
+            img.setAttribute('crossOrigin', 'anonymous');
+            src  = src +'?v='+new Date().getTime();
             img.src = src;
             if (img.complete === true) {
                 // Inline XML images may fail to parse, throwing an Error later on
