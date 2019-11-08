@@ -111,7 +111,14 @@ export class Cache {
             typeof this._options.proxy === 'string' &&
             FEATURES.SUPPORT_CORS_XHR &&
             !useCORS;
-        if (!isSameOrigin && !isBlob && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
+        if (
+            !isSameOrigin &&
+            !isBlob &&
+            this._options.allowTaint === false &&
+            !isInlineImage(key) &&
+            !useProxy &&
+            !useCORS
+        ) {
             return;
         }
 
