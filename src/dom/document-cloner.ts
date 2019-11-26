@@ -8,6 +8,7 @@ import {
     isScriptElement,
     isSelectElement,
     isStyleElement,
+    isSVGElementNode,
     isTextareaElement,
     isTextNode
 } from './node-parser';
@@ -322,7 +323,7 @@ export class DocumentCloner {
 
     resolvePseudoContent(
         node: Element,
-        clone: Element | SVGElement,
+        clone: Element,
         style: CSSStyleDeclaration,
         pseudoElt: PseudoElementType
     ): HTMLElement | void {
@@ -414,7 +415,7 @@ export class DocumentCloner {
                 ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
                 : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
 
-        if (isSVGElement(clone)) {
+        if (isSVGElementNode(clone)) {
             clone.className.baseValue += newClassName;
         } else {
             clone.className += newClassName;
@@ -430,10 +431,6 @@ export class DocumentCloner {
         }
         return false;
     }
-}
-
-function isSVGElement(element: Element | SVGElement): element is SVGElement {
-    return typeof (element as SVGElement).className === 'object';
 }
 
 enum PseudoElementType {
