@@ -25,7 +25,9 @@ const html2canvas = (element: HTMLElement, options: Partial<Options> = {}): Prom
 
 export default html2canvas;
 
-CacheStorage.setContext(window);
+if (typeof window !== "undefined") {
+    CacheStorage.setContext(window);
+}
 
 const renderElement = async (element: HTMLElement, opts: Partial<Options>): Promise<HTMLCanvasElement> => {
     const ownerDocument = element.ownerDocument;
