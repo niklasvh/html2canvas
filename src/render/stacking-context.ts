@@ -115,7 +115,7 @@ const parseStackTree = (
                 } else if (order > 0) {
                     let index = 0;
                     parentStack.positiveZIndex.some((current, i) => {
-                        if (order > current.element.container.styles.zIndex.order) {
+                        if (order >= current.element.container.styles.zIndex.order) {
                             index = i + 1;
                             return false;
                         } else if (index > 0) {
