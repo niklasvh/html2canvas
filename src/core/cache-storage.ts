@@ -178,7 +178,8 @@ export class Cache {
             };
 
             xhr.onerror = reject;
-            xhr.open('GET', `${proxy}?url=${encodeURIComponent(src)}&responseType=${responseType}`);
+            const query_string = proxy.indexOf('?') > -1 ? '&' : '?';
+			xhr.open('GET', `${proxy}${query_string}url=${encodeURIComponent(src)}&responseType=${responseType}`);
 
             if (responseType !== 'text' && xhr instanceof XMLHttpRequest) {
                 xhr.responseType = responseType;
