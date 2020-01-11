@@ -1,4 +1,5 @@
 /dist
+/tmp
 /build
 /nbproject/
 image.jpg
@@ -15,3 +16,4 @@ npm-debug.log
 debug.log
 tests/reftests.js
 *.log
+.rpt2_cache

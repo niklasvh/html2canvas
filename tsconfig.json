@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "resolveJsonModule": true,
+        "types": ["node", "jest"],
+        "target": "es5",
+        "lib": ["es2015", "dom"],
+        "sourceMap": true,
+        "outDir": "dist/lib",
+        "declaration": true,
+        "declarationDir": "dist/types"
+    },
+    "include": [
+        "src"
+    ]
+}

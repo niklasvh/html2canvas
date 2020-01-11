@@ -14,6 +14,13 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const filenamifyUrl = require('filenamify-url');
 
+const mkdirp = require('mkdirp');
+const screenshotFolder = './tmp/reftests';
+const metadataFolder = './tmp/reftests/metadata';
+
+mkdirp.sync(path.resolve(__dirname, screenshotFolder));
+mkdirp.sync(path.resolve(__dirname, metadataFolder));
+
 const CORS_PORT = 8081;
 const corsApp = express();
 corsApp.use('/proxy', proxy());
@@ -59,9 +66,10 @@ const writeScreenshot = (buffer, body) => {
     const filename = `${filenamifyUrl(
         body.test.replace(/^\/tests\/reftests\//, '').replace(/\.html$/, ''),
         {replacement: '-'}
-    )}!${body.platform.name}-${body.platform.version}.png`;
+    )}!${[process.env.TARGET_BROWSER, body.platform.name, body.platform.version].join('-')}`;
 
-    fs.writeFileSync(path.resolve(__dirname, './tests/results/', filename), buffer);
+    fs.writeFileSync(path.resolve(__dirname, screenshotFolder, `${filename}.png`), buffer);
+    return filename;
 };
 
 app.post('/screenshot', (req, res) => {
@@ -70,33 +78,16 @@ app.post('/screenshot', (req, res) => {
     }
 
     const buffer = new Buffer(req.body.screenshot.substring(prefix.length), 'base64');
-    writeScreenshot(buffer, req.body);
-    return res.sendStatus(200);
-});
-
-const chunks = {};
-
-app.post('/screenshot/chunk', (req, res) => {
-    if (!req.body || !req.body.screenshot) {
-        return res.sendStatus(400);
-    }
-
-    const key = `${req.body.platform.name}-${req.body.platform.version}-${req.body.test
-        .replace(/^\/tests\/reftests\//, '')
-        .replace(/\.html$/, '')}`;
-    if (!Array.isArray(chunks[key])) {
-        chunks[key] = Array.from(Array(req.body.totalCount));
-    }
-
-    chunks[key][req.body.part] = req.body.screenshot;
-
-    if (chunks[key].every(s => typeof s === 'string')) {
-        const str = chunks[key].reduce((acc, s) => acc + s, '');
-        const buffer = new Buffer(str.substring(prefix.length), 'base64');
-        delete chunks[key];
-        writeScreenshot(buffer, req.body);
-    }
-
+    const filename = writeScreenshot(buffer, req.body);
+    fs.writeFileSync(path.resolve(__dirname, metadataFolder, `${filename}.json`), JSON.stringify({
+        windowWidth: req.body.windowWidth,
+        windowHeight: req.body.windowHeight,
+        platform: req.body.platform,
+        devicePixelRatio: req.body.devicePixelRatio,
+        test: req.body.test,
+        id: process.env.TARGET_BROWSER,
+        screenshot: filename
+    }));
     return res.sendStatus(200);
 });
 

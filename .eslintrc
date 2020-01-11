@@ -1,23 +1,27 @@
 {
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
+    "extends":  [
+        "plugin:@typescript-eslint/recommended",
+        "prettier/@typescript-eslint",
+        "plugin:prettier/recommended",
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.json",
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
     "plugins": [
-        "flowtype",
+        "@typescript-eslint",
         "prettier"
     ],
     "rules": {
         "no-console": ["error", { "allow": ["warn", "error"] }],
-        "flowtype/boolean-style": [
-            2,
-            "boolean"
-        ],
-        "flowtype/no-weak-types": 2,
-        "flowtype/delimiter-dangle": 2,
-        "prettier/prettier": ["error", {
-            "singleQuote": true,
-            "bracketSpacing": false,
-            "parser": "flow",
-            "tabWidth": 4,
-            "printWidth": 100
-        }]
+        "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
+        "@typescript-eslint/interface-name-prefix": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/class-name-casing": "off",
+        "prettier/prettier": "error"
     }
 }

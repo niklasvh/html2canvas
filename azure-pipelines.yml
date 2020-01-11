@@ -1,0 +1,170 @@
+trigger:
+- master
+
+jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm run build
+      displayName: Build
+    - script: |
+       npm pack
+       mv html2canvas-*.tgz html2canvas.tgz
+       tar --list --verbose --file=html2canvas.tgz
+      displayName: Pack
+      name: pack
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: html2canvas.tgz
+        artifactName: npm
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'dist'
+        artifactName: dist
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'build'
+        artifactName: build
+
+  - job: Test
+    displayName: Tests
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - script: npm run build
+      displayName: Build
+    - script: npm run lint
+      displayName: Lint
+    - script: npm run unittest
+      displayName: Unit tests
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Linux_Firefox_Stable
+      displayName: Linux Firefox Stable
+      vmImage: 'ubuntu-16.04'
+      targetBrowser: Firefox_Stable
+      xvfb: true
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Linux_Chrome_Stable
+      displayName: Linux Chrome Stable
+      vmImage: 'ubuntu-16.04'
+      targetBrowser: Chrome_Stable
+      xvfb: true
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_9
+      displayName: iOS Simulator Safari 9
+      vmImage: 'macOS-10.13'
+      targetBrowser: Safari_IOS_9
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_10
+      displayName: iOS Simulator Safari 10
+      vmImage: 'macOS-10.13'
+      targetBrowser: Safari_IOS_10
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_IOS_12
+      displayName: iOS Simulator Safari 12
+      vmImage: 'macOS-10.13'
+      targetBrowser: Safari_IOS_12
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_OSX_Safari_Stable
+      displayName: OSX Safari Stable
+      vmImage: 'macOS-10.13'
+      targetBrowser: Safari_Stable
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE9
+      displayName: Windows Internet Explorer 9 (Emulated)
+      vmImage: 'vs2017-win2016'
+      targetBrowser: IE_9
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE10
+      displayName: Windows Internet Explorer 10 (Emulated)
+      vmImage: 'vs2017-win2016'
+      targetBrowser: IE_10
+
+  - template: ci/browser-tests.yml
+    parameters:
+      name: Browser_Tests_Windows_IE11
+      displayName: Windows Internet Explorer 11
+      vmImage: 'vs2017-win2016'
+      targetBrowser: IE_11
+
+  - job: Build_docs
+    displayName: Build docs
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    dependsOn:
+      - Browser_Tests_Linux_Firefox_Stable
+      - Browser_Tests_Linux_Chrome_Stable
+      - Browser_Tests_OSX_Safari_IOS_9
+      - Browser_Tests_OSX_Safari_IOS_10
+      - Browser_Tests_OSX_Safari_IOS_12
+      - Browser_Tests_OSX_Safari_Stable
+      - Browser_Tests_Windows_IE9
+      - Browser_Tests_Windows_IE10
+      - Browser_Tests_Windows_IE11
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - task: Npm@0
+      inputs:
+        command: install
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download test results'
+      inputs:
+        artifactName: ReftestResults
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download dist'
+      inputs:
+        artifactName: dist
+        downloadPath: $(System.DefaultWorkingDirectory)
+    - script: cp -R tests/reftests www/static/tests/reftests && cp -R tests/assets www/static/tests/assets && cp tests/test.js www/static/tests/test.js && cp -R ReftestResults ./www/static/results
+      displayName: Copy reftests to docs website
+    - script: cp -R dist ./www/static/dist
+      displayName: Copy dist to docs website
+    - script: npm run build:reftest-result-list www/static/results/metadata www/src/results.json
+      displayName: Create reftest result index
+    - script: npm run build:reftest-preview
+      displayName: Create reftest previewer
+    - script: rm -rf www/static/results/metadata
+      displayName: Clean metadata folder
+    - script: npm run build && cd www && npm install && npm run build && cd ..
+      displayName: Build docs
+    - task: PublishBuildArtifacts@1
+      displayName: Upload docs website artifact
+      inputs:
+        PathtoPublish: 'www/public'
+        artifactName: docs
