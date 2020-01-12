@@ -140,13 +140,13 @@ export class CanvasRenderer {
         }
     }
 
-    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number) {
+    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number) {
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
         } else {
             const letters = toCodePoints(text.text).map(i => fromCodePoint(i));
             letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + text.bounds.height);
+                this.ctx.fillText(letter, left, text.bounds.top + baseline);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
@@ -173,10 +173,13 @@ export class CanvasRenderer {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
 
         this.ctx.font = font;
+        this.ctx.textBaseline = 'alphabetic';
+
+        const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
 
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = asString(styles.color);
-            this.renderTextWithLetterSpacing(text, styles.letterSpacing);
+            this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
             const textShadows: TextShadow = styles.textShadow;
 
             if (textShadows.length && text.text.trim().length) {
@@ -206,7 +209,6 @@ export class CanvasRenderer {
                             // Draws a line at the baseline of the font
                             // TODO As some browsers display the line as more than 1px if the font-size is big,
                             // need to take that into account both in position and size
-                            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
                             this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.round(text.bounds.top + baseline),
@@ -220,7 +222,6 @@ export class CanvasRenderer {
                             break;
                         case TEXT_DECORATION_LINE.LINE_THROUGH:
                             // TODO try and find exact position for line-through
-                            const {middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
                             this.ctx.fillRect(
                                 text.bounds.left,
                                 Math.ceil(text.bounds.top + middle),
@@ -363,7 +364,10 @@ export class CanvasRenderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            [this.ctx.font] = this.createFontStyle(styles);
+            const [fontFamily, fontSize] = this.createFontStyle(styles);
+            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+
+            this.ctx.font = fontFamily;
             this.ctx.fillStyle = asString(styles.color);
 
             this.ctx.textBaseline = 'middle';
@@ -393,7 +397,11 @@ export class CanvasRenderer {
             ]);
 
             this.ctx.clip();
-            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing);
+            this.renderTextWithLetterSpacing(
+                new TextBounds(container.value, textBounds),
+                styles.letterSpacing,
+                baseline
+            );
             this.ctx.restore();
             this.ctx.textBaseline = 'bottom';
             this.ctx.textAlign = 'left';
@@ -413,7 +421,9 @@ export class CanvasRenderer {
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
-                [this.ctx.font] = this.createFontStyle(styles);
+                const [fontFamily, fontSize] = this.createFontStyle(styles);
+
+                this.ctx.font = fontFamily;
                 this.ctx.fillStyle = asString(styles.color);
 
                 this.ctx.textBaseline = 'middle';
@@ -425,7 +435,13 @@ export class CanvasRenderer {
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
-                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles.letterSpacing);
+                const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+
+                this.renderTextWithLetterSpacing(
+                    new TextBounds(paint.listValue, bounds),
+                    styles.letterSpacing,
+                    baseline
+                );
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
             }
