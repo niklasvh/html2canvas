@@ -171,7 +171,7 @@ export class CanvasRenderer {
 
     async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
-
+        this.ctx.save();
         this.ctx.font = font;
 
         text.textBounds.forEach(text => {
@@ -191,11 +191,6 @@ export class CanvasRenderer {
 
                         this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
                     });
-
-                this.ctx.shadowColor = '';
-                this.ctx.shadowOffsetX = 0;
-                this.ctx.shadowOffsetY = 0;
-                this.ctx.shadowBlur = 0;
             }
 
             if (styles.textDecorationLine.length) {
@@ -232,6 +227,7 @@ export class CanvasRenderer {
                 });
             }
         });
+        this.ctx.restore();
     }
 
     renderReplacedElement(
