@@ -70,10 +70,8 @@ export default class Color {
     g: number;
     b: number;
     a: number | null;
-    k: number;
     isHSL: boolean;
     isHSV: boolean;
-    isCMYK: boolean;
     isRGB: boolean;
 
     constructor(value: string | Array<number>) {
@@ -88,10 +86,8 @@ export default class Color {
         this.g = g;
         this.b = b;
         this.a = a;
-        this.k = 0;
         this.isHSL = false;
         this.isHSV = false;
-        this.isCMYK = false;
         this.isRGB = true;
     }
 
@@ -109,10 +105,8 @@ export default class Color {
         if (this.isRGB) return;
         if (!this.isHSL) return;
         this.r = Math.max(0, Math.min(359, this.r));
-        this.g = Math.max(0, Math.min(100, this.g));
-        this.b = Math.max(0, Math.min(100, this.b));
-        this.g /= 100;
-        this.b /= 100;
+        this.g = Math.max(0, Math.min(100, this.g)) / 100;
+        this.b = Math.max(0, Math.min(100, this.b)) / 100;
         var C = (1 - Math.abs(2 * this.b - 1)) * this.g;
         var h = this.r / 60;
         var X = C * (1 - Math.abs(h % 2 - 1));
@@ -154,10 +148,8 @@ export default class Color {
         if (this.isRGB) return;
         if (!this.isHSV) return;
         this.r = Math.max(0, Math.min(359, this.r));
-        this.g = Math.max(0, Math.min(100, this.g));
-        this.b = Math.max(0, Math.min(100, this.b));
-        this.g /= 100;
-        this.b /= 100;
+        this.g = Math.max(0, Math.min(100, this.g)) / 100;
+        this.b = Math.max(0, Math.min(100, this.b)) / 100;
         var C = this.g * this.b;
         var h = this.r / 60;
         var X = C * (1 - Math.abs(h % 2 - 1));
@@ -195,29 +187,12 @@ export default class Color {
         this.isRGB = true;
     }
 
-    cmyk2rgb() {
-        if (this.isRGB) return;
-        if (!this.isCMYK) return;
-        this.r = Math.max(0, Math.min(100, this.r)) / 100;
-        this.g = Math.max(0, Math.min(100, this.g)) / 100;
-        this.b = Math.max(0, Math.min(100, this.b)) / 100;
-        this.k = Math.max(0, Math.min(100, this.k)) / 100;
-        this.r = Math.round((1 - this.r) * (1 - this.k) * 255);
-        this.g = Math.round((1 - this.g) * (1 - this.k) * 255);
-        this.b = Math.round((1 - this.b) * (1 - this.k) * 255);
-        this.isCMYK = false;
-        this.isRGB = true;
-    }
-
     rgb2hsl() {
         if (this.isHSL) return;
         if (!this.isRGB) return;
-        this.r = Math.max(0, Math.min(255, this.r));
-        this.g = Math.max(0, Math.min(255, this.g));
-        this.b = Math.max(0, Math.min(255, this.b));
-        this.r /= 255;
-        this.g /= 255;
-        this.b /= 255;
+        this.r = Math.max(0, Math.min(255, this.r)) / 255;
+        this.g = Math.max(0, Math.min(255, this.g)) / 255;
+        this.b = Math.max(0, Math.min(255, this.b)) / 255;
         var h, l, s;
         var M = Math.max(this.r, this.g, this.b);
         var m = Math.min(this.r, this.g, this.b);
@@ -240,12 +215,9 @@ export default class Color {
     rgb2hsv() {
         if (this.isHSV) return;
         if (!this.isRGB) return;
-        this.r = Math.max(0, Math.min(255, this.r));
-        this.g = Math.max(0, Math.min(255, this.g));
-        this.b = Math.max(0, Math.min(255, this.b));
-        this.r /= 255;
-        this.g /= 255;
-        this.b /= 255;
+        this.r = Math.max(0, Math.min(255, this.r)) / 255;
+        this.g = Math.max(0, Math.min(255, this.g)) / 255;
+        this.b = Math.max(0, Math.min(255, this.b)) / 255;
         var M = Math.max(this.r, this.g, this.b);
         var m = Math.min(this.r, this.g, this.b);
         var C = M - m;
@@ -262,30 +234,6 @@ export default class Color {
         else this.g = C / M * 100;
         this.b = M * 100;
         this.isHSV = true;
-        this.isRGB = false;
-    }
-
-    rgb2cmyk() {
-        if (this.isCMYK) return;
-        if (!this.isRGB) return;
-        this.r = Math.max(0, Math.min(255, this.r));
-        this.g = Math.max(0, Math.min(255, this.g));
-        this.b = Math.max(0, Math.min(255, this.b));
-        this.r /= 255;
-        this.g /= 255;
-        this.b /= 255;
-        this.k = 1 - Math.max(this.r, this.g, this.b);
-        if (this.k == 1) {
-            this.r = 0;
-            this.g = 0;
-            this.b = 0;
-        } else {
-            this.r = Math.round((1 - this.r - this.k) / (1 - this.k) * 100);
-            this.g = Math.round((1 - this.g - this.k) / (1 - this.k) * 100);
-            this.b = Math.round((1 - this.b - this.k) / (1 - this.k) * 100);
-        }
-        this.k = Math.round(this.k * 100);
-        this.isCMYK = true;
         this.isRGB = false;
     }
 
@@ -310,13 +258,7 @@ export default class Color {
 
     adjustBrightness(value: number) {
         if (value < 0) value = 0;
-        if (this.isCMYK) {
-            this.cmyk2rgb();
-            this.rgb2hsl();
-            this.b *= value;
-            this.hsl2rgb();
-            this.rgb2cmyk();
-        } else if (this.isRGB) {
+        if (this.isRGB) {
             this.rgb2hsl();
             this.b *= value;
             this.hsl2rgb();
@@ -337,11 +279,7 @@ export default class Color {
 
     adjustBrightnessRGB(value: number) {
         if (value < 0) value = 0;
-        if (this.isCMYK) {
-            this.cmyk2rgb();
-            this.brightnessRGB(value);
-            this.rgb2cmyk();
-        } else if (this.isHSL) {
+        if (this.isHSL) {
             this.hsl2rgb();
             this.brightnessRGB(value);
             this.rgb2hsl();
@@ -363,11 +301,7 @@ export default class Color {
     adjustContrast(value: number) {
         if (value < 0) value = 0;
         else if (value > 1) value = 1;
-        if (this.isCMYK) {
-            this.cmyk2rgb();
-            this.contrastRGB(value);
-            this.rgb2cmyk();
-        } else if (this.isHSL) {
+        if (this.isHSL) {
             this.hsl2rgb();
             this.contrastRGB(value);
             this.rgb2hsl();
@@ -410,11 +344,7 @@ export default class Color {
     }
 
     grayscale(value: number, mode: ?string) {
-        if (this.isCMYK) {
-            this.cmyk2rgb();
-            this.grayscaleRGB(value, mode);
-            this.rgb2cmyk();
-        } else if (this.isHSL) {
+        if (this.isHSL) {
             this.hsl2rgb();
             this.grayscaleRGB(value, mode);
             this.rgb2hsl();
@@ -430,25 +360,13 @@ export default class Color {
     adjustHue(value: number) {
         while (value < 0) value += 360;
         while (value > 360) value -= 360;
-        if (this.isCMYK) {
-            this.cmyk2rgb();
+        if (this.isRGB) {
             this.rgb2hsl();
             this.r += value;
             if (this.r < 0) this.r += 360;
             if (this.r > 359) this.r -= 360;
             this.hsl2rgb();
-            this.rgb2cmyk();
-        } else if (this.isRGB) {
-            this.rgb2hsl();
-            this.r += value;
-            if (this.r < 0) this.r += 360;
-            if (this.r > 359) this.r -= 360;
-            this.hsl2rgb();
-        } else if (this.isHSV) {
-            this.r += value;
-            if (this.r < 0) this.r += 360;
-            if (this.r > 359) this.r -= 360;
-        } else if (this.isHSL) {
+        } else {
             this.r += value;
             if (this.r < 0) this.r += 360;
             if (this.r > 359) this.r -= 360;
@@ -460,38 +378,23 @@ export default class Color {
             this.r = value * (255 - 2 * this.r) + this.r;
             this.g = value * (255 - 2 * this.g) + this.g;
             this.b = value * (255 - 2 * this.b) + this.b;
-        } else if (this.isHSL || this.isHSV) {
+        } else {
             this.r = value * (360 - 2 * this.r) + this.r;
             this.g = value * (100 - 2 * this.g) + this.g;
             this.b = value * (100 - 2 * this.b) + this.b;
-        } else if (this.isCMYK) {
-            this.r = value * (255 - 2 * this.r) + this.r;
-            this.g = value * (255 - 2 * this.g) + this.g;
-            this.b = value * (255 - 2 * this.b) + this.b;
-            //this.k = 1 - this.k;
         }
     }
 
     adjustSaturation(value: number) {
         while (value < 0) value = 0;
-        if (this.isCMYK) {
-            this.cmyk2rgb();
+        if (this.isRGB) {
             this.rgb2hsl();
             this.g *= value;
             if (this.g > 100) this.g = 100;
             this.hsl2rgb();
-            this.rgb2cmyk();
-        } else if (this.isHSL) {
-            this.g *= value;
-            if (this.g > 100) this.g = 100;
-        } else if (this.isHSV) {
-            this.g *= value;
-            if (this.g > 100) this.g = 100;
         } else {
-            this.rgb2hsl();
             this.g *= value;
             if (this.g > 100) this.g = 100;
-            this.hsl2rgb();
         }
     }
 
@@ -512,10 +415,6 @@ export default class Color {
         else if (value > 1) value = 1;
         if (this.isRGB) {
             this.sepiaRGB(value);
-        } else if (this.isCMYK) {
-            this.cmyk2rgb();
-            this.sepiaRGB(value);
-            this.rgb2cmyk();
         } else if (this.isHSL) {
             this.hsl2rgb();
             this.sepiaRGB(value);
