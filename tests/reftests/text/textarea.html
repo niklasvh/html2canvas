@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>textarea</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        textarea{
+            font-family: Arial;
+            font-size: 14px;
+            width: 10em;
+            height: 90px;
+        }
+    </style>
+
+</head>
+<body>
+<div>
+    <p>1. <code>word wrap</code></p>
+    <textarea> A long text with many words that should be wrapped on various lines.
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea style="padding: 1em">A long text with many words that should be wrapped on various lines.
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea style="line-height: 25px">A long text with many words.
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea>A long text with many           words     that should be wrapped on various lines.
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea>A long text with many
+          words that
+
+        should be wrapped on various lines.
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea>Donaudampfschifffahrtsgesellschaft
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea>Donaudampfschifffahrtsgesellschaft Kapitän Koch
+    </textarea>
+    <p>1. <code>word wrap</code></p>
+    <textarea>Donaudampfschifffahrtsgesellschaftskapitänskochmütze</textarea>
+</div>
+
+</body>
+</html>
