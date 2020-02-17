@@ -38,6 +38,7 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
+import {layout} from './textarea-layout';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -141,77 +142,18 @@ export class CanvasRenderer {
     }
 
     renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, lineHeight?: number) {
-        if (letterSpacing === 0) {
-            if (lineHeight===undefined){
-                this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
-            }else {
-                let pos = 0
-                let word = 0
-                let line = 0
-                let y = text.bounds.top + lineHeight / 2
-                while (pos < text.text.length) {
-                    let c = text.text.charAt(pos)
-                    pos++
-                    switch (c) {
-                        case ' ':
-                            if (this.ctx.measureText(text.text.substring(line, pos - 1)).width > text.bounds.width) {
-                                if (line === word) {
-                                    let p = pos
-                                    while (this.ctx.measureText(text.text.substring(line, p)).width > text.bounds.width) {
-                                        p--
-                                    }
-                                    this.ctx.fillText(text.text.substring(line, p), text.bounds.left, y)
-                                    y += lineHeight
-                                    line = word = p
-                                } else {
-                                    this.ctx.fillText(text.text.substring(line, word), text.bounds.left, y)
-                                    y += lineHeight
-                                    let s = word === pos - 1
-                                    while (pos < text.text.length && text.text.charAt(pos) === ' ') pos++
-                                    line = s ? pos : word
-                                    word = pos
-                                }
-                            } else {
-                                word = pos
-                            }
-                            break
-                        case '\n':
-                            if (this.ctx.measureText(text.text.substring(line, pos - 1)).width > text.bounds.width) {
-                                if (line === word) {
-                                    let p = pos
-                                    while (this.ctx.measureText(text.text.substring(line, p)).width > text.bounds.width) {
-                                        p--
-                                    }
-                                    this.ctx.fillText(text.text.substring(line, p), text.bounds.left, y)
-                                    y += lineHeight
-                                    line = word = p
-                                } else {
-                                    this.ctx.fillText(text.text.substring(line, word), text.bounds.left, y)
-                                    y += lineHeight
-                                    line = word
-                                    word = pos
-                                }
-                            } else {
-                                this.ctx.fillText(text.text.substring(line, pos - 1), text.bounds.left, y)
-                                y += lineHeight
-                                line = pos
-                                word = pos
-                            }
-                            break
-                        default:
-                    }
-                }
-                if (pos > line) {
-                    this.ctx.fillText(text.text.substring(line, pos + 1), text.bounds.left, y)
+        if (lineHeight === undefined) {
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+        } else {
+            const chars = toCodePoints(text.text).map(i => fromCodePoint(i));
+            const pos = layout(chars, text.bounds.width, s => this.ctx.measureText(s).width + letterSpacing);
+            const dx = text.bounds.left;
+            const dy = text.bounds.top + lineHeight / 2;
+            for (let i = 0; i < pos.length; i++) {
+                if (pos[i][0] >= 0) {
+                    this.ctx.fillText(chars[i], pos[i][0] + dx, pos[i][1] * lineHeight + dy);
                 }
             }
-        } else {
-            const letters = toCodePoints(text.text).map(i => fromCodePoint(i));
-            letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + text.bounds.height);
-
-                return left + this.ctx.measureText(letter).width;
-            }, text.bounds.left);
         }
     }
 
@@ -455,7 +397,8 @@ export class CanvasRenderer {
             ]);
 
             this.ctx.clip();
-            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing, computeLineHeight(styles.lineHeight, styles.fontSize.number));
+            const lineHeight = (container instanceof TextareaElementContainer) ? computeLineHeight(styles.lineHeight, styles.fontSize.number) : undefined;
+            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing, lineHeight);
             this.ctx.restore();
             this.ctx.textBaseline = 'bottom';
             this.ctx.textAlign = 'left';
