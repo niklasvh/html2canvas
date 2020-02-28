@@ -8,9 +8,6 @@ html2canvas
 [![NPM Downloads](https://img.shields.io/npm/dm/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
 [![NPM Version](https://img.shields.io/npm/v/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
 
-This is a branch of the original and fixes:
-- Rendering of textarea (see [#2008](https://github.com/niklasvh/html2canvas/issues/2008))
-
 #### JavaScript HTML renderer ####
 
  The script allows you to take "screenshots" of webpages or parts of it, directly on the users browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
