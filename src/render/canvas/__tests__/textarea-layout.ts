@@ -36,8 +36,8 @@ describe('textarea-layout', () => {
             ['Donaudampfsc', 'x2']);
     });
     it('should wrap lines at -', () => {
-        layoutEqual('   Long text-  message with sev lines.',
-            ['   Long text-', 'message with','sev lines.']);
+        layoutEqual('   Long text- message with lines.',
+            ['   Long text', '- message','with lines.']);
     });
     it('should wrap lines at - 2', () => {
         layoutEqual('Long text-  message with sev lines.',

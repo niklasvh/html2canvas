@@ -13,7 +13,7 @@ export function layout(chars: string[], width: number, measure: (s: string, len:
             const lineWidth = measure(lineString, lineLen);
             pos.push([lineWidth - measure(chars[i], 1), line]);
             if (lineWidth > width) {
-                if (chars[i] === ' ' || chars[i] === '-') {
+                if (chars[i] === ' ') {
                     let p = i;
                     while (p > 0 && pos[p][1] === line && chars[p] === ' ') p--;
                     for (let j = i; j > p; j--) {
@@ -25,6 +25,10 @@ export function layout(chars: string[], width: number, measure: (s: string, len:
                         pos.push([-1, line]);
                         i++;
                     }
+                } else if (chars[i] === '-') {
+                    line++;
+                    setLine(i, i + 1);
+                    pos[i] = [0, line];
                 } else {
                     let p = i;
                     while (p > 0 && pos[p][1] === line && chars[p] !== ' ' && chars[p] !== '-') p--;
