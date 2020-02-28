@@ -146,7 +146,8 @@ export class CanvasRenderer {
             this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
         } else {
             const chars = toCodePoints(text.text).map(i => fromCodePoint(i));
-            const pos = layout(chars, text.bounds.width, s => this.ctx.measureText(s).width + letterSpacing);
+            const pos = layout(chars, text.bounds.width, (s, len) =>
+                this.ctx.measureText(s).width + letterSpacing * (len - 1));
             const dx = text.bounds.left;
             const dy = text.bounds.top + lineHeight / 2;
             for (let i = 0; i < pos.length; i++) {

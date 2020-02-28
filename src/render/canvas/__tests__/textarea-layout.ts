@@ -35,10 +35,22 @@ describe('textarea-layout', () => {
         layoutEqual('Donaudampfsc x2',
             ['Donaudampfsc', 'x2']);
     });
+    it('should wrap lines at -', () => {
+        layoutEqual('   Long text-  message with sev lines.',
+            ['   Long text-', 'message with','sev lines.']);
+    });
+    it('should wrap lines at - 2', () => {
+        layoutEqual('Long text-  message with sev lines.',
+            ['Long text- ', 'message with','sev lines.']);
+    });
+    it('should wrap lines at - 3', () => {
+        layoutEqual('Long text-message with sev lines.',
+            ['Long text-', 'message with','sev lines.']);
+    });
 });
 
 function layoutEqual(s: string, lines: string[]) {
-    const pos = layout(toCodePoints(s).map(i => fromCodePoint(i)), 120, _ => 10);
+    const pos = layout(toCodePoints(s).map(i => fromCodePoint(i)), 120, (_, len) => 10 * len);
     let line = '';
     let y = 0;
     let j = 0;
