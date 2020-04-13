@@ -8,6 +8,7 @@ import {
     isScriptElement,
     isSelectElement,
     isStyleElement,
+    isSVGElementNode,
     isTextareaElement,
     isTextNode
 } from './node-parser';
@@ -71,7 +72,7 @@ export class DocumentCloner {
          if window url is about:blank, we can assign the url to current by writing onto the document
          */
 
-        const iframeLoad = iframeLoader(iframe).then(() => {
+        const iframeLoad = iframeLoader(iframe).then(async () => {
             this.scrolledElements.forEach(restoreNodeScroll);
             if (cloneWindow) {
                 cloneWindow.scrollTo(windowSize.left, windowSize.top);
@@ -89,6 +90,10 @@ export class DocumentCloner {
 
             if (typeof this.clonedReferenceElement === 'undefined') {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
+            }
+
+            if (documentClone.fonts && documentClone.fonts.ready) {
+                await documentClone.fonts.ready;
             }
 
             if (typeof onclone === 'function') {
@@ -398,17 +403,33 @@ export class DocumentCloner {
                         );
                         break;
                     default:
-                    //    console.log('ident', token, declaration);
+                        // safari doesn't parse string tokens correctly because of lack of quotes
+                        anonymousReplacedElement.appendChild(document.createTextNode(token.value));
                 }
             }
         });
 
         anonymousReplacedElement.className = `${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE} ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
-        clone.className +=
+        const newClassName =
             pseudoElt === PseudoElementType.BEFORE
                 ? ` ${PSEUDO_HIDE_ELEMENT_CLASS_BEFORE}`
                 : ` ${PSEUDO_HIDE_ELEMENT_CLASS_AFTER}`;
+
+        if (isSVGElementNode(clone)) {
+            clone.className.baseValue += newClassName;
+        } else {
+            clone.className += newClassName;
+        }
+
         return anonymousReplacedElement;
+    }
+
+    static destroy(container: HTMLIFrameElement): boolean {
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+            return true;
+        }
+        return false;
     }
 }
 

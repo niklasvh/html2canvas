@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>z-index19</title>
+    <style>
+        .canvas-view {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin-right: 50px;
+        }
+
+        .div1 {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: red;
+        }
+
+        .div2 {
+            position: absolute;
+            z-index: 2;
+            top: 100px;
+            left: 100px;
+            bottom: 0;
+            right: 0;
+            background-color: green;
+        }
+
+        .div3 {
+            position: absolute;
+            z-index: 3;
+            top: 200px;
+            left: 200px;
+            bottom: 0;
+            right: 0;
+            background-color: blue;
+        }
+
+        .div4 {
+            position: absolute;
+            z-index: 4;
+            top: 300px;
+            left: 300px;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+        }
+    </style>
+    <script type="text/javascript" src="../../test.js"></script>
+</head>
+<body>
+<div class="canvas-view" id="my-home">
+    <div class="main" id="my-div">
+        <div class="div1"></div>
+        <div class="div2"></div>
+        <div class="div3"></div>
+        <div class="div4"></div>
+    </div>
+</div>
+</body>
+</html>

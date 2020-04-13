@@ -103,7 +103,8 @@ export const isTextNode = (node: Node): node is Text => node.nodeType === Node.T
 export const isElementNode = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 export const isHTMLElementNode = (node: Node): node is HTMLElement =>
     typeof (node as HTMLElement).style !== 'undefined';
-
+export const isSVGElementNode = (element: Element): element is SVGElement =>
+    typeof (element as SVGElement).className === 'object';
 export const isLIElement = (node: Element): node is HTMLLIElement => node.tagName === 'LI';
 export const isOLElement = (node: Element): node is HTMLOListElement => node.tagName === 'OL';
 export const isInputElement = (node: Element): node is HTMLInputElement => node.tagName === 'INPUT';

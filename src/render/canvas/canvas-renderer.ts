@@ -71,10 +71,12 @@ export class CanvasRenderer {
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.options = options;
-        this.canvas.width = Math.floor(options.width * options.scale);
-        this.canvas.height = Math.floor(options.height * options.scale);
-        this.canvas.style.width = `${options.width}px`;
-        this.canvas.style.height = `${options.height}px`;
+        if (!options.canvas) {
+            this.canvas.width = Math.floor(options.width * options.scale);
+            this.canvas.height = Math.floor(options.height * options.scale);
+            this.canvas.style.width = `${options.width}px`;
+            this.canvas.style.height = `${options.height}px`;
+        }
         this.fontMetrics = new FontMetrics(document);
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
@@ -580,8 +582,10 @@ export class CanvasRenderer {
 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, width, height);
-                const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
-                this.renderRepeat(path, pattern, x, y);
+                if (width > 0 && height > 0) {
+                    const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                    this.renderRepeat(path, pattern, x, y);
+                }
             } else if (isRadialGradient(backgroundImage)) {
                 const [path, left, top, width, height] = calculateBackgroundRendering(container, index, [
                     null,
@@ -701,8 +705,9 @@ export class CanvasRenderer {
         let side = 0;
         for (const border of borders) {
             if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side++, paint.curves);
+                await this.renderBorder(border.color, side, paint.curves);
             }
+            side++;
         }
     }
 

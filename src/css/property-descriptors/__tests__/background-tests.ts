@@ -4,15 +4,13 @@ import {backgroundImage} from '../background-image';
 import {CSSImageType} from '../../types/image';
 import {pack} from '../../types/color';
 import {deg} from '../../types/angle';
-import {createMockContext} from '../../../core/__tests__/mock-context';
-import {CacheStorage} from '../../../core/cache-storage';
+
+jest.mock('../../../core/cache-storage');
+jest.mock('../../../core/features');
 
 const backgroundImageParse = (value: string) => backgroundImage.parse(Parser.parseValues(value));
 
 describe('property-descriptors', () => {
-    before(() => {
-        CacheStorage.attachInstance(createMockContext('http://example.com'));
-    });
     describe('background-image', () => {
         it('none', () => deepStrictEqual(backgroundImageParse('none'), []));
 

@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.5](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2019-09-27)
+
+
+### fix
+
+* correctly respect logging option (#2013) ([34b06d6365603c3b16664ab7804efe94c7945946](https://github.com/niklasvh/html2canvas/commit/34b06d6365603c3b16664ab7804efe94c7945946)), closes [#2013](https://github.com/niklasvh/html2canvas/issues/2013)
+* safari pseudo element content parsing (#2018) ([3f599103fb139f218ffe917800e74af2c7cc7ad5](https://github.com/niklasvh/html2canvas/commit/3f599103fb139f218ffe917800e74af2c7cc7ad5)), closes [#2018](https://github.com/niklasvh/html2canvas/issues/2018)
+* using existing canvas option (#2017) ([076492042a73d67b30e4562f2964200e07d25f5e](https://github.com/niklasvh/html2canvas/commit/076492042a73d67b30e4562f2964200e07d25f5e)), closes [#2017](https://github.com/niklasvh/html2canvas/issues/2017)
+
+
+
+# [1.0.0-rc.4](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2019-09-22)
+
+
+### docs
+
+* fix typo (#1864) ([9a63797aa7fb81454008745d2a1c069ca24339a4](https://github.com/niklasvh/html2canvas/commit/9a63797aa7fb81454008745d2a1c069ca24339a4)), closes [#1864](https://github.com/niklasvh/html2canvas/issues/1864)
+
+### feat
+
+* ignore unsupported image functions (#1873) ([61f4819e02102b112513d57b16ec7d37e989af20](https://github.com/niklasvh/html2canvas/commit/61f4819e02102b112513d57b16ec7d37e989af20)), closes [#1873](https://github.com/niklasvh/html2canvas/issues/1873)
+
+### fix
+
+* correctly render partial borders (fix #1920) (#2010) ([eedb81ef9e114366a7e286e975659360cf9d0983](https://github.com/niklasvh/html2canvas/commit/eedb81ef9e114366a7e286e975659360cf9d0983)), closes [#1920](https://github.com/niklasvh/html2canvas/issues/1920) [#2010](https://github.com/niklasvh/html2canvas/issues/2010)
+* nested z-index ordering (#2011) ([00555cf1efddfed5877811d8a03a326f9943ab06](https://github.com/niklasvh/html2canvas/commit/00555cf1efddfed5877811d8a03a326f9943ab06)), closes [#2011](https://github.com/niklasvh/html2canvas/issues/2011) [#1978](https://github.com/niklasvh/html2canvas/issues/1978)
+* null backgroundColor option as transparent (#2012) ([7d3456b78c37e7333db087601805b32ec7ca0253](https://github.com/niklasvh/html2canvas/commit/7d3456b78c37e7333db087601805b32ec7ca0253)), closes [#2012](https://github.com/niklasvh/html2canvas/issues/2012)
+* zero size iframe rendering (#1863) ([81dcf7b6be66920260a60908aa4b86e7530f6e17](https://github.com/niklasvh/html2canvas/commit/81dcf7b6be66920260a60908aa4b86e7530f6e17)), closes [#1863](https://github.com/niklasvh/html2canvas/issues/1863)
+
+
+
 # [1.0.0-rc.3](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2019-05-30)
 
 
