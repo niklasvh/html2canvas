@@ -74,28 +74,28 @@ jobs:
     parameters:
       name: Browser_Tests_OSX_Safari_IOS_9
       displayName: iOS Simulator Safari 9
-      vmImage: 'macOS-10.13'
+      vmImage: 'macOS-10.14'
       targetBrowser: Safari_IOS_9
 
   - template: ci/browser-tests.yml
     parameters:
       name: Browser_Tests_OSX_Safari_IOS_10
       displayName: iOS Simulator Safari 10
-      vmImage: 'macOS-10.13'
+      vmImage: 'macOS-10.14'
       targetBrowser: Safari_IOS_10
 
   - template: ci/browser-tests.yml
     parameters:
       name: Browser_Tests_OSX_Safari_IOS_12
       displayName: iOS Simulator Safari 12
-      vmImage: 'macOS-10.13'
+      vmImage: 'macOS-10.14'
       targetBrowser: Safari_IOS_12
 
   - template: ci/browser-tests.yml
     parameters:
       name: Browser_Tests_OSX_Safari_Stable
       displayName: OSX Safari Stable
-      vmImage: 'macOS-10.13'
+      vmImage: 'macOS-10.14'
       targetBrowser: Safari_Stable
 
   - template: ci/browser-tests.yml
