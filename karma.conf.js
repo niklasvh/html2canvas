@@ -13,16 +13,19 @@ module.exports = function(config) {
         Safari_IOS_9: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '9.0'
         },
         Safari_IOS_10: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '10.0'
         },
         Safari_IOS_12: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '12.1'
         },
         SauceLabs_IE9: {
@@ -126,7 +129,7 @@ module.exports = function(config) {
         baseBrowserDecorator(this);
         this.on('start', url => {
             console.log('starting with url 2 ', url, args);
-            simctl.getDevices(args.sdk).then(devices => {
+            simctl.getDevices(args.sdk, args.platform).then(devices => {
                 console.log('devices: ', devices);
                 const d = devices.find(d => {
                     return d.name === args.name;
