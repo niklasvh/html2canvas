@@ -89,7 +89,7 @@ module.exports = function(config) {
             flags: ['-extoff']
         },
         Safari_Stable: {
-            base: 'Safari'
+            base: 'SafariNative'
         },
         Chrome_Stable: {
             base: 'Chrome'
