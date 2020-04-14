@@ -88,7 +88,7 @@ module.exports = function(config) {
             base: 'Safari'
         },
         Chrome_Stable: {
-            base: 'Chrome'
+            base: 'ChromeHeadless'
         },
         Firefox_Stable: {
             base: 'Firefox'
@@ -99,7 +99,7 @@ module.exports = function(config) {
 
     const customLaunchers = ciLauncher ? {target_browser: ciLauncher} : {
         stable_chrome: {
-            base: 'Chrome'
+            base: 'ChromeHeadless'
         },
         stable_firefox: {
             base: 'Firefox'
