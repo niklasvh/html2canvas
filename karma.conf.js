@@ -128,7 +128,7 @@ module.exports = function(config) {
             console.log('starting with url 2 ', url, args);
             simctl.getDevices(args.sdk).then(devices => {
                 console.log('devices: ', devices);
-                const d = devices[args.sdk].find(d => {
+                const d = devices.find(d => {
                     return d.name === args.name;
                 });
 
