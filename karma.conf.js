@@ -129,9 +129,7 @@ module.exports = function(config) {
         }
         baseBrowserDecorator(this);
         this.on('start', url => {
-            console.log('starting with url 2 ', url, args);
             simctl.getDevices(args.sdk, args.platform).then(devices => {
-                console.log('devices: ', devices);
                 const d = devices.find(d => {
                     return d.name === args.name;
                 });
@@ -142,7 +140,6 @@ module.exports = function(config) {
                     this._process.kill();
                     return;
                 }
-
 
                 return iosSimulator.getSimulator(d.udid).then(device => {
                     return simctl.bootDevice(d.udid).then(() => device);
