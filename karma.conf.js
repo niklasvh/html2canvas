@@ -126,7 +126,7 @@ module.exports = function(config) {
         baseBrowserDecorator(this);
         this.on('start', url => {
             console.log('starting with url 2 ', url, args);
-            simctl.getDevices().then(devices => {
+            simctl.getDevices(args.sdk).then(devices => {
                 console.log('devices: ', devices);
                 const d = devices[args.sdk].find(d => {
                     return d.name === args.name;
