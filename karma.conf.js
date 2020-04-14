@@ -4,6 +4,7 @@
 const path = require('path');
 const simctl = require('node-simctl');
 const iosSimulator = require('appium-ios-simulator');
+const listenAddress = 'localhost';
 const port = 9876;
 
 const log = require('karma/lib/logger').create('launcher:MobileSafari');
@@ -213,6 +214,9 @@ module.exports = function(config) {
         junitReporter: {
             outputDir: 'tmp/junit/'
         },
+
+        // web server listen address,
+        listenAddress,
 
         // web server port
         port,
