@@ -90,6 +90,7 @@ jobs:
       displayName: iOS Simulator Safari 12
       vmImage: 'macOS-10.14'
       targetBrowser: Safari_IOS_12
+      xcodeSelection: '/Applications/Xcode_10.1.app'
 
   - template: ci/browser-tests.yml
     parameters:
