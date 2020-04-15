@@ -157,9 +157,7 @@ export class CanvasRenderer {
         const fontVariant = styles.fontVariant
             .filter(variant => variant === 'normal' || variant === 'small-caps')
             .join('');
-        const fontFamily = styles.fontFamily.map(fontName => {
-            return fontName.indexOf(' ') === -1 ? fontName : `"${fontName}"`;
-        }).join(', ');
+        const fontFamily = styles.fontFamily.join(', ');
         const fontSize = isDimensionToken(styles.fontSize)
             ? `${styles.fontSize.number}${styles.fontSize.unit}`
             : `${styles.fontSize.number}px`;
