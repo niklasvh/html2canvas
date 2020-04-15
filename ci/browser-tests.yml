@@ -31,6 +31,9 @@ jobs:
       inputs:
         artifactName: build
         downloadPath: $(System.DefaultWorkingDirectory)
+    - ${{ if ne(parameters.xcodeSelection, '') }}:
+      - script: sudo xcode-select -s "${{ parameters.xcodeSelection }}"
+        displayName: 'Switch Xcode'
     - ${{ if not(eq(parameters.xvfb, 'true')) }}:
       - script: npm run karma
         displayName: 'Run browser tests'

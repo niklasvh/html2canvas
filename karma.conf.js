@@ -4,6 +4,7 @@
 const path = require('path');
 const simctl = require('node-simctl');
 const iosSimulator = require('appium-ios-simulator');
+const listenAddress = 'localhost';
 const port = 9876;
 
 const log = require('karma/lib/logger').create('launcher:MobileSafari');
@@ -13,16 +14,19 @@ module.exports = function(config) {
         Safari_IOS_9: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '9.0'
         },
         Safari_IOS_10: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '10.0'
         },
         Safari_IOS_12: {
             base: 'MobileSafari',
             name: 'iPhone 5s',
+            platform: 'iOS',
             sdk: '12.1'
         },
         SauceLabs_IE9: {
@@ -85,7 +89,7 @@ module.exports = function(config) {
             flags: ['-extoff']
         },
         Safari_Stable: {
-            base: 'Safari'
+            base: 'SafariNative'
         },
         Chrome_Stable: {
             base: 'ChromeHeadless'
@@ -125,8 +129,8 @@ module.exports = function(config) {
         }
         baseBrowserDecorator(this);
         this.on('start', url => {
-            simctl.getDevices().then(devices => {
-                const d = devices[args.sdk].find(d => {
+            simctl.getDevices(args.sdk, args.platform).then(devices => {
+                const d = devices.find(d => {
                     return d.name === args.name;
                 });
 
@@ -207,6 +211,9 @@ module.exports = function(config) {
         junitReporter: {
             outputDir: 'tmp/junit/'
         },
+
+        // web server listen address,
+        listenAddress,
 
         // web server port
         port,
