@@ -19,12 +19,12 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
             accumulator.push(token.value);
           }
           if (token.type === TokenType.COMMA_TOKEN) {
-            results.push(accumulator.join(' '));
+            results.push(`'${accumulator.join(' ')}'`);
             accumulator.length = 0;
           }
         });
         if (accumulator.length) {
-          results.push(accumulator.join(' '));
+          results.push(`'${accumulator.join(' ')}'`);
         }
         console.log(results);
         return results;
