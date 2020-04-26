@@ -26,7 +26,6 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
         if (accumulator.length) {
             results.push(`'${accumulator.join(' ')}'`);
         }
-        console.log(results);
         return results;
     }
 };
