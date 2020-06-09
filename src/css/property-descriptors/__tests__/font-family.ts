@@ -8,18 +8,18 @@ describe('property-descriptors', () => {
     describe('font-family', () => {
         it('sans-serif', () =>
             deepEqual(fontFamilyParse('sans-serif'), [
-                "sans-serif",
+                "'sans-serif'",
             ]));
 
         it('great fonts 40 library', () =>
             deepEqual(fontFamilyParse('great fonts 40 library'), [
-                "great fonts 40 library",
+                "'great fonts 40 library'",
             ]));
 
         it('preferred font, "quoted fallback font"', () =>
             deepEqual(fontFamilyParse('preferred font, "quoted fallback font"'), [
-                "preferred font",
-                "quoted fallback font"
+                "'preferred font'",
+                "'quoted fallback font'"
             ]));
     });
 });
