@@ -21,5 +21,10 @@ describe('property-descriptors', () => {
                 "'preferred font'",
                 "'quoted fallback font'"
             ]));
+
+        it("'escaping test\\'s font'", () =>
+            deepEqual(fontFamilyParse("'escaping test\\'s font'"), [
+                "'escaping test\'s font'",
+            ]));
     });
 });
