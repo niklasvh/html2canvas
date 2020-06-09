@@ -8,7 +8,7 @@ describe('property-descriptors', () => {
     describe('font-family', () => {
         it('sans-serif', () =>
             deepEqual(fontFamilyParse('sans-serif'), [
-                "'sans-serif'",
+                "sans-serif",
             ]));
 
         it('great fonts 40 library', () =>
@@ -16,10 +16,11 @@ describe('property-descriptors', () => {
                 "'great fonts 40 library'",
             ]));
 
-        it('preferred font, "quoted fallback font"', () =>
-            deepEqual(fontFamilyParse('preferred font, "quoted fallback font"'), [
+        it('preferred font, "quoted fallback font", font', () =>
+            deepEqual(fontFamilyParse('preferred font, "quoted fallback font", font'), [
                 "'preferred font'",
-                "'quoted fallback font'"
+                "'quoted fallback font'",
+                "font"
             ]));
 
         it("'escaping test\\'s font'", () =>

@@ -24,14 +24,14 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
                     accumulator.push(token.number.toString());
                     break;
                 case TokenType.COMMA_TOKEN:
-                    results.push(`'${accumulator.join(' ')}'`);
+                    results.push(accumulator.join(' '));
                     accumulator.length = 0;
                     break;
             }
         });
         if (accumulator.length) {
-            results.push(`'${accumulator.join(' ')}'`);
+            results.push(accumulator.join(' '));
         }
-        return results;
+        return results.map(result => result.includes(' ') ? `'${result}'` : result);
     }
 };
