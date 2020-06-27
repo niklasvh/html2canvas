@@ -21,7 +21,7 @@ import html2canvas from 'html2canvas';
     
 ## Usage
 
-To render an `element` with html2canvas with some (optional) [options](/configuration/), simply call `html2canvas(element, options);`
+To render an `element` with html2canvas with some (optional) [options](/docs/configuration.md), simply call `html2canvas(element, options);`
 
 ```javascript
 html2canvas(document.body).then(function(canvas) {
