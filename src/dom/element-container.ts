@@ -24,6 +24,13 @@ export class ElementContainer {
             // getBoundingClientRect takes transforms into account
             element.style.transform = 'none';
         }
+        const ad = this.styles.animationDuration;
+        const td = this.styles.transitionDuration;
+        const style = (element as HTMLElement).style;
+        if (style && (ad || td)) {
+            style.animationDuration = '0ms';
+            style.transitionDuration = '0ms';
+        }
         this.bounds = parseBounds(element);
         this.flags = 0;
     }
