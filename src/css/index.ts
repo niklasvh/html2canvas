@@ -74,7 +74,7 @@ import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
-import { duration } from './property-descriptors/duration';
+import {duration} from './property-descriptors/duration';
 
 export class CSSParsedDeclaration {
     animationDuration: CSSValue;
