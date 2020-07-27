@@ -121,8 +121,12 @@ export class CanvasRenderer {
     }
 
     popEffect() {
+        const globalAlpha = this.ctx.globalAlpha;
         this._activeEffects.pop();
         this.ctx.restore();
+        if (globalAlpha) {
+            this.ctx.globalAlpha = globalAlpha;
+        }
     }
 
     async renderStack(stack: StackingContext) {
