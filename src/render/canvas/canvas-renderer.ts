@@ -22,7 +22,7 @@ import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
 import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
 import {ReplacedElementContainer} from '../../dom/replaced-elements/index';
-import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../effects';
+import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect, isOpacityEffect} from '../effects';
 import {contains} from '../../core/bitwise';
 import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
 import {FIFTY_PERCENT, getAbsoluteValue} from '../../css/types/length-percentage';
@@ -116,17 +116,15 @@ export class CanvasRenderer {
             this.path(effect.path);
             this.ctx.clip();
         }
-
+        if (isOpacityEffect(effect)) {
+            this.ctx.globalAlpha = effect.val;
+        }
         this._activeEffects.push(effect);
     }
 
     popEffect() {
-        const globalAlpha = this.ctx.globalAlpha;
         this._activeEffects.pop();
         this.ctx.restore();
-        if (globalAlpha) {
-            this.ctx.globalAlpha = globalAlpha;
-        }
     }
 
     async renderStack(stack: StackingContext) {
