@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Npm install
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Pack
+      run: |
+       npm pack
+       mv html2canvas-*.tgz html2canvas.tgz
+       tar --list --verbose --file=html2canvas.tgz
+    - name: Upload npm pack
+      uses: actions/upload-artifact@v2
+      with:
+        name: npm
+        path: html2canvas.tgz
+    - name: Upload dist
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: build
