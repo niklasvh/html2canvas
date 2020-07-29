@@ -55,6 +55,7 @@ import {zIndex} from './property-descriptors/z-index';
 import {CSSValue, isIdentToken, Parser} from './syntax/parser';
 import {Tokenizer} from './syntax/tokenizer';
 import {Color, color as colorType, isTransparent} from './types/color';
+import {duration as durationType} from './types/duration';
 import {angle} from './types/angle';
 import {image} from './types/image';
 import {opacity} from './property-descriptors/opacity';
@@ -73,8 +74,10 @@ import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
+import {duration} from './property-descriptors/duration';
 
 export class CSSParsedDeclaration {
+    animationDuration: CSSValue;
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
     backgroundColor: Color;
     backgroundImage: ReturnType<typeof backgroundImage.parse>;
@@ -133,11 +136,13 @@ export class CSSParsedDeclaration {
     textTransform: ReturnType<typeof textTransform.parse>;
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
+    transitionDuration: CSSValue;
     visibility: ReturnType<typeof visibility.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
 
     constructor(declaration: CSSStyleDeclaration) {
+        this.animationDuration = parse(duration, declaration.animationDuration);
         this.backgroundClip = parse(backgroundClip, declaration.backgroundClip);
         this.backgroundColor = parse(backgroundColor, declaration.backgroundColor);
         this.backgroundImage = parse(backgroundImage, declaration.backgroundImage);
@@ -197,6 +202,7 @@ export class CSSParsedDeclaration {
         this.textTransform = parse(textTransform, declaration.textTransform);
         this.transform = parse(transform, declaration.transform);
         this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
+        this.transitionDuration = parse(duration, declaration.transitionDuration);
         this.visibility = parse(visibility, declaration.visibility);
         this.wordBreak = parse(wordBreak, declaration.wordBreak);
         this.zIndex = parse(zIndex, declaration.zIndex);
@@ -288,6 +294,8 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
                 case 'length-percentage':
                     const value = parser.parseComponentValue();
                     return isLengthPercentage(value) ? value : ZERO_LENGTH;
+                case 'duration':
+                    return durationType.parse(parser.parseComponentValue());
             }
     }
 
