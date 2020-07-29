@@ -96,12 +96,17 @@ jobs:
             name: OSX Safari Stable
             targetBrowser: Safari_Stable
           - os: macos-latest  
-            name: iOS Simulator Safari 9
-            targetBrowser: Safari_IOS_9
+            name: iOS Simulator Safari 12
+            targetBrowser: Safari_IOS_12
+            xcode: /Applications/Xcode_10.3.app
           - os: macos-latest  
-            name: iOS Simulator Safari 10
-            targetBrowser: Safari_IOS_10
-
+            name: iOS Simulator Safari 13
+            targetBrowser: Safari_IOS_13
+            xcode: /Applications/Xcode_11.6_beta.app
+          - os: macos-latest  
+            name: iOS Simulator Safari 14
+            targetBrowser: Safari_IOS_14
+            xcode: /Applications/Xcode_12_beta.app
           - os: windows-latest
             name: Windows Internet Explorer 9 (Emulated)
             targetBrowser: IE_9
