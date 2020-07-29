@@ -113,7 +113,7 @@ jobs:
           name: build
           path: build
       - name: xcode selection
-        if: ${{ matrix.config.xcode != "" }}
+        if: ${{ matrix.config.xcode != '' }}
         run: sudo xcode-select -s "${{ matrix.config.xcode }}"
       - name: Run browser tests
         if: ${{ matrix.config.xvfb != true }}
