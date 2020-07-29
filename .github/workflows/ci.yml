@@ -61,9 +61,32 @@ jobs:
       matrix:
         config:
           - os: ubuntu-latest
-            name: Browser Tests Linux Firefox Stable
+            name: Linux Firefox Stable
             targetBrowser: Firefox_Stable
             xvfb: true
+          - os: ubuntu-latest  
+            name: Linux Chrome Stable
+            targetBrowser: Chrome_Stable
+            xvfb: true
+          - os: macos-latest  
+            name: OSX Safari Stable
+            targetBrowser: Safari_Stable
+          - os: macos-latest  
+            name: iOS Simulator Safari 9
+            targetBrowser: Safari_IOS_9
+          - os: macos-latest  
+            name: iOS Simulator Safari 10
+            targetBrowser: Safari_IOS_10
+          - os: macos-latest  
+            name: iOS Simulator Safari 12
+            targetBrowser: Safari_IOS_12
+            xcode: '/Applications/Xcode_10.1.app'
+          - os: windows-latest
+            name: Windows Internet Explorer 9 (Emulated)
+            targetBrowser: IE_9
+          - os: windows-latest
+            name: Windows Internet Explorer 10 (Emulated)
+            targetBrowser: IE_10  
           - os: windows-latest
             name: Windows Internet Explorer 11
             targetBrowser: IE_11
@@ -89,6 +112,9 @@ jobs:
         with:
           name: build
           path: build
+      - name: xcode selection
+        if: ${{ matrix.config.xcode != "" }}
+        run: sudo xcode-select -s "${{ matrix.config.xcode }}"
       - name: Run browser tests
         if: ${{ matrix.config.xvfb != true }}
         run: npm run karma
