@@ -18,6 +18,10 @@ jobs:
         node-version: 12
     - name: Npm install
       run: npm ci
+    - name: Configure git
+      run: |
+        git config user.name "CI"
+        git config user.email "niklasvh@gmail.com"
     - name: Create release
       run: npm run release -- --preset eslint --${{ github.event.inputs.version }}
 
