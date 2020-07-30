@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, refs/tags/* ]
   pull_request:
     branches: [ master ]
 
@@ -168,4 +168,54 @@ jobs:
         with:
           name: ReftestResults
           path: tmp/reftests      
-                
+  publish: 
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/test')
+    needs: browser-test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Download library
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+      - name: Create Github Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload html2canvas.js
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+          asset_path: ./dist/html2canvas.js
+          asset_name: html2canvas.js
+          asset_content_type: text/javascript
+      - name: Upload html2canvas.min.js
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+          asset_path: ./dist/html2canvas.min.js
+          asset_name: html2canvas.min.js
+          asset_content_type: text/javascript
+      - name: Upload html2canvas.esm.js
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+          asset_path: ./dist/html2canvas.esm.js
+          asset_name: html2canvas.esm.js
+          asset_content_type: text/javascript
