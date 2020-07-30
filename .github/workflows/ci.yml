@@ -2,10 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ master, refs/tags/* ]
+    branches: [ master ]
+    tags:
+      - 'test*'
   pull_request:
     branches: [ master ]
-
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
