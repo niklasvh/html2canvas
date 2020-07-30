@@ -1,0 +1,27 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version (major | minor | patch | premajor | preminor | prepatch | prerelease)'
+        default: 'patch'
+        required: true
+        
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Npm install
+      run: npm ci
+    - name: Configure git
+      run: |
+        git config user.name "CI"
+        git config user.email "niklasvh@gmail.com"
+    - name: Create release
+      run: npm run release -- --preset eslint --${{ github.event.inputs.version }}
+

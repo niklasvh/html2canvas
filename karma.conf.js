@@ -10,6 +10,7 @@ const port = 9876;
 const log = require('karma/lib/logger').create('launcher:MobileSafari');
 
 module.exports = function(config) {
+    // https://github.com/actions/virtual-environments/blob/master/images/macos/macos-10.15-Readme.md
     const launchers = {
         Safari_IOS_9: {
             base: 'MobileSafari',
@@ -27,7 +28,19 @@ module.exports = function(config) {
             base: 'MobileSafari',
             name: 'iPhone 5s',
             platform: 'iOS',
-            sdk: '12.1'
+            sdk: '12.4'
+        },
+        Safari_IOS_13: {
+            base: 'MobileSafari',
+            name: 'iPhone 8',
+            platform: 'iOS',
+            sdk: '13.6'
+        },
+        Safari_IOS_14: {
+            base: 'MobileSafari',
+            name: 'iPhone 8',
+            platform: 'iOS',
+            sdk: '14.0'
         },
         SauceLabs_IE9: {
             base: 'SauceLabs',
