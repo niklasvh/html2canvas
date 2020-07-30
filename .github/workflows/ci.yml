@@ -82,6 +82,7 @@ jobs:
       run: npm run unittest
   browser-test:
     strategy:
+      fail-fast: false
       matrix:
         config:
           - os: ubuntu-latest
