@@ -279,16 +279,18 @@ jobs:
     needs: docs
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Download docs
         uses: actions/download-artifact@v2
         with:
           name: docs
           path: docs
       - name: Publish docs
-          uses: JamesIves/github-pages-deploy-action@3.5.9
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            BRANCH: gh-pages-test
-            FOLDER: docs
-            SINGLE_COMMIT: true
-            CLEAN: true
+        uses: JamesIves/github-pages-deploy-action@3.5.9
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages-test
+          FOLDER: docs
+          SINGLE_COMMIT: true
+          CLEAN: true
