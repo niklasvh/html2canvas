@@ -177,10 +177,6 @@ jobs:
     needs: browser-test
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: 'https://npm.pkg.github.com'
       - name: Download NPM package
         uses: actions/download-artifact@v2
         with:
@@ -200,7 +196,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref, '-rc.') || contains(github.ref, '-alpha.') }}
       - name: Upload html2canvas.js
         uses: actions/upload-release-asset@v1
         env:
@@ -230,10 +226,22 @@ jobs:
           asset_content_type: text/javascript
       - name: Unpack npm
         run: cd npm && tar -xvzf "html2canvas.tgz"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: 'https://npm.pkg.github.com'
       - name: NPM Publish (github)
-        run: npm publish
+        run: cd package && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: 'https://registry.npmjs.org'
+#      - name: NPM Publish
+#        run: cd package && npm publish public
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   docs:
     runs-on: ubuntu-latest
     name: Build docs
@@ -282,8 +290,6 @@ jobs:
         with:
           name: docs
           path: www/public
-      - name: Echo
-        run: echo ${{ github.ref }}
   publish-docs:
     runs-on: ubuntu-latest
     name: Publish Docs
