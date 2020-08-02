@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
     tags:
-      - 'test*'
+      - 'v*'
   pull_request:
     branches: [ master ]
 
@@ -173,13 +173,19 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publish
-    if: startsWith(github.ref, 'refs/tags/test')
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: browser-test
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 12
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Download NPM package
+        uses: actions/download-artifact@v2
+        with:
+          name: npm
+          path: npm
       - name: Download library
         uses: actions/download-artifact@v2
         with:
@@ -222,6 +228,12 @@ jobs:
           asset_path: ./dist/html2canvas.esm.js
           asset_name: html2canvas.esm.js
           asset_content_type: text/javascript
+      - name: Unpack npm
+        run: cd npm && tar -xvzf "html2canvas.tgz"
+      - name: NPM Publish (github)
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
     runs-on: ubuntu-latest
     name: Build docs
@@ -275,7 +287,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     name: Publish Docs
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v') }}
     needs: docs
     steps:
       - uses: actions/checkout@v2
@@ -290,7 +302,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@3.5.9
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages-test
+          BRANCH: gh-pages
           FOLDER: docs
           SINGLE_COMMIT: true
           CLEAN: true
