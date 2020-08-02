@@ -275,7 +275,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     name: Publish Docs
-    if: ${{ github.ref == 'master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     needs: docs
     steps:
       - uses: actions/checkout@v2
