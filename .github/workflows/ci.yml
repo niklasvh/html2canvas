@@ -232,8 +232,8 @@ jobs:
         run: cd npm && tar -xvzf "html2canvas.tgz"
       - name: NPM Publish (github)
         run: npm publish
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docs:
     runs-on: ubuntu-latest
     name: Build docs
