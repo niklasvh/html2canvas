@@ -231,7 +231,7 @@ jobs:
           node-version: 12
           registry-url: 'https://registry.npmjs.org'
       - name: NPM Publish
-        run: cd npm/package && npm publish --dry-run
+        run: cd npm/package && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   docs:
