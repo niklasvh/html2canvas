@@ -80,7 +80,7 @@
     "rollup-plugin-typescript2": "^0.21.0",
     "serve-index": "^1.9.1",
     "slash": "1.0.0",
-    "standard-version": "^5.0.2",
+    "standard-version": "^8.0.2",
     "ts-jest": "^24.1.0",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
