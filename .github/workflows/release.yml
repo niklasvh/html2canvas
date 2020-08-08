@@ -24,4 +24,10 @@ jobs:
         git config user.email "niklasvh@gmail.com"
     - name: Create release
       run: npm run release -- --preset eslint --${{ github.event.inputs.version }}
-
+    - name: Print details
+      run: |
+        cat package.json
+        cat CHANGELOG.md
+        git tag
+    - name: Push git version
+      run: git push --follow-tags origin master
