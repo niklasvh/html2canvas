@@ -229,19 +229,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: 'https://npm.pkg.github.com'
-      - name: NPM Publish (github)
-        run: cd npm/package && npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
           registry-url: 'https://registry.npmjs.org'
-#      - name: NPM Publish
-#        run: cd npm/package && npm publish public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: NPM Publish
+        run: cd npm/package && npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   docs:
     runs-on: ubuntu-latest
     name: Build docs
