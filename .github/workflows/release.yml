@@ -9,6 +9,11 @@ on:
         required: true
         
 jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ github.repository_owner }}
+      - run: echo ${{ github.event.pusher.name }}
   version:
     name: Create version
     if: github.repository_owner == github.event.pusher.name
