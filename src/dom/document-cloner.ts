@@ -5,6 +5,7 @@ import {
     isElementNode,
     isHTMLElementNode,
     isIFrameElement,
+    isImageElement,
     isScriptElement,
     isSelectElement,
     isStyleElement,
@@ -128,7 +129,15 @@ export class DocumentCloner {
             return this.createStyleClone(node);
         }
 
-        return node.cloneNode(false) as HTMLElement;
+        const clone = node.cloneNode(false) as HTMLElement;
+
+        // @ts-ignore
+        if (isImageElement(clone) && clone.loading === 'lazy') {
+            // @ts-ignore
+            clone.loading = 'eager';
+        }
+
+        return clone;
     }
 
     createStyleClone(node: HTMLStyleElement): HTMLStyleElement {
