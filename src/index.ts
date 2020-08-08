@@ -25,7 +25,7 @@ const html2canvas = (element: HTMLElement, options: Partial<Options> = {}): Prom
 
 export default html2canvas;
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
     CacheStorage.setContext(window);
 }
 
