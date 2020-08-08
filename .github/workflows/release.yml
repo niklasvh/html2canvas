@@ -11,7 +11,6 @@ on:
 jobs:
   version:
     name: Create version
-    if: github.repository_owner == github.event.pusher.name
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
