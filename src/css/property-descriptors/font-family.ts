@@ -1,6 +1,6 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue} from '../syntax/parser';
-import {StringValueToken, TokenType} from '../syntax/tokenizer';
+import {TokenType} from '../syntax/tokenizer';
 
 export type FONT_FAMILY = string;
 
@@ -12,9 +12,26 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]) => {
-        return tokens.filter(isStringToken).map(token => token.value);
+        const accumulator: string[] = [];
+        const results: string[] = [];
+        tokens.forEach(token => {
+            switch (token.type) {
+                case TokenType.IDENT_TOKEN:
+                case TokenType.STRING_TOKEN:
+                    accumulator.push(token.value);
+                    break;
+                case TokenType.NUMBER_TOKEN:
+                    accumulator.push(token.number.toString());
+                    break;
+                case TokenType.COMMA_TOKEN:
+                    results.push(accumulator.join(' '));
+                    accumulator.length = 0;
+                    break;
+            }
+        });
+        if (accumulator.length) {
+            results.push(accumulator.join(' '));
+        }
+        return results.map(result => result.indexOf(' ') === -1 ? result : `'${result}'`);
     }
 };
-
-const isStringToken = (token: CSSValue): token is StringValueToken =>
-    token.type === TokenType.STRING_TOKEN || token.type === TokenType.IDENT_TOKEN;
