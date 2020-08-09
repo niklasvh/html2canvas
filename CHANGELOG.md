@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0-rc.7](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2020-08-09)
+
+
+### fix
+
+* concatenate contiguous font-family tokens (#2219) ([bacfadf](https://github.com/niklasvh/html2canvas/commit/bacfadff96d907d9e8ab4ef515ca6487de9e51fc)), closes [#2219](https://github.com/niklasvh/html2canvas/issues/2219)
+* external styles on svg elements (#2320) ([1514220](https://github.com/niklasvh/html2canvas/commit/1514220812cfb22d64d0974558d9c14fe90a41d3)), closes [#2320](https://github.com/niklasvh/html2canvas/issues/2320)
+
+
+
 # [1.0.0-rc.6](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2020-08-08)
 
 
