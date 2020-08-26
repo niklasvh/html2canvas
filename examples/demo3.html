@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Text stroke tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        div span:first-child {
+            font-size: 2em;
+        }
+
+        div span:nth-child(2) {
+            font-size: 5em;
+        }
+
+        .stroke1 {
+            -webkit-text-stroke: .09em red;
+            font-size: 1em;
+        }
+
+        .stroke2 {
+            -webkit-text-stroke-width: .12em;
+            -webkit-text-stroke-color: green;
+            font-size: 2em;
+            box-shadow: 1px 1px #000;
+        }
+
+        .stroke3 {
+            -webkit-text-stroke-width: .19em;
+            -webkit-text-stroke-color: blue;
+            font-size: 3em;
+        }
+
+
+
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stroke1">
+        Some text <span> with bigger text </span> that should have a stroke
+        <strong>Bolder stroke</strong> that makes things pretty
+    </div>
+    <script type="text/javascript" src="../dist/html2canvas.js"></script>
+    <script type="text/javascript">
+        html2canvas(document.body).then(function (canvas) {
+            document.body.appendChild(canvas);
+        });
+    </script>
+
+</html>

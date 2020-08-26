@@ -47,6 +47,8 @@ import {textAlign} from './property-descriptors/text-align';
 import {position, POSITION} from './property-descriptors/position';
 import {textShadow} from './property-descriptors/text-shadow';
 import {textTransform} from './property-descriptors/text-transform';
+import {textStrokeColor} from './property-descriptors/text-stroke-color';
+import {textStrokeWidth} from './property-descriptors/text-stroke-width';
 import {transform} from './property-descriptors/transform';
 import {transformOrigin} from './property-descriptors/transform-origin';
 import {visibility, VISIBILITY} from './property-descriptors/visibility';
@@ -131,6 +133,8 @@ export class CSSParsedDeclaration {
     textDecorationLine: ReturnType<typeof textDecorationLine.parse>;
     textShadow: ReturnType<typeof textShadow.parse>;
     textTransform: ReturnType<typeof textTransform.parse>;
+    textStrokeColor: Color;
+    textStrokeWidth: LengthPercentage;
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
     visibility: ReturnType<typeof visibility.parse>;
@@ -195,6 +199,8 @@ export class CSSParsedDeclaration {
         this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
         this.textShadow = parse(textShadow, declaration.textShadow);
         this.textTransform = parse(textTransform, declaration.textTransform);
+        this.textStrokeColor = parse(textStrokeColor, declaration.webkitTextStrokeColor);
+        this.textStrokeWidth = parse(textStrokeWidth, declaration.webkitTextStrokeWidth);
         this.transform = parse(transform, declaration.transform);
         this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
         this.visibility = parse(visibility, declaration.visibility);
@@ -261,7 +267,8 @@ export class CSSParsedCounterDeclaration {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) => {
     const tokenizer = new Tokenizer();
-    const value = style !== null && typeof style !== 'undefined' ? style.toString() : descriptor.initialValue;
+    const value =
+        style !== null && typeof style !== 'undefined' && style != '' ? style.toString() : descriptor.initialValue;
     tokenizer.write(value);
     const parser = new Parser(tokenizer.read());
     switch (descriptor.type) {
