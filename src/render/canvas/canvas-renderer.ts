@@ -1,5 +1,17 @@
 import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
-import {asString, Color, isTransparent} from '../../css/types/color';
+import {
+    asString,
+    Color,
+    isTransparent,
+    RGBColor,
+    contrastRGB,
+    hueRotateRGB,
+    grayscaleRGB,
+    brightnessRGB,
+    invertRGB,
+    saturateRGB,
+    sepiaRGB
+} from '../../css/types/color';
 import {Logger} from '../../core/logger';
 import {ElementContainer} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
@@ -38,6 +50,8 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
+import {Filter} from '../../css/property-descriptors/filter';
+import {stackBlurImage} from '../../css/types/functions/stackBlur';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -248,7 +262,8 @@ export class CanvasRenderer {
     renderReplacedElement(
         container: ReplacedElementContainer,
         curves: BoundCurves,
-        image: HTMLImageElement | HTMLCanvasElement
+        image: HTMLImageElement | HTMLCanvasElement,
+        filter?: Filter | null | undefined
     ) {
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
             const box = contentBox(container);
@@ -267,6 +282,49 @@ export class CanvasRenderer {
                 box.width,
                 box.height
             );
+            if (filter) {
+                try {
+                    let imageData = this.ctx.getImageData(box.left, box.top, box.width, box.height);
+                    for (let _j = 0; _j < imageData.height; _j++) {
+                        for (let _i = 0; _i < imageData.width; _i++) {
+                            let index = _j * 4 * imageData.width + _i * 4;
+                            let rgb: RGBColor = {
+                                r: imageData.data[index],
+                                g: imageData.data[index + 1],
+                                b: imageData.data[index + 2]
+                            };
+                            if (filter.contrast) {
+                                rgb = contrastRGB(rgb, filter.contrast.number);
+                            }
+                            if (filter['hue-rotate']) {
+                                rgb = hueRotateRGB(rgb, filter['hue-rotate'].number);
+                            }
+                            if (filter.grayscale) {
+                                rgb = grayscaleRGB(rgb, filter['grayscale'].number, 'luma:BT709');
+                            }
+                            if (filter.brightness) {
+                                rgb = brightnessRGB(rgb, filter['brightness'].number);
+                            }
+                            if (filter.invert) {
+                                rgb = invertRGB(rgb, filter['invert'].number);
+                            }
+                            if (filter.saturate) {
+                                rgb = saturateRGB(rgb, filter.saturate.number);
+                            }
+                            if (filter.sepia) {
+                                rgb = sepiaRGB(rgb, filter.sepia.number);
+                            }
+                            imageData.data[index] = rgb.r;
+                            imageData.data[index + 1] = rgb.g;
+                            imageData.data[index + 2] = rgb.b;
+                        }
+                    }
+                    if (filter.blur) {
+                        imageData = stackBlurImage(imageData, box.width, box.height, filter.blur.number * 2.2, 1);
+                    }
+                    this.ctx.putImageData(imageData, box.left, box.top);
+                } catch (error) {}
+            }
             this.ctx.restore();
         }
     }
@@ -283,7 +341,7 @@ export class CanvasRenderer {
         if (container instanceof ImageElementContainer) {
             try {
                 const image = await this.options.cache.match(container.src);
-                this.renderReplacedElement(container, curves, image);
+                this.renderReplacedElement(container, curves, image, styles.filter);
             } catch (e) {
                 Logger.getInstance(this.options.id).error(`Error loading image ${container.src}`);
             }

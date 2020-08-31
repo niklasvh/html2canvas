@@ -1,9 +1,9 @@
 import {IPropertyTypeValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 
 export const textStrokeColor: IPropertyTypeValueDescriptor = {
-    name: `-webkit-text-stroke-color`,
+    name: `text-stroke-color`,
     initialValue: 'transparent',
-    prefix: false,
+    prefix: true,
     type: PropertyDescriptorParsingType.TYPE_VALUE,
     format: 'color'
 };
