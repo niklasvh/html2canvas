@@ -51,7 +51,7 @@ import {SelectElementContainer} from '../../dom/elements/select-element-containe
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {Filter} from '../../css/property-descriptors/filter';
-import {stackBlurImage} from '../../css/types/functions/stackBlur';
+import {stackBlurImage} from '../../css/types/functions/stack-blur';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
