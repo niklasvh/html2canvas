@@ -105,6 +105,7 @@ export class CSSParsedDeclaration {
     color: Color;
     display: ReturnType<typeof display.parse>;
     filter: ReturnType<typeof filter.parse>;
+    filterOriginal: string | null;
     float: ReturnType<typeof float.parse>;
     fontFamily: ReturnType<typeof fontFamily.parse>;
     fontSize: LengthPercentage;
@@ -171,6 +172,7 @@ export class CSSParsedDeclaration {
         this.color = parse(color, declaration.color);
         this.display = parse(display, declaration.display);
         this.filter = parse(filter, declaration.filter);
+        this.filterOriginal = declaration.filter;
         this.float = parse(float, declaration.cssFloat);
         this.fontFamily = parse(fontFamily, declaration.fontFamily);
         this.fontSize = parse(fontSize, declaration.fontSize);

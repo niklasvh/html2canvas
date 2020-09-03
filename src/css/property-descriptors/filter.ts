@@ -2,15 +2,10 @@ import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IProper
 import {CSSValue, isIdentWithValue, CSSFunction, isCSSFunction} from '../syntax/parser';
 import {isLength, Length} from '../types/length';
 
-export interface Filter {
-    contrast: Length | null;
-    'hue-rotate': Length | null;
-    grayscale: Length | null;
-    brightness: Length | null;
-    blur: Length | null;
-    invert: Length | null;
-    saturate: Length | null;
-    sepia: Length | null;
+export type Filter = FilterItem[];
+export interface FilterItem {
+    name: string;
+    value: Length;
 }
 
 export const filter: IPropertyListDescriptor<Filter | null> = {
@@ -22,17 +17,7 @@ export const filter: IPropertyListDescriptor<Filter | null> = {
         if (tokens.length === 1 && isIdentWithValue(tokens[0], 'none')) {
             return null;
         }
-
-        const filter: Filter = {
-            contrast: null,
-            'hue-rotate': null,
-            grayscale: null,
-            brightness: null,
-            blur: null,
-            invert: null,
-            saturate: null,
-            sepia: null
-        };
+        const filter: Filter = [];
 
         let hasFilter: boolean = false;
 
@@ -50,7 +35,7 @@ export const filter: IPropertyListDescriptor<Filter | null> = {
                         const value: CSSValue = token.values[index];
                         if (isLength(value)) {
                             hasFilter = true;
-                            filter[token.name] = value;
+                            filter.push({name: token.name, value: value});
                         }
                     }
                     break;

@@ -1,79 +1,72 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Nested transform tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style>
+            #first {
+                background: indianred;
+                margin-top: 100px;
+            }
 
-<head>
-    <title>Nested transform tests</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
+            #second {
+                border: 15px solid red;
+                background: darkseagreen;
+                -webkit-transform: rotate(7.5deg);
+                /* Chrome, Safari 3.1+ */
+                -moz-transform: rotate(7.5deg);
+                /* Firefox 3.5-15 */
+                -ms-transform: rotate(7.5deg);
+                /* IE 9 */
+                -o-transform: rotate(7.5deg);
+                /* Opera 10.50-12.00 */
+                transform: rotate(7.5deg);
+            }
 
-        #first {
-            background: indianred;
-            margin-top: 100px;
-        }
+            #third {
+                background: cadetblue;
+                -webkit-transform: rotate(-70.5deg);
+                /* Chrome, Safari 3.1+ */
+                -moz-transform: rotate(-70.5deg);
+                /* Firefox 3.5-15 */
+                -ms-transform: rotate(-70.5deg);
+                /* IE 9 */
+                -o-transform: rotate(-70.5deg);
+                /* Opera 10.50-12.00 */
+                transform: rotate(-70.5deg);
+                /* Firefox 16+, IE 10+, Opera 12.10+ */
+            }
 
-        #second {
-            border: 15px solid red;
-            background: darkseagreen;
-            -webkit-transform: rotate(7.5deg);
-            /* Chrome, Safari 3.1+ */
-            -moz-transform: rotate(7.5deg);
-            /* Firefox 3.5-15 */
-            -ms-transform: rotate(7.5deg);
-            /* IE 9 */
-            -o-transform: rotate(7.5deg);
-            /* Opera 10.50-12.00 */
-            transform: rotate(7.5deg);
-        }
+            #fourth {
+                margin-bottom: 100px;
+                {% comment %} transform: scale(2); {% endcomment %}
+            }
 
-        #third {
-            background: cadetblue;
-            -webkit-transform: rotate(-70.5deg);
-            /* Chrome, Safari 3.1+ */
-            -moz-transform: rotate(-70.5deg);
-            /* Firefox 3.5-15 */
-            -ms-transform: rotate(-70.5deg);
-            /* IE 9 */
-            -o-transform: rotate(-70.5deg);
-            /* Opera 10.50-12.00 */
-            transform: rotate(-70.5deg);
-            /* Firefox 16+, IE 10+, Opera 12.10+ */
-        }
+            div {
+                display: inline-block;
+            }
 
-        #fourth {
-            background: #bc8f8f;
-        }
+            body {
+                font-family: Arial;
+            }
 
-        div {
-            display: inline-block;
-        }
+            img.test {
+                width: 100px;
+                /* Chrome, Safari, Opera */
+                filter:  contrast(110%) sepia(100%) grayscale(100%);
+            }
+        </style>
+    </head>
 
-        body {
-            font-family: Arial;
-        }
-
-        img.test {
-            width: 100px;
-            -webkit-filter: saturate(1600%);
-            /* Chrome, Safari, Opera */
-            filter: saturate(1600%);
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="fourth"><img class="test" src="../tests/assets/image.jpg" crossOrigin="anonymous" alt=""></div>
-    <div id="fourth2"><img src="../tests/assets/image.jpg" crossOrigin="anonymous" alt=""></div>
-    <script type="text/javascript" src="../dist/html2canvas.js"></script>
-    <script type="text/javascript">
-        html2canvas(document.body, { allowTaint: true, scale: 1 }).then(function (canvas) {
-            document.body.appendChild(canvas);
-        });
-    </script>
-</body>
-
+    <body>
+        <div id="fourth">
+            <img class="test" src="../tests/assets/image.jpg" crossorigin="anonymous" alt="" />
+        </div>
+        <script type="text/javascript" src="../dist/html2canvas.js"></script>
+        <script type="text/javascript">
+            html2canvas(document.getElementById('fourth'), {allowTaint: true, scale: 1}).then(function(canvas) {
+                document.body.appendChild(canvas);
+            });
+        </script>
+    </body>
 </html>
