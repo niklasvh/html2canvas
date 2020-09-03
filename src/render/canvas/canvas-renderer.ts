@@ -235,7 +235,12 @@ export class CanvasRenderer {
                 });
             }
 
-            if (styles.textStrokeWidth && styles.textStrokeColor && text.text.trim().length) {
+            if (
+                styles.textStrokeWidth &&
+                styles.textStrokeWidth.number &&
+                styles.textStrokeColor &&
+                text.text.trim().length
+            ) {
                 this.ctx.strokeStyle = asString(styles.textStrokeColor);
                 this.ctx.lineWidth = getAbsoluteValue(styles.textStrokeWidth, text.bounds.width);
                 this.ctx.strokeText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
