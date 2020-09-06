@@ -96,14 +96,30 @@ export class DocumentCloner {
             if (documentClone.fonts && documentClone.fonts.ready) {
                 await documentClone.fonts.ready;
             }
-
-            if (typeof onclone === 'function') {
+            const loadImg = (img: HTMLImageElement): Promise<Event> => {
+                return new Promise((resolve, reject) => {
+                    img.complete && resolve();
+                    !img.src && reject();
+                    img.onload = resolve;
+                    img.onerror = reject;
+                });
+            };
+            const callback = (): Promise<HTMLIFrameElement> => {
                 return Promise.resolve()
-                    .then(() => onclone(documentClone))
+                    .then(() => {
+                        if (typeof onclone === 'function') {
+                            onclone(documentClone);
+                        }
+                    })
                     .then(() => iframe);
+            };
+            const loadImgs = [];
+            for (let i = 0; i < documentClone.images.length; i++) {
+                loadImgs.push(loadImg(documentClone.images[i]));
             }
-
-            return iframe;
+            return Promise.all(loadImgs)
+                .then(callback)
+                .catch(callback);
         });
 
         documentClone.open();
