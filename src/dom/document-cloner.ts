@@ -96,7 +96,7 @@ export class DocumentCloner {
             if (documentClone.fonts && documentClone.fonts.ready) {
                 await documentClone.fonts.ready;
             }
-            const loadImg = (img: HTMLImageElement): Promise<Event> => {
+            const loadImg = (img: HTMLImageElement): Promise<Event | void> => {
                 return new Promise((resolve, reject) => {
                     img.complete && resolve();
                     !img.src && reject();
@@ -113,6 +113,9 @@ export class DocumentCloner {
                     })
                     .then(() => iframe);
             };
+            if (!/(AppleWebKit)/g.test(navigator.userAgent)) {
+                return callback();
+            }
             const loadImgs = [];
             for (let i = 0; i < documentClone.images.length; i++) {
                 loadImgs.push(loadImg(documentClone.images[i]));
