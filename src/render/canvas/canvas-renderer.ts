@@ -483,6 +483,7 @@ export class CanvasRenderer {
     mask(paths: Path[]) {
         this.ctx.beginPath();
         this.ctx.save();
+        // reset tranform to identity
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(this.canvas.width, 0);
@@ -675,8 +676,8 @@ export class CanvasRenderer {
                     const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
                     const shadowPaintingArea = transformPath(
                         borderBoxArea,
-                        -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
-                        (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.offsetX.number - maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.offsetY.number + (shadow.inset ? 1 : -1) * shadow.spread.number,
                         shadow.spread.number * (shadow.inset ? -2 : 2),
                         shadow.spread.number * (shadow.inset ? -2 : 2)
                     );
@@ -691,8 +692,8 @@ export class CanvasRenderer {
                         this.path(shadowPaintingArea);
                     }
 
-                    this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
-                    this.ctx.shadowOffsetY = shadow.offsetY.number;
+                    this.ctx.shadowOffsetX =  maskOffset;
+                    this.ctx.shadowOffsetY = 0;
                     this.ctx.shadowColor = asString(shadow.color);
                     this.ctx.shadowBlur = shadow.blur.number;
                     this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
