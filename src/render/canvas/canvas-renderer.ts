@@ -5,7 +5,7 @@ import {ElementContainer} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css/index';
 import {TextContainer} from '../../dom/text-container';
-import {Path, transformPath, reversePath } from '../path';
+import {Path, transformPath, reversePath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
 import {isBezierCurve} from '../bezier-curve';
@@ -692,7 +692,7 @@ export class CanvasRenderer {
                         this.path(shadowPaintingArea);
                     }
 
-                    this.ctx.shadowOffsetX =  maskOffset;
+                    this.ctx.shadowOffsetX = maskOffset;
                     this.ctx.shadowOffsetY = 0;
                     this.ctx.shadowColor = asString(shadow.color);
                     this.ctx.shadowBlur = shadow.blur.number;

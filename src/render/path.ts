@@ -35,9 +35,12 @@ export const transformPath = (path: Path[], deltaX: number, deltaY: number, delt
     });
 };
 
-export const reversePath = (path: Path[]) : Path[] => {
-    return path.slice(0).reverse().map((point) => {
-        return point.reverse();
-    });
-}
+export const reversePath = (path: Path[]): Path[] => {
+    return path
+        .slice(0)
+        .reverse()
+        .map(point => {
+            return point.reverse();
+        });
+};
 export type Path = Vector | BezierCurve;
