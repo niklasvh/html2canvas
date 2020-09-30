@@ -21,7 +21,7 @@ It doesn't magically circumvent any browser content policy restrictions either, 
 
 The script is still in a **very experimental state**, so I don't recommend using it in a production environment nor start building applications with it yet, as there will be still major changes made.
 
-### Browser compatibility ###
+### Browser Compatibility ###
 
 The library should work fine on the following browsers (with `Promise` polyfill):
 
