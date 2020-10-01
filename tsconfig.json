@@ -14,8 +14,10 @@
         "outDir": "dist/lib",
         "declaration": true,
         "declarationDir": "dist/types"
+        
     },
     "include": [
         "src"
-    ]
+                ]
+    
 }
