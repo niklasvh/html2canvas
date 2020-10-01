@@ -1,4 +1,4 @@
-html2canvas
+html2canvas best version
 ===========
 
 [Homepage](https://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest)
