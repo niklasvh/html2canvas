@@ -7,6 +7,7 @@ import {Logger} from './core/logger';
 import {CacheStorage, ResourceOptions} from './core/cache-storage';
 import {CanvasRenderer, RenderOptions} from './render/canvas/canvas-renderer';
 import {ForeignObjectRenderer} from './render/canvas/foreignobject-renderer';
+import {Guid} from './core/guid';
 
 export type Options = CloneOptions &
     RenderOptions &
@@ -42,7 +43,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         throw new Error(`Document is not attached to a Window`);
     }
 
-    const instanceName = (Math.round(Math.random() * 1000) + Date.now()).toString(16);
+    const instanceName = Guid.generate();
 
     const {width, height, left, top} =
         isBodyElement(element) || isHTMLElement(element) ? parseDocumentSize(ownerDocument) : parseBounds(element);
