@@ -44,7 +44,8 @@ import {overflow, OVERFLOW} from './property-descriptors/overflow';
 import {overflowWrap} from './property-descriptors/overflow-wrap';
 import {paddingBottom, paddingLeft, paddingRight, paddingTop} from './property-descriptors/padding';
 import {textAlign} from './property-descriptors/text-align';
-import {position, POSITION} from './property-descriptors/position';
+import { position, POSITION } from './property-descriptors/position';
+import { textFillColor } from './property-descriptors/text-fill-color';
 import {textShadow} from './property-descriptors/text-shadow';
 import {textTransform} from './property-descriptors/text-transform';
 import {textStrokeColor} from './property-descriptors/text-stroke-color';
@@ -132,6 +133,7 @@ export class CSSParsedDeclaration {
     paddingLeft: LengthPercentage;
     position: ReturnType<typeof position.parse>;
     textAlign: ReturnType<typeof textAlign.parse>;
+    textFillColor: Color;
     textDecorationColor: Color;
     textDecorationLine: ReturnType<typeof textDecorationLine.parse>;
     textShadow: ReturnType<typeof textShadow.parse>;
@@ -200,6 +202,7 @@ export class CSSParsedDeclaration {
         this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
         this.position = parse(position, declaration.position);
         this.textAlign = parse(textAlign, declaration.textAlign);
+        this.textFillColor = parse(textFillColor, declaration.textFillColor)
         this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
         this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
         this.textShadow = parse(textShadow, declaration.textShadow);

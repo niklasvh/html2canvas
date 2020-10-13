@@ -10,7 +10,7 @@ import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
 import {isBezierCurve} from '../bezier-curve';
 import {Vector} from '../vector';
-import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
+import {CSSImageType, CSSLinearGradientImage, CSSRadialGradientImage, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
 import {parsePathForBorder} from '../border';
 import {Cache} from '../../core/cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
@@ -38,7 +38,8 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
-import {processImage, isSupportedFilter} from '../image-filter';
+import { processImage, isSupportedFilter } from '../image-filter';
+import {isFontColorGradient } from '../font-color-gradient'
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -172,13 +173,56 @@ export class CanvasRenderer {
         ];
     }
 
-    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
+    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration, container: ElementContainer) {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
 
         this.ctx.font = font;
+        let fillStyle: CanvasGradient|string = asString(styles.color);
+        if (isFontColorGradient(styles)) { 
+            if (isLinearGradient(styles.backgroundImage[0])) {
+                const backgroundImage = styles.backgroundImage[0] as CSSLinearGradientImage
+                const [, x, y, width, height] = calculateBackgroundRendering(container, 0, [null, null, null]);
+                const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
+                if (Math.round(Math.abs(x0)) === Math.round(Math.abs(x1))) {
+                    const gradient = this.ctx.createLinearGradient(x, y0+y, x, y1+y);
+                    processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
+                        gradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                    );
+                    fillStyle = gradient;
+                } else if (Math.round(Math.abs(y0)) === Math.round(Math.abs(y1))) { 
+                    const gradient = this.ctx.createLinearGradient(x+x0, y, x+x1, y);
+                    processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
+                        gradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                    );
+                    fillStyle = gradient;
+                }
+            } else if (isRadialGradient(styles.backgroundImage[0])) {
+                const backgroundImage = styles.backgroundImage[0] as CSSRadialGradientImage
+                const [, left, top, width, height] = calculateBackgroundRendering(container, 0, [
+                    null,
+                    null,
+                    null
+                ]);
+                const position = backgroundImage.position.length === 0 ? [FIFTY_PERCENT] : backgroundImage.position;
+                const x = getAbsoluteValue(position[0], width);
+                const y = getAbsoluteValue(position[position.length - 1], height);
+
+                const [rx,] = calculateRadius(backgroundImage, x, y, width, height);
+                if (rx > 0 && rx > 0) {
+                    const radialGradient = this.ctx.createRadialGradient(left + x, top + y, 0, left + x, top + y, rx);
+
+                    processColorStops(backgroundImage.stops, rx * 2).forEach(colorStop =>
+                        radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                    );
+                    
+                    fillStyle = radialGradient;
+                }
+            }
+        }
+
 
         text.textBounds.forEach(text => {
-            this.ctx.fillStyle = asString(styles.color);
+            this.ctx.fillStyle = fillStyle;
             this.renderTextWithLetterSpacing(text, styles.letterSpacing);
             const textShadows: TextShadow = styles.textShadow;
 
@@ -286,7 +330,7 @@ export class CanvasRenderer {
         const curves = paint.curves;
         const styles = container.styles;
         for (const child of container.textNodes) {
-            await this.renderTextNode(child, styles);
+            await this.renderTextNode(child, styles, container);
         }
 
         if (container instanceof ImageElementContainer) {
@@ -563,6 +607,7 @@ export class CanvasRenderer {
 
     async renderBackgroundImage(container: ElementContainer) {
         let index = container.styles.backgroundImage.length - 1;
+        if (isFontColorGradient(container.styles)) return false;
         for (const backgroundImage of container.styles.backgroundImage.slice(0).reverse()) {
             if (backgroundImage.type === CSSImageType.URL) {
                 let image;
@@ -588,7 +633,6 @@ export class CanvasRenderer {
             } else if (isLinearGradient(backgroundImage)) {
                 const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
                 const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
-
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;

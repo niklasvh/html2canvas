@@ -1,6 +1,7 @@
 interface CSSStyleDeclaration {
     textDecorationColor: string | null;
     textDecorationLine: string | null;
+    textFillColor: string | null;
     overflowWrap: string | null;
 }
 
