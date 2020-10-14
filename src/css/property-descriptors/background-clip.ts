@@ -3,7 +3,8 @@ import {CSSValue, isIdentToken} from '../syntax/parser';
 export enum BACKGROUND_CLIP {
     BORDER_BOX = 0,
     PADDING_BOX = 1,
-    CONTENT_BOX = 2
+    CONTENT_BOX = 2,
+    TEXT = 3
 }
 
 export type BackgroundClip = BACKGROUND_CLIP[];
@@ -21,6 +22,8 @@ export const backgroundClip: IPropertyListDescriptor<BackgroundClip> = {
                         return BACKGROUND_CLIP.PADDING_BOX;
                     case 'content-box':
                         return BACKGROUND_CLIP.CONTENT_BOX;
+                    case 'text':
+                        return BACKGROUND_CLIP.TEXT;
                 }
             }
             return BACKGROUND_CLIP.BORDER_BOX;

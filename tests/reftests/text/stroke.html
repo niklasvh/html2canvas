@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Text stroke</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            div span:first-child {
+                font-size: 2em;
+            }
+
+            div span:nth-child(2) {
+                font-size: 5em;
+            }
+
+            .stroke1 {
+                -webkit-text-stroke: 0.09em red;
+                font-size: 1em;
+            }
+
+            body {
+                font-family: Arial;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>&lt;h1&gt; text-stroke</h1>
+        <div class="stroke1">
+            Some text <span> with bigger text </span> that should have a stroke <strong>Bolder stroke</strong> that
+            makes things pretty
+        </div>
+    </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Text tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        .gradient-text {
+            font-size: 40px;
+            font-weight: bolder;
+            position: relative;
+        }
+
+        .gradient-text-one {
+            background-image: -webkit-linear-gradient(bottom, red, #fd8403, yellow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-two {
+            background-image: -webkit-linear-gradient(right, red, blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-three {
+            background-image: radial-gradient(red, yellow, green);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>font-color-gradient</h1>
+    <div style="margin-top: 10px;">
+        <span class="gradient-text gradient-text-one">Hello world</span>
+        <span>no effects</span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span class="gradient-text gradient-text-two">Hello world</span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span class="gradient-text gradient-text-three">Hello world</span>
+    </div>
+    <div style="font-family: 'Inconsolata', Monaco, Consolas, 'Andale Mono', monospace">npm install --save html2canvas
+    </div>
+
+</body>
+
+</html>

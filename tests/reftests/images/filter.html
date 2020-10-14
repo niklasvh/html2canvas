@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>External content tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            body {
+                font-family: Arial;
+            }
+        </style>
+        <base href="http://localhost:8081/" />
+    </head>
+    <body>
+        <h1>Original image</h1>
+        <img src="http://localhost:8081/assets/image2.jpg" />
+
+        <h1>filter: blur(5px);</h1>
+        <img src="/assets/image_1.jpg" style="filter: blur(5px);" />
+
+        <h1>filter: contrast(200%);</h1>
+        <img src="/assets/image_1.jpg" style="filter: contrast(200%);" />
+
+        <h1>filter: grayscale(80%);</h1>
+        <img src="/assets/image_1.jpg" style="filter: grayscale(80%);" />
+
+        <h1>filter: hue-rotate(90deg);</h1>
+        <img src="/assets/image_1.jpg" style="filter: hue-rotate(90deg);" />
+
+        <h1>filter: invert(75%);</h1>
+        <img src="/assets/image_1.jpg" style="filter: invert(75%);" />
+    </body>
+</html>
