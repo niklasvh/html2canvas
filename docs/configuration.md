@@ -23,6 +23,7 @@ These are all of the available configuration options.
 | removeContainer | `true` | Whether to cleanup the cloned DOM elements html2canvas creates temporarily
 | scale | `window.devicePixelRatio` | The scale to use for rendering. Defaults to the browsers device pixel ratio.
 | useCORS | `false` | Whether to attempt to load images from a server using CORS
+| withCredentials | `null` | Whether to set image.crossOrigin to `anonymous` (default) or `use-credentials` (when true)
 | width | `Element` width | The width of the `canvas`
 | height | `Element` height | The height of the `canvas`
 | x | `Element` x-offset | Crop canvas x-coordinate

@@ -65,6 +65,7 @@ export interface ResourceOptions {
     imageTimeout: number;
     useCORS: boolean;
     allowTaint: boolean;
+    withCredentials?: boolean;
     proxy?: string;
 }
 
@@ -126,7 +127,11 @@ export class Cache {
             img.onerror = reject;
             //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
             if (isInlineBase64Image(src) || useCORS) {
-                img.crossOrigin = 'anonymous';
+                if (this._options.withCredentials) {
+                    img.crossOrigin = 'use-credentials';
+                } else {
+                    img.crossOrigin = 'anonymous';
+                }
             }
             img.src = src;
             if (img.complete === true) {
