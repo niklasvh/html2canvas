@@ -73,6 +73,7 @@ import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
+import {objectFit} from './property-descriptors/object-fit';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -136,6 +137,7 @@ export class CSSParsedDeclaration {
     visibility: ReturnType<typeof visibility.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
+    objectFit: ReturnType<typeof objectFit.parse>;
 
     constructor(declaration: CSSStyleDeclaration) {
         this.backgroundClip = parse(backgroundClip, declaration.backgroundClip);
@@ -200,6 +202,7 @@ export class CSSParsedDeclaration {
         this.visibility = parse(visibility, declaration.visibility);
         this.wordBreak = parse(wordBreak, declaration.wordBreak);
         this.zIndex = parse(zIndex, declaration.zIndex);
+        this.objectFit = parse(objectFit, declaration.objectFit);
     }
 
     isVisible(): boolean {
