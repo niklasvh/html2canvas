@@ -533,8 +533,8 @@ export class CanvasRenderer {
         }
 
         const canvas = (this.canvas.ownerDocument as Document).createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = Math.max(1, width);
+        canvas.height = Math.max(1, height);
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
         return canvas;
