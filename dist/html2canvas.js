@@ -5400,7 +5400,10 @@
         };
         DocumentCloner.destroy = function (container) {
             if (container.parentNode) {
-                container.parentNode.removeChild(container);
+                // lpビルダーでのみ付くクラス
+                if (!container.classList.contains('no-remove')) {
+                    container.parentNode.removeChild(container);
+                }
                 return true;
             }
             return false;
@@ -5413,18 +5416,27 @@
         PseudoElementType[PseudoElementType["AFTER"] = 1] = "AFTER";
     })(PseudoElementType || (PseudoElementType = {}));
     var createIFrameContainer = function (ownerDocument, bounds) {
-        var cloneIframeContainer = ownerDocument.createElement('iframe');
-        cloneIframeContainer.className = 'html2canvas-container';
-        cloneIframeContainer.style.visibility = 'hidden';
-        cloneIframeContainer.style.position = 'fixed';
-        cloneIframeContainer.style.left = '-10000px';
-        cloneIframeContainer.style.top = '0px';
-        cloneIframeContainer.style.border = '0';
-        cloneIframeContainer.width = bounds.width.toString();
-        cloneIframeContainer.height = bounds.height.toString();
-        cloneIframeContainer.scrolling = 'no'; // ios won't scroll without it
-        cloneIframeContainer.setAttribute(IGNORE_ATTRIBUTE, 'true');
-        ownerDocument.body.appendChild(cloneIframeContainer);
+        // lpビルダーでのみ出現
+        var ogpIframe = ownerDocument.querySelector('.ogp-iframe');
+        var cloneIframeContainer = ownerDocument.querySelector('.ogp-iframe .html2canvas-container');
+        if (cloneIframeContainer === null) {
+            cloneIframeContainer = ownerDocument.createElement('iframe');
+            if (ogpIframe === null) {
+                cloneIframeContainer.className = 'html2canvas-container';
+            } else {
+                cloneIframeContainer.className = 'html2canvas-container no-remove';
+            }
+            cloneIframeContainer.style.visibility = 'hidden';
+            cloneIframeContainer.style.position = 'fixed';
+            cloneIframeContainer.style.left = '-10000px';
+            cloneIframeContainer.style.top = '0px';
+            cloneIframeContainer.style.border = '0';
+            cloneIframeContainer.width = bounds.width.toString();
+            cloneIframeContainer.height = bounds.height.toString();
+            cloneIframeContainer.scrolling = 'no'; // ios won't scroll without it
+            cloneIframeContainer.setAttribute(IGNORE_ATTRIBUTE, 'true');
+            ownerDocument.body.appendChild(cloneIframeContainer);
+        }
         return cloneIframeContainer;
     };
     var iframeLoader = function (iframe) {
