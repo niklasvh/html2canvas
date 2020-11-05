@@ -5400,7 +5400,7 @@
         };
         DocumentCloner.destroy = function (container) {
             if (container.parentNode) {
-                // lpビルダーでのみ付くクラス
+                // lpビルダーでのみ付くクラス(ogpとthumbnailのキャプチャ時)
                 if (!container.classList.contains('no-remove')) {
                     container.parentNode.removeChild(container);
                 }
@@ -5416,12 +5416,12 @@
         PseudoElementType[PseudoElementType["AFTER"] = 1] = "AFTER";
     })(PseudoElementType || (PseudoElementType = {}));
     var createIFrameContainer = function (ownerDocument, bounds) {
-        // lpビルダーでのみ出現
-        var ogpIframe = ownerDocument.querySelector('.ogp-iframe');
-        var cloneIframeContainer = ownerDocument.querySelector('.ogp-iframe .html2canvas-container');
+        // lpビルダーでのみ出現(ogpとthumbnailのキャプチャ時)
+        var ogpOrThumbnailIframe = ownerDocument.querySelector('.ogp-iframe, .thumbnail-iframe');
+        var cloneIframeContainer = ownerDocument.querySelector('.ogp-iframe .html2canvas-container, .thumbnail-iframe .html2canvas-container');
         if (cloneIframeContainer === null) {
             cloneIframeContainer = ownerDocument.createElement('iframe');
-            if (ogpIframe === null) {
+            if (ogpOrThumbnailIframe === null) {
                 cloneIframeContainer.className = 'html2canvas-container';
             } else {
                 cloneIframeContainer.className = 'html2canvas-container no-remove';
