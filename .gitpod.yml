@@ -1,0 +1,14 @@
+tasks:
+  - name: Build
+    init: npm install && npm run build
+    command: gp sync-done boot
+
+  - name: Website
+    before: cd www/
+    init: npm install
+    command: gp sync-await boot && npm start
+    openMode: split-right
+
+ports:
+  - port: 8000
+    onOpen: open-preview
