@@ -41,6 +41,7 @@ import {TextShadow} from '../../css/property-descriptors/text-shadow';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
+    rejectImageError: boolean;
 };
 
 export interface RenderOptions {
@@ -272,9 +273,18 @@ export class CanvasRenderer {
         if (container instanceof ImageElementContainer) {
             try {
                 const image = await this.options.cache.match(container.src);
+                if (
+                    this.options.rejectImageError &&
+                    (container.intrinsicHeight === 0 || container.intrinsicWidth === 0)
+                ) {
+                    throw 'Image has zero height or zero width!';
+                }
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
                 Logger.getInstance(this.options.id).error(`Error loading image ${container.src}`);
+                if (this.options.rejectImageError) {
+                    throw e;
+                }
             }
         }
 
@@ -285,9 +295,18 @@ export class CanvasRenderer {
         if (container instanceof SVGElementContainer) {
             try {
                 const image = await this.options.cache.match(container.svg);
+                if (
+                    this.options.rejectImageError &&
+                    (container.intrinsicHeight === 0 || container.intrinsicWidth === 0)
+                ) {
+                    throw 'Image has zero height or zero width!';
+                }
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
                 Logger.getInstance(this.options.id).error(`Error loading svg ${container.svg.substring(0, 255)}`);
+                if (this.options.rejectImageError) {
+                    throw e;
+                }
             }
         }
 
@@ -304,7 +323,8 @@ export class CanvasRenderer {
                 height: container.height,
                 cache: this.options.cache,
                 windowWidth: container.width,
-                windowHeight: container.height
+                windowHeight: container.height,
+                rejectImageError: this.options.rejectImageError
             });
 
             const canvas = await iframeRenderer.render(container.tree);
