@@ -22,7 +22,7 @@ import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
 import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
 import {ReplacedElementContainer} from '../../dom/replaced-elements/index';
-import {EffectTarget, IElementEffect, isClipEffect, isTransformEffect} from '../effects';
+import {EffectTarget, IElementEffect, isClipEffect, isOpacityEffect, isTransformEffect} from '../effects';
 import {contains} from '../../core/bitwise';
 import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
 import {FIFTY_PERCENT, getAbsoluteValue} from '../../css/types/length-percentage';
@@ -99,6 +99,10 @@ export class CanvasRenderer {
 
     applyEffect(effect: IElementEffect) {
         this.ctx.save();
+        if (isOpacityEffect(effect)) {
+            this.ctx.globalAlpha = effect.opacity;
+        }
+
         if (isTransformEffect(effect)) {
             this.ctx.translate(effect.offsetX, effect.offsetY);
             this.ctx.transform(
@@ -128,7 +132,6 @@ export class CanvasRenderer {
     async renderStack(stack: StackingContext) {
         const styles = stack.element.container.styles;
         if (styles.isVisible()) {
-            this.ctx.globalAlpha = styles.opacity;
             await this.renderStackContent(stack);
         }
     }
