@@ -1,0 +1,17 @@
+name: Issue Close Require
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: need reproduce
+        uses: actions-cool/issues-helper@v1.8
+        with:
+          actions: 'close-issues'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          labels: 'Needs More Information'
+          inactive-day: 7
