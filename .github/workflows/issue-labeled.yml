@@ -1,0 +1,19 @@
+name: Issue Labeled
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  issue-labeled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Needs More Information
+        if: github.event.label.name == 'Needs More Information'
+        uses: actions-cool/issues-helper@v1.8
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Hello @${{ github.event.issue.user.login }}. We need you to provide an online replay example so that we can help you troubleshoot the problem. You can create an example on [jsfiddle](https://jsfiddle.net/) or a minimal GitHub repository. Issues labeled by `Needs More Information` will be closed if no activities in 7 days.
