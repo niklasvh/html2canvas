@@ -1,7 +1,7 @@
 import {ElementContainer, FLAGS} from '../dom/element-container';
 import {contains} from '../core/bitwise';
 import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
-import {ClipEffect, EffectTarget, IElementEffect, OpacityEffect, TransformEffect} from './effects';
+import {ClipEffect, EffectTarget, IElementEffect, TransformEffect, OpacityEffect} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
 import {DISPLAY} from '../css/property-descriptors/display';
@@ -41,10 +41,6 @@ export class ElementPaint {
         this.container = element;
         this.effects = parentStack.slice(0);
         this.curves = new BoundCurves(element);
-        if (element.styles.opacity < 1) {
-            this.effects.push(new OpacityEffect(element.styles.opacity));
-        }
-
         if (element.styles.transform !== null) {
             const offsetX = element.bounds.left + element.styles.transformOrigin[0].number;
             const offsetY = element.bounds.top + element.styles.transformOrigin[1].number;
@@ -63,6 +59,10 @@ export class ElementPaint {
                 this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
             }
         }
+
+        if (element.styles.opacity < 1) {
+            this.effects.push(new OpacityEffect(element.styles.opacity, EffectTarget.CONTENT));
+        }
     }
 
     getParentEffects(): IElementEffect[] {
@@ -73,6 +73,9 @@ export class ElementPaint {
             if (!equalPath(borderBox, paddingBox)) {
                 effects.push(new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT));
             }
+        }
+        if (this.container.styles.opacity < 1) {
+            effects.push(new OpacityEffect(this.container.styles.opacity, EffectTarget.CONTENT));
         }
         return effects;
     }
@@ -119,7 +122,7 @@ const parseStackTree = (
                 } else if (order > 0) {
                     let index = 0;
                     parentStack.positiveZIndex.some((current, i) => {
-                        if (order >= current.element.container.styles.zIndex.order) {
+                        if (order > current.element.container.styles.zIndex.order) {
                             index = i + 1;
                             return false;
                         } else if (index > 0) {

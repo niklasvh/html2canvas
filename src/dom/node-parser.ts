@@ -102,7 +102,7 @@ const createsStackingContext = (styles: CSSParsedDeclaration): boolean => styles
 export const isTextNode = (node: Node): node is Text => node.nodeType === Node.TEXT_NODE;
 export const isElementNode = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 export const isHTMLElementNode = (node: Node): node is HTMLElement =>
-    isElementNode(node) && typeof (node as HTMLElement).style !== 'undefined' && !isSVGElementNode(node);
+    typeof (node as HTMLElement).style !== 'undefined';
 export const isSVGElementNode = (element: Element): element is SVGElement =>
     typeof (element as SVGElement).className === 'object';
 export const isLIElement = (node: Element): node is HTMLLIElement => node.tagName === 'LI';

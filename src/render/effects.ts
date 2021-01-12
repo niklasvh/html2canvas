@@ -18,37 +18,42 @@ export interface IElementEffect {
 }
 
 export class TransformEffect implements IElementEffect {
-    readonly type: EffectType = EffectType.TRANSFORM;
-    readonly target: number = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
+    readonly type: EffectType;
+    readonly target: number;
     readonly offsetX: number;
     readonly offsetY: number;
     readonly matrix: Matrix;
 
     constructor(offsetX: number, offsetY: number, matrix: Matrix) {
+        this.type = EffectType.TRANSFORM;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.matrix = matrix;
+        this.target = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
     }
 }
 
 export class ClipEffect implements IElementEffect {
-    readonly type: EffectType = EffectType.CLIP;
+    readonly type: EffectType;
     readonly target: number;
     readonly path: Path[];
 
     constructor(path: Path[], target: EffectTarget) {
+        this.type = EffectType.CLIP;
         this.target = target;
         this.path = path;
     }
 }
 
 export class OpacityEffect implements IElementEffect {
-    readonly type: EffectType = EffectType.OPACITY;
-    readonly target: number = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
-    readonly opacity: number;
+    readonly type: EffectType;
+    readonly target: number;
+    readonly val: number;
 
-    constructor(opacity: number) {
-        this.opacity = opacity;
+    constructor(val: number, target: EffectTarget) {
+        this.type = EffectType.OPACITY;
+        this.target = target;
+        this.val = val;
     }
 }
 
