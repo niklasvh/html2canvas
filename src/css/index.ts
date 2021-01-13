@@ -54,6 +54,7 @@ import {transform} from './property-descriptors/transform';
 import {transformOrigin} from './property-descriptors/transform-origin';
 import {visibility, VISIBILITY} from './property-descriptors/visibility';
 import {wordBreak} from './property-descriptors/word-break';
+import {writingMode} from './property-descriptors/writing-mode';
 import {zIndex} from './property-descriptors/z-index';
 import {CSSValue, isIdentToken, Parser} from './syntax/parser';
 import {Tokenizer} from './syntax/tokenizer';
@@ -144,6 +145,7 @@ export class CSSParsedDeclaration {
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
     visibility: ReturnType<typeof visibility.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
+    writingMode: ReturnType<typeof writingMode.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
 
     constructor(declaration: CSSStyleDeclaration) {
@@ -213,6 +215,7 @@ export class CSSParsedDeclaration {
         this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
         this.visibility = parse(visibility, declaration.visibility);
         this.wordBreak = parse(wordBreak, declaration.wordBreak);
+        this.writingMode = parse(writingMode, declaration.writingMode);
         this.zIndex = parse(zIndex, declaration.zIndex);
     }
 

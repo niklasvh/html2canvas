@@ -144,9 +144,24 @@ export class CanvasRenderer {
         }
     }
 
-    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number) {
+    renderTextWithLetterSpacing(text: TextBounds, styles: CSSParsedDeclaration) {
+        const letterSpacing = styles.letterSpacing
+        const fontSize = styles.fontSize.number
+        const writingMode = styles.writingMode
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+            const reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+            if (reg.test(text.text) || writingMode === 'horizontal-tb') {
+                this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+            } else {
+                var ox = text.bounds.left;
+                var oy = text.bounds.top;
+                this.ctx.save()
+                this.ctx.translate(ox, oy);
+                this.ctx.rotate(90 * Math.PI/180)
+                this.ctx.fillText(text.text, -fontSize / 10, fontSize / 8); // 26: 3, 
+                this.ctx.translate(-ox, -oy);
+                this.ctx.restore()
+            }
         } else {
             const letters = toCodePoints(text.text).map(i => fromCodePoint(i));
             letters.reduce((left, letter) => {
@@ -175,7 +190,7 @@ export class CanvasRenderer {
 
     async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration, container: ElementContainer) {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
-
+        const writingMode = styles.writingMode
         this.ctx.font = font;
         let fillStyle: CanvasGradient|string = asString(styles.color);
         if (isFontColorGradient(styles)) { 
@@ -220,10 +235,9 @@ export class CanvasRenderer {
             }
         }
 
-
         text.textBounds.forEach(text => {
             this.ctx.fillStyle = fillStyle;
-            this.renderTextWithLetterSpacing(text, styles.letterSpacing);
+            this.renderTextWithLetterSpacing(text, styles);
             const textShadows: TextShadow = styles.textShadow;
 
             if (textShadows.length && text.text.trim().length) {
@@ -235,7 +249,6 @@ export class CanvasRenderer {
                         this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
                         this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
                         this.ctx.shadowBlur = textShadow.blur.number;
-
                         this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
                     });
 
@@ -247,6 +260,7 @@ export class CanvasRenderer {
 
             if (styles.textDecorationLine.length) {
                 this.ctx.fillStyle = asString(styles.textDecorationColor || styles.color);
+                var lineWidth = parseFloat(fontSize) / 10
                 styles.textDecorationLine.forEach(textDecorationLine => {
                     switch (textDecorationLine) {
                         case TEXT_DECORATION_LINE.UNDERLINE:
@@ -254,26 +268,52 @@ export class CanvasRenderer {
                             // TODO As some browsers display the line as more than 1px if the font-size is big,
                             // need to take that into account both in position and size
                             const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
-                            this.ctx.fillRect(
-                                text.bounds.left,
-                                Math.round(text.bounds.top + baseline),
-                                text.bounds.width,
-                                1
-                            );
-
+                            if (writingMode === 'horizontal-tb') {
+                                this.ctx.fillRect(
+                                    text.bounds.left,
+                                    Math.round(text.bounds.top + baseline),
+                                    text.bounds.width,
+                                    lineWidth
+                                );
+                            } else {
+                                this.ctx.fillRect(
+                                    text.bounds.left - lineWidth,
+                                    text.bounds.top - lineWidth,
+                                    lineWidth,
+                                    text.bounds.height + 2 * lineWidth,
+                                );
+                            }
                             break;
                         case TEXT_DECORATION_LINE.OVERLINE:
-                            this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, 1);
+                            if (writingMode === 'horizontal-tb') {
+                                this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, lineWidth);
+                            } else {
+                                this.ctx.fillRect(
+                                    text.bounds.left + text.bounds.width - 2 * lineWidth,
+                                    text.bounds.top - lineWidth,
+                                    lineWidth,
+                                    text.bounds.height + 2 * lineWidth,
+                                );
+                            }
                             break;
                         case TEXT_DECORATION_LINE.LINE_THROUGH:
                             // TODO try and find exact position for line-through
                             const {middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
-                            this.ctx.fillRect(
-                                text.bounds.left,
-                                Math.ceil(text.bounds.top + middle),
-                                text.bounds.width,
-                                1
-                            );
+                            if (writingMode === 'horizontal-tb') {
+                                this.ctx.fillRect(
+                                    text.bounds.left,
+                                    Math.ceil(text.bounds.top + middle),
+                                    text.bounds.width,
+                                    lineWidth
+                                );
+                            } else {
+                                this.ctx.fillRect(
+                                    text.bounds.left + middle - 3 * lineWidth,
+                                    text.bounds.top - lineWidth,
+                                    lineWidth,
+                                    text.bounds.height,
+                                );
+                            }
                             break;
                     }
                 });
@@ -458,7 +498,7 @@ export class CanvasRenderer {
             ]);
 
             this.ctx.clip();
-            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing);
+            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles);
             this.ctx.restore();
             this.ctx.textBaseline = 'bottom';
             this.ctx.textAlign = 'left';
@@ -490,7 +530,7 @@ export class CanvasRenderer {
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
-                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles.letterSpacing);
+                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles);
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
             }
