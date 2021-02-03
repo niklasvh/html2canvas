@@ -44,12 +44,15 @@ import {overflow, OVERFLOW} from './property-descriptors/overflow';
 import {overflowWrap} from './property-descriptors/overflow-wrap';
 import {paddingBottom, paddingLeft, paddingRight, paddingTop} from './property-descriptors/padding';
 import {textAlign} from './property-descriptors/text-align';
+import {paintOrder} from './property-descriptors/paint-order';
 import {position, POSITION} from './property-descriptors/position';
 import {textShadow} from './property-descriptors/text-shadow';
 import {textTransform} from './property-descriptors/text-transform';
 import {transform} from './property-descriptors/transform';
 import {transformOrigin} from './property-descriptors/transform-origin';
 import {visibility, VISIBILITY} from './property-descriptors/visibility';
+import {webkitTextStrokeColor} from './property-descriptors/webkit-text-sroke-color';
+import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-sroke-width';
 import {wordBreak} from './property-descriptors/word-break';
 import {zIndex} from './property-descriptors/z-index';
 import {CSSValue, isIdentToken, Parser} from './syntax/parser';
@@ -125,6 +128,7 @@ export class CSSParsedDeclaration {
     paddingRight: LengthPercentage;
     paddingBottom: LengthPercentage;
     paddingLeft: LengthPercentage;
+    paintOrder: ReturnType<typeof paintOrder.parse>;
     position: ReturnType<typeof position.parse>;
     textAlign: ReturnType<typeof textAlign.parse>;
     textDecorationColor: Color;
@@ -134,6 +138,8 @@ export class CSSParsedDeclaration {
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
     visibility: ReturnType<typeof visibility.parse>;
+    webkitTextStrokeColor: Color;
+    webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
 
@@ -189,6 +195,7 @@ export class CSSParsedDeclaration {
         this.paddingRight = parse(paddingRight, declaration.paddingRight);
         this.paddingBottom = parse(paddingBottom, declaration.paddingBottom);
         this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
+        this.paintOrder = parse(paintOrder, declaration.paintOrder);
         this.position = parse(position, declaration.position);
         this.textAlign = parse(textAlign, declaration.textAlign);
         this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
@@ -198,6 +205,8 @@ export class CSSParsedDeclaration {
         this.transform = parse(transform, declaration.transform);
         this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
         this.visibility = parse(visibility, declaration.visibility);
+        this.webkitTextStrokeColor = parse(webkitTextStrokeColor, declaration.webkitTextStrokeColor);
+        this.webkitTextStrokeWidth = parse(webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
         this.wordBreak = parse(wordBreak, declaration.wordBreak);
         this.zIndex = parse(zIndex, declaration.zIndex);
     }

@@ -50,6 +50,7 @@ Below is a list of all the supported CSS properties and values.
  - overflow
  - overflow-wrap
  - padding
+ - paint-order
  - position
  - right
  - text-align
@@ -58,7 +59,7 @@ Below is a list of all the supported CSS properties and values.
    - text-decoration-line
    - text-decoration-style (**Only supports `solid`**)
  - text-shadow
- - text-transform 
+ - text-transform
  - top
  - transform (**Limited support**)
  - visibility
@@ -68,6 +69,9 @@ Below is a list of all the supported CSS properties and values.
  - word-spacing
  - word-wrap
  - z-index
+ - -webkit-text-stroke
+   - -webkit-text-stroke-color
+   - -webkit-text-stroke-width
     
 ## Unsupported CSS properties
 These CSS properties are **NOT** currently supported
