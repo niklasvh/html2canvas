@@ -31,7 +31,7 @@ The library should work fine on the following browsers (with `Promise` polyfill)
 * IE9+
 * Safari 6+
 
-As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
+As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported. The website support all the programming languages.
 
 ### Usage ###
 
