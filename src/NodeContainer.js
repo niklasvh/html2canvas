@@ -274,19 +274,25 @@ const getImage = (node: HTMLElement | SVGSVGElement, resourceLoader: ResourceLoa
         node instanceof SVGSVGElement
     ) {
         const percentValueTest: RegExp = /^[0-9]{1,3}\%$/i;
+
+        const widthAttribute: string = node.getAttribute('width') || '';
+        const widthStyle: string = node.style.width || '';
+        const heightAttribute: string = node.getAttribute('width') || '';
+        const heightStyle: string = node.style.width || '';
+
         if (
-            percentValueTest.test(node.getAttribute('width')) ||
-            percentValueTest.test(node.getAttribute('height')) ||
-            percentValueTest.test(node.style.width) ||
-            percentValueTest.test(node.style.height)
+            percentValueTest.test(widthAttribute) ||
+            percentValueTest.test(widthStyle) ||
+            percentValueTest.test(heightAttribute) ||
+            percentValueTest.test(heightStyle)
         ) {
             if (!node.clientWidth && !node.clientHeight && node.parentNode) {
                 const parentStyle = window.getComputedStyle(node.parentNode);
-                node.setAttribute('width', parentStyle.width);
-                node.setAttribute('height', parentStyle.height);
+                node.setAttribute('width', parentStyle.width.toString());
+                node.setAttribute('height', parentStyle.height.toString());
             } else {
-                node.setAttribute('width', node.clientWidth);
-                node.setAttribute('height', node.clientHeight);
+                node.setAttribute('width', node.clientWidth.toString());
+                node.setAttribute('height', node.clientHeight.toString());
             }
         }
 
