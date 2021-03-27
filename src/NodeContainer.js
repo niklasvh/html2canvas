@@ -273,6 +273,23 @@ const getImage = (node: HTMLElement | SVGSVGElement, resourceLoader: ResourceLoa
         node instanceof node.ownerDocument.defaultView.SVGSVGElement ||
         node instanceof SVGSVGElement
     ) {
+        const percentValueTest: RegExp = /^[0-9]{1,3}\%$/i;
+        if (
+            percentValueTest.test(node.getAttribute('width')) ||
+            percentValueTest.test(node.getAttribute('height')) ||
+            percentValueTest.test(node.style.width) ||
+            percentValueTest.test(node.style.height)
+        ) {
+            if (!node.clientWidth && !node.clientHeight && node.parentNode) {
+                const parentStyle = window.getComputedStyle(node.parentNode);
+                node.setAttribute('width', parentStyle.width);
+                node.setAttribute('height', parentStyle.height);
+            } else {
+                node.setAttribute('width', node.clientWidth);
+                node.setAttribute('height', node.clientHeight);
+            }
+        }
+
         const s = new XMLSerializer();
         return resourceLoader.loadImage(
             `data:image/svg+xml,${encodeURIComponent(s.serializeToString(node))}`
