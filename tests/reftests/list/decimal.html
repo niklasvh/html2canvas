@@ -5,15 +5,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../test.js"></script>
 
-    <script type="text/javascript">
-      function setUp() {
-        var supportedTypes = ["decimal","decimal-leading-zero","upper-roman","lower-roman","lower-alpha","upper-alpha"];
-        for (var i = 1;i<=15;i++){
-          $('#dynamic').append($('<li />').text(i).css('list-style-type',supportedTypes[0]));
-        }
-      }
-    </script>
-
     <style>
       #dynamic{
         list-style-type:decimal;
@@ -54,7 +45,23 @@
   </head>
   <body>
 
-    <ol id="dynamic"></ol>
 
+  <ol id="dynamic">
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+      <li>7</li>
+      <li>8</li>
+      <li>9</li>
+      <li>10</li>
+      <li>11</li>
+      <li>12</li>
+      <li>13</li>
+      <li>14</li>
+      <li>15</li>
+  </ol>
   </body>
 </html>

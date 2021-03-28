@@ -1,10 +1,10 @@
 html2canvas
 ===========
 
-[Homepage](https://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest) | [Donate](https://www.gittip.com/niklasvh/)
+[Homepage](https://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/niklasvh/html2canvas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
-[![Build Status](https://travis-ci.org/niklasvh/html2canvas.svg)](https://travis-ci.org/niklasvh/html2canvas)
+![CI](https://github.com/niklasvh/html2canvas/workflows/CI/badge.svg?branch=master)
 [![NPM Downloads](https://img.shields.io/npm/dm/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
 [![NPM Version](https://img.shields.io/npm/v/html2canvas.svg)](https://www.npmjs.org/package/html2canvas)
 
@@ -39,12 +39,10 @@ The html2canvas library utilizes `Promise`s and expects them to be available in 
 support [older browsers](http://caniuse.com/#search=promise) that do not natively support `Promise`s, please include a polyfill such as
 [es6-promise](https://github.com/jakearchibald/es6-promise) before including `html2canvas`.
 
-**Note!** These instructions are for using the current dev version of 0.5, for the latest release version (0.4.1), checkout the [old readme](https://github.com/niklasvh/html2canvas/blob/v0.4/readme.md).
-
 To render an `element` with html2canvas, simply call:
 ` html2canvas(element[, options]);`
 
-The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fullfillment handler to the promise using `then`:
+The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fulfillment handler to the promise using `then`:
 
     html2canvas(document.body).then(function(canvas) {
         document.body.appendChild(canvas);
@@ -66,23 +64,9 @@ Build browser bundle
 
     $ npm run build
 
-### Running tests ###
-
-The library has two sets of tests. The first set is a number of qunit tests that check that different values parsed by browsers are correctly converted in html2canvas. To run these tests with grunt you'll need [phantomjs](http://phantomjs.org/).
-
-The other set of tests run Firefox, Chrome and Internet Explorer with [webdriver](https://github.com/niklasvh/webdriver.js). The selenium standalone server (runs on Java) is required for these tests and can be downloaded from [here](http://code.google.com/p/selenium/downloads/list). They capture an actual screenshot from the test pages and compare the image to the screenshot created by html2canvas and calculate the percentage differences. These tests generally aren't expected to provide 100% matches, but while committing changes, these should generally not go decrease from the baseline values.
-
-Start by downloading the dependencies:
-
-    $ npm install
-
-Run tests:
-
-    $ npm test
-
 ### Examples ###
 
-For more information and examples, please visit the [homepage](https://html2canvas.hertzen.com) or try the [test console](http://html2canvas.hertzen.com/screenshots.html).
+For more information and examples, please visit the [homepage](https://html2canvas.hertzen.com) or try the [test console](https://html2canvas.hertzen.com/tests/).
 
 ### Contributing ###
 

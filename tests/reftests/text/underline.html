@@ -6,13 +6,20 @@
         <script type="text/javascript" src="../../test.js"></script>
         <script type="text/javascript">
             function setUp() {
-                $('body').empty();
-                $.each(['arial','verdana','tahoma','courier new'],function(i,e){
-                    var div = $('<div />').css('font-family',e).appendTo('body');
-                    for(var i=1;i<=10;i*=2){
-                        $('<div />').text('Testing texts').css('margin-top',1).css('font-size',(16+i*6)).appendTo(div);
-                    }
+                var container = document.querySelector('#test');
+                container.innerHTML = '';
 
+                ['arial','verdana','courier new'].forEach(function(e) {
+                    var div = document.createElement('div');
+                    div.style.fontFamily = e;
+                    container.appendChild(div);
+                    for(var i=1;i<=10;i*=2) {
+                        var text = document.createElement('div');
+                        text.innerText = 'Testing texts';
+                        text.style.marginTop = '1px';
+                        text.style.fontSize = (16+i*6) + 'px';
+                        div.appendChild(text);
+                    }
                 });
             }
         </script>
@@ -45,6 +52,9 @@
 
     </head>
     <body>
-        Creating content through JavaScript
+    test <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> label u
+        <div id="test">
+            Creating content through JavaScript
+        </div>
     </body>
 </html>

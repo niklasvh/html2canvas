@@ -42,7 +42,7 @@
     ctx.stroke();
 
     document.querySelector("button").addEventListener("click", function() {
-        html2canvas(document.querySelector("#content"), {canvas: canvas}).then(function(canvas) {
+        html2canvas(document.querySelector("#content"), {canvas: canvas, scale: 1}).then(function(canvas) {
             console.log('Drew on the existing canvas');
         });
     }, false);

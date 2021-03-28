@@ -14,8 +14,14 @@
 				width: 100px;
 				height: 100px;
 				padding: 10px;
-				border: 15px solid black;
+				border: 15px solid transparent;
 			}
+            .linearGradient {
+                width: 200px;
+                height: 200px;
+                background-image: linear-gradient(rgba(0, 0, 0, 0.7) 0.1em, transparent 0.1em), linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0.1em, transparent 0.1em);
+                background-size: 1em 1em;
+            }
 		</style>
 	</head>
 	<body>
@@ -38,5 +44,8 @@
 		<div style="background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); "></div>
 		<div style="background: linear-gradient(90deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%) content-box;"></div>
 		<div style="background: linear-gradient(60deg, hsla(120,80%,50%,0.8) 0%, transparent 50%, rgba(255,100,100,0.5) 100%);"></div>
+		<div style="background: linear-gradient(to right, red 20%, orange 20% 40%, yellow 40% 60%, green 60% 80%, blue 80%);"></div>
+		<div style="background: linear-gradient(-45deg, #FF0000 40%, #00FF00 50%);"></div>
+		<div class="linearGradient"></div>
 	</body>
 </html>
