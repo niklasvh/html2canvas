@@ -8,6 +8,7 @@ export class TextContainer {
 
     constructor(node: Text, styles: CSSParsedDeclaration) {
         this.text = transform(node.data, styles.textTransform);
+        node.nodeValue = this.text;
         this.textBounds = parseTextBounds(this.text, styles, node);
     }
 }
