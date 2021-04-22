@@ -50,6 +50,7 @@ export const display: IPropertyListDescriptor<Display> = {
 const parseDisplayValue = (display: string): Display => {
     switch (display) {
         case 'block':
+        case '-webkit-box':
             return DISPLAY.BLOCK;
         case 'inline':
             return DISPLAY.INLINE;
