@@ -152,14 +152,6 @@ var Cache = /** @class */ (function () {
                                     }
                                     img.src = src;
                                 }
-                                img.crossOrigin = 'anonymous';
-                                img.setAttribute('crossOrigin', 'anonymous');
-                                if (hasParamsRegex.test(src)) {
-                                    src = src + '&v=' + timeStamp;
-                                }
-                                else {
-                                    src = src + '?v=' + timeStamp;
-                                }
                                 img.src = src;
                                 if (img.complete === true) {
                                     // Inline XML images may fail to parse, throwing an Error later on
