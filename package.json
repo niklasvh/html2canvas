@@ -1,6 +1,6 @@
 {
-  "title": "html2canvas-cors",
-  "name": "html2canvas-cors",
+  "title": "html2canvas",
+  "name": "html2canvas",
   "description": "Screenshots with JavaScript",
   "main": "dist/html2canvas.js",
   "module": "dist/html2canvas.esm.js",
@@ -91,7 +91,6 @@
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "install": "npm run build",
     "prepare": "npm run build",
     "prebuild": "rimraf dist/ && rimraf build/ && mkdirp dist && mkdirp build",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && npm run build:create-reftest-list && npm run build:testrunner && npm run build:minify",
