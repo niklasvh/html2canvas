@@ -1,6 +1,6 @@
 {
-  "title": "html2canvas",
-  "name": "html2canvas",
+  "title": "html2canvas-cors",
+  "name": "html2canvas-cors",
   "description": "Screenshots with JavaScript",
   "main": "dist/html2canvas.js",
   "module": "dist/html2canvas.esm.js",
@@ -111,6 +111,6 @@
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
-    "css-line-break": "1.1.1"
+    "css-line-break": "^1.1.1"
   }
 }
