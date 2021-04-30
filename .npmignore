@@ -1,7 +1,6 @@
 .github/
 .idea/
 .rpt2_cache
-build/
 configs/
 docs/
 examples/
