@@ -8,19 +8,19 @@ const pkg = require('./package.json');
 
 const banner = `/*!
  * ${pkg.title} ${pkg.version} <${pkg.homepage}>
- * Copyright (c) ${(new Date()).getFullYear()} ${pkg.author.name} <${pkg.author.url}>
+ * Copyright (c) ${new Date().getFullYear()} ${pkg.author.name} <${pkg.author.url}>
  * Released under ${pkg.license} License
  */`;
 
 export default {
     input: `src/index.ts`,
     output: [
-        { file: pkg.main, name: pkg.name, format: 'umd', banner, sourcemap: true },
-        { file: pkg.module, format: 'esm', banner, sourcemap: true },
+        {file: pkg.main, name: pkg.name, format: 'umd', banner, sourcemap: true},
+        {file: pkg.module, format: 'esm', banner, sourcemap: true}
     ],
     external: [],
     watch: {
-        include: 'src/**',
+        include: 'src/**'
     },
     plugins: [
         // Allow node_modules resolution, so you can use 'external' to control
@@ -30,13 +30,13 @@ export default {
         // Allow json resolution
         json(),
         // Compile TypeScript files
-        typescript({ useTsconfigDeclarationDir: true }),
+        typescript({useTsconfigDeclarationDir: true}),
         // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
         commonjs({
             include: 'node_modules/**'
         }),
 
         // Resolve source maps to the original source
-        sourceMaps(),
-    ],
-}
+        sourceMaps()
+    ]
+};

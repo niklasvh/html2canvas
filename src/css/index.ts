@@ -291,5 +291,5 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
             }
     }
 
-    throw new Error(`Attempting to parse unsupported css format type ${descriptor.format}`);
+    throw new Error(`Attempting to parse unsupported css format type ${descriptor}`);
 };
