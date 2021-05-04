@@ -1,1 +1,0 @@
-{"version":3,"file":"document-cloner.js","sourceRoot":"","sources":["../../../../src/dom/__mocks__/document-cloner.ts"],"names":[],"mappings":";;AAAA;IAGI;QACI,+EAA+E;QAC/E,IAAI,CAAC,sBAAsB,GAAG,EAAiB,CAAC;IACpD,CAAC;IAED,iCAAQ,GAAR;QACI,OAAO,OAAO,CAAC,OAAO,CAAC,EAAE,CAAC,CAAC;IAC/B,CAAC;IAEM,sBAAO,GAAd;QACI,OAAO,IAAI,CAAC;IAChB,CAAC;IACL,qBAAC;AAAD,CAAC,AAfD,IAeC;AAfY,wCAAc"}
