@@ -91,7 +91,7 @@ export class BoundCurves {
                 ? getCurvePoints(
                       bounds.left + Math.min(topWidth, bounds.width + borderLeftWidth),
                       bounds.top + borderTopWidth,
-                      topWidth > bounds.width + borderLeftWidth ? 0 : trh - borderLeftWidth,
+                      topWidth > bounds.width + borderRightWidth ? 0 : trh - borderRightWidth,
                       trv - borderTopWidth,
                       CORNER.TOP_RIGHT
                   )
