@@ -3,6 +3,7 @@ import {testList, ignoredTests} from '../build/reftests';
 import {default as platform} from 'platform';
 // @ts-ignore
 import Promise from 'es6-promise';
+import {ScreenshotRequest} from './types';
 
 const testRunnerUrl = location.href;
 const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
@@ -21,20 +22,20 @@ const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
         };
         xhr.onerror = reject;
 
+        const request: ScreenshotRequest = {
+            screenshot: canvas.toDataURL(),
+            test: url,
+            platform: {
+                name: platform.name,
+                version: platform.version
+            },
+            devicePixelRatio: window.devicePixelRatio || 1,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
+        };
+
         xhr.open('POST', 'http://localhost:8000/screenshot', true);
-        xhr.send(
-            JSON.stringify({
-                screenshot: canvas.toDataURL(),
-                test: url,
-                platform: {
-                    name: platform.name,
-                    version: platform.version
-                },
-                devicePixelRatio: window.devicePixelRatio || 1,
-                windowWidth: window.innerWidth,
-                windowHeight: window.innerHeight
-            })
-        );
+        xhr.send(JSON.stringify(request));
     });
 };
 
@@ -76,40 +77,38 @@ testList
                 }
                 document.body.removeChild(testContainer);
             });
-            it('Should render untainted canvas', () => {
+
+            it('Should render untainted canvas', async () => {
                 const contentWindow = testContainer.contentWindow;
                 if (!contentWindow) {
                     throw new Error('Window not found for iframe');
                 }
 
-                return (
-                    contentWindow
+                const canvas: HTMLCanvasElement = await contentWindow
+                    // @ts-ignore
+                    .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
+                        removeContainer: true,
+                        backgroundColor: '#ffffff',
+                        proxy: 'http://localhost:8081/proxy',
                         // @ts-ignore
-                        .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
-                            removeContainer: true,
-                            backgroundColor: '#ffffff',
-                            proxy: 'http://localhost:8081/proxy',
-                            // @ts-ignore
-                            ...(contentWindow.h2cOptions || {})
-                        })
-                        .then((canvas: HTMLCanvasElement) => {
-                            try {
-                                (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(
-                                    0,
-                                    0,
-                                    canvas.width,
-                                    canvas.height
-                                );
-                            } catch (e) {
-                                return Promise.reject('Canvas is tainted');
-                            }
+                        ...(contentWindow.h2cOptions || {})
+                    });
 
-                            // @ts-ignore
-                            if (window.__karma__) {
-                                return uploadResults(canvas, url);
-                            }
-                        })
-                );
+                try {
+                    (canvas.getContext('2d') as CanvasRenderingContext2D).getImageData(
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+                } catch (e) {
+                    throw new Error('Canvas is tainted');
+                }
+
+                // @ts-ignore
+                if (window.__karma__) {
+                    return uploadResults(canvas, url);
+                }
             });
         });
     });
