@@ -302,3 +302,156 @@ export const COLORS: {[key: string]: Color} = {
     YELLOW: 0xffff00ff,
     YELLOWGREEN: 0x9acd32ff
 };
+
+export interface RGBColor {
+    r: number;
+    g: number;
+    b: number;
+}
+
+export const contrastRGB = (rgb: RGBColor, value: number): RGBColor => {
+    if (value < 0) value = 0;
+    else if (value > 1) value = 1;
+    return {
+        r: Math.max(0, Math.min(255, value * (rgb.r - 128) + 128)),
+        g: Math.max(0, Math.min(255, value * (rgb.g - 128) + 128)),
+        b: Math.max(0, Math.min(255, value * (rgb.b - 128) + 128))
+    };
+};
+
+export const grayscaleRGB = (rgb: RGBColor, value: number, mode?: string | null) => {
+    var gray = 0;
+    //different grayscale algorithms
+    switch (mode) {
+        case 'average':
+            gray = (rgb.r + rgb.g + rgb.b) / 3;
+            break;
+        case 'luma:BT601':
+            gray = rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
+            break;
+        case 'desaturation':
+            gray = (Math.max(rgb.r, rgb.g, rgb.b) + Math.max(rgb.r, rgb.g, rgb.b)) / 2;
+            break;
+        case 'decompsition:max':
+            gray = Math.max(rgb.r, rgb.g, rgb.b);
+            break;
+        case 'decompsition:min':
+            gray = Math.min(rgb.r, rgb.g, rgb.b);
+            break;
+        case 'luma:BT709':
+        default:
+            gray = rgb.r * 0.2126 + rgb.g * 0.7152 + rgb.b * 0.0722;
+            break;
+    }
+    rgb.r = value * (gray - rgb.r) + rgb.r;
+    rgb.g = value * (gray - rgb.g) + rgb.g;
+    rgb.b = value * (gray - rgb.b) + rgb.b;
+    return rgb;
+};
+
+export const brightnessRGB = (rgb: RGBColor, value: number): RGBColor => {
+    if (value < 0) value = 0;
+    return {
+        r: Math.max(0, Math.min(255, rgb.r * value)),
+        g: Math.max(0, Math.min(255, rgb.g * value)),
+        b: Math.max(0, Math.min(255, rgb.b * value))
+    };
+};
+
+export const invertRGB = (rgb: RGBColor, value: number): RGBColor => {
+    return {
+        r: value * (255 - 2 * rgb.r) + rgb.r,
+        g: value * (255 - 2 * rgb.g) + rgb.g,
+        b: value * (255 - 2 * rgb.b) + rgb.b
+    };
+};
+
+export const sepiaRGB = (rgb: RGBColor, value: number): RGBColor => {
+    if (value < 0) value = 0;
+    else if (value > 1) value = 1;
+    return {
+        r: value * Math.min(255, rgb.r * 0.393 + rgb.g * 0.769 + rgb.b * 0.189 - rgb.r) + rgb.r,
+        g: value * Math.min(255, rgb.r * 0.349 + rgb.g * 0.686 + rgb.b * 0.168 - rgb.g) + rgb.g,
+        b: value * Math.min(255, rgb.r * 0.272 + rgb.g * 0.534 + rgb.b * 0.131 - rgb.b) + rgb.b
+    };
+};
+
+export const hueRotateRGB = (rgb: RGBColor, value: number): RGBColor => {
+    while (value < 0) value += 360;
+    while (value > 360) value -= 360;
+    rgb2hsl(rgb);
+    rgb.r += value;
+    if (rgb.r < 0) rgb.r += 360;
+    if (rgb.r > 359) rgb.r -= 360;
+    hsl2rgb(rgb);
+    return rgb;
+};
+
+export const saturateRGB = (rgb: RGBColor, value: number): RGBColor => {
+    if (value < 0) value = 0;
+    rgb2hsl(rgb);
+    rgb.g *= value;
+    if (rgb.g > 100) rgb.g = 100;
+    hsl2rgb(rgb);
+    return rgb;
+};
+
+function rgb2hsl(rgb: RGBColor) {
+    rgb.r = Math.max(0, Math.min(255, rgb.r)) / 255;
+    rgb.g = Math.max(0, Math.min(255, rgb.g)) / 255;
+    rgb.b = Math.max(0, Math.min(255, rgb.b)) / 255;
+    let h, l;
+    let M = Math.max(rgb.r, rgb.g, rgb.b);
+    let m = Math.min(rgb.r, rgb.g, rgb.b);
+    let d = M - m;
+    if (d == 0) h = 0;
+    else if (M == rgb.r) h = ((rgb.g - rgb.b) / d) % 6;
+    else if (M == rgb.g) h = (rgb.b - rgb.r) / d + 2;
+    else h = (rgb.r - rgb.g) / d + 4;
+    h = Math.round(h * 60);
+    if (h < 0) h += 360;
+    rgb.r = h;
+    l = (M + m) / 2;
+    if (d == 0) rgb.g = 0;
+    else rgb.g = (d / (1 - Math.abs(2 * l - 1))) * 100;
+    rgb.b = l * 100;
+}
+
+function hsl2rgb(rgb: RGBColor) {
+    rgb.r = Math.max(0, Math.min(359, rgb.r));
+    rgb.g = Math.max(0, Math.min(100, rgb.g)) / 100;
+    rgb.b = Math.max(0, Math.min(100, rgb.b)) / 100;
+    let C = (1 - Math.abs(2 * rgb.b - 1)) * rgb.g;
+    let h = rgb.r / 60;
+    let X = C * (1 - Math.abs((h % 2) - 1));
+    let l = rgb.b;
+    rgb.r = 0;
+    rgb.g = 0;
+    rgb.b = 0;
+    if (h >= 0 && h < 1) {
+        rgb.r = C;
+        rgb.g = X;
+    } else if (h >= 1 && h < 2) {
+        rgb.r = X;
+        rgb.g = C;
+    } else if (h >= 2 && h < 3) {
+        rgb.g = C;
+        rgb.b = X;
+    } else if (h >= 3 && h < 4) {
+        rgb.g = X;
+        rgb.b = C;
+    } else if (h >= 4 && h < 5) {
+        rgb.r = X;
+        rgb.b = C;
+    } else {
+        rgb.r = C;
+        rgb.b = X;
+    }
+    let m = l - C / 2;
+    rgb.r += m;
+    rgb.g += m;
+    rgb.b += m;
+    rgb.r = Math.round(rgb.r * 255.0);
+    rgb.g = Math.round(rgb.g * 255.0);
+    rgb.b = Math.round(rgb.b * 255.0);
+}

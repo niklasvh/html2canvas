@@ -141,6 +141,7 @@ export class Parser {
     }
 }
 
+export const isCSSFunction = (token: CSSValue): token is CSSFunction => token.type === TokenType.FUNCTION;
 export const isDimensionToken = (token: CSSValue): token is DimensionToken => token.type === TokenType.DIMENSION_TOKEN;
 export const isNumberToken = (token: CSSValue): token is NumberValueToken => token.type === TokenType.NUMBER_TOKEN;
 export const isIdentToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.IDENT_TOKEN;
