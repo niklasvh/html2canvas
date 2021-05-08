@@ -5,6 +5,8 @@ import {default as platform} from 'platform';
 import Promise from 'es6-promise';
 import {ScreenshotRequest} from './types';
 
+// @ts-ignore
+window.Promise = Promise;
 const testRunnerUrl = location.href;
 const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
 
