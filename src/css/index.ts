@@ -73,6 +73,7 @@ import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
+import {direction} from './property-descriptors/direction';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -101,6 +102,7 @@ export class CSSParsedDeclaration {
     boxShadow: ReturnType<typeof boxShadow.parse>;
     color: Color;
     display: ReturnType<typeof display.parse>;
+    direction: ReturnType<typeof direction.parse>;
     float: ReturnType<typeof float.parse>;
     fontFamily: ReturnType<typeof fontFamily.parse>;
     fontSize: LengthPercentage;
@@ -164,6 +166,7 @@ export class CSSParsedDeclaration {
         this.boxShadow = parse(boxShadow, declaration.boxShadow);
         this.color = parse(color, declaration.color);
         this.display = parse(display, declaration.display);
+        this.direction = parse(direction, declaration.direction);
         this.float = parse(float, declaration.cssFloat);
         this.fontFamily = parse(fontFamily, declaration.fontFamily);
         this.fontSize = parse(fontSize, declaration.fontSize);

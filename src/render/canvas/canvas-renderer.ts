@@ -38,6 +38,8 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
+import {Direction} from 'tty';
+import {DIRECTION} from '../../css/property-descriptors/direction';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -371,6 +373,7 @@ export class CanvasRenderer {
 
             this.ctx.textBaseline = 'middle';
             this.ctx.textAlign = canvasTextAlign(container.styles.textAlign);
+            this.ctx.direction = canvasTextDirection(container.styles.direction);
 
             const bounds = contentBox(container);
 
@@ -431,6 +434,7 @@ export class CanvasRenderer {
                 this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles.letterSpacing);
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
+                this.ctx.direction = 'inherit';
             }
         }
     }
@@ -765,5 +769,16 @@ const canvasTextAlign = (textAlign: TEXT_ALIGN): CanvasTextAlign => {
         case TEXT_ALIGN.LEFT:
         default:
             return 'left';
+    }
+};
+
+const canvasTextDirection = (textDirection: Direction) => {
+    switch (textDirection) {
+        case DIRECTION.LTR:
+            return 'ltr';
+        case DIRECTION.RTL:
+            return 'rtl';
+        default:
+            return 'inherit';
     }
 };
