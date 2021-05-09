@@ -127,13 +127,13 @@ export class Cache {
             //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
             const timeStamp = new Date().getTime();
             const hasParamsRegex = /\?.+/;
+            // pbs.twimg.com - twitter images don't support params and returns 404
+            const urlsToExclude = /pbs\.twimg\.com/;
             if (isInlineBase64Image(src) || useCORS) {
                 img.crossOrigin = 'anonymous';
                 img.setAttribute('crossOrigin', 'anonymous');
-                if (hasParamsRegex.test(src)) {
-                    src  = src +'&v='+timeStamp;
-                } else {
-                    src  = src +'?v='+timeStamp;
+                if (!urlsToExclude.test(src)) {
+                    src = hasParamsRegex.test(src) ? src +'&v='+timeStamp : src +'?v='+timeStamp;
                 }
                 img.src = src;
             }
