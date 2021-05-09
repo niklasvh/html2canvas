@@ -38,7 +38,6 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
-import {Direction} from 'tty';
 import {DIRECTION} from '../../css/property-descriptors/direction';
 
 export type RenderConfigurations = RenderOptions & {
