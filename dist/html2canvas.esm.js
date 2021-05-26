@@ -2534,7 +2534,7 @@ var Cache = /** @class */ (function () {
                                 if (isInlineBase64Image(src) || useCORS) {
                                     img.crossOrigin = 'anonymous';
                                     img.setAttribute('crossOrigin', 'anonymous');
-                                    if (!urlsToExclude.test(src)) {
+                                    if (!urlsToExclude.test(src) && !isInlineBase64Image(src)) {
                                         src = hasParamsRegex.test(src) ? src + '&v=' + timeStamp : src + '?v=' + timeStamp;
                                     }
                                     img.src = src;
