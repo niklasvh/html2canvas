@@ -18,7 +18,7 @@ Below is a list of all the supported CSS properties and values.
  - border
    - border-color
    - border-radius
-   - border-style (**Only supports `solid`**)
+   - border-style
    - border-width
  - bottom
  - box-sizing
