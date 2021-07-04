@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.0.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.7...v1.0.0) (2021-07-04)
+
+
+### ci
+
+* update docs publish action (#2451) ([7222aba](https://github.com/niklasvh/html2canvas/commit/7222aba1b42138c3d466525172411b3d9869095f)), closes [#2451](https://github.com/niklasvh/html2canvas/issues/2451)
+
+### deps
+
+* update www deps (#2525) ([2a013e2](https://github.com/niklasvh/html2canvas/commit/2a013e20c814b7dbaea98f54f0bde8f553eb79a2)), closes [#2525](https://github.com/niklasvh/html2canvas/issues/2525)
+
+### fix
+
+* opacity with overflow hidden (#2450) ([82b7da5](https://github.com/niklasvh/html2canvas/commit/82b7da558c342e7f53d298bb1d843a5db86c3b21)), closes [#2450](https://github.com/niklasvh/html2canvas/issues/2450)
+
+### test
+
+* update karma runner (#2524) ([ff35c7d](https://github.com/niklasvh/html2canvas/commit/ff35c7dbd33f863f5b614d778baf8cb1e8dded60)), closes [#2524](https://github.com/niklasvh/html2canvas/issues/2524)
+
+
+
 # [1.0.0-rc.7](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2020-08-09)
 
 
