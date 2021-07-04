@@ -23,10 +23,11 @@ const servers: Server[] = [];
 servers.push(screenshotApp.listen(8000));
 servers.push(corsApp.listen(8081));
 
-karmaTestRunner().then(() => {
-    servers.forEach(server => server.close());
-}).catch(e => {
-    console.error(e);
-    process.exit(1);
-});
-
+karmaTestRunner()
+    .then(() => {
+        servers.forEach(server => server.close());
+    })
+    .catch(e => {
+        console.error(e);
+        process.exit(1);
+    });
