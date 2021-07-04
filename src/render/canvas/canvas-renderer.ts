@@ -8,10 +8,15 @@ import {TextContainer} from '../../dom/text-container';
 import {Path, transformPath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
-import {isBezierCurve} from '../bezier-curve';
+import {BezierCurve, isBezierCurve} from '../bezier-curve';
 import {Vector} from '../vector';
 import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
-import {parsePathForBorder} from '../border';
+import {
+    parsePathForBorder,
+    parsePathForBorderDoubleInner,
+    parsePathForBorderDoubleOuter,
+    parsePathForBorderStroke
+} from '../border';
 import {Cache} from '../../core/cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
@@ -630,9 +635,24 @@ export class CanvasRenderer {
         }
     }
 
-    async renderBorder(color: Color, side: number, curvePoints: BoundCurves) {
+    async renderSolidBorder(color: Color, side: number, curvePoints: BoundCurves) {
         this.path(parsePathForBorder(curvePoints, side));
         this.ctx.fillStyle = asString(color);
+        this.ctx.fill();
+    }
+
+    async renderDoubleBorder(color: Color, width: number, side: number, curvePoints: BoundCurves) {
+        if (width < 3) {
+            await this.renderSolidBorder(color, side, curvePoints);
+            return;
+        }
+
+        const outerPaths = parsePathForBorderDoubleOuter(curvePoints, side);
+        this.path(outerPaths);
+        this.ctx.fillStyle = asString(color);
+        this.ctx.fill();
+        const innerPaths = parsePathForBorderDoubleInner(curvePoints, side);
+        this.path(innerPaths);
         this.ctx.fill();
     }
 
@@ -642,10 +662,10 @@ export class CanvasRenderer {
         const hasBackground = !isTransparent(styles.backgroundColor) || styles.backgroundImage.length;
 
         const borders = [
-            {style: styles.borderTopStyle, color: styles.borderTopColor},
-            {style: styles.borderRightStyle, color: styles.borderRightColor},
-            {style: styles.borderBottomStyle, color: styles.borderBottomColor},
-            {style: styles.borderLeftStyle, color: styles.borderLeftColor}
+            {style: styles.borderTopStyle, color: styles.borderTopColor, width: styles.borderTopWidth},
+            {style: styles.borderRightStyle, color: styles.borderRightColor, width: styles.borderRightWidth},
+            {style: styles.borderBottomStyle, color: styles.borderBottomColor, width: styles.borderBottomWidth},
+            {style: styles.borderLeftStyle, color: styles.borderLeftColor, width: styles.borderLeftWidth}
         ];
 
         const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
@@ -705,11 +725,141 @@ export class CanvasRenderer {
 
         let side = 0;
         for (const border of borders) {
-            if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side, paint.curves);
+            if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color) && border.width > 0) {
+                if (border.style === BORDER_STYLE.DASHED) {
+                    await this.renderDashedDottedBorder(
+                        border.color,
+                        border.width,
+                        side,
+                        paint.curves,
+                        BORDER_STYLE.DASHED
+                    );
+                } else if (border.style === BORDER_STYLE.DOTTED) {
+                    await this.renderDashedDottedBorder(
+                        border.color,
+                        border.width,
+                        side,
+                        paint.curves,
+                        BORDER_STYLE.DOTTED
+                    );
+                } else if (border.style === BORDER_STYLE.DOUBLE) {
+                    await this.renderDoubleBorder(border.color, border.width, side, paint.curves);
+                } else {
+                    await this.renderSolidBorder(border.color, side, paint.curves);
+                }
             }
             side++;
         }
+    }
+
+    async renderDashedDottedBorder(
+        color: Color,
+        width: number,
+        side: number,
+        curvePoints: BoundCurves,
+        style: BORDER_STYLE
+    ) {
+        this.ctx.save();
+
+        const strokePaths = parsePathForBorderStroke(curvePoints, side);
+        const boxPaths = parsePathForBorder(curvePoints, side);
+
+        if (style === BORDER_STYLE.DASHED) {
+            this.path(boxPaths);
+            this.ctx.clip();
+        }
+
+        let startX, startY, endX, endY;
+        if (isBezierCurve(boxPaths[0])) {
+            startX = (boxPaths[0] as BezierCurve).start.x;
+            startY = (boxPaths[0] as BezierCurve).start.y;
+        } else {
+            startX = (boxPaths[0] as Vector).x;
+            startY = (boxPaths[0] as Vector).y;
+        }
+        if (isBezierCurve(boxPaths[1])) {
+            endX = (boxPaths[1] as BezierCurve).end.x;
+            endY = (boxPaths[1] as BezierCurve).end.y;
+        } else {
+            endX = (boxPaths[1] as Vector).x;
+            endY = (boxPaths[1] as Vector).y;
+        }
+
+        let length;
+        if (side === 0 || side === 2) {
+            length = Math.abs(startX - endX);
+        } else {
+            length = Math.abs(startY - endY);
+        }
+
+        this.ctx.beginPath();
+        if (style === BORDER_STYLE.DOTTED) {
+            this.formatPath(strokePaths);
+        } else {
+            this.formatPath(boxPaths.slice(0, 2));
+        }
+
+        let dashLength = width < 3 ? width * 3 : width * 2;
+        let spaceLength = width < 3 ? width * 2 : width;
+        if (style === BORDER_STYLE.DOTTED) {
+            dashLength = width;
+            spaceLength = width;
+        }
+
+        let useLineDash = true;
+        if (length <= dashLength * 2) {
+            useLineDash = false;
+        } else if (length <= dashLength * 2 + spaceLength) {
+            const multiplier = length / (2 * dashLength + spaceLength);
+            dashLength *= multiplier;
+            spaceLength *= multiplier;
+        } else {
+            const numberOfDashes = Math.floor((length + spaceLength) / (dashLength + spaceLength));
+            const minSpace = (length - numberOfDashes * dashLength) / (numberOfDashes - 1);
+            const maxSpace = (length - (numberOfDashes + 1) * dashLength) / numberOfDashes;
+            spaceLength =
+                maxSpace <= 0 || Math.abs(spaceLength - minSpace) < Math.abs(spaceLength - maxSpace)
+                    ? minSpace
+                    : maxSpace;
+        }
+
+        if (useLineDash) {
+            if (style === BORDER_STYLE.DOTTED) {
+                this.ctx.setLineDash([0, dashLength + spaceLength]);
+            } else {
+                this.ctx.setLineDash([dashLength, spaceLength]);
+            }
+        }
+
+        if (style === BORDER_STYLE.DOTTED) {
+            this.ctx.lineCap = 'round';
+            this.ctx.lineWidth = width;
+        } else {
+            this.ctx.lineWidth = width * 2 + 1.1;
+        }
+        this.ctx.strokeStyle = asString(color);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // dashed round edge gap
+        if (style === BORDER_STYLE.DASHED) {
+            if (isBezierCurve(boxPaths[0])) {
+                const path1 = boxPaths[3] as BezierCurve;
+                const path2 = boxPaths[0] as BezierCurve;
+                this.ctx.beginPath();
+                this.formatPath([new Vector(path1.end.x, path1.end.y), new Vector(path2.start.x, path2.start.y)]);
+                this.ctx.stroke();
+            }
+            if (isBezierCurve(boxPaths[1])) {
+                const path1 = boxPaths[1] as BezierCurve;
+                const path2 = boxPaths[2] as BezierCurve;
+                this.ctx.beginPath();
+                this.formatPath([new Vector(path1.end.x, path1.end.y), new Vector(path2.start.x, path2.start.y)]);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
     }
 
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {
