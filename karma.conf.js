@@ -42,6 +42,12 @@ module.exports = function(config) {
             platform: 'iOS',
             sdk: '14.0'
         },
+        Safari_IOS_15: {
+            base: 'MobileSafari',
+            name: 'iPhone 8',
+            platform: 'iOS',
+            sdk: '15.0'
+        },
         SauceLabs_IE9: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
