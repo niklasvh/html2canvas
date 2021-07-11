@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.1.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0...v1.1.0) (2021-07-11)
+
+
+### ci
+
+* fail build if no artifacts uploaded (#2566) ([e7a021a](https://github.com/niklasvh/html2canvas/commit/e7a021ab931f3c0de060b4643e88fad85345c3d3)), closes [#2566](https://github.com/niklasvh/html2canvas/issues/2566)
+
+### deps
+
+* update dependencies with lint fixes (#2565) ([b2902ec](https://github.com/niklasvh/html2canvas/commit/b2902ec31c2a414ea26f864f8e00aa8846890ffc)), closes [#2565](https://github.com/niklasvh/html2canvas/issues/2565)
+
+### docs
+
+* update border-style support ([cf35a28](https://github.com/niklasvh/html2canvas/commit/cf35a282b2c9d41b601c3148e8c08fe7ba61a5f9))
+
+### fix
+
+* Ensure resizeImage's canvas has at least 1px of width and height (#2409) ([bb92371](https://github.com/niklasvh/html2canvas/commit/bb9237155cf0ec090432ee6c5d9c555eb6ffa81f)), closes [#2409](https://github.com/niklasvh/html2canvas/issues/2409)
+* text-decoration-line fallback (#2088) (#2567) ([44296e5](https://github.com/niklasvh/html2canvas/commit/44296e529368140ec06a937383e05f3074b19ee2)), closes [#2088](https://github.com/niklasvh/html2canvas/issues/2088) [#2567](https://github.com/niklasvh/html2canvas/issues/2567)
+* use baseline for text positioning (#2109) ([85f79c1](https://github.com/niklasvh/html2canvas/commit/85f79c1a5e4c0b422ace552c430dd389c8477a44)), closes [#2109](https://github.com/niklasvh/html2canvas/issues/2109)
+
+
+
 # [1.0.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.7...v1.0.0) (2021-07-04)
 
 
