@@ -16,10 +16,10 @@ export const backgroundRepeat: IPropertyListDescriptor<BackgroundRepeat> = {
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]): BackgroundRepeat => {
         return parseFunctionArgs(tokens)
-            .map(values =>
+            .map((values) =>
                 values
                     .filter(isIdentToken)
-                    .map(token => token.value)
+                    .map((token) => token.value)
                     .join(' ')
             )
             .map(parseBackgroundRepeat);

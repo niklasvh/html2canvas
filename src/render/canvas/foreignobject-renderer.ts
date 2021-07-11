@@ -20,13 +20,11 @@ export class ForeignObjectRenderer {
         this.ctx.scale(this.options.scale, this.options.scale);
         this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
         Logger.getInstance(options.id).debug(
-            `EXPERIMENTAL ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${
-                options.y
-            }) with scale ${options.scale}`
+            `EXPERIMENTAL ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
         );
     }
 
-    async render(element: HTMLElement) {
+    async render(element: HTMLElement): Promise<HTMLCanvasElement> {
         const svg = createForeignObjectSVG(
             Math.max(this.options.windowWidth, this.options.width) * this.options.scale,
             Math.max(this.options.windowHeight, this.options.height) * this.options.scale,

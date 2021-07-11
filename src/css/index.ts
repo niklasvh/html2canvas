@@ -289,6 +289,7 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
                     const value = parser.parseComponentValue();
                     return isLengthPercentage(value) ? value : ZERO_LENGTH;
             }
+            break;
     }
 
     throw new Error(`Attempting to parse unsupported css format type ${descriptor.format}`);

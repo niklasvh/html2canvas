@@ -84,7 +84,7 @@ const parseStackTree = (
     realStackingContext: StackingContext,
     listItems: ElementPaint[]
 ) => {
-    parent.container.elements.forEach(child => {
+    parent.container.elements.forEach((child) => {
         const treatAsRealStackingContext = contains(child.flags, FLAGS.CREATES_REAL_STACKING_CONTEXT);
         const createsStackingContext = contains(child.flags, FLAGS.CREATES_STACKING_CONTEXT);
         const paintContainer = new ElementPaint(child, parent.getParentEffects());

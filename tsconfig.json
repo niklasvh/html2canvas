@@ -6,7 +6,6 @@
         "noUnusedParameters": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
-        "resolveJsonModule": true,
         "types": ["node", "jest"],
         "target": "es5",
         "lib": ["es2015", "dom"],
