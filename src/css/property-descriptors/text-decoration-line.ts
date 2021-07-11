@@ -19,7 +19,7 @@ export const textDecorationLine: IPropertyListDescriptor<TextDecorationLine> = {
     parse: (tokens: CSSValue[]): TextDecorationLine => {
         return tokens
             .filter(isIdentToken)
-            .map(token => {
+            .map((token) => {
                 switch (token.value) {
                     case 'underline':
                         return TEXT_DECORATION_LINE.UNDERLINE;
@@ -32,6 +32,6 @@ export const textDecorationLine: IPropertyListDescriptor<TextDecorationLine> = {
                 }
                 return TEXT_DECORATION_LINE.NONE;
             })
-            .filter(line => line !== TEXT_DECORATION_LINE.NONE);
+            .filter((line) => line !== TEXT_DECORATION_LINE.NONE);
     }
 };

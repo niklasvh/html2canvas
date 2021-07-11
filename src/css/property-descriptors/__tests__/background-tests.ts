@@ -32,7 +32,10 @@ describe('property-descriptors', () => {
                     {
                         angle: deg(180),
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: pack(255, 255, 0, 0.5), stop: null}, {color: pack(0, 0, 255, 0.5), stop: null}]
+                        stops: [
+                            {color: pack(255, 255, 0, 0.5), stop: null},
+                            {color: pack(0, 0, 255, 0.5), stop: null}
+                        ]
                     },
                     {url: 'https://html2canvas.hertzen.com', type: CSSImageType.URL}
                 ]

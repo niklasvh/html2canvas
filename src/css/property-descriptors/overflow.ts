@@ -13,7 +13,7 @@ export const overflow: IPropertyListDescriptor<OVERFLOW[]> = {
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]): OVERFLOW[] => {
-        return tokens.filter(isIdentToken).map(overflow => {
+        return tokens.filter(isIdentToken).map((overflow) => {
             switch (overflow.value) {
                 case 'hidden':
                     return OVERFLOW.HIDDEN;

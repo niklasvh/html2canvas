@@ -28,8 +28,9 @@ export class IFrameElementContainer extends ElementContainer {
 
                 // http://www.w3.org/TR/css3-background/#special-backgrounds
                 const documentBackgroundColor = iframe.contentWindow.document.documentElement
-                    ? parseColor(getComputedStyle(iframe.contentWindow.document.documentElement)
-                          .backgroundColor as string)
+                    ? parseColor(
+                          getComputedStyle(iframe.contentWindow.document.documentElement).backgroundColor as string
+                      )
                     : COLORS.TRANSPARENT;
                 const bodyBackgroundColor = iframe.contentWindow.document.body
                     ? parseColor(getComputedStyle(iframe.contentWindow.document.body).backgroundColor as string)

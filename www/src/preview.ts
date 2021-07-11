@@ -62,7 +62,7 @@ const DOWN_ARROW = 40;
 const LEFT_ARROW = 37;
 const RIGHT_ARROW = 39;
 
-window.addEventListener('keydown', e => {
+window.addEventListener('keydown', (e) => {
     if (testSelector && browserSelector) {
         if (e.keyCode === UP_ARROW) {
             testSelector.selectedIndex = Math.max(0, testSelector.selectedIndex - 1);
@@ -103,7 +103,7 @@ if (testSelector && browserSelector) {
     browserSelector.addEventListener(
         'change',
         () => {
-            testList[testSelector.value].some(browser => {
+            testList[testSelector.value].some((browser) => {
                 if (browser.id === browserSelector.value) {
                     if (browser) {
                         onBrowserChange(browser);

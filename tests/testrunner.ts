@@ -42,11 +42,11 @@ const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
 };
 
 testList
-    .filter(test => {
+    .filter((test) => {
         return !Array.isArray(ignoredTests[test]) || ignoredTests[test].indexOf(platform.name || '') === -1;
     })
-    .forEach(url => {
-        describe(url, function() {
+    .forEach((url) => {
+        describe(url, function () {
             this.timeout(60000);
             this.retries(2);
             const windowWidth = 800;
@@ -58,7 +58,7 @@ testList
             testContainer.style.position = 'fixed';
             testContainer.style.left = '10000px';
 
-            before(done => {
+            before((done) => {
                 testContainer.onload = () => done();
 
                 testContainer.src = url + '?selenium&run=false&reftest&' + Math.random();

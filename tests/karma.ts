@@ -25,9 +25,9 @@ servers.push(corsApp.listen(8081));
 
 karmaTestRunner()
     .then(() => {
-        servers.forEach(server => server.close());
+        servers.forEach((server) => server.close());
     })
-    .catch(e => {
+    .catch((e) => {
         console.error(e);
         process.exit(1);
     });

@@ -218,7 +218,7 @@ export const calculateBackgroundRepeatPath = (
     [width, height]: [number, number],
     backgroundPositioningArea: Bounds,
     backgroundPaintingArea: Bounds
-) => {
+): [Vector, Vector, Vector, Vector] => {
     switch (repeat) {
         case BACKGROUND_REPEAT.REPEAT_X:
             return [

@@ -4,7 +4,7 @@ import {Logger} from './logger';
 export class CacheStorage {
     private static _caches: {[key: string]: Cache} = {};
     private static _link?: HTMLAnchorElement;
-    private static _origin: string = 'about:blank';
+    private static _origin = 'about:blank';
     private static _current: Cache | null = null;
 
     static create(name: string, options: ResourceOptions): Cache {
@@ -39,7 +39,7 @@ export class CacheStorage {
         return CacheStorage.getOrigin(src) === CacheStorage._origin;
     }
 
-    static setContext(window: Window) {
+    static setContext(window: Window): void {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
     }
@@ -52,11 +52,11 @@ export class CacheStorage {
         return current;
     }
 
-    static attachInstance(cache: Cache) {
+    static attachInstance(cache: Cache): void {
         CacheStorage._current = cache;
     }
 
-    static detachInstance() {
+    static detachInstance(): void {
         CacheStorage._current = null;
     }
 }
@@ -169,7 +169,7 @@ export class Cache {
                     } else {
                         const reader = new FileReader();
                         reader.addEventListener('load', () => resolve(reader.result as string), false);
-                        reader.addEventListener('error', e => reject(e), false);
+                        reader.addEventListener('error', (e) => reject(e), false);
                         reader.readAsDataURL(xhr.response);
                     }
                 } else {

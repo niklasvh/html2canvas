@@ -74,7 +74,7 @@ export class Parser {
     parseComponentValues(): CSSValue[] {
         const values = [];
         while (true) {
-            let value = this.consumeComponentValue();
+            const value = this.consumeComponentValue();
             if (value.type === TokenType.EOF_TOKEN) {
                 return values;
             }
@@ -148,14 +148,14 @@ export const isStringToken = (token: CSSValue): token is StringValueToken => tok
 export const isIdentWithValue = (token: CSSValue, value: string): boolean =>
     isIdentToken(token) && token.value === value;
 
-export const nonWhiteSpace = (token: CSSValue) => token.type !== TokenType.WHITESPACE_TOKEN;
-export const nonFunctionArgSeparator = (token: CSSValue) =>
+export const nonWhiteSpace = (token: CSSValue): boolean => token.type !== TokenType.WHITESPACE_TOKEN;
+export const nonFunctionArgSeparator = (token: CSSValue): boolean =>
     token.type !== TokenType.WHITESPACE_TOKEN && token.type !== TokenType.COMMA_TOKEN;
 
 export const parseFunctionArgs = (tokens: CSSValue[]): CSSValue[][] => {
     const args: CSSValue[][] = [];
     let arg: CSSValue[] = [];
-    tokens.forEach(token => {
+    tokens.forEach((token) => {
         if (token.type === TokenType.COMMA_TOKEN) {
             if (arg.length === 0) {
                 throw new Error(`Error parsing function args, zero tokens for arg`);

@@ -18,7 +18,7 @@ export const parseTextBounds = (value: string, styles: CSSParsedDeclaration, nod
     const textList = breakText(value, styles);
     const textBounds: TextBounds[] = [];
     let offset = 0;
-    textList.forEach(text => {
+    textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 textBounds.push(new TextBounds(text, getRangeBounds(node, offset, text.length)));
@@ -67,7 +67,7 @@ const getRangeBounds = (node: Text, offset: number, length: number): Bounds => {
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? toCodePoints(value).map(i => fromCodePoint(i)) : breakWords(value, styles);
+    return styles.letterSpacing !== 0 ? toCodePoints(value).map((i) => fromCodePoint(i)) : breakWords(value, styles);
 };
 
 const breakWords = (str: string, styles: CSSParsedDeclaration): string[] => {

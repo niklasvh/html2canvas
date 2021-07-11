@@ -15,7 +15,7 @@ export const backgroundOrigin: IPropertyListDescriptor<BackgroundOrigin> = {
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]): BackgroundOrigin => {
-        return tokens.map(token => {
+        return tokens.map((token) => {
             if (isIdentToken(token)) {
                 switch (token.value) {
                     case 'padding-box':

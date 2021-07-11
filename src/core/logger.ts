@@ -17,7 +17,7 @@ export class Logger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debug(...args: any) {
+    debug(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.debug === 'function') {
@@ -33,11 +33,11 @@ export class Logger {
         return Date.now() - this.start;
     }
 
-    static create(options: LoggerOptions) {
+    static create(options: LoggerOptions): void {
         Logger.instances[options.id] = new Logger(options);
     }
 
-    static destroy(id: string) {
+    static destroy(id: string): void {
         delete Logger.instances[id];
     }
 
@@ -50,7 +50,7 @@ export class Logger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    info(...args: any) {
+    info(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.info === 'function') {
@@ -61,7 +61,7 @@ export class Logger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error(...args: any) {
+    error(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.error === 'function') {
