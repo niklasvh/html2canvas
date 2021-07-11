@@ -17,7 +17,7 @@ const files = readdirSync(path);
 interface RefTestMetadata {}
 
 interface RefTestSingleMetadata extends RefTestMetadata {
-    test: string;
+    test?: string;
 }
 
 interface RefTestResults {
@@ -26,12 +26,14 @@ interface RefTestResults {
 
 const result: RefTestResults = files.reduce((result: RefTestResults, file) => {
     const json: RefTestSingleMetadata = JSON.parse(readFileSync(resolve(__dirname, path, file)).toString());
-    if (!result[json.test]) {
-        result[json.test] = [];
-    }
+    if (json.test) {
+        if (!result[json.test]) {
+            result[json.test] = [];
+        }
 
-    result[json.test].push(json);
-    delete json.test;
+        result[json.test].push(json);
+        delete json.test;
+    }
 
     return result;
 }, {});
