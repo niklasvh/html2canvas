@@ -43,16 +43,19 @@ jobs:
         with:
           name: npm
           path: html2canvas.tgz
+          if-no-files-found: error
       - name: Upload dist
         uses: actions/upload-artifact@v2
         with:
           name: dist
           path: dist
+          if-no-files-found: error
       - name: Upload build
         uses: actions/upload-artifact@v2
         with:
           name: build
           path: build
+          if-no-files-found: error
 
   test:
     runs-on: ubuntu-latest
@@ -170,6 +173,7 @@ jobs:
         with:
           name: reftest-results
           path: tmp/reftests
+          if-no-files-found: error
   publish:
     runs-on: ubuntu-latest
     name: Publish
@@ -282,6 +286,7 @@ jobs:
         with:
           name: docs
           path: www/public
+          if-no-files-found: error
   publish-docs:
     runs-on: ubuntu-latest
     name: Publish Docs
