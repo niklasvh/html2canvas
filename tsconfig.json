@@ -12,7 +12,8 @@
         "sourceMap": true,
         "outDir": "dist/lib",
         "declaration": true,
-        "declarationDir": "dist/types"
+        "declarationDir": "dist/types",
+        "resolveJsonModule": true
     },
     "include": [
         "src"
