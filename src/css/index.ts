@@ -191,8 +191,11 @@ export class CSSParsedDeclaration {
         this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
         this.position = parse(position, declaration.position);
         this.textAlign = parse(textAlign, declaration.textAlign);
-        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
-        this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
+        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor ?? declaration.color);
+        this.textDecorationLine = parse(
+            textDecorationLine,
+            declaration.textDecorationLine ?? declaration.textDecoration
+        );
         this.textShadow = parse(textShadow, declaration.textShadow);
         this.textTransform = parse(textTransform, declaration.textTransform);
         this.transform = parse(transform, declaration.transform);
