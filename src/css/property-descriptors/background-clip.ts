@@ -14,7 +14,7 @@ export const backgroundClip: IPropertyListDescriptor<BackgroundClip> = {
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
     parse: (tokens: CSSValue[]): BackgroundClip => {
-        return tokens.map(token => {
+        return tokens.map((token) => {
             if (isIdentToken(token)) {
                 switch (token.value) {
                     case 'padding-box':

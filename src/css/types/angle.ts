@@ -41,7 +41,7 @@ export const isAngle = (value: CSSValue): boolean => {
 export const parseNamedSide = (tokens: CSSValue[]): number | GradientCorner => {
     const sideOrCorner = tokens
         .filter(isIdentToken)
-        .map(ident => ident.value)
+        .map((ident) => ident.value)
         .join(' ');
 
     switch (sideOrCorner) {

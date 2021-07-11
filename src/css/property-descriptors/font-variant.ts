@@ -6,6 +6,6 @@ export const fontVariant: IPropertyListDescriptor<string[]> = {
     type: PropertyDescriptorParsingType.LIST,
     prefix: false,
     parse: (tokens: CSSValue[]): string[] => {
-        return tokens.filter(isIdentToken).map(token => token.value);
+        return tokens.filter(isIdentToken).map((token) => token.value);
     }
 };

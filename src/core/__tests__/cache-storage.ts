@@ -47,12 +47,12 @@ const createMockContext = (origin: string, opts = {}) => {
 
 const images: ImageMock[] = [];
 const xhr: XMLHttpRequestMock[] = [];
-const sleep = async (timeout: number) => await new Promise(resolve => setTimeout(resolve, timeout));
+const sleep = async (timeout: number) => await new Promise((resolve) => setTimeout(resolve, timeout));
 
 class ImageMock {
     src?: string;
     crossOrigin?: string;
-    onload?: () => {};
+    onload?: () => void;
     constructor() {
         images.push(this);
     }
@@ -65,8 +65,8 @@ class XMLHttpRequestMock {
     method?: string;
     url?: string;
     response?: string;
-    onload?: () => {};
-    ontimeout?: () => {};
+    onload?: () => void;
+    ontimeout?: () => void;
     constructor() {
         this.sent = false;
         this.status = 500;
@@ -106,7 +106,7 @@ const setFeatures = (opts: {[key: string]: boolean} = {}) => {
         SUPPORT_RESPONSE_TYPE: false
     };
 
-    Object.keys(defaults).forEach(key => {
+    Object.keys(defaults).forEach((key) => {
         Object.defineProperty(FEATURES, key, {
             value: typeof opts[key] === 'boolean' ? opts[key] : defaults[key],
             writable: true

@@ -2,15 +2,14 @@ export class DocumentCloner {
     clonedReferenceElement?: HTMLElement;
 
     constructor() {
-        // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
         this.clonedReferenceElement = {} as HTMLElement;
     }
 
-    toIFrame() {
-        return Promise.resolve({});
+    toIFrame(): Promise<HTMLIFrameElement> {
+        return Promise.resolve({} as HTMLIFrameElement);
     }
 
-    static destroy() {
+    static destroy(): boolean {
         return true;
     }
 }

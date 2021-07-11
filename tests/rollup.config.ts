@@ -1,8 +1,8 @@
-import nodeResolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import sourceMaps from 'rollup-plugin-sourcemaps';
-import typescript from 'rollup-plugin-typescript2';
-import json from 'rollup-plugin-json';
+import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
 import {resolve} from 'path';
 
 const pkg = require('../package.json');
@@ -36,14 +36,12 @@ export default {
         // Allow json resolution
         json(),
         // Compile TypeScript files
-        typescript({useTsconfigDeclarationDir: true, tsconfig: resolve(__dirname, 'tsconfig.json')}),
+        typescript({
+            tsconfig: resolve(__dirname, 'tsconfig.json')
+        }),
         // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
         commonjs({
-            include: 'node_modules/**',
-            namedModules: {
-                'node_modules/platform/platform.js': ['name', 'version'],
-                'node_modules/es6-promise/dist/es6-promise.js': ['Promise']
-            }
+            include: 'node_modules/**'
         }),
 
         // Resolve source maps to the original source

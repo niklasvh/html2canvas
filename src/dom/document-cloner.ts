@@ -130,9 +130,7 @@ export class DocumentCloner {
         }
 
         const clone = node.cloneNode(false) as T;
-        // @ts-ignore
         if (isImageElement(clone) && clone.loading === 'lazy') {
-            // @ts-ignore
             clone.loading = 'eager';
         }
 
@@ -351,7 +349,7 @@ export class DocumentCloner {
         const anonymousReplacedElement = document.createElement('html2canvaspseudoelement');
         copyCSSStyles(style, anonymousReplacedElement);
 
-        declaration.content.forEach(token => {
+        declaration.content.forEach((token) => {
             if (token.type === TokenType.STRING_TOKEN) {
                 anonymousReplacedElement.appendChild(document.createTextNode(token.value));
             } else if (token.type === TokenType.URL_TOKEN) {
@@ -390,7 +388,7 @@ export class DocumentCloner {
                                 : LIST_STYLE_TYPE.DECIMAL;
                         const separator = delim && delim.type === TokenType.STRING_TOKEN ? delim.value : '';
                         const text = counterStates
-                            .map(value => createCounterText(value, counterType, false))
+                            .map((value) => createCounterText(value, counterType, false))
                             .join(separator);
 
                         anonymousReplacedElement.appendChild(document.createTextNode(text));
@@ -474,15 +472,18 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
 
         const documentClone = cloneWindow.document;
 
-        cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = () => {
-            cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
-            const interval = setInterval(() => {
-                if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
-                    clearInterval(interval);
-                    resolve(iframe);
-                }
-            }, 50);
-        };
+        cloneWindow.onload =
+            iframe.onload =
+            documentClone.onreadystatechange =
+                () => {
+                    cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
+                    const interval = setInterval(() => {
+                        if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
+                            clearInterval(interval);
+                            resolve(iframe);
+                        }
+                    }, 50);
+                };
     });
 };
 
