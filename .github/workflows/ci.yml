@@ -341,3 +341,9 @@ jobs:
           path: tmp/reftests
       - name: Run diff
         run: npm run reftests-diff
+        continue-on-error: true
+      - name: Upload diff
+        uses: actions/upload-artifact@v2
+        with:
+          name: snapshot-diffs
+          path: tmp/snapshot-diffs
