@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.1](https://github.com/niklasvh/html2canvas/compare/v1.1.0...v1.1.1) (2021-07-12)
+
+
+### fix
+
+* allow proxy url with parameters (#2100) ([a4a3ce8](https://github.com/niklasvh/html2canvas/commit/a4a3ce8a2eb6a4f43f1bc9a7935eb16f2b98a3cd)), closes [#2100](https://github.com/niklasvh/html2canvas/issues/2100)
+* crash on background-size with calc() (fix #2469) (#2569) ([084017a](https://github.com/niklasvh/html2canvas/commit/084017a67319a993d73c6bdf612dd8532f1b8dbe)), closes [#2469](https://github.com/niklasvh/html2canvas/issues/2469) [#2569](https://github.com/niklasvh/html2canvas/issues/2569)
+* handle unhandled promise rejections (#2568) ([4555940](https://github.com/niklasvh/html2canvas/commit/4555940d0bc17b7fd9327dd0164c382a3dbf1858)), closes [#2568](https://github.com/niklasvh/html2canvas/issues/2568)
+
+
+
 # [1.1.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0...v1.1.0) (2021-07-11)
 
 
