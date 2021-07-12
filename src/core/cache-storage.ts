@@ -180,7 +180,8 @@ export class Cache {
             };
 
             xhr.onerror = reject;
-            xhr.open('GET', `${proxy}?url=${encodeURIComponent(src)}&responseType=${responseType}`);
+            const queryString = proxy.indexOf('?') > -1 ? '&' : '?';
+            xhr.open('GET', `${proxy}${queryString}url=${encodeURIComponent(src)}&responseType=${responseType}`);
 
             if (responseType !== 'text' && xhr instanceof XMLHttpRequest) {
                 xhr.responseType = responseType;
