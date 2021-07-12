@@ -24,6 +24,10 @@ var REFTEST = window.location.search.indexOf('reftest') !== -1;
         ])
         .forEach(appendScript);
 
+    window.addEventListener("unhandledrejection", function(event) {
+        console.info('UNHANDLED PROMISE REJECTION:', event);
+    });
+
     window.onload = function() {
         (function($) {
             $.fn.html2canvas = function(options) {

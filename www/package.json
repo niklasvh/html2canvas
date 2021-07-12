@@ -19,7 +19,7 @@
     "gatsby-transformer-remark": "^2.3.8",
     "glamor": "^2.20.40",
     "gzip-size": "^5.0.0",
-    "html2canvas": "^1.0.0-alpha.12",
+    "html2canvas": "file:../",
     "mkdirp": "^0.5.1",
     "prismjs": "^1.16.0",
     "react": "^16.8.6",
