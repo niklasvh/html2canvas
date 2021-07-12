@@ -86,6 +86,10 @@ testList
                     throw new Error('Window not found for iframe');
                 }
 
+                contentWindow.addEventListener('unhandledrejection', (event) => {
+                    throw new Error(`unhandledrejection: ${event.reason}`);
+                });
+
                 const canvas: HTMLCanvasElement = await contentWindow
                     // @ts-ignore
                     .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
