@@ -91,6 +91,10 @@ export const calculateBackgroundSize = (
 ): [number, number] => {
     const [first, second] = size;
 
+    if (!first) {
+        return [0, 0];
+    }
+
     if (isLengthPercentage(first) && second && isLengthPercentage(second)) {
         return [getAbsoluteValue(first, bounds.width), getAbsoluteValue(second, bounds.height)];
     }
