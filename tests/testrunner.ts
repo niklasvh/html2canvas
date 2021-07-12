@@ -87,7 +87,8 @@ testList
                 }
 
                 contentWindow.addEventListener('unhandledrejection', (event) => {
-                    throw new Error(`unhandledrejection: ${event.reason}`);
+                    console.error(event.reason);
+                    throw new Error(`unhandledrejection: ${JSON.stringify(event.reason)}`);
                 });
 
                 const canvas: HTMLCanvasElement = await contentWindow
