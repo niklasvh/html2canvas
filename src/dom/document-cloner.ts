@@ -97,7 +97,9 @@ export class DocumentCloner {
                 await documentClone.fonts.ready;
             }
 
-            await imagesReady(documentClone);
+            if (/(AppleWebKit)/g.test(navigator.userAgent)) {
+                await imagesReady(documentClone);
+            }
 
             if (typeof onclone === 'function') {
                 return Promise.resolve()
