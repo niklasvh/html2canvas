@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.2](https://github.com/niklasvh/html2canvas/compare/v1.1.1...v1.1.2) (2021-07-13)
+
+
+### ci
+
+* implement screenshot diffing (#2571) ([e29af58](https://github.com/niklasvh/html2canvas/commit/e29af586618125bbad10ad6bee3d69fddbc5d22a)), closes [#2571](https://github.com/niklasvh/html2canvas/issues/2571)
+
+### fix
+
+* logger unique names (#2575) ([1715854](https://github.com/niklasvh/html2canvas/commit/171585491dd1bee4f30691328bd22e978f3ac79e)), closes [#2575](https://github.com/niklasvh/html2canvas/issues/2575)
+* text-shadow position with baseline (#2576) ([439e365](https://github.com/niklasvh/html2canvas/commit/439e365ea8c703b528778a268dcfc3bf9ccad6a9)), closes [#2576](https://github.com/niklasvh/html2canvas/issues/2576)
+
+
+
 ## [1.1.1](https://github.com/niklasvh/html2canvas/compare/v1.1.0...v1.1.1) (2021-07-12)
 
 
