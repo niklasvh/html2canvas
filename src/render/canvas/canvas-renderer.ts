@@ -148,11 +148,11 @@ export class CanvasRenderer {
 
     renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number): void {
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height + baseline);
         } else {
             const letters = toCodePoints(text.text).map((i) => fromCodePoint(i));
             letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + baseline);
+                this.ctx.fillText(letter, left, text.bounds.top + text.bounds.height + baseline);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
