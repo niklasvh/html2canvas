@@ -467,17 +467,17 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
 };
 
 const imageReady = (img: HTMLImageElement): Promise<Event | void> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (img.complete) {
             resolve();
             return;
         }
         if (!img.src) {
-            reject();
+            resolve();
             return;
         }
         img.onload = resolve;
-        img.onerror = reject;
+        img.onerror = resolve;
     });
 };
 
