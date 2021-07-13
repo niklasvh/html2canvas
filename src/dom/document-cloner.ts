@@ -466,7 +466,7 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
     return cloneIframeContainer;
 };
 
-const imageReady = (img: HTMLImageElement): Promise<Event | void> => {
+const imageReady = (img: HTMLImageElement): Promise<Event | void | string> => {
     return new Promise((resolve) => {
         if (img.complete) {
             resolve();
