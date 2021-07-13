@@ -17,6 +17,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
+
+      - name: Checkout current snapshots
+        run: |
+          git remote
+          git checkout origin/gh-pages results
       - name: Cache node modules
         uses: actions/cache@v2
         env:
