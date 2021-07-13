@@ -472,18 +472,15 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
 
         const documentClone = cloneWindow.document;
 
-        cloneWindow.onload =
-            iframe.onload =
-            documentClone.onreadystatechange =
-                () => {
-                    cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
-                    const interval = setInterval(() => {
-                        if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
-                            clearInterval(interval);
-                            resolve(iframe);
-                        }
-                    }, 50);
-                };
+        cloneWindow.onload = iframe.onload = () => {
+            cloneWindow.onload = iframe.onload = null;
+            const interval = setInterval(() => {
+                if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
+                    clearInterval(interval);
+                    resolve(iframe);
+                }
+            }, 50);
+        };
     });
 };
 
