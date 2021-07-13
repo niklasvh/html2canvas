@@ -97,6 +97,8 @@ export class DocumentCloner {
                 await documentClone.fonts.ready;
             }
 
+            await imagesReady(documentClone);
+
             if (typeof onclone === 'function') {
                 return Promise.resolve()
                     .then(() => onclone(documentClone))
@@ -460,6 +462,25 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
     ownerDocument.body.appendChild(cloneIframeContainer);
 
     return cloneIframeContainer;
+};
+
+const imageReady = (img: HTMLImageElement): Promise<Event | void> => {
+    return new Promise((resolve, reject) => {
+        if (img.complete) {
+            resolve();
+            return;
+        }
+        if (!img.src) {
+            reject();
+            return;
+        }
+        img.onload = resolve;
+        img.onerror = reject;
+    });
+};
+
+const imagesReady = (document: HTMLDocument): Promise<unknown[]> => {
+    return Promise.all([].slice.call(document.images, 0).map(imageReady));
 };
 
 const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => {
