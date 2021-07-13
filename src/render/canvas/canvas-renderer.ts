@@ -198,7 +198,7 @@ export class CanvasRenderer {
                         this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
                         this.ctx.shadowBlur = textShadow.blur.number;
 
-                        this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
                     });
 
                 this.ctx.shadowColor = '';
