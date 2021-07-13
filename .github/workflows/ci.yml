@@ -14,16 +14,9 @@ jobs:
     name: Build
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-
-      - name: Checkout current snapshots
-        run: |
-          git remote
-          git checkout origin/gh-pages results
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -322,6 +315,8 @@ jobs:
     needs: browser-test
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
           node-version: 12
