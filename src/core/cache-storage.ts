@@ -108,10 +108,18 @@ export class Cache {
         const useProxy =
             !isInlineImage(key) &&
             !isSameOrigin &&
+            !isBlobImage(key) &&
             typeof this._options.proxy === 'string' &&
             FEATURES.SUPPORT_CORS_XHR &&
             !useCORS;
-        if (!isSameOrigin && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
+        if (
+            !isSameOrigin &&
+            this._options.allowTaint === false &&
+            !isInlineImage(key) &&
+            !isBlobImage(key) &&
+            !useProxy &&
+            !useCORS
+        ) {
             return;
         }
 
