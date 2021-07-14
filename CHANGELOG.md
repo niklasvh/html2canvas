@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.3](https://github.com/niklasvh/html2canvas/compare/v1.1.2...v1.1.3) (2021-07-14)
+
+
+### feat
+
+* allow access to reference element in onclone (#2584) ([58b4591](https://github.com/niklasvh/html2canvas/commit/58b45911741c0dbbccd462b2976560bb3999eaef)), closes [#2584](https://github.com/niklasvh/html2canvas/issues/2584)
+* support for custom and slot elements (#2581) ([acb4cd2](https://github.com/niklasvh/html2canvas/commit/acb4cd24b85527908c02a60794768949578678f0)), closes [#2581](https://github.com/niklasvh/html2canvas/issues/2581)
+
+### fix
+
+* iframe load to ensure images are loaded (#2577) ([eeb5a3e](https://github.com/niklasvh/html2canvas/commit/eeb5a3ea1d6c94e0f6dcfd40695eb88ebb3e0041)), closes [#2577](https://github.com/niklasvh/html2canvas/issues/2577)
+* image blob rendering ([1acdc82](https://github.com/niklasvh/html2canvas/commit/1acdc827a4e05933c2f7c9558405c66b7cd82f58))
+* responsive svg images (#2583) ([92fa448](https://github.com/niklasvh/html2canvas/commit/92fa448913192d5e4e82bfe14f6644b669d4e6ef)), closes [#2583](https://github.com/niklasvh/html2canvas/issues/2583)
+
+### test
+
+* add test cases for text-stroke and textarea from (#1540 and #2132) (#2585) ([1d00bfe](https://github.com/niklasvh/html2canvas/commit/1d00bfe175d51e663d0bae88b6dbd10a266a71f1)), closes [#1540](https://github.com/niklasvh/html2canvas/issues/1540) [#2132](https://github.com/niklasvh/html2canvas/issues/2132) [#2585](https://github.com/niklasvh/html2canvas/issues/2585)
+
+
+
 ## [1.1.2](https://github.com/niklasvh/html2canvas/compare/v1.1.1...v1.1.2) (2021-07-13)
 
 
