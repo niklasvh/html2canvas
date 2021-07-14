@@ -25,6 +25,7 @@ export interface CloneOptions {
     id: string;
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document) => void;
+    copyStylesInSVG?: boolean;
 }
 
 export type CloneConfigurations = CloneOptions & {
@@ -308,7 +309,12 @@ export class DocumentCloner {
 
             this.counters.pop(counters);
 
-            if (style && (this.options.copyStyles || isSVGElementNode(node)) && !isIFrameElement(node)) {
+            if (
+                style &&
+                this.options.copyStylesInSVG &&
+                (this.options.copyStyles || isSVGElementNode(node)) &&
+                !isIFrameElement(node)
+            ) {
                 copyCSSStyles(style, clone);
             }
 

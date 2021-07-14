@@ -90,7 +90,8 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         onclone: options.onclone,
         ignoreElements: options.ignoreElements,
         inlineImages: options.foreignObjectRendering,
-        copyStyles: options.foreignObjectRendering
+        copyStyles: options.foreignObjectRendering,
+        copyStylesInSVG: options.copyStylesInSVG == null ? true : options.copyStylesInSVG
     });
     const clonedElement = documentCloner.clonedReferenceElement;
     if (!clonedElement) {
