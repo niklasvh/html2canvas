@@ -32,7 +32,7 @@ if (typeof window !== 'undefined') {
 let instanceCount = 1;
 
 const renderElement = async (element: HTMLElement, opts: Partial<Options>): Promise<HTMLCanvasElement> => {
-    if (typeof element !== 'object') {
+    if (!element || typeof element !== 'object') {
         return Promise.reject('Invalid element provided as first argument');
     }
     const ownerDocument = element.ownerDocument;
