@@ -24,7 +24,7 @@ import {getQuote} from '../css/property-descriptors/quotes';
 export interface CloneOptions {
     id: string;
     ignoreElements?: (element: Element) => boolean;
-    onclone?: (document: Document) => void;
+    onclone?: (document: Document, element: HTMLElement) => void;
 }
 
 export type CloneConfigurations = CloneOptions & {
@@ -89,7 +89,9 @@ export class DocumentCloner {
 
             const onclone = this.options.onclone;
 
-            if (typeof this.clonedReferenceElement === 'undefined') {
+            const referenceElement = this.clonedReferenceElement;
+
+            if (typeof referenceElement === 'undefined') {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
             }
 
@@ -103,7 +105,7 @@ export class DocumentCloner {
 
             if (typeof onclone === 'function') {
                 return Promise.resolve()
-                    .then(() => onclone(documentClone))
+                    .then(() => onclone(documentClone, referenceElement))
                     .then(() => iframe);
             }
 
