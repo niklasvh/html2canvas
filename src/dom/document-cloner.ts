@@ -448,7 +448,7 @@ export const copyCSSStyles = <T extends HTMLElement | SVGElement>(style: CSSStyl
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
         // Safari shows pseudoelements if content is set
-        if (property !== 'content') {
+        if (property !== 'content' && property !== 'all') {
             target.style.setProperty(property, style.getPropertyValue(property));
         }
     }
