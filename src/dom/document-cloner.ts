@@ -89,7 +89,9 @@ export class DocumentCloner {
 
             const onclone = this.options.onclone;
 
-            if (typeof this.clonedReferenceElement === 'undefined') {
+            const referenceElement = this.clonedReferenceElement;
+
+            if (typeof referenceElement === 'undefined') {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
             }
 
@@ -103,7 +105,7 @@ export class DocumentCloner {
 
             if (typeof onclone === 'function') {
                 return Promise.resolve()
-                    .then(() => onclone(documentClone, this.clonedReferenceElement))
+                    .then(() => onclone(documentClone, referenceElement))
                     .then(() => iframe);
             }
 
