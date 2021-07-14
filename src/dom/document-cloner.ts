@@ -97,6 +97,10 @@ export class DocumentCloner {
                 await documentClone.fonts.ready;
             }
 
+            if (/(AppleWebKit)/g.test(navigator.userAgent)) {
+                await imagesReady(documentClone);
+            }
+
             if (typeof onclone === 'function') {
                 return Promise.resolve()
                     .then(() => onclone(documentClone))
@@ -462,6 +466,25 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
     return cloneIframeContainer;
 };
 
+const imageReady = (img: HTMLImageElement): Promise<Event | void | string> => {
+    return new Promise((resolve) => {
+        if (img.complete) {
+            resolve();
+            return;
+        }
+        if (!img.src) {
+            resolve();
+            return;
+        }
+        img.onload = resolve;
+        img.onerror = resolve;
+    });
+};
+
+const imagesReady = (document: HTMLDocument): Promise<unknown[]> => {
+    return Promise.all([].slice.call(document.images, 0).map(imageReady));
+};
+
 const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => {
     return new Promise((resolve, reject) => {
         const cloneWindow = iframe.contentWindow;
@@ -472,18 +495,15 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
 
         const documentClone = cloneWindow.document;
 
-        cloneWindow.onload =
-            iframe.onload =
-            documentClone.onreadystatechange =
-                () => {
-                    cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
-                    const interval = setInterval(() => {
-                        if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
-                            clearInterval(interval);
-                            resolve(iframe);
-                        }
-                    }, 50);
-                };
+        cloneWindow.onload = iframe.onload = () => {
+            cloneWindow.onload = iframe.onload = null;
+            const interval = setInterval(() => {
+                if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
+                    clearInterval(interval);
+                    resolve(iframe);
+                }
+            }, 50);
+        };
     });
 };
 
