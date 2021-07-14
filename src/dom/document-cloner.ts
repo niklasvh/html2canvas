@@ -24,7 +24,7 @@ import {getQuote} from '../css/property-descriptors/quotes';
 export interface CloneOptions {
     id: string;
     ignoreElements?: (element: Element) => boolean;
-    onclone?: (document: Document) => void;
+    onclone?: (document: Document, element: HTMLElement) => void;
 }
 
 export type CloneConfigurations = CloneOptions & {
@@ -103,7 +103,7 @@ export class DocumentCloner {
 
             if (typeof onclone === 'function') {
                 return Promise.resolve()
-                    .then(() => onclone(documentClone))
+                    .then(() => onclone(documentClone, this.clonedReferenceElement))
                     .then(() => iframe);
             }
 
