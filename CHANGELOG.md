@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.4](https://github.com/niklasvh/html2canvas/compare/v1.1.3...v1.1.4) (2021-07-15)
+
+
+### feat
+
+* add support for webkit-text-stroke and paint-order (#2591) ([522e5aa](https://github.com/niklasvh/html2canvas/commit/522e5aac5fdad090953d095b5d558053a5e2d43d)), closes [#2591](https://github.com/niklasvh/html2canvas/issues/2591)
+
+### fix
+
+* don't copy 'all' css property (#2586) ([fa60716](https://github.com/niklasvh/html2canvas/commit/fa60716d07ed590ec64543a586a7960cbc8557df)), closes [#2586](https://github.com/niklasvh/html2canvas/issues/2586)
+* svg d path getting truncated on copy (#2589) ([dd6d885](https://github.com/niklasvh/html2canvas/commit/dd6d8856eca820a13a0990c467b9e531433fd4a9)), closes [#2589](https://github.com/niklasvh/html2canvas/issues/2589)
+* text position for form elements and list markers (#2588) ([cd99f11](https://github.com/niklasvh/html2canvas/commit/cd99f11b1b9eb1260a548a63e2a370a0a5ddafa0)), closes [#2588](https://github.com/niklasvh/html2canvas/issues/2588)
+* this.canvas.ownerDocument is undefined (#2590) ([45efe54](https://github.com/niklasvh/html2canvas/commit/45efe54da8145f97b9ee0463e686103280e3c8b1)), closes [#2590](https://github.com/niklasvh/html2canvas/issues/2590)
+* word-break seperators (#2593) ([e9f7f48](https://github.com/niklasvh/html2canvas/commit/e9f7f48d571304be14610a181feedca3c3b42864)), closes [#2593](https://github.com/niklasvh/html2canvas/issues/2593)
+
+### test
+
+* refactor language tests (#2594) ([4c360fc](https://github.com/niklasvh/html2canvas/commit/4c360fc1f059f4dcab71a79f9dc8a5b2e25411ea)), closes [#2594](https://github.com/niklasvh/html2canvas/issues/2594)
+* update box-shadow with radius ([578bb77](https://github.com/niklasvh/html2canvas/commit/578bb771bfeb7e81362e9e355d6cc9ae910e3920))
+
+
+
 ## [1.1.3](https://github.com/niklasvh/html2canvas/compare/v1.1.2...v1.1.3) (2021-07-14)
 
 
