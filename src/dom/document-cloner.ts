@@ -443,12 +443,17 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
     });
 };
 
+const ignoredStyleProperties = [
+    'all', // #2476
+    'd', // #2483
+    'content' // Safari shows pseudoelements if content is set
+];
+
 export const copyCSSStyles = <T extends HTMLElement | SVGElement>(style: CSSStyleDeclaration, target: T): T => {
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
-        // Safari shows pseudoelements if content is set
-        if (property !== 'content' && property !== 'all') {
+        if (ignoredStyleProperties.indexOf(property) === -1) {
             target.style.setProperty(property, style.getPropertyValue(property));
         }
     }
