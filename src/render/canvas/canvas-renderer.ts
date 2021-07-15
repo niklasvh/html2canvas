@@ -376,7 +376,7 @@ export class CanvasRenderer {
             this.ctx.font = fontFamily;
             this.ctx.fillStyle = asString(styles.color);
 
-            this.ctx.textBaseline = 'middle';
+            this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = canvasTextAlign(container.styles.textAlign);
 
             const bounds = contentBox(container);
@@ -409,7 +409,7 @@ export class CanvasRenderer {
                 baseline
             );
             this.ctx.restore();
-            this.ctx.textBaseline = 'bottom';
+            this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = 'left';
         }
 
@@ -427,7 +427,7 @@ export class CanvasRenderer {
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
-                const [fontFamily, fontSize] = this.createFontStyle(styles);
+                const [fontFamily] = this.createFontStyle(styles);
 
                 this.ctx.font = fontFamily;
                 this.ctx.fillStyle = asString(styles.color);
@@ -441,12 +441,10 @@ export class CanvasRenderer {
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
-                const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
-
                 this.renderTextWithLetterSpacing(
                     new TextBounds(paint.listValue, bounds),
                     styles.letterSpacing,
-                    baseline
+                    computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 2
                 );
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
