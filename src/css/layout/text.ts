@@ -70,6 +70,9 @@ const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
     return styles.letterSpacing !== 0 ? toCodePoints(value).map((i) => fromCodePoint(i)) : breakWords(value, styles);
 };
 
+// https://drafts.csswg.org/css-text/#word-separator
+const wordSeparators = [0x0020, 0x00a0, 0x1361, 0x10100, 0x10101, 0x1039, 0x1091];
+
 const breakWords = (str: string, styles: CSSParsedDeclaration): string[] => {
     const breaker = LineBreaker(str, {
         lineBreak: styles.lineBreak,
@@ -81,7 +84,24 @@ const breakWords = (str: string, styles: CSSParsedDeclaration): string[] => {
 
     while (!(bk = breaker.next()).done) {
         if (bk.value) {
-            words.push(bk.value.slice());
+            const value = bk.value.slice();
+            const codePoints = toCodePoints(value);
+            let word = '';
+            codePoints.forEach((codePoint) => {
+                if (wordSeparators.indexOf(codePoint) === -1) {
+                    word += fromCodePoint(codePoint);
+                } else {
+                    if (word.length) {
+                        words.push(word);
+                    }
+                    words.push(fromCodePoint(codePoint));
+                    word = '';
+                }
+            });
+
+            if (word.length) {
+                words.push(word);
+            }
         }
     }
 
