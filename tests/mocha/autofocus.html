@@ -1,0 +1,61 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="lib/mocha.css" />
+    <script src="../../node_modules/bluebird/js/browser/bluebird.js"></script>
+    <script src="../../dist/html2canvas0.js"></script>
+    <script src="../assets/jquery-1.6.2.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+</head>
+<body>
+<div id="mocha"></div>
+<script>mocha.setup('bdd')</script>
+<main>
+  <input type="text" autofocus />
+  <input id="other-input" type="text" />
+</main>
+<script>
+    describe("input with autofocus", function() {
+        it("maintains focus while html2canvas is running", function(done) {
+          var currFocused = document.activeElement;
+          expect(currFocused).to.equal(document.querySelector('input[autofocus]'));
+
+            html2canvas(document.querySelector("main"))
+            .then(function(canvas) {
+                expect(document.activeElement).to.equal(currFocused);
+                done();
+            }).catch(function(error) {
+                done(error);
+            });
+        });
+
+        it("doesn't sieze focus from another input", function (done) {
+          document.querySelector('#other-input').focus()
+          var currFocused = document.activeElement;
+          expect(currFocused).to.equal(document.querySelector('#other-input'));
+          html2canvas(document.querySelector("main"))
+          .then(function(canvas) {
+              expect(document.activeElement).to.equal(currFocused);
+              done();
+          }).catch(function(error) {
+              done(error);
+          });
+        });
+    });
+
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+    }
+    else {
+        mocha.run();
+    }
+    mocha.suite.afterAll(function() {
+        document.body.setAttribute('data-complete', 'true');
+    });
+</script>
+</body>
+</html>
