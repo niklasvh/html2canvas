@@ -15,6 +15,7 @@ export type Options = CloneOptions &
         foreignObjectRendering: boolean;
         logging: boolean;
         removeContainer?: boolean;
+        rejectImageError: boolean;
     };
 
 const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
@@ -66,6 +67,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         cache: opts.cache ? opts.cache : CacheStorage.create(instanceName, resourceOptions),
         logging: true,
         removeContainer: true,
+        rejectImageError: false,
         foreignObjectRendering: false,
         scale: defaultView.devicePixelRatio || 1,
         windowWidth: defaultView.innerWidth,
@@ -133,7 +135,8 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         width: options.width,
         height: options.height,
         windowWidth: options.windowWidth,
-        windowHeight: options.windowHeight
+        windowHeight: options.windowHeight,
+        rejectImageError: options.rejectImageError
     };
 
     let canvas;
