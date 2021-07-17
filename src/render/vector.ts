@@ -14,6 +14,9 @@ export class Vector implements IPath {
     add(deltaX: number, deltaY: number): Vector {
         return new Vector(this.x + deltaX, this.y + deltaY);
     }
+    reverse(): Vector {
+        return this;
+    }
 }
 
 export const isVector = (path: Path): path is Vector => path.type === PathType.VECTOR;
