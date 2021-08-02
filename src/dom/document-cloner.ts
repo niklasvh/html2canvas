@@ -132,8 +132,15 @@ export class DocumentCloner {
         }
 
         const clone = node.cloneNode(false) as T;
-        if (isImageElement(clone) && clone.loading === 'lazy') {
-            clone.loading = 'eager';
+        if (isImageElement(clone)) {
+            if (isImageElement(node) && node.currentSrc && node.currentSrc !== node.src) {
+                clone.src = node.currentSrc;
+                clone.srcset = '';
+            }
+
+            if (clone.loading === 'lazy') {
+                clone.loading = 'eager';
+            }
         }
 
         return clone;
