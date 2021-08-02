@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.5](https://github.com/niklasvh/html2canvas/compare/v1.1.4...v1.1.5) (2021-08-02)
+
+
+### docs
+
+* update README to github discussion Q/A ([5dea36b](https://github.com/niklasvh/html2canvas/commit/5dea36bd6964164e8ba3f8780309e792f5d16255))
+
+### fix
+
+* emoji line breaking (fix #1813) (#2621) ([7d788c6](https://github.com/niklasvh/html2canvas/commit/7d788c6f3d221b87f6b59fcda8517731340b2d1f)), closes [#1813](https://github.com/niklasvh/html2canvas/issues/1813) [#2621](https://github.com/niklasvh/html2canvas/issues/2621) [#1813](https://github.com/niklasvh/html2canvas/issues/1813)
+* natural sizes for images with srcset (#2622) ([96e23d1](https://github.com/niklasvh/html2canvas/commit/96e23d185198b7131cf0cfa31c14c165790464e9)), closes [#2622](https://github.com/niklasvh/html2canvas/issues/2622)
+
+
+
 ## [1.1.4](https://github.com/niklasvh/html2canvas/compare/v1.1.3...v1.1.4) (2021-07-15)
 
 
