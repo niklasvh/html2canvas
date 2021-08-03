@@ -5,6 +5,18 @@ import {BezierCurve} from './bezier-curve';
 import {Path} from './path';
 
 export class BoundCurves {
+    readonly topLeftBorderDoubleOuterBox: Path;
+    readonly topRightBorderDoubleOuterBox: Path;
+    readonly bottomRightBorderDoubleOuterBox: Path;
+    readonly bottomLeftBorderDoubleOuterBox: Path;
+    readonly topLeftBorderDoubleInnerBox: Path;
+    readonly topRightBorderDoubleInnerBox: Path;
+    readonly bottomRightBorderDoubleInnerBox: Path;
+    readonly bottomLeftBorderDoubleInnerBox: Path;
+    readonly topLeftBorderStroke: Path;
+    readonly topRightBorderStroke: Path;
+    readonly bottomRightBorderStroke: Path;
+    readonly bottomLeftBorderStroke: Path;
     readonly topLeftBorderBox: Path;
     readonly topRightBorderBox: Path;
     readonly bottomRightBorderBox: Path;
@@ -60,6 +72,141 @@ export class BoundCurves {
         const paddingBottom = getAbsoluteValue(styles.paddingBottom, element.bounds.width);
         const paddingLeft = getAbsoluteValue(styles.paddingLeft, element.bounds.width);
 
+        this.topLeftBorderDoubleOuterBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + borderLeftWidth / 3,
+                      bounds.top + borderTopWidth / 3,
+                      tlh - borderLeftWidth / 3,
+                      tlv - borderTopWidth / 3,
+                      CORNER.TOP_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth / 3, bounds.top + borderTopWidth / 3);
+        this.topRightBorderDoubleOuterBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + topWidth,
+                      bounds.top + borderTopWidth / 3,
+                      trh - borderRightWidth / 3,
+                      trv - borderTopWidth / 3,
+                      CORNER.TOP_RIGHT
+                  )
+                : new Vector(bounds.left + bounds.width - borderRightWidth / 3, bounds.top + borderTopWidth / 3);
+        this.bottomRightBorderDoubleOuterBox =
+            brh > 0 || brv > 0
+                ? getCurvePoints(
+                      bounds.left + bottomWidth,
+                      bounds.top + rightHeight,
+                      brh - borderRightWidth / 3,
+                      brv - borderBottomWidth / 3,
+                      CORNER.BOTTOM_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - borderRightWidth / 3,
+                      bounds.top + bounds.height - borderBottomWidth / 3
+                  );
+        this.bottomLeftBorderDoubleOuterBox =
+            blh > 0 || blv > 0
+                ? getCurvePoints(
+                      bounds.left + borderLeftWidth / 3,
+                      bounds.top + leftHeight,
+                      blh - borderLeftWidth / 3,
+                      blv - borderBottomWidth / 3,
+                      CORNER.BOTTOM_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth / 3, bounds.top + bounds.height - borderBottomWidth / 3);
+        this.topLeftBorderDoubleInnerBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + (borderLeftWidth * 2) / 3,
+                      bounds.top + (borderTopWidth * 2) / 3,
+                      tlh - (borderLeftWidth * 2) / 3,
+                      tlv - (borderTopWidth * 2) / 3,
+                      CORNER.TOP_LEFT
+                  )
+                : new Vector(bounds.left + (borderLeftWidth * 2) / 3, bounds.top + (borderTopWidth * 2) / 3);
+        this.topRightBorderDoubleInnerBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + topWidth,
+                      bounds.top + (borderTopWidth * 2) / 3,
+                      trh - (borderRightWidth * 2) / 3,
+                      trv - (borderTopWidth * 2) / 3,
+                      CORNER.TOP_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - (borderRightWidth * 2) / 3,
+                      bounds.top + (borderTopWidth * 2) / 3
+                  );
+        this.bottomRightBorderDoubleInnerBox =
+            brh > 0 || brv > 0
+                ? getCurvePoints(
+                      bounds.left + bottomWidth,
+                      bounds.top + rightHeight,
+                      brh - (borderRightWidth * 2) / 3,
+                      brv - (borderBottomWidth * 2) / 3,
+                      CORNER.BOTTOM_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - (borderRightWidth * 2) / 3,
+                      bounds.top + bounds.height - (borderBottomWidth * 2) / 3
+                  );
+        this.bottomLeftBorderDoubleInnerBox =
+            blh > 0 || blv > 0
+                ? getCurvePoints(
+                      bounds.left + (borderLeftWidth * 2) / 3,
+                      bounds.top + leftHeight,
+                      blh - (borderLeftWidth * 2) / 3,
+                      blv - (borderBottomWidth * 2) / 3,
+                      CORNER.BOTTOM_LEFT
+                  )
+                : new Vector(
+                      bounds.left + (borderLeftWidth * 2) / 3,
+                      bounds.top + bounds.height - (borderBottomWidth * 2) / 3
+                  );
+        this.topLeftBorderStroke =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + borderLeftWidth / 2,
+                      bounds.top + borderTopWidth / 2,
+                      tlh - borderLeftWidth / 2,
+                      tlv - borderTopWidth / 2,
+                      CORNER.TOP_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth / 2, bounds.top + borderTopWidth / 2);
+        this.topRightBorderStroke =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(
+                      bounds.left + topWidth,
+                      bounds.top + borderTopWidth / 2,
+                      trh - borderRightWidth / 2,
+                      trv - borderTopWidth / 2,
+                      CORNER.TOP_RIGHT
+                  )
+                : new Vector(bounds.left + bounds.width - borderRightWidth / 2, bounds.top + borderTopWidth / 2);
+        this.bottomRightBorderStroke =
+            brh > 0 || brv > 0
+                ? getCurvePoints(
+                      bounds.left + bottomWidth,
+                      bounds.top + rightHeight,
+                      brh - borderRightWidth / 2,
+                      brv - borderBottomWidth / 2,
+                      CORNER.BOTTOM_RIGHT
+                  )
+                : new Vector(
+                      bounds.left + bounds.width - borderRightWidth / 2,
+                      bounds.top + bounds.height - borderBottomWidth / 2
+                  );
+        this.bottomLeftBorderStroke =
+            blh > 0 || blv > 0
+                ? getCurvePoints(
+                      bounds.left + borderLeftWidth / 2,
+                      bounds.top + leftHeight,
+                      blh - borderLeftWidth / 2,
+                      blv - borderBottomWidth / 2,
+                      CORNER.BOTTOM_LEFT
+                  )
+                : new Vector(bounds.left + borderLeftWidth / 2, bounds.top + bounds.height - borderBottomWidth / 2);
         this.topLeftBorderBox =
             tlh > 0 || tlv > 0
                 ? getCurvePoints(bounds.left, bounds.top, tlh, tlv, CORNER.TOP_LEFT)
@@ -89,10 +236,10 @@ export class BoundCurves {
         this.topRightPaddingBox =
             trh > 0 || trv > 0
                 ? getCurvePoints(
-                      bounds.left + Math.min(topWidth, bounds.width + borderLeftWidth),
+                      bounds.left + Math.min(topWidth, bounds.width - borderRightWidth),
                       bounds.top + borderTopWidth,
-                      topWidth > bounds.width + borderRightWidth ? 0 : trh - borderRightWidth,
-                      trv - borderTopWidth,
+                      topWidth > bounds.width + borderRightWidth ? 0 : Math.max(0, trh - borderRightWidth),
+                      Math.max(0, trv - borderTopWidth),
                       CORNER.TOP_RIGHT
                   )
                 : new Vector(bounds.left + bounds.width - borderRightWidth, bounds.top + borderTopWidth);
@@ -100,9 +247,9 @@ export class BoundCurves {
             brh > 0 || brv > 0
                 ? getCurvePoints(
                       bounds.left + Math.min(bottomWidth, bounds.width - borderLeftWidth),
-                      bounds.top + Math.min(rightHeight, bounds.height + borderTopWidth),
+                      bounds.top + Math.min(rightHeight, bounds.height - borderBottomWidth),
                       Math.max(0, brh - borderRightWidth),
-                      brv - borderBottomWidth,
+                      Math.max(0, brv - borderBottomWidth),
                       CORNER.BOTTOM_RIGHT
                   )
                 : new Vector(
@@ -113,9 +260,9 @@ export class BoundCurves {
             blh > 0 || blv > 0
                 ? getCurvePoints(
                       bounds.left + borderLeftWidth,
-                      bounds.top + leftHeight,
+                      bounds.top + Math.min(leftHeight, bounds.height - borderBottomWidth),
                       Math.max(0, blh - borderLeftWidth),
-                      blv - borderBottomWidth,
+                      Math.max(0, blv - borderBottomWidth),
                       CORNER.BOTTOM_LEFT
                   )
                 : new Vector(bounds.left + borderLeftWidth, bounds.top + bounds.height - borderBottomWidth);

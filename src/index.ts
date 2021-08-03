@@ -29,7 +29,12 @@ if (typeof window !== 'undefined') {
     CacheStorage.setContext(window);
 }
 
+let instanceCount = 1;
+
 const renderElement = async (element: HTMLElement, opts: Partial<Options>): Promise<HTMLCanvasElement> => {
+    if (!element || typeof element !== 'object') {
+        return Promise.reject('Invalid element provided as first argument');
+    }
     const ownerDocument = element.ownerDocument;
 
     if (!ownerDocument) {
@@ -42,7 +47,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         throw new Error(`Document is not attached to a Window`);
     }
 
-    const instanceName = (Math.round(Math.random() * 1000) + Date.now()).toString(16);
+    const instanceName = `#${instanceCount++}`;
 
     const {width, height, left, top} =
         isBodyElement(element) || isHTMLElement(element) ? parseDocumentSize(ownerDocument) : parseBounds(element);

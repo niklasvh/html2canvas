@@ -14,11 +14,11 @@ import {color as colorType} from '../color';
 import {HUNDRED_PERCENT, LengthPercentage, ZERO_LENGTH} from '../length-percentage';
 
 export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage | CSSRadialGradientImage => {
-    let angle = deg(180);
+    const angle = deg(180);
     const stops: UnprocessedGradientColorStop[] = [];
     let type = CSSImageType.LINEAR_GRADIENT;
-    let shape: CSSRadialShape = CSSRadialShape.CIRCLE;
-    let size: CSSRadialSize = CSSRadialExtent.FARTHEST_CORNER;
+    const shape: CSSRadialShape = CSSRadialShape.CIRCLE;
+    const size: CSSRadialSize = CSSRadialExtent.FARTHEST_CORNER;
     const position: LengthPercentage[] = [];
     parseFunctionArgs(tokens).forEach((arg, i) => {
         const firstToken = arg[0];

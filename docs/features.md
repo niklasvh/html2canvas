@@ -12,13 +12,13 @@ Below is a list of all the supported CSS properties and values.
        - url()
        - linear-gradient()
        - radial-gradient()
-   - background-origin 
+   - background-origin
    - background-position
-   - background-size   
+   - background-size
  - border
    - border-color
    - border-radius
-   - border-style (**Only supports `solid`**)
+   - border-style
    - border-width
  - bottom
  - box-sizing
@@ -50,6 +50,7 @@ Below is a list of all the supported CSS properties and values.
  - overflow
  - overflow-wrap
  - padding
+ - paint-order
  - position
  - right
  - text-align
@@ -58,17 +59,18 @@ Below is a list of all the supported CSS properties and values.
    - text-decoration-line
    - text-decoration-style (**Only supports `solid`**)
  - text-shadow
- - text-transform 
+ - text-transform
  - top
  - transform (**Limited support**)
  - visibility
  - white-space
  - width
+ - webkit-text-stroke
  - word-break
  - word-spacing
  - word-wrap
  - z-index
-    
+
 ## Unsupported CSS properties
 These CSS properties are **NOT** currently supported
  - [background-blend-mode](https://github.com/niklasvh/html2canvas/issues/966)

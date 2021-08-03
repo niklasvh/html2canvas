@@ -91,6 +91,10 @@ export const calculateBackgroundSize = (
 ): [number, number] => {
     const [first, second] = size;
 
+    if (!first) {
+        return [0, 0];
+    }
+
     if (isLengthPercentage(first) && second && isLengthPercentage(second)) {
         return [getAbsoluteValue(first, bounds.width), getAbsoluteValue(second, bounds.height)];
     }
@@ -218,7 +222,7 @@ export const calculateBackgroundRepeatPath = (
     [width, height]: [number, number],
     backgroundPositioningArea: Bounds,
     backgroundPaintingArea: Bounds
-) => {
+): [Vector, Vector, Vector, Vector] => {
     switch (repeat) {
         case BACKGROUND_REPEAT.REPEAT_X:
             return [

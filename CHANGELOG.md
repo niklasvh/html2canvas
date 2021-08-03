@@ -2,6 +2,131 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.5](https://github.com/niklasvh/html2canvas/compare/v1.1.4...v1.1.5) (2021-08-02)
+
+
+### docs
+
+* update README to github discussion Q/A ([5dea36b](https://github.com/niklasvh/html2canvas/commit/5dea36bd6964164e8ba3f8780309e792f5d16255))
+
+### fix
+
+* emoji line breaking (fix #1813) (#2621) ([7d788c6](https://github.com/niklasvh/html2canvas/commit/7d788c6f3d221b87f6b59fcda8517731340b2d1f)), closes [#1813](https://github.com/niklasvh/html2canvas/issues/1813) [#2621](https://github.com/niklasvh/html2canvas/issues/2621) [#1813](https://github.com/niklasvh/html2canvas/issues/1813)
+* natural sizes for images with srcset (#2622) ([96e23d1](https://github.com/niklasvh/html2canvas/commit/96e23d185198b7131cf0cfa31c14c165790464e9)), closes [#2622](https://github.com/niklasvh/html2canvas/issues/2622)
+
+
+
+## [1.1.4](https://github.com/niklasvh/html2canvas/compare/v1.1.3...v1.1.4) (2021-07-15)
+
+
+### feat
+
+* add support for webkit-text-stroke and paint-order (#2591) ([522e5aa](https://github.com/niklasvh/html2canvas/commit/522e5aac5fdad090953d095b5d558053a5e2d43d)), closes [#2591](https://github.com/niklasvh/html2canvas/issues/2591)
+
+### fix
+
+* don't copy 'all' css property (#2586) ([fa60716](https://github.com/niklasvh/html2canvas/commit/fa60716d07ed590ec64543a586a7960cbc8557df)), closes [#2586](https://github.com/niklasvh/html2canvas/issues/2586)
+* svg d path getting truncated on copy (#2589) ([dd6d885](https://github.com/niklasvh/html2canvas/commit/dd6d8856eca820a13a0990c467b9e531433fd4a9)), closes [#2589](https://github.com/niklasvh/html2canvas/issues/2589)
+* text position for form elements and list markers (#2588) ([cd99f11](https://github.com/niklasvh/html2canvas/commit/cd99f11b1b9eb1260a548a63e2a370a0a5ddafa0)), closes [#2588](https://github.com/niklasvh/html2canvas/issues/2588)
+* this.canvas.ownerDocument is undefined (#2590) ([45efe54](https://github.com/niklasvh/html2canvas/commit/45efe54da8145f97b9ee0463e686103280e3c8b1)), closes [#2590](https://github.com/niklasvh/html2canvas/issues/2590)
+* word-break seperators (#2593) ([e9f7f48](https://github.com/niklasvh/html2canvas/commit/e9f7f48d571304be14610a181feedca3c3b42864)), closes [#2593](https://github.com/niklasvh/html2canvas/issues/2593)
+
+### test
+
+* refactor language tests (#2594) ([4c360fc](https://github.com/niklasvh/html2canvas/commit/4c360fc1f059f4dcab71a79f9dc8a5b2e25411ea)), closes [#2594](https://github.com/niklasvh/html2canvas/issues/2594)
+* update box-shadow with radius ([578bb77](https://github.com/niklasvh/html2canvas/commit/578bb771bfeb7e81362e9e355d6cc9ae910e3920))
+
+
+
+## [1.1.3](https://github.com/niklasvh/html2canvas/compare/v1.1.2...v1.1.3) (2021-07-14)
+
+
+### feat
+
+* allow access to reference element in onclone (#2584) ([58b4591](https://github.com/niklasvh/html2canvas/commit/58b45911741c0dbbccd462b2976560bb3999eaef)), closes [#2584](https://github.com/niklasvh/html2canvas/issues/2584)
+* support for custom and slot elements (#2581) ([acb4cd2](https://github.com/niklasvh/html2canvas/commit/acb4cd24b85527908c02a60794768949578678f0)), closes [#2581](https://github.com/niklasvh/html2canvas/issues/2581)
+
+### fix
+
+* iframe load to ensure images are loaded (#2577) ([eeb5a3e](https://github.com/niklasvh/html2canvas/commit/eeb5a3ea1d6c94e0f6dcfd40695eb88ebb3e0041)), closes [#2577](https://github.com/niklasvh/html2canvas/issues/2577)
+* image blob rendering ([1acdc82](https://github.com/niklasvh/html2canvas/commit/1acdc827a4e05933c2f7c9558405c66b7cd82f58))
+* responsive svg images (#2583) ([92fa448](https://github.com/niklasvh/html2canvas/commit/92fa448913192d5e4e82bfe14f6644b669d4e6ef)), closes [#2583](https://github.com/niklasvh/html2canvas/issues/2583)
+
+### test
+
+* add test cases for text-stroke and textarea from (#1540 and #2132) (#2585) ([1d00bfe](https://github.com/niklasvh/html2canvas/commit/1d00bfe175d51e663d0bae88b6dbd10a266a71f1)), closes [#1540](https://github.com/niklasvh/html2canvas/issues/1540) [#2132](https://github.com/niklasvh/html2canvas/issues/2132) [#2585](https://github.com/niklasvh/html2canvas/issues/2585)
+
+
+
+## [1.1.2](https://github.com/niklasvh/html2canvas/compare/v1.1.1...v1.1.2) (2021-07-13)
+
+
+### ci
+
+* implement screenshot diffing (#2571) ([e29af58](https://github.com/niklasvh/html2canvas/commit/e29af586618125bbad10ad6bee3d69fddbc5d22a)), closes [#2571](https://github.com/niklasvh/html2canvas/issues/2571)
+
+### fix
+
+* logger unique names (#2575) ([1715854](https://github.com/niklasvh/html2canvas/commit/171585491dd1bee4f30691328bd22e978f3ac79e)), closes [#2575](https://github.com/niklasvh/html2canvas/issues/2575)
+* text-shadow position with baseline (#2576) ([439e365](https://github.com/niklasvh/html2canvas/commit/439e365ea8c703b528778a268dcfc3bf9ccad6a9)), closes [#2576](https://github.com/niklasvh/html2canvas/issues/2576)
+
+
+
+## [1.1.1](https://github.com/niklasvh/html2canvas/compare/v1.1.0...v1.1.1) (2021-07-12)
+
+
+### fix
+
+* allow proxy url with parameters (#2100) ([a4a3ce8](https://github.com/niklasvh/html2canvas/commit/a4a3ce8a2eb6a4f43f1bc9a7935eb16f2b98a3cd)), closes [#2100](https://github.com/niklasvh/html2canvas/issues/2100)
+* crash on background-size with calc() (fix #2469) (#2569) ([084017a](https://github.com/niklasvh/html2canvas/commit/084017a67319a993d73c6bdf612dd8532f1b8dbe)), closes [#2469](https://github.com/niklasvh/html2canvas/issues/2469) [#2569](https://github.com/niklasvh/html2canvas/issues/2569)
+* handle unhandled promise rejections (#2568) ([4555940](https://github.com/niklasvh/html2canvas/commit/4555940d0bc17b7fd9327dd0164c382a3dbf1858)), closes [#2568](https://github.com/niklasvh/html2canvas/issues/2568)
+
+
+
+# [1.1.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0...v1.1.0) (2021-07-11)
+
+
+### ci
+
+* fail build if no artifacts uploaded (#2566) ([e7a021a](https://github.com/niklasvh/html2canvas/commit/e7a021ab931f3c0de060b4643e88fad85345c3d3)), closes [#2566](https://github.com/niklasvh/html2canvas/issues/2566)
+
+### deps
+
+* update dependencies with lint fixes (#2565) ([b2902ec](https://github.com/niklasvh/html2canvas/commit/b2902ec31c2a414ea26f864f8e00aa8846890ffc)), closes [#2565](https://github.com/niklasvh/html2canvas/issues/2565)
+
+### docs
+
+* update border-style support ([cf35a28](https://github.com/niklasvh/html2canvas/commit/cf35a282b2c9d41b601c3148e8c08fe7ba61a5f9))
+
+### fix
+
+* Ensure resizeImage's canvas has at least 1px of width and height (#2409) ([bb92371](https://github.com/niklasvh/html2canvas/commit/bb9237155cf0ec090432ee6c5d9c555eb6ffa81f)), closes [#2409](https://github.com/niklasvh/html2canvas/issues/2409)
+* text-decoration-line fallback (#2088) (#2567) ([44296e5](https://github.com/niklasvh/html2canvas/commit/44296e529368140ec06a937383e05f3074b19ee2)), closes [#2088](https://github.com/niklasvh/html2canvas/issues/2088) [#2567](https://github.com/niklasvh/html2canvas/issues/2567)
+* use baseline for text positioning (#2109) ([85f79c1](https://github.com/niklasvh/html2canvas/commit/85f79c1a5e4c0b422ace552c430dd389c8477a44)), closes [#2109](https://github.com/niklasvh/html2canvas/issues/2109)
+
+
+
+# [1.0.0](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.7...v1.0.0) (2021-07-04)
+
+
+### ci
+
+* update docs publish action (#2451) ([7222aba](https://github.com/niklasvh/html2canvas/commit/7222aba1b42138c3d466525172411b3d9869095f)), closes [#2451](https://github.com/niklasvh/html2canvas/issues/2451)
+
+### deps
+
+* update www deps (#2525) ([2a013e2](https://github.com/niklasvh/html2canvas/commit/2a013e20c814b7dbaea98f54f0bde8f553eb79a2)), closes [#2525](https://github.com/niklasvh/html2canvas/issues/2525)
+
+### fix
+
+* opacity with overflow hidden (#2450) ([82b7da5](https://github.com/niklasvh/html2canvas/commit/82b7da558c342e7f53d298bb1d843a5db86c3b21)), closes [#2450](https://github.com/niklasvh/html2canvas/issues/2450)
+
+### test
+
+* update karma runner (#2524) ([ff35c7d](https://github.com/niklasvh/html2canvas/commit/ff35c7dbd33f863f5b614d778baf8cb1e8dded60)), closes [#2524](https://github.com/niklasvh/html2canvas/issues/2524)
+
+
+
 # [1.0.0-rc.7](https://github.com/niklasvh/html2canvas/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2020-08-09)
 
 

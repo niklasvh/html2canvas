@@ -40,25 +40,37 @@ describe('types', () => {
                     deepStrictEqual(parse('linear-gradient(yellow, blue)'), {
                         angle: deg(180),
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: colorParse('yellow'), stop: null}, {color: colorParse('blue'), stop: null}]
+                        stops: [
+                            {color: colorParse('yellow'), stop: null},
+                            {color: colorParse('blue'), stop: null}
+                        ]
                     }));
                 it('linear-gradient(to bottom, yellow, blue)', () =>
                     deepStrictEqual(parse('linear-gradient(to bottom, yellow, blue)'), {
                         angle: deg(180),
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: colorParse('yellow'), stop: null}, {color: colorParse('blue'), stop: null}]
+                        stops: [
+                            {color: colorParse('yellow'), stop: null},
+                            {color: colorParse('blue'), stop: null}
+                        ]
                     }));
                 it('linear-gradient(180deg, yellow, blue)', () =>
                     deepStrictEqual(parse('linear-gradient(180deg, yellow, blue)'), {
                         angle: deg(180),
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: colorParse('yellow'), stop: null}, {color: colorParse('blue'), stop: null}]
+                        stops: [
+                            {color: colorParse('yellow'), stop: null},
+                            {color: colorParse('blue'), stop: null}
+                        ]
                     }));
                 it('linear-gradient(to top, blue, yellow)', () =>
                     deepStrictEqual(parse('linear-gradient(to top, blue, yellow)'), {
                         angle: 0,
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: colorParse('blue'), stop: null}, {color: colorParse('yellow'), stop: null}]
+                        stops: [
+                            {color: colorParse('blue'), stop: null},
+                            {color: colorParse('yellow'), stop: null}
+                        ]
                     }));
                 it('linear-gradient(to top right, blue, yellow)', () =>
                     deepStrictEqual(parse('linear-gradient(to top right, blue, yellow)'), {
@@ -67,7 +79,10 @@ describe('types', () => {
                             {type: TokenType.NUMBER_TOKEN, number: 0, flags: 4}
                         ],
                         type: CSSImageType.LINEAR_GRADIENT,
-                        stops: [{color: colorParse('blue'), stop: null}, {color: colorParse('yellow'), stop: null}]
+                        stops: [
+                            {color: colorParse('blue'), stop: null},
+                            {color: colorParse('yellow'), stop: null}
+                        ]
                     }));
                 it('linear-gradient(to bottom, yellow 0%, blue 100%)', () =>
                     deepStrictEqual(parse('linear-gradient(to bottom, yellow 0%, blue 100%)'), {

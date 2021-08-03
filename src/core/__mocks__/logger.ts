@@ -1,17 +1,22 @@
 export class Logger {
-    debug() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    debug(): void {}
 
-    static create() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    static create(): void {}
 
-    static destroy() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    static destroy(): void {}
 
     static getInstance(): Logger {
         return logger;
     }
 
-    info() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    info(): void {}
 
-    error() {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    error(): void {}
 }
 
 const logger = new Logger();

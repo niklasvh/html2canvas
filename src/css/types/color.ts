@@ -59,9 +59,9 @@ export const color: ITypeDescriptor<Color> = {
     }
 };
 
-export const isTransparent = (color: Color) => (0xff & color) === 0;
+export const isTransparent = (color: Color): boolean => (0xff & color) === 0;
 
-export const asString = (color: Color) => {
+export const asString = (color: Color): string => {
     const alpha = 0xff & color;
     const blue = 0xff & (color >> 8);
     const green = 0xff & (color >> 16);

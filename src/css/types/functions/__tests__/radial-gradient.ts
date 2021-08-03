@@ -55,7 +55,10 @@ describe('functions', () => {
                     shape: CSSRadialShape.CIRCLE,
                     size: [{type: TokenType.DIMENSION_TOKEN, number: 20, flags: 4, unit: 'px'}],
                     position: [],
-                    stops: [{color: colorParse('red'), stop: null}, {color: colorParse('blue'), stop: null}]
+                    stops: [
+                        {color: colorParse('red'), stop: null},
+                        {color: colorParse('blue'), stop: null}
+                    ]
                 }));
         });
     });

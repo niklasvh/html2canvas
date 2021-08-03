@@ -8,10 +8,15 @@ import {TextContainer} from '../../dom/text-container';
 import {Path, transformPath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
-import {isBezierCurve} from '../bezier-curve';
+import {BezierCurve, isBezierCurve} from '../bezier-curve';
 import {Vector} from '../vector';
 import {CSSImageType, CSSURLImage, isLinearGradient, isRadialGradient} from '../../css/types/image';
-import {parsePathForBorder} from '../border';
+import {
+    parsePathForBorder,
+    parsePathForBorderDoubleInner,
+    parsePathForBorderDoubleOuter,
+    parsePathForBorderStroke
+} from '../border';
 import {Cache} from '../../core/cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
@@ -38,6 +43,7 @@ import {TextareaElementContainer} from '../../dom/elements/textarea-element-cont
 import {SelectElementContainer} from '../../dom/elements/select-element-container';
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
+import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -83,21 +89,19 @@ export class CanvasRenderer {
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
         Logger.getInstance(options.id).debug(
-            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${
-                options.scale
-            }`
+            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
         );
     }
 
-    applyEffects(effects: IElementEffect[], target: EffectTarget) {
+    applyEffects(effects: IElementEffect[], target: EffectTarget): void {
         while (this._activeEffects.length) {
             this.popEffect();
         }
 
-        effects.filter(effect => contains(effect.target, target)).forEach(effect => this.applyEffect(effect));
+        effects.filter((effect) => contains(effect.target, target)).forEach((effect) => this.applyEffect(effect));
     }
 
-    applyEffect(effect: IElementEffect) {
+    applyEffect(effect: IElementEffect): void {
         this.ctx.save();
         if (isOpacityEffect(effect)) {
             this.ctx.globalAlpha = effect.opacity;
@@ -124,32 +128,32 @@ export class CanvasRenderer {
         this._activeEffects.push(effect);
     }
 
-    popEffect() {
+    popEffect(): void {
         this._activeEffects.pop();
         this.ctx.restore();
     }
 
-    async renderStack(stack: StackingContext) {
+    async renderStack(stack: StackingContext): Promise<void> {
         const styles = stack.element.container.styles;
         if (styles.isVisible()) {
             await this.renderStackContent(stack);
         }
     }
 
-    async renderNode(paint: ElementPaint) {
+    async renderNode(paint: ElementPaint): Promise<void> {
         if (paint.container.styles.isVisible()) {
             await this.renderNodeBackgroundAndBorders(paint);
             await this.renderNodeContent(paint);
         }
     }
 
-    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number) {
+    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number): void {
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
         } else {
-            const letters = toCodePoints(text.text).map(i => fromCodePoint(i));
+            const letters = toCodePoints(text.text).map((i) => fromCodePoint(i));
             letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + text.bounds.height);
+                this.ctx.fillText(letter, left, text.bounds.top + baseline);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
@@ -158,7 +162,7 @@ export class CanvasRenderer {
 
     private createFontStyle(styles: CSSParsedDeclaration): string[] {
         const fontVariant = styles.fontVariant
-            .filter(variant => variant === 'normal' || variant === 'small-caps')
+            .filter((variant) => variant === 'normal' || variant === 'small-caps')
             .join('');
         const fontFamily = styles.fontFamily.join(', ');
         const fontSize = isDimensionToken(styles.fontSize)
@@ -172,68 +176,92 @@ export class CanvasRenderer {
         ];
     }
 
-    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration) {
+    async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration): Promise<void> {
         const [font, fontFamily, fontSize] = this.createFontStyle(styles);
 
         this.ctx.font = font;
 
-        text.textBounds.forEach(text => {
-            this.ctx.fillStyle = asString(styles.color);
-            this.renderTextWithLetterSpacing(text, styles.letterSpacing);
-            const textShadows: TextShadow = styles.textShadow;
+        this.ctx.textBaseline = 'alphabetic';
+        const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+        const paintOrder = styles.paintOrder;
 
-            if (textShadows.length && text.text.trim().length) {
-                textShadows
-                    .slice(0)
-                    .reverse()
-                    .forEach(textShadow => {
-                        this.ctx.shadowColor = asString(textShadow.color);
-                        this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
-                        this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
-                        this.ctx.shadowBlur = textShadow.blur.number;
+        text.textBounds.forEach((text) => {
+            paintOrder.forEach((paintOrderLayer) => {
+                switch (paintOrderLayer) {
+                    case PAINT_ORDER_LAYER.FILL:
+                        this.ctx.fillStyle = asString(styles.color);
+                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                        const textShadows: TextShadow = styles.textShadow;
 
-                        this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + text.bounds.height);
-                    });
+                        if (textShadows.length && text.text.trim().length) {
+                            textShadows
+                                .slice(0)
+                                .reverse()
+                                .forEach((textShadow) => {
+                                    this.ctx.shadowColor = asString(textShadow.color);
+                                    this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
+                                    this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
+                                    this.ctx.shadowBlur = textShadow.blur.number;
 
-                this.ctx.shadowColor = '';
-                this.ctx.shadowOffsetX = 0;
-                this.ctx.shadowOffsetY = 0;
-                this.ctx.shadowBlur = 0;
-            }
+                                    this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                                });
 
-            if (styles.textDecorationLine.length) {
-                this.ctx.fillStyle = asString(styles.textDecorationColor || styles.color);
-                styles.textDecorationLine.forEach(textDecorationLine => {
-                    switch (textDecorationLine) {
-                        case TEXT_DECORATION_LINE.UNDERLINE:
-                            // Draws a line at the baseline of the font
-                            // TODO As some browsers display the line as more than 1px if the font-size is big,
-                            // need to take that into account both in position and size
-                            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
-                            this.ctx.fillRect(
-                                text.bounds.left,
-                                Math.round(text.bounds.top + baseline),
-                                text.bounds.width,
-                                1
-                            );
+                            this.ctx.shadowColor = '';
+                            this.ctx.shadowOffsetX = 0;
+                            this.ctx.shadowOffsetY = 0;
+                            this.ctx.shadowBlur = 0;
+                        }
 
-                            break;
-                        case TEXT_DECORATION_LINE.OVERLINE:
-                            this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, 1);
-                            break;
-                        case TEXT_DECORATION_LINE.LINE_THROUGH:
-                            // TODO try and find exact position for line-through
-                            const {middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
-                            this.ctx.fillRect(
-                                text.bounds.left,
-                                Math.ceil(text.bounds.top + middle),
-                                text.bounds.width,
-                                1
-                            );
-                            break;
-                    }
-                });
-            }
+                        if (styles.textDecorationLine.length) {
+                            this.ctx.fillStyle = asString(styles.textDecorationColor || styles.color);
+                            styles.textDecorationLine.forEach((textDecorationLine) => {
+                                switch (textDecorationLine) {
+                                    case TEXT_DECORATION_LINE.UNDERLINE:
+                                        // Draws a line at the baseline of the font
+                                        // TODO As some browsers display the line as more than 1px if the font-size is big,
+                                        // need to take that into account both in position and size
+                                        this.ctx.fillRect(
+                                            text.bounds.left,
+                                            Math.round(text.bounds.top + baseline),
+                                            text.bounds.width,
+                                            1
+                                        );
+
+                                        break;
+                                    case TEXT_DECORATION_LINE.OVERLINE:
+                                        this.ctx.fillRect(
+                                            text.bounds.left,
+                                            Math.round(text.bounds.top),
+                                            text.bounds.width,
+                                            1
+                                        );
+                                        break;
+                                    case TEXT_DECORATION_LINE.LINE_THROUGH:
+                                        // TODO try and find exact position for line-through
+                                        this.ctx.fillRect(
+                                            text.bounds.left,
+                                            Math.ceil(text.bounds.top + middle),
+                                            text.bounds.width,
+                                            1
+                                        );
+                                        break;
+                                }
+                            });
+                        }
+                        break;
+                    case PAINT_ORDER_LAYER.STROKE:
+                        if (styles.webkitTextStrokeWidth && text.text.trim().length) {
+                            this.ctx.strokeStyle = asString(styles.webkitTextStrokeColor);
+                            this.ctx.lineWidth = styles.webkitTextStrokeWidth;
+                            this.ctx.lineJoin = !!(window as any).chrome ? 'miter' : 'round';
+                            this.ctx.strokeText(text.text, text.bounds.left, text.bounds.top + baseline);
+                        }
+                        this.ctx.strokeStyle = '';
+                        this.ctx.lineWidth = 0;
+                        this.ctx.lineJoin = 'miter';
+                        break;
+                }
+            });
         });
     }
 
@@ -241,7 +269,7 @@ export class CanvasRenderer {
         container: ReplacedElementContainer,
         curves: BoundCurves,
         image: HTMLImageElement | HTMLCanvasElement
-    ) {
+    ): void {
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
             const box = contentBox(container);
             const path = calculatePaddingBoxPath(curves);
@@ -263,7 +291,7 @@ export class CanvasRenderer {
         }
     }
 
-    async renderNodeContent(paint: ElementPaint) {
+    async renderNodeContent(paint: ElementPaint): Promise<void> {
         this.applyEffects(paint.effects, EffectTarget.CONTENT);
         const container = paint.container;
         const curves = paint.curves;
@@ -366,10 +394,13 @@ export class CanvasRenderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            [this.ctx.font] = this.createFontStyle(styles);
+            const [fontFamily, fontSize] = this.createFontStyle(styles);
+            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+
+            this.ctx.font = fontFamily;
             this.ctx.fillStyle = asString(styles.color);
 
-            this.ctx.textBaseline = 'middle';
+            this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = canvasTextAlign(container.styles.textAlign);
 
             const bounds = contentBox(container);
@@ -396,9 +427,13 @@ export class CanvasRenderer {
             ]);
 
             this.ctx.clip();
-            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles.letterSpacing);
+            this.renderTextWithLetterSpacing(
+                new TextBounds(container.value, textBounds),
+                styles.letterSpacing,
+                baseline
+            );
             this.ctx.restore();
-            this.ctx.textBaseline = 'bottom';
+            this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = 'left';
         }
 
@@ -416,7 +451,9 @@ export class CanvasRenderer {
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
-                [this.ctx.font] = this.createFontStyle(styles);
+                const [fontFamily] = this.createFontStyle(styles);
+
+                this.ctx.font = fontFamily;
                 this.ctx.fillStyle = asString(styles.color);
 
                 this.ctx.textBaseline = 'middle';
@@ -428,14 +465,18 @@ export class CanvasRenderer {
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
-                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles.letterSpacing);
+                this.renderTextWithLetterSpacing(
+                    new TextBounds(paint.listValue, bounds),
+                    styles.letterSpacing,
+                    computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 2
+                );
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
             }
         }
     }
 
-    async renderStackContent(stack: StackingContext) {
+    async renderStackContent(stack: StackingContext): Promise<void> {
         // https://www.w3.org/TR/css-position-3/#painting-order
         // 1. the background and borders of the element forming the stacking context.
         await this.renderNodeBackgroundAndBorders(stack.element);
@@ -483,7 +524,7 @@ export class CanvasRenderer {
         }
     }
 
-    mask(paths: Path[]) {
+    mask(paths: Path[]): void {
         this.ctx.beginPath();
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(this.canvas.width, 0);
@@ -494,13 +535,13 @@ export class CanvasRenderer {
         this.ctx.closePath();
     }
 
-    path(paths: Path[]) {
+    path(paths: Path[]): void {
         this.ctx.beginPath();
         this.formatPath(paths);
         this.ctx.closePath();
     }
 
-    formatPath(paths: Path[]) {
+    formatPath(paths: Path[]): void {
         paths.forEach((point, index) => {
             const start: Vector = isBezierCurve(point) ? point.start : point;
             if (index === 0) {
@@ -522,7 +563,7 @@ export class CanvasRenderer {
         });
     }
 
-    renderRepeat(path: Path[], pattern: CanvasPattern | CanvasGradient, offsetX: number, offsetY: number) {
+    renderRepeat(path: Path[], pattern: CanvasPattern | CanvasGradient, offsetX: number, offsetY: number): void {
         this.path(path);
         this.ctx.fillStyle = pattern;
         this.ctx.translate(offsetX, offsetY);
@@ -535,15 +576,16 @@ export class CanvasRenderer {
             return image;
         }
 
-        const canvas = (this.canvas.ownerDocument as Document).createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        const ownerDocument = this.canvas.ownerDocument ?? document;
+        const canvas = ownerDocument.createElement('canvas');
+        canvas.width = Math.max(1, width);
+        canvas.height = Math.max(1, height);
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
         return canvas;
     }
 
-    async renderBackgroundImage(container: ElementContainer) {
+    async renderBackgroundImage(container: ElementContainer): Promise<void> {
         let index = container.styles.backgroundImage.length - 1;
         for (const backgroundImage of container.styles.backgroundImage.slice(0).reverse()) {
             if (backgroundImage.type === CSSImageType.URL) {
@@ -577,7 +619,7 @@ export class CanvasRenderer {
                 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
                 const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 
-                processColorStops(backgroundImage.stops, lineLength).forEach(colorStop =>
+                processColorStops(backgroundImage.stops, lineLength).forEach((colorStop) =>
                     gradient.addColorStop(colorStop.stop, asString(colorStop.color))
                 );
 
@@ -601,7 +643,7 @@ export class CanvasRenderer {
                 if (rx > 0 && rx > 0) {
                     const radialGradient = this.ctx.createRadialGradient(left + x, top + y, 0, left + x, top + y, rx);
 
-                    processColorStops(backgroundImage.stops, rx * 2).forEach(colorStop =>
+                    processColorStops(backgroundImage.stops, rx * 2).forEach((colorStop) =>
                         radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
                     );
 
@@ -630,22 +672,37 @@ export class CanvasRenderer {
         }
     }
 
-    async renderBorder(color: Color, side: number, curvePoints: BoundCurves) {
+    async renderSolidBorder(color: Color, side: number, curvePoints: BoundCurves): Promise<void> {
         this.path(parsePathForBorder(curvePoints, side));
         this.ctx.fillStyle = asString(color);
         this.ctx.fill();
     }
 
-    async renderNodeBackgroundAndBorders(paint: ElementPaint) {
+    async renderDoubleBorder(color: Color, width: number, side: number, curvePoints: BoundCurves): Promise<void> {
+        if (width < 3) {
+            await this.renderSolidBorder(color, side, curvePoints);
+            return;
+        }
+
+        const outerPaths = parsePathForBorderDoubleOuter(curvePoints, side);
+        this.path(outerPaths);
+        this.ctx.fillStyle = asString(color);
+        this.ctx.fill();
+        const innerPaths = parsePathForBorderDoubleInner(curvePoints, side);
+        this.path(innerPaths);
+        this.ctx.fill();
+    }
+
+    async renderNodeBackgroundAndBorders(paint: ElementPaint): Promise<void> {
         this.applyEffects(paint.effects, EffectTarget.BACKGROUND_BORDERS);
         const styles = paint.container.styles;
         const hasBackground = !isTransparent(styles.backgroundColor) || styles.backgroundImage.length;
 
         const borders = [
-            {style: styles.borderTopStyle, color: styles.borderTopColor},
-            {style: styles.borderRightStyle, color: styles.borderRightColor},
-            {style: styles.borderBottomStyle, color: styles.borderBottomColor},
-            {style: styles.borderLeftStyle, color: styles.borderLeftColor}
+            {style: styles.borderTopStyle, color: styles.borderTopColor, width: styles.borderTopWidth},
+            {style: styles.borderRightStyle, color: styles.borderRightColor, width: styles.borderRightWidth},
+            {style: styles.borderBottomStyle, color: styles.borderBottomColor, width: styles.borderBottomWidth},
+            {style: styles.borderLeftStyle, color: styles.borderLeftColor, width: styles.borderLeftWidth}
         ];
 
         const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
@@ -670,7 +727,7 @@ export class CanvasRenderer {
             styles.boxShadow
                 .slice(0)
                 .reverse()
-                .forEach(shadow => {
+                .forEach((shadow) => {
                     this.ctx.save();
                     const borderBoxArea = calculateBorderBoxPath(paint.curves);
                     const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
@@ -705,11 +762,141 @@ export class CanvasRenderer {
 
         let side = 0;
         for (const border of borders) {
-            if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color)) {
-                await this.renderBorder(border.color, side, paint.curves);
+            if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color) && border.width > 0) {
+                if (border.style === BORDER_STYLE.DASHED) {
+                    await this.renderDashedDottedBorder(
+                        border.color,
+                        border.width,
+                        side,
+                        paint.curves,
+                        BORDER_STYLE.DASHED
+                    );
+                } else if (border.style === BORDER_STYLE.DOTTED) {
+                    await this.renderDashedDottedBorder(
+                        border.color,
+                        border.width,
+                        side,
+                        paint.curves,
+                        BORDER_STYLE.DOTTED
+                    );
+                } else if (border.style === BORDER_STYLE.DOUBLE) {
+                    await this.renderDoubleBorder(border.color, border.width, side, paint.curves);
+                } else {
+                    await this.renderSolidBorder(border.color, side, paint.curves);
+                }
             }
             side++;
         }
+    }
+
+    async renderDashedDottedBorder(
+        color: Color,
+        width: number,
+        side: number,
+        curvePoints: BoundCurves,
+        style: BORDER_STYLE
+    ): Promise<void> {
+        this.ctx.save();
+
+        const strokePaths = parsePathForBorderStroke(curvePoints, side);
+        const boxPaths = parsePathForBorder(curvePoints, side);
+
+        if (style === BORDER_STYLE.DASHED) {
+            this.path(boxPaths);
+            this.ctx.clip();
+        }
+
+        let startX, startY, endX, endY;
+        if (isBezierCurve(boxPaths[0])) {
+            startX = (boxPaths[0] as BezierCurve).start.x;
+            startY = (boxPaths[0] as BezierCurve).start.y;
+        } else {
+            startX = (boxPaths[0] as Vector).x;
+            startY = (boxPaths[0] as Vector).y;
+        }
+        if (isBezierCurve(boxPaths[1])) {
+            endX = (boxPaths[1] as BezierCurve).end.x;
+            endY = (boxPaths[1] as BezierCurve).end.y;
+        } else {
+            endX = (boxPaths[1] as Vector).x;
+            endY = (boxPaths[1] as Vector).y;
+        }
+
+        let length;
+        if (side === 0 || side === 2) {
+            length = Math.abs(startX - endX);
+        } else {
+            length = Math.abs(startY - endY);
+        }
+
+        this.ctx.beginPath();
+        if (style === BORDER_STYLE.DOTTED) {
+            this.formatPath(strokePaths);
+        } else {
+            this.formatPath(boxPaths.slice(0, 2));
+        }
+
+        let dashLength = width < 3 ? width * 3 : width * 2;
+        let spaceLength = width < 3 ? width * 2 : width;
+        if (style === BORDER_STYLE.DOTTED) {
+            dashLength = width;
+            spaceLength = width;
+        }
+
+        let useLineDash = true;
+        if (length <= dashLength * 2) {
+            useLineDash = false;
+        } else if (length <= dashLength * 2 + spaceLength) {
+            const multiplier = length / (2 * dashLength + spaceLength);
+            dashLength *= multiplier;
+            spaceLength *= multiplier;
+        } else {
+            const numberOfDashes = Math.floor((length + spaceLength) / (dashLength + spaceLength));
+            const minSpace = (length - numberOfDashes * dashLength) / (numberOfDashes - 1);
+            const maxSpace = (length - (numberOfDashes + 1) * dashLength) / numberOfDashes;
+            spaceLength =
+                maxSpace <= 0 || Math.abs(spaceLength - minSpace) < Math.abs(spaceLength - maxSpace)
+                    ? minSpace
+                    : maxSpace;
+        }
+
+        if (useLineDash) {
+            if (style === BORDER_STYLE.DOTTED) {
+                this.ctx.setLineDash([0, dashLength + spaceLength]);
+            } else {
+                this.ctx.setLineDash([dashLength, spaceLength]);
+            }
+        }
+
+        if (style === BORDER_STYLE.DOTTED) {
+            this.ctx.lineCap = 'round';
+            this.ctx.lineWidth = width;
+        } else {
+            this.ctx.lineWidth = width * 2 + 1.1;
+        }
+        this.ctx.strokeStyle = asString(color);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // dashed round edge gap
+        if (style === BORDER_STYLE.DASHED) {
+            if (isBezierCurve(boxPaths[0])) {
+                const path1 = boxPaths[3] as BezierCurve;
+                const path2 = boxPaths[0] as BezierCurve;
+                this.ctx.beginPath();
+                this.formatPath([new Vector(path1.end.x, path1.end.y), new Vector(path2.start.x, path2.start.y)]);
+                this.ctx.stroke();
+            }
+            if (isBezierCurve(boxPaths[1])) {
+                const path1 = boxPaths[1] as BezierCurve;
+                const path2 = boxPaths[2] as BezierCurve;
+                this.ctx.beginPath();
+                this.formatPath([new Vector(path1.end.x, path1.end.y), new Vector(path2.start.x, path2.start.y)]);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
     }
 
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {

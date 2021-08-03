@@ -19,6 +19,6 @@ export const backgroundImage: IPropertyListDescriptor<ICSSImage[]> = {
             return [];
         }
 
-        return tokens.filter(value => nonFunctionArgSeparator(value) && isSupportedImage(value)).map(image.parse);
+        return tokens.filter((value) => nonFunctionArgSeparator(value) && isSupportedImage(value)).map(image.parse);
     }
 };

@@ -24,7 +24,7 @@ import {getQuote} from '../css/property-descriptors/quotes';
 export interface CloneOptions {
     id: string;
     ignoreElements?: (element: Element) => boolean;
-    onclone?: (document: Document) => void;
+    onclone?: (document: Document, element: HTMLElement) => void;
 }
 
 export type CloneConfigurations = CloneOptions & {
@@ -89,7 +89,9 @@ export class DocumentCloner {
 
             const onclone = this.options.onclone;
 
-            if (typeof this.clonedReferenceElement === 'undefined') {
+            const referenceElement = this.clonedReferenceElement;
+
+            if (typeof referenceElement === 'undefined') {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
             }
 
@@ -97,9 +99,13 @@ export class DocumentCloner {
                 await documentClone.fonts.ready;
             }
 
+            if (/(AppleWebKit)/g.test(navigator.userAgent)) {
+                await imagesReady(documentClone);
+            }
+
             if (typeof onclone === 'function') {
                 return Promise.resolve()
-                    .then(() => onclone(documentClone))
+                    .then(() => onclone(documentClone, referenceElement))
                     .then(() => iframe);
             }
 
@@ -120,20 +126,21 @@ export class DocumentCloner {
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
-        /*
-        if (isIFrameElement(node)) {
-            return this.createIFrameClone(node);
-        }
-*/
+
         if (isStyleElement(node)) {
             return this.createStyleClone(node);
         }
 
         const clone = node.cloneNode(false) as T;
-        // @ts-ignore
-        if (isImageElement(clone) && clone.loading === 'lazy') {
-            // @ts-ignore
-            clone.loading = 'eager';
+        if (isImageElement(clone)) {
+            if (isImageElement(node) && node.currentSrc && node.currentSrc !== node.src) {
+                clone.src = node.currentSrc;
+                clone.srcset = '';
+            }
+
+            if (clone.loading === 'lazy') {
+                clone.loading = 'eager';
+            }
         }
 
         return clone;
@@ -193,67 +200,7 @@ export class DocumentCloner {
 
         return clonedCanvas;
     }
-    /*
-    createIFrameClone(iframe: HTMLIFrameElement) {
-        const tempIframe = <HTMLIFrameElement>iframe.cloneNode(false);
-        const iframeKey = generateIframeKey();
-        tempIframe.setAttribute('data-html2canvas-internal-iframe-key', iframeKey);
 
-        const {width, height} = parseBounds(iframe);
-
-        this.resourceLoader.cache[iframeKey] = getIframeDocumentElement(iframe, this.options)
-            .then(documentElement => {
-                return this.renderer(
-                    documentElement,
-                    {
-                        allowTaint: this.options.allowTaint,
-                        backgroundColor: '#ffffff',
-                        canvas: null,
-                        imageTimeout: this.options.imageTimeout,
-                        logging: this.options.logging,
-                        proxy: this.options.proxy,
-                        removeContainer: this.options.removeContainer,
-                        scale: this.options.scale,
-                        foreignObjectRendering: this.options.foreignObjectRendering,
-                        useCORS: this.options.useCORS,
-                        target: new CanvasRenderer(),
-                        width,
-                        height,
-                        x: 0,
-                        y: 0,
-                        windowWidth: documentElement.ownerDocument.defaultView.innerWidth,
-                        windowHeight: documentElement.ownerDocument.defaultView.innerHeight,
-                        scrollX: documentElement.ownerDocument.defaultView.pageXOffset,
-                        scrollY: documentElement.ownerDocument.defaultView.pageYOffset
-                    },
-                );
-            })
-            .then(
-                (canvas: HTMLCanvasElement) =>
-                    new Promise((resolve, reject) => {
-                        const iframeCanvas = document.createElement('img');
-                        iframeCanvas.onload = () => resolve(canvas);
-                        iframeCanvas.onerror = (event) => {
-                            // Empty iframes may result in empty "data:," URLs, which are invalid from the <img>'s point of view
-                            // and instead of `onload` cause `onerror` and unhandled rejection warnings
-                            // https://github.com/niklasvh/html2canvas/issues/1502
-                            iframeCanvas.src == 'data:,' ? resolve(canvas) : reject(event);
-                        };
-                        iframeCanvas.src = canvas.toDataURL();
-                        if (tempIframe.parentNode && iframe.ownerDocument && iframe.ownerDocument.defaultView) {
-                            tempIframe.parentNode.replaceChild(
-                                copyCSSStyles(
-                                    iframe.ownerDocument.defaultView.getComputedStyle(iframe),
-                                    iframeCanvas
-                                ),
-                                tempIframe
-                            );
-                        }
-                    })
-            );
-        return tempIframe;
-    }
-*/
     cloneNode(node: Node): Node {
         if (isTextNode(node)) {
             return document.createTextNode(node.data);
@@ -310,8 +257,6 @@ export class DocumentCloner {
                 copyCSSStyles(style, clone);
             }
 
-            //this.inlineAllImages(clone);
-
             if (node.scrollTop !== 0 || node.scrollLeft !== 0) {
                 this.scrolledElements.push([clone, node.scrollLeft, node.scrollTop]);
             }
@@ -351,7 +296,7 @@ export class DocumentCloner {
         const anonymousReplacedElement = document.createElement('html2canvaspseudoelement');
         copyCSSStyles(style, anonymousReplacedElement);
 
-        declaration.content.forEach(token => {
+        declaration.content.forEach((token) => {
             if (token.type === TokenType.STRING_TOKEN) {
                 anonymousReplacedElement.appendChild(document.createTextNode(token.value));
             } else if (token.type === TokenType.URL_TOKEN) {
@@ -390,7 +335,7 @@ export class DocumentCloner {
                                 : LIST_STYLE_TYPE.DECIMAL;
                         const separator = delim && delim.type === TokenType.STRING_TOKEN ? delim.value : '';
                         const text = counterStates
-                            .map(value => createCounterText(value, counterType, false))
+                            .map((value) => createCounterText(value, counterType, false))
                             .join(separator);
 
                         anonymousReplacedElement.appendChild(document.createTextNode(text));
@@ -464,6 +409,25 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
     return cloneIframeContainer;
 };
 
+const imageReady = (img: HTMLImageElement): Promise<Event | void | string> => {
+    return new Promise((resolve) => {
+        if (img.complete) {
+            resolve();
+            return;
+        }
+        if (!img.src) {
+            resolve();
+            return;
+        }
+        img.onload = resolve;
+        img.onerror = resolve;
+    });
+};
+
+const imagesReady = (document: HTMLDocument): Promise<unknown[]> => {
+    return Promise.all([].slice.call(document.images, 0).map(imageReady));
+};
+
 const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => {
     return new Promise((resolve, reject) => {
         const cloneWindow = iframe.contentWindow;
@@ -474,8 +438,8 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
 
         const documentClone = cloneWindow.document;
 
-        cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = () => {
-            cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
+        cloneWindow.onload = iframe.onload = () => {
+            cloneWindow.onload = iframe.onload = null;
             const interval = setInterval(() => {
                 if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
                     clearInterval(interval);
@@ -486,12 +450,17 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
     });
 };
 
+const ignoredStyleProperties = [
+    'all', // #2476
+    'd', // #2483
+    'content' // Safari shows pseudoelements if content is set
+];
+
 export const copyCSSStyles = <T extends HTMLElement | SVGElement>(style: CSSStyleDeclaration, target: T): T => {
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
-        // Safari shows pseudoelements if content is set
-        if (property !== 'content') {
+        if (ignoredStyleProperties.indexOf(property) === -1) {
             target.style.setProperty(property, style.getPropertyValue(property));
         }
     }

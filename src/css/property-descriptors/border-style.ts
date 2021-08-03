@@ -1,7 +1,10 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 export enum BORDER_STYLE {
     NONE = 0,
-    SOLID = 1
+    SOLID = 1,
+    DASHED = 2,
+    DOTTED = 3,
+    DOUBLE = 4
 }
 
 const borderStyleForSide = (side: string): IPropertyIdentValueDescriptor<BORDER_STYLE> => ({
@@ -13,6 +16,12 @@ const borderStyleForSide = (side: string): IPropertyIdentValueDescriptor<BORDER_
         switch (style) {
             case 'none':
                 return BORDER_STYLE.NONE;
+            case 'dashed':
+                return BORDER_STYLE.DASHED;
+            case 'dotted':
+                return BORDER_STYLE.DOTTED;
+            case 'double':
+                return BORDER_STYLE.DOUBLE;
         }
         return BORDER_STYLE.SOLID;
     }

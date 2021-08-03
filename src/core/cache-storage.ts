@@ -4,7 +4,7 @@ import {Logger} from './logger';
 export class CacheStorage {
     private static _caches: {[key: string]: Cache} = {};
     private static _link?: HTMLAnchorElement;
-    private static _origin: string = 'about:blank';
+    private static _origin = 'about:blank';
     private static _current: Cache | null = null;
 
     static create(name: string, options: ResourceOptions): Cache {
@@ -39,7 +39,7 @@ export class CacheStorage {
         return CacheStorage.getOrigin(src) === CacheStorage._origin;
     }
 
-    static setContext(window: Window) {
+    static setContext(window: Window): void {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
     }
@@ -52,11 +52,11 @@ export class CacheStorage {
         return current;
     }
 
-    static attachInstance(cache: Cache) {
+    static attachInstance(cache: Cache): void {
         CacheStorage._current = cache;
     }
 
-    static detachInstance() {
+    static detachInstance(): void {
         CacheStorage._current = null;
     }
 }
@@ -87,7 +87,9 @@ export class Cache {
         }
 
         if (isBlobImage(src) || isRenderable(src)) {
-            this._cache[src] = this.loadImage(src);
+            (this._cache[src] = this.loadImage(src)).catch(() => {
+                // prevent unhandled rejection
+            });
             return result;
         }
 
@@ -106,10 +108,18 @@ export class Cache {
         const useProxy =
             !isInlineImage(key) &&
             !isSameOrigin &&
+            !isBlobImage(key) &&
             typeof this._options.proxy === 'string' &&
             FEATURES.SUPPORT_CORS_XHR &&
             !useCORS;
-        if (!isSameOrigin && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
+        if (
+            !isSameOrigin &&
+            this._options.allowTaint === false &&
+            !isInlineImage(key) &&
+            !isBlobImage(key) &&
+            !useProxy &&
+            !useCORS
+        ) {
             return;
         }
 
@@ -169,7 +179,7 @@ export class Cache {
                     } else {
                         const reader = new FileReader();
                         reader.addEventListener('load', () => resolve(reader.result as string), false);
-                        reader.addEventListener('error', e => reject(e), false);
+                        reader.addEventListener('error', (e) => reject(e), false);
                         reader.readAsDataURL(xhr.response);
                     }
                 } else {
@@ -178,7 +188,8 @@ export class Cache {
             };
 
             xhr.onerror = reject;
-            xhr.open('GET', `${proxy}?url=${encodeURIComponent(src)}&responseType=${responseType}`);
+            const queryString = proxy.indexOf('?') > -1 ? '&' : '?';
+            xhr.open('GET', `${proxy}${queryString}url=${encodeURIComponent(src)}&responseType=${responseType}`);
 
             if (responseType !== 'text' && xhr instanceof XMLHttpRequest) {
                 xhr.responseType = responseType;

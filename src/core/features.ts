@@ -90,7 +90,13 @@ const testForeignObject = (document: Document): Promise<boolean> => {
         .catch(() => false);
 };
 
-export const createForeignObjectSVG = (width: number, height: number, x: number, y: number, node: Node) => {
+export const createForeignObjectSVG = (
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    node: Node
+): SVGForeignObjectElement => {
     const xmlns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(xmlns, 'svg');
     const foreignObject = document.createElementNS(xmlns, 'foreignObject');
@@ -120,19 +126,19 @@ export const loadSerializedSVG = (svg: Node): Promise<HTMLImageElement> => {
 };
 
 export const FEATURES = {
-    get SUPPORT_RANGE_BOUNDS() {
+    get SUPPORT_RANGE_BOUNDS(): boolean {
         'use strict';
         const value = testRangeBounds(document);
         Object.defineProperty(FEATURES, 'SUPPORT_RANGE_BOUNDS', {value});
         return value;
     },
-    get SUPPORT_SVG_DRAWING() {
+    get SUPPORT_SVG_DRAWING(): boolean {
         'use strict';
         const value = testSVG(document);
         Object.defineProperty(FEATURES, 'SUPPORT_SVG_DRAWING', {value});
         return value;
     },
-    get SUPPORT_FOREIGNOBJECT_DRAWING() {
+    get SUPPORT_FOREIGNOBJECT_DRAWING(): Promise<boolean> {
         'use strict';
         const value =
             typeof Array.from === 'function' && typeof window.fetch === 'function'
@@ -141,19 +147,19 @@ export const FEATURES = {
         Object.defineProperty(FEATURES, 'SUPPORT_FOREIGNOBJECT_DRAWING', {value});
         return value;
     },
-    get SUPPORT_CORS_IMAGES() {
+    get SUPPORT_CORS_IMAGES(): boolean {
         'use strict';
         const value = testCORS();
         Object.defineProperty(FEATURES, 'SUPPORT_CORS_IMAGES', {value});
         return value;
     },
-    get SUPPORT_RESPONSE_TYPE() {
+    get SUPPORT_RESPONSE_TYPE(): boolean {
         'use strict';
         const value = testResponseType();
         Object.defineProperty(FEATURES, 'SUPPORT_RESPONSE_TYPE', {value});
         return value;
     },
-    get SUPPORT_CORS_XHR() {
+    get SUPPORT_CORS_XHR(): boolean {
         'use strict';
         const value = 'withCredentials' in new XMLHttpRequest();
         Object.defineProperty(FEATURES, 'SUPPORT_CORS_XHR', {value});

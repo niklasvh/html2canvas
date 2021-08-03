@@ -74,6 +74,9 @@ import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
+import {paintOrder} from './property-descriptors/paint-order';
+import {webkitTextStrokeColor} from './property-descriptors/webkit-text-stroke-color';
+import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-stroke-width';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -127,6 +130,7 @@ export class CSSParsedDeclaration {
     paddingRight: LengthPercentage;
     paddingBottom: LengthPercentage;
     paddingLeft: LengthPercentage;
+    paintOrder: ReturnType<typeof paintOrder.parse>;
     position: ReturnType<typeof position.parse>;
     textAlign: ReturnType<typeof textAlign.parse>;
     textDecorationColor: Color;
@@ -136,6 +140,8 @@ export class CSSParsedDeclaration {
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
     visibility: ReturnType<typeof visibility.parse>;
+    webkitTextStrokeColor: Color;
+    webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
 
@@ -192,15 +198,21 @@ export class CSSParsedDeclaration {
         this.paddingRight = parse(paddingRight, declaration.paddingRight);
         this.paddingBottom = parse(paddingBottom, declaration.paddingBottom);
         this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
+        this.paintOrder = parse(paintOrder, declaration.paintOrder);
         this.position = parse(position, declaration.position);
         this.textAlign = parse(textAlign, declaration.textAlign);
-        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor || declaration.color);
-        this.textDecorationLine = parse(textDecorationLine, declaration.textDecorationLine);
+        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor ?? declaration.color);
+        this.textDecorationLine = parse(
+            textDecorationLine,
+            declaration.textDecorationLine ?? declaration.textDecoration
+        );
         this.textShadow = parse(textShadow, declaration.textShadow);
         this.textTransform = parse(textTransform, declaration.textTransform);
         this.transform = parse(transform, declaration.transform);
         this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
         this.visibility = parse(visibility, declaration.visibility);
+        this.webkitTextStrokeColor = parse(webkitTextStrokeColor, declaration.webkitTextStrokeColor);
+        this.webkitTextStrokeWidth = parse(webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
         this.wordBreak = parse(wordBreak, declaration.wordBreak);
         this.zIndex = parse(zIndex, declaration.zIndex);
     }
@@ -292,7 +304,6 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
                     const value = parser.parseComponentValue();
                     return isLengthPercentage(value) ? value : ZERO_LENGTH;
             }
+            break;
     }
-
-    throw new Error(`Attempting to parse unsupported css format type ${descriptor.format}`);
 };

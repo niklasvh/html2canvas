@@ -21,7 +21,7 @@ const outputPath = resolve(__dirname, '../', process.argv[3]);
 const ignoredTests = readFileSync(path)
     .toString()
     .split(/\r\n|\r|\n/)
-    .filter(l => l.length)
+    .filter((l) => l.length)
     .reduce((acc: {[key: string]: string[]}, l) => {
         const m = l.match(/^(\[(.+)\])?(.+)$/i);
         if (m) {

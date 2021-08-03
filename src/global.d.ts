@@ -1,7 +1,7 @@
 interface CSSStyleDeclaration {
-    textDecorationColor: string | null;
-    textDecorationLine: string | null;
-    overflowWrap: string | null;
+    textDecorationColor: string;
+    textDecorationLine: string;
+    overflowWrap: string;
 }
 
 interface DocumentType extends Node, ChildNode {
@@ -9,5 +9,6 @@ interface DocumentType extends Node, ChildNode {
 }
 
 interface Document {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fonts: any;
 }
