@@ -93,12 +93,12 @@ testList
 
                 const canvas: HTMLCanvasElement = await contentWindow
                     // @ts-ignore
-                    .html2canvas(contentWindow.h2cSelector ?? contentWindow.document.documentElement, {
+                    .html2canvas(contentWindow.forceElement || contentWindow.document.documentElement, {
                         removeContainer: true,
                         backgroundColor: '#ffffff',
                         proxy: 'http://localhost:8081/proxy',
                         // @ts-ignore
-                        ...(contentWindow.h2cOptions ?? {})
+                        ...(contentWindow.h2cOptions || {})
                     });
 
                 try {
