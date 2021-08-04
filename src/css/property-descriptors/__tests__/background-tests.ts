@@ -16,6 +16,7 @@ const backgroundImageParse = (context: Context, value: string) =>
 describe('property-descriptors', () => {
     let context: Context;
     beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         context = new Context({} as any, {} as any);
     });
     describe('background-image', () => {

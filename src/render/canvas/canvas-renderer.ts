@@ -246,6 +246,7 @@ export class CanvasRenderer extends Renderer {
                         if (styles.webkitTextStrokeWidth && text.text.trim().length) {
                             this.ctx.strokeStyle = asString(styles.webkitTextStrokeColor);
                             this.ctx.lineWidth = styles.webkitTextStrokeWidth;
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             this.ctx.lineJoin = !!(window as any).chrome ? 'miter' : 'round';
                             this.ctx.strokeText(text.text, text.bounds.left, text.bounds.top + baseline);
                         }

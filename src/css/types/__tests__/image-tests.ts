@@ -16,6 +16,7 @@ import {Context} from '../../../core/context';
 describe('types', () => {
     let context: Context;
     beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         context = new Context({} as any, {} as any);
     });
 
