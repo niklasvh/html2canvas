@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>scroll 2 test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        h2cOptions = {
+            scrollX: 0,
+            scrollY: -50
+        };
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        #div1 {
+            position: absolute;
+            left: 350px;
+            top: 250px;
+            width: 100px;
+            height: 100px;
+            background: green;
+        }
+
+        body, html {
+            background: red;
+            height: 200vh;
+            width: 100vh;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="div1">
+    great success
+</div>
+
+<script>
+    var forceElement = document.querySelector('#div1');
+    h2cSelector = forceElement;
+    window.scrollTo(0, 50);
+</script>
+</body>
+</html>
