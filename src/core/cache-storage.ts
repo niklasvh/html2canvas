@@ -1,28 +1,9 @@
 import {FEATURES} from './features';
-import {Logger} from './logger';
+import type {Context} from './context';
 
 export class CacheStorage {
-    private static _caches: {[key: string]: Cache} = {};
     private static _link?: HTMLAnchorElement;
     private static _origin = 'about:blank';
-    private static _current: Cache | null = null;
-
-    static create(name: string, options: ResourceOptions): Cache {
-        return (CacheStorage._caches[name] = new Cache(name, options));
-    }
-
-    static destroy(name: string): void {
-        delete CacheStorage._caches[name];
-    }
-
-    static open(name: string): Cache {
-        const cache = CacheStorage._caches[name];
-        if (typeof cache !== 'undefined') {
-            return cache;
-        }
-
-        throw new Error(`Cache with key "${name}" not found`);
-    }
 
     static getOrigin(url: string): string {
         const link = CacheStorage._link;
@@ -43,22 +24,6 @@ export class CacheStorage {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
     }
-
-    static getInstance(): Cache {
-        const current = CacheStorage._current;
-        if (current === null) {
-            throw new Error(`No cache instance attached`);
-        }
-        return current;
-    }
-
-    static attachInstance(cache: Cache): void {
-        CacheStorage._current = cache;
-    }
-
-    static detachInstance(): void {
-        CacheStorage._current = null;
-    }
 }
 
 export interface ResourceOptions {
@@ -70,15 +35,9 @@ export interface ResourceOptions {
 
 export class Cache {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private readonly _cache: {[key: string]: Promise<any>};
-    private readonly _options: ResourceOptions;
-    private readonly id: string;
+    private readonly _cache: {[key: string]: Promise<any>} = {};
 
-    constructor(id: string, options: ResourceOptions) {
-        this.id = id;
-        this._options = options;
-        this._cache = {};
-    }
+    constructor(private readonly context: Context, private readonly _options: ResourceOptions) {}
 
     addImage(src: string): Promise<void> {
         const result = Promise.resolve();
@@ -128,7 +87,7 @@ export class Cache {
             src = await this.proxy(src);
         }
 
-        Logger.getInstance(this.id).debug(`Added image ${key.substring(0, 256)}`);
+        this.context.logger.debug(`Added image ${key.substring(0, 256)}`);
 
         return await new Promise((resolve, reject) => {
             const img = new Image();

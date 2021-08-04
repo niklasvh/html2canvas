@@ -1,14 +1,15 @@
 import {CSSParsedDeclaration} from '../css/index';
 import {TEXT_TRANSFORM} from '../css/property-descriptors/text-transform';
 import {parseTextBounds, TextBounds} from '../css/layout/text';
+import {Context} from '../core/context';
 
 export class TextContainer {
     text: string;
     textBounds: TextBounds[];
 
-    constructor(node: Text, styles: CSSParsedDeclaration) {
+    constructor(context: Context, node: Text, styles: CSSParsedDeclaration) {
         this.text = transform(node.data, styles.textTransform);
-        this.textBounds = parseTextBounds(this.text, styles, node);
+        this.textBounds = parseTextBounds(context, this.text, styles, node);
     }
 }
 

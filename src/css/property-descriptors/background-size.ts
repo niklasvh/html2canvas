@@ -2,6 +2,7 @@ import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IProper
 import {CSSValue, isIdentToken, parseFunctionArgs} from '../syntax/parser';
 import {isLengthPercentage, LengthPercentage} from '../types/length-percentage';
 import {StringValueToken} from '../syntax/tokenizer';
+import {Context} from '../../core/context';
 
 export enum BACKGROUND_SIZE {
     AUTO = 'auto',
@@ -17,7 +18,7 @@ export const backgroundSize: IPropertyListDescriptor<BackgroundSize> = {
     initialValue: '0',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): BackgroundSize => {
+    parse: (_context: Context, tokens: CSSValue[]): BackgroundSize => {
         return parseFunctionArgs(tokens).map((values) => values.filter(isBackgroundSizeInfoToken));
     }
 };

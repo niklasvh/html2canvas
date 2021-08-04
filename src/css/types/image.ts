@@ -4,11 +4,11 @@ import {Color} from './color';
 import {linearGradient} from './functions/linear-gradient';
 import {prefixLinearGradient} from './functions/-prefix-linear-gradient';
 import {ITypeDescriptor} from '../ITypeDescriptor';
-import {CacheStorage} from '../../core/cache-storage';
 import {LengthPercentage} from './length-percentage';
 import {webkitGradient} from './functions/-webkit-gradient';
 import {radialGradient} from './functions/radial-gradient';
 import {prefixRadialGradient} from './functions/-prefix-radial-gradient';
+import {Context} from '../../core/context';
 
 export enum CSSImageType {
     URL,
@@ -79,10 +79,10 @@ export interface CSSRadialGradientImage extends ICSSGradientImage {
 
 export const image: ITypeDescriptor<ICSSImage> = {
     name: 'image',
-    parse: (value: CSSValue): ICSSImage => {
+    parse: (context: Context, value: CSSValue): ICSSImage => {
         if (value.type === TokenType.URL_TOKEN) {
             const image: CSSURLImage = {url: value.value, type: CSSImageType.URL};
-            CacheStorage.getInstance().addImage(value.value);
+            context.cache.addImage(value.value);
             return image;
         }
 
@@ -91,7 +91,7 @@ export const image: ITypeDescriptor<ICSSImage> = {
             if (typeof imageFunction === 'undefined') {
                 throw new Error(`Attempting to parse an unsupported image function "${value.name}"`);
             }
-            return imageFunction(value.values);
+            return imageFunction(context, value.values);
         }
 
         throw new Error(`Unsupported image type`);
@@ -102,7 +102,7 @@ export function isSupportedImage(value: CSSValue): boolean {
     return value.type !== TokenType.FUNCTION || !!SUPPORTED_IMAGE_FUNCTIONS[value.name];
 }
 
-const SUPPORTED_IMAGE_FUNCTIONS: Record<string, (args: CSSValue[]) => ICSSImage> = {
+const SUPPORTED_IMAGE_FUNCTIONS: Record<string, (context: Context, args: CSSValue[]) => ICSSImage> = {
     'linear-gradient': linearGradient,
     '-moz-linear-gradient': prefixLinearGradient,
     '-ms-linear-gradient': prefixLinearGradient,

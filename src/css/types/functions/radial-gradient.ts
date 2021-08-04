@@ -10,6 +10,7 @@ import {
 import {parseColorStop} from './gradient';
 import {FIFTY_PERCENT, HUNDRED_PERCENT, isLengthPercentage, LengthPercentage, ZERO_LENGTH} from '../length-percentage';
 import {isLength} from '../length';
+import {Context} from '../../../core/context';
 export const CLOSEST_SIDE = 'closest-side';
 export const FARTHEST_SIDE = 'farthest-side';
 export const CLOSEST_CORNER = 'closest-corner';
@@ -19,7 +20,7 @@ export const ELLIPSE = 'ellipse';
 export const COVER = 'cover';
 export const CONTAIN = 'contain';
 
-export const radialGradient = (tokens: CSSValue[]): CSSRadialGradientImage => {
+export const radialGradient = (context: Context, tokens: CSSValue[]): CSSRadialGradientImage => {
     let shape: CSSRadialShape = CSSRadialShape.CIRCLE;
     let size: CSSRadialSize = CSSRadialExtent.FARTHEST_CORNER;
     const stops: UnprocessedGradientColorStop[] = [];
@@ -85,7 +86,7 @@ export const radialGradient = (tokens: CSSValue[]): CSSRadialGradientImage => {
         }
 
         if (isColorStop) {
-            const colorStop = parseColorStop(arg);
+            const colorStop = parseColorStop(context, arg);
             stops.push(colorStop);
         }
     });

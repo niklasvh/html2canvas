@@ -4,9 +4,10 @@ import {color, COLORS} from '../../types/color';
 import {textShadow} from '../text-shadow';
 import {FLAG_INTEGER, DimensionToken, TokenType} from '../../syntax/tokenizer';
 import {ZERO_LENGTH} from '../../types/length-percentage';
+import {Context} from '../../../core/context';
 
-const textShadowParse = (value: string) => textShadow.parse(Parser.parseValues(value));
-const colorParse = (value: string) => color.parse(Parser.parseValue(value));
+const textShadowParse = (value: string) => textShadow.parse({} as Context, Parser.parseValues(value));
+const colorParse = (value: string) => color.parse({} as Context, Parser.parseValue(value));
 const dimension = (number: number, unit: string): DimensionToken => ({
     flags: FLAG_INTEGER,
     number,

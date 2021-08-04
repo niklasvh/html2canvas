@@ -1,4 +1,5 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {Context} from '../../core/context';
 export enum FONT_STYLE {
     NORMAL = 'normal',
     ITALIC = 'italic',
@@ -10,7 +11,7 @@ export const fontStyle: IPropertyIdentValueDescriptor<FONT_STYLE> = {
     initialValue: 'normal',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (overflow: string) => {
+    parse: (_context: Context, overflow: string) => {
         switch (overflow) {
             case 'oblique':
                 return FONT_STYLE.OBLIQUE;
