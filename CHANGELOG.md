@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.2.0](https://github.com/niklasvh/html2canvas/compare/v1.1.5...v1.2.0) (2021-08-04)
+
+
+### fix
+
+* element cropping & scrolling (#2625) ([878e37a](https://github.com/niklasvh/html2canvas/commit/878e37a24272d0412fe589975ef8eed931c56e0b)), closes [#2625](https://github.com/niklasvh/html2canvas/issues/2625)
+* overflow-wrap break-word (#2626) ([95a46b0](https://github.com/niklasvh/html2canvas/commit/95a46b00c53563722c035a0e45fdf5fb507275e4)), closes [#2626](https://github.com/niklasvh/html2canvas/issues/2626)
+
+### test
+
+* element with scrolled window (#2624) ([1338c7b](https://github.com/niklasvh/html2canvas/commit/1338c7b203535d53509416358d74014200a994eb)), closes [#2624](https://github.com/niklasvh/html2canvas/issues/2624)
+
+
+
 ## [1.1.5](https://github.com/niklasvh/html2canvas/compare/v1.1.4...v1.1.5) (2021-08-02)
 
 
