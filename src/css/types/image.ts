@@ -94,12 +94,15 @@ export const image: ITypeDescriptor<ICSSImage> = {
             return imageFunction(context, value.values);
         }
 
-        throw new Error(`Unsupported image type`);
+        throw new Error(`Unsupported image type ${value.type}`);
     }
 };
 
 export function isSupportedImage(value: CSSValue): boolean {
-    return value.type !== TokenType.FUNCTION || !!SUPPORTED_IMAGE_FUNCTIONS[value.name];
+    return (
+        !(value.type === TokenType.IDENT_TOKEN && value.value === 'none') &&
+        (value.type !== TokenType.FUNCTION || !!SUPPORTED_IMAGE_FUNCTIONS[value.name])
+    );
 }
 
 const SUPPORTED_IMAGE_FUNCTIONS: Record<string, (context: Context, args: CSSValue[]) => ICSSImage> = {
