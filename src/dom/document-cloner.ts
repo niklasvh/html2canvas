@@ -77,14 +77,6 @@ export class DocumentCloner {
             this.scrolledElements.forEach(restoreNodeScroll);
             if (cloneWindow) {
                 cloneWindow.scrollTo(windowSize.left, windowSize.top);
-                if (
-                    /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
-                    (cloneWindow.scrollY !== windowSize.top || cloneWindow.scrollX !== windowSize.left)
-                ) {
-                    documentClone.documentElement.style.top = -windowSize.top + 'px';
-                    documentClone.documentElement.style.left = -windowSize.left + 'px';
-                    documentClone.documentElement.style.position = 'absolute';
-                }
             }
 
             const onclone = this.options.onclone;
