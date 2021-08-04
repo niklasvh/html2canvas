@@ -1,5 +1,6 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken, isNumberToken, nonWhiteSpace} from '../syntax/parser';
+import {Context} from '../../core/context';
 
 export interface COUNTER_RESET {
     counter: string;
@@ -13,7 +14,7 @@ export const counterReset: IPropertyListDescriptor<CounterReset> = {
     initialValue: 'none',
     prefix: true,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]) => {
+    parse: (_context: Context, tokens: CSSValue[]) => {
         if (tokens.length === 0) {
             return [];
         }

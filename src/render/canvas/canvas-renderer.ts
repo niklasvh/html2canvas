@@ -1,6 +1,5 @@
 import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
 import {asString, Color, isTransparent} from '../../css/types/color';
-import {Logger} from '../../core/logger';
 import {ElementContainer} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css/index';
@@ -17,7 +16,6 @@ import {
     parsePathForBorderDoubleOuter,
     parsePathForBorderStroke
 } from '../border';
-import {Cache} from '../../core/cache-storage';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
 import {TextBounds} from '../../css/layout/text';
@@ -44,39 +42,34 @@ import {SelectElementContainer} from '../../dom/elements/select-element-containe
 import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element-container';
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
+import {Renderer} from '../renderer';
+import {Context} from '../../core/context';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
 };
 
 export interface RenderOptions {
-    id: string;
     scale: number;
     canvas?: HTMLCanvasElement;
     x: number;
     y: number;
-    scrollX: number;
-    scrollY: number;
     width: number;
     height: number;
-    windowWidth: number;
-    windowHeight: number;
-    cache: Cache;
 }
 
 const MASK_OFFSET = 10000;
 
-export class CanvasRenderer {
+export class CanvasRenderer extends Renderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    options: RenderConfigurations;
     private readonly _activeEffects: IElementEffect[] = [];
     private readonly fontMetrics: FontMetrics;
 
-    constructor(options: RenderConfigurations) {
+    constructor(context: Context, options: RenderConfigurations) {
+        super(context, options);
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-        this.options = options;
         if (!options.canvas) {
             this.canvas.width = Math.floor(options.width * options.scale);
             this.canvas.height = Math.floor(options.height * options.scale);
@@ -85,11 +78,11 @@ export class CanvasRenderer {
         }
         this.fontMetrics = new FontMetrics(document);
         this.ctx.scale(this.options.scale, this.options.scale);
-        this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
+        this.ctx.translate(-options.x, -options.y);
         this.ctx.textBaseline = 'bottom';
         this._activeEffects = [];
-        Logger.getInstance(options.id).debug(
-            `Canvas renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
+        this.context.logger.debug(
+            `Canvas renderer initialized (${options.width}x${options.height}) with scale ${options.scale}`
         );
     }
 
@@ -253,6 +246,7 @@ export class CanvasRenderer {
                         if (styles.webkitTextStrokeWidth && text.text.trim().length) {
                             this.ctx.strokeStyle = asString(styles.webkitTextStrokeColor);
                             this.ctx.lineWidth = styles.webkitTextStrokeWidth;
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             this.ctx.lineJoin = !!(window as any).chrome ? 'miter' : 'round';
                             this.ctx.strokeText(text.text, text.bounds.left, text.bounds.top + baseline);
                         }
@@ -302,10 +296,10 @@ export class CanvasRenderer {
 
         if (container instanceof ImageElementContainer) {
             try {
-                const image = await this.options.cache.match(container.src);
+                const image = await this.context.cache.match(container.src);
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
-                Logger.getInstance(this.options.id).error(`Error loading image ${container.src}`);
+                this.context.logger.error(`Error loading image ${container.src}`);
             }
         }
 
@@ -315,27 +309,21 @@ export class CanvasRenderer {
 
         if (container instanceof SVGElementContainer) {
             try {
-                const image = await this.options.cache.match(container.svg);
+                const image = await this.context.cache.match(container.svg);
                 this.renderReplacedElement(container, curves, image);
             } catch (e) {
-                Logger.getInstance(this.options.id).error(`Error loading svg ${container.svg.substring(0, 255)}`);
+                this.context.logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
         }
 
         if (container instanceof IFrameElementContainer && container.tree) {
-            const iframeRenderer = new CanvasRenderer({
-                id: this.options.id,
+            const iframeRenderer = new CanvasRenderer(this.context, {
                 scale: this.options.scale,
                 backgroundColor: container.backgroundColor,
                 x: 0,
                 y: 0,
-                scrollX: 0,
-                scrollY: 0,
                 width: container.width,
-                height: container.height,
-                cache: this.options.cache,
-                windowWidth: container.width,
-                windowHeight: container.height
+                height: container.height
             });
 
             const canvas = await iframeRenderer.render(container.tree);
@@ -444,10 +432,10 @@ export class CanvasRenderer {
                     let image;
                     const url = (img as CSSURLImage).url;
                     try {
-                        image = await this.options.cache.match(url);
+                        image = await this.context.cache.match(url);
                         this.ctx.drawImage(image, container.bounds.left - (image.width + 10), container.bounds.top);
                     } catch (e) {
-                        Logger.getInstance(this.options.id).error(`Error loading list-style-image ${url}`);
+                        this.context.logger.error(`Error loading list-style-image ${url}`);
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
@@ -592,9 +580,9 @@ export class CanvasRenderer {
                 let image;
                 const url = (backgroundImage as CSSURLImage).url;
                 try {
-                    image = await this.options.cache.match(url);
+                    image = await this.context.cache.match(url);
                 } catch (e) {
-                    Logger.getInstance(this.options.id).error(`Error loading background-image ${url}`);
+                    this.context.logger.error(`Error loading background-image ${url}`);
                 }
 
                 if (image) {
@@ -902,12 +890,7 @@ export class CanvasRenderer {
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {
         if (this.options.backgroundColor) {
             this.ctx.fillStyle = asString(this.options.backgroundColor);
-            this.ctx.fillRect(
-                this.options.x - this.options.scrollX,
-                this.options.y - this.options.scrollY,
-                this.options.width,
-                this.options.height
-            );
+            this.ctx.fillRect(this.options.x, this.options.y, this.options.width, this.options.height);
         }
 
         const stack = parseStackingContexts(element);

@@ -33,22 +33,6 @@ export class Logger {
         return Date.now() - this.start;
     }
 
-    static create(options: LoggerOptions): void {
-        Logger.instances[options.id] = new Logger(options);
-    }
-
-    static destroy(id: string): void {
-        delete Logger.instances[id];
-    }
-
-    static getInstance(id: string): Logger {
-        const instance = Logger.instances[id];
-        if (typeof instance === 'undefined') {
-            throw new Error(`No logger instance found with id ${id}`);
-        }
-        return instance;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     info(...args: unknown[]): void {
         if (this.enabled) {
@@ -56,6 +40,19 @@ export class Logger {
             if (typeof window !== 'undefined' && window.console && typeof console.info === 'function') {
                 // eslint-disable-next-line no-console
                 console.info(this.id, `${this.getTime()}ms`, ...args);
+            }
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    warn(...args: unknown[]): void {
+        if (this.enabled) {
+            // eslint-disable-next-line no-console
+            if (typeof window !== 'undefined' && window.console && typeof console.warn === 'function') {
+                // eslint-disable-next-line no-console
+                console.warn(this.id, `${this.getTime()}ms`, ...args);
+            } else {
+                this.info(...args);
             }
         }
     }

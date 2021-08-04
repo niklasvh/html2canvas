@@ -1,8 +1,9 @@
 import {deepEqual} from 'assert';
 import {Parser} from '../../syntax/parser';
 import {fontFamily} from '../font-family';
+import {Context} from '../../../core/context';
 
-const fontFamilyParse = (value: string) => fontFamily.parse(Parser.parseValues(value));
+const fontFamilyParse = (value: string) => fontFamily.parse({} as Context, Parser.parseValues(value));
 
 describe('property-descriptors', () => {
     describe('font-family', () => {

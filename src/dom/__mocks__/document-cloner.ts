@@ -2,7 +2,14 @@ export class DocumentCloner {
     clonedReferenceElement?: HTMLElement;
 
     constructor() {
-        this.clonedReferenceElement = {} as HTMLElement;
+        this.clonedReferenceElement = {
+            ownerDocument: {
+                defaultView: {
+                    pageXOffset: 12,
+                    pageYOffset: 34
+                }
+            }
+        } as HTMLElement;
     }
 
     toIFrame(): Promise<HTMLIFrameElement> {

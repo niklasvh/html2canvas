@@ -1,5 +1,6 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
+import {Context} from '../../core/context';
 export enum PAINT_ORDER_LAYER {
     FILL,
     STROKE,
@@ -13,9 +14,9 @@ export const paintOrder: IPropertyListDescriptor<PaintOrder> = {
     initialValue: 'normal',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): PaintOrder => {
+    parse: (_context: Context, tokens: CSSValue[]): PaintOrder => {
         const DEFAULT_VALUE = [PAINT_ORDER_LAYER.FILL, PAINT_ORDER_LAYER.STROKE, PAINT_ORDER_LAYER.MARKERS];
-        let layers: PaintOrder = [];
+        const layers: PaintOrder = [];
 
         tokens.filter(isIdentToken).forEach((token) => {
             switch (token.value) {

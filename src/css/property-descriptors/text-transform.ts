@@ -1,4 +1,5 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {Context} from '../../core/context';
 export enum TEXT_TRANSFORM {
     NONE = 0,
     LOWERCASE = 1,
@@ -11,7 +12,7 @@ export const textTransform: IPropertyIdentValueDescriptor<TEXT_TRANSFORM> = {
     initialValue: 'none',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (textTransform: string) => {
+    parse: (_context: Context, textTransform: string) => {
         switch (textTransform) {
             case 'uppercase':
                 return TEXT_TRANSFORM.UPPERCASE;

@@ -12,8 +12,12 @@ import {deg} from '../angle';
 import {TokenType} from '../../syntax/tokenizer';
 import {color as colorType} from '../color';
 import {HUNDRED_PERCENT, LengthPercentage, ZERO_LENGTH} from '../length-percentage';
+import {Context} from '../../../core/context';
 
-export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage | CSSRadialGradientImage => {
+export const webkitGradient = (
+    context: Context,
+    tokens: CSSValue[]
+): CSSLinearGradientImage | CSSRadialGradientImage => {
     const angle = deg(180);
     const stops: UnprocessedGradientColorStop[] = [];
     let type = CSSImageType.LINEAR_GRADIENT;
@@ -34,15 +38,15 @@ export const webkitGradient = (tokens: CSSValue[]): CSSLinearGradientImage | CSS
 
         if (firstToken.type === TokenType.FUNCTION) {
             if (firstToken.name === 'from') {
-                const color = colorType.parse(firstToken.values[0]);
+                const color = colorType.parse(context, firstToken.values[0]);
                 stops.push({stop: ZERO_LENGTH, color});
             } else if (firstToken.name === 'to') {
-                const color = colorType.parse(firstToken.values[0]);
+                const color = colorType.parse(context, firstToken.values[0]);
                 stops.push({stop: HUNDRED_PERCENT, color});
             } else if (firstToken.name === 'color-stop') {
                 const values = firstToken.values.filter(nonFunctionArgSeparator);
                 if (values.length === 2) {
-                    const color = colorType.parse(values[1]);
+                    const color = colorType.parse(context, values[1]);
                     const stop = values[0];
                     if (isNumberToken(stop)) {
                         stops.push({
