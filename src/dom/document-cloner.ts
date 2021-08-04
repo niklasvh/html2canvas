@@ -13,18 +13,24 @@ import {
     isTextareaElement,
     isTextNode
 } from './node-parser';
-import {Logger} from '../core/logger';
 import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
 import {TokenType} from '../css/syntax/tokenizer';
 import {CounterState, createCounterText} from '../css/types/functions/counter';
 import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-style-type';
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
+import {Context} from '../context';
 
 export interface CloneOptions {
-    id: string;
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document, element: HTMLElement) => void;
+}
+
+export interface WindowOptions {
+    scrollX: number;
+    scrollY: number;
+    windowWidth: number;
+    windowHeight: number;
 }
 
 export type CloneConfigurations = CloneOptions & {
@@ -36,15 +42,17 @@ const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 
 export class DocumentCloner {
     private readonly scrolledElements: [Element, number, number][];
-    private readonly options: CloneConfigurations;
     private readonly referenceElement: HTMLElement;
     clonedReferenceElement?: HTMLElement;
     private readonly documentElement: HTMLElement;
     private readonly counters: CounterState;
     private quoteDepth: number;
 
-    constructor(element: HTMLElement, options: CloneConfigurations) {
-        this.options = options;
+    constructor(
+        private readonly context: Context,
+        element: HTMLElement,
+        private readonly options: CloneConfigurations
+    ) {
         this.scrolledElements = [];
         this.referenceElement = element;
         this.counters = new CounterState();
@@ -77,6 +85,18 @@ export class DocumentCloner {
             this.scrolledElements.forEach(restoreNodeScroll);
             if (cloneWindow) {
                 cloneWindow.scrollTo(windowSize.left, windowSize.top);
+                if (
+                    /(iPad|iPhone|iPod)/g.test(navigator.userAgent) &&
+                    (cloneWindow.scrollY !== windowSize.top || cloneWindow.scrollX !== windowSize.left)
+                ) {
+                    this.context.logger.warn('Unable to restore scroll position for cloned document');
+                    this.context.windowBounds = this.context.windowBounds.add(
+                        cloneWindow.scrollX - windowSize.left,
+                        cloneWindow.scrollY - windowSize.top,
+                        0,
+                        0
+                    );
+                }
             }
 
             const onclone = this.options.onclone;
@@ -154,7 +174,7 @@ export class DocumentCloner {
             }
         } catch (e) {
             // accessing node.sheet.cssRules throws a DOMException
-            Logger.getInstance(this.options.id).error('Unable to access cssRules property', e);
+            this.context.logger.error('Unable to access cssRules property', e);
             if (e.name !== 'SecurityError') {
                 throw e;
             }
@@ -169,7 +189,7 @@ export class DocumentCloner {
                 img.src = canvas.toDataURL();
                 return img;
             } catch (e) {
-                Logger.getInstance(this.options.id).info(`Unable to clone canvas contents, canvas is tainted`);
+                this.context.logger.info(`Unable to clone canvas contents, canvas is tainted`);
             }
         }
 

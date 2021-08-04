@@ -1,16 +1,16 @@
 import {ElementContainer} from '../element-container';
-import {CacheStorage} from '../../core/cache-storage';
 import {parseBounds} from '../../css/layout/bounds';
+import {Context} from '../../context';
 
 export class SVGElementContainer extends ElementContainer {
     svg: string;
     intrinsicWidth: number;
     intrinsicHeight: number;
 
-    constructor(img: SVGSVGElement) {
-        super(img);
+    constructor(context: Context, img: SVGSVGElement) {
+        super(context, img);
         const s = new XMLSerializer();
-        const bounds = parseBounds(img);
+        const bounds = parseBounds(context, img);
         img.setAttribute('width', `${bounds.width}px`);
         img.setAttribute('height', `${bounds.height}px`);
 
@@ -18,6 +18,6 @@ export class SVGElementContainer extends ElementContainer {
         this.intrinsicWidth = img.width.baseVal.value;
         this.intrinsicHeight = img.height.baseVal.value;
 
-        CacheStorage.getInstance().addImage(this.svg);
+        this.context.cache.addImage(this.svg);
     }
 }

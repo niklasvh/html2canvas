@@ -1,7 +1,8 @@
 import {deepStrictEqual, fail} from 'assert';
 import {FEATURES} from '../features';
 import {CacheStorage} from '../cache-storage';
-import {Logger} from '../logger';
+import {Context} from '../../context';
+import {Bounds} from '../../css/layout/bounds';
 
 const proxy = 'http://example.com/proxy';
 
@@ -35,14 +36,18 @@ const createMockContext = (origin: string, opts = {}) => {
     };
 
     CacheStorage.setContext(context as Window);
-    Logger.create({id: 'test', enabled: false});
-    return CacheStorage.create('test', {
-        imageTimeout: 0,
-        useCORS: false,
-        allowTaint: false,
-        proxy,
-        ...opts
-    });
+
+    return new Context(
+        {
+            logging: false,
+            imageTimeout: 0,
+            useCORS: false,
+            allowTaint: false,
+            proxy,
+            ...opts
+        },
+        new Bounds(0, 0, 0, 0)
+    );
 };
 
 const images: ImageMock[] = [];
@@ -121,7 +126,7 @@ describe('cache-storage', () => {
         images.splice(0, images.length);
     });
     it('addImage adds images to cache', async () => {
-        const cache = createMockContext('http://example.com', {proxy: null});
+        const {cache} = createMockContext('http://example.com', {proxy: null});
         await cache.addImage('http://example.com/test.jpg');
         await cache.addImage('http://example.com/test2.jpg');
 
@@ -131,7 +136,7 @@ describe('cache-storage', () => {
     });
 
     it('addImage should not add duplicate entries', async () => {
-        const cache = createMockContext('http://example.com');
+        const {cache} = createMockContext('http://example.com');
         await cache.addImage('http://example.com/test.jpg');
         await cache.addImage('http://example.com/test.jpg');
 
@@ -141,7 +146,7 @@ describe('cache-storage', () => {
 
     describe('svg', () => {
         it('should add svg images correctly', async () => {
-            const cache = createMockContext('http://example.com');
+            const {cache} = createMockContext('http://example.com');
             await cache.addImage('http://example.com/test.svg');
             await cache.addImage('http://example.com/test2.svg');
 
@@ -152,7 +157,7 @@ describe('cache-storage', () => {
 
         it('should omit svg images if not supported', async () => {
             setFeatures({SUPPORT_SVG_DRAWING: false});
-            const cache = createMockContext('http://example.com');
+            const {cache} = createMockContext('http://example.com');
             await cache.addImage('http://example.com/test.svg');
             await cache.addImage('http://example.com/test2.svg');
 
@@ -162,7 +167,7 @@ describe('cache-storage', () => {
 
     describe('cross-origin', () => {
         it('addImage should not add images it cannot load/render', async () => {
-            const cache = createMockContext('http://example.com', {
+            const {cache} = createMockContext('http://example.com', {
                 proxy: undefined
             });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
@@ -170,7 +175,7 @@ describe('cache-storage', () => {
         });
 
         it('addImage should add images if tainting enabled', async () => {
-            const cache = createMockContext('http://example.com', {
+            const {cache} = createMockContext('http://example.com', {
                 allowTaint: true,
                 proxy: undefined
             });
@@ -181,7 +186,7 @@ describe('cache-storage', () => {
         });
 
         it('addImage should add images if cors enabled', async () => {
-            const cache = createMockContext('http://example.com', {useCORS: true});
+            const {cache} = createMockContext('http://example.com', {useCORS: true});
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
@@ -191,7 +196,7 @@ describe('cache-storage', () => {
         it('addImage should not add images if cors enabled but not supported', async () => {
             setFeatures({SUPPORT_CORS_IMAGES: false});
 
-            const cache = createMockContext('http://example.com', {
+            const {cache} = createMockContext('http://example.com', {
                 useCORS: true,
                 proxy: undefined
             });
@@ -200,7 +205,7 @@ describe('cache-storage', () => {
         });
 
         it('addImage should not add images to proxy if cors enabled', async () => {
-            const cache = createMockContext('http://example.com', {useCORS: true});
+            const {cache} = createMockContext('http://example.com', {useCORS: true});
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
@@ -208,7 +213,7 @@ describe('cache-storage', () => {
         });
 
         it('addImage should use proxy ', async () => {
-            const cache = createMockContext('http://example.com');
+            const {cache} = createMockContext('http://example.com');
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(xhr.length, 1);
             deepStrictEqual(
@@ -222,7 +227,7 @@ describe('cache-storage', () => {
         });
 
         it('proxy should respect imageTimeout', async () => {
-            const cache = createMockContext('http://example.com', {
+            const {cache} = createMockContext('http://example.com', {
                 imageTimeout: 10
             });
             await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
@@ -244,7 +249,7 @@ describe('cache-storage', () => {
     });
 
     it('match should return cache entry', async () => {
-        const cache = createMockContext('http://example.com');
+        const {cache} = createMockContext('http://example.com');
         await cache.addImage('http://example.com/test.jpg');
 
         if (images[0].onload) {
@@ -257,7 +262,7 @@ describe('cache-storage', () => {
     });
 
     it('image should respect imageTimeout', async () => {
-        const cache = createMockContext('http://example.com', {imageTimeout: 10});
+        const {cache} = createMockContext('http://example.com', {imageTimeout: 10});
         cache.addImage('http://example.com/test.jpg');
 
         try {
