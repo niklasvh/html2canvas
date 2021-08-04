@@ -19,7 +19,7 @@ import {CounterState, createCounterText} from '../css/types/functions/counter';
 import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-style-type';
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
-import {Context} from '../context';
+import {Context} from '../core/context';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
@@ -238,7 +238,7 @@ export class DocumentCloner {
                 createPseudoHideStyles(clone);
             }
 
-            const counters = this.counters.parse(new CSSParsedCounterDeclaration(style));
+            const counters = this.counters.parse(new CSSParsedCounterDeclaration(this.context, style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
             for (let child = node.firstChild; child; child = child.nextSibling) {
@@ -302,8 +302,8 @@ export class DocumentCloner {
             return;
         }
 
-        this.counters.parse(new CSSParsedCounterDeclaration(style));
-        const declaration = new CSSParsedPseudoDeclaration(style);
+        this.counters.parse(new CSSParsedCounterDeclaration(this.context, style));
+        const declaration = new CSSParsedPseudoDeclaration(this.context, style);
 
         const anonymousReplacedElement = document.createElement('html2canvaspseudoelement');
         copyCSSStyles(style, anonymousReplacedElement);
@@ -330,7 +330,7 @@ export class DocumentCloner {
                         const counterState = this.counters.getCounterValue(counter.value);
                         const counterType =
                             counterStyle && isIdentToken(counterStyle)
-                                ? listStyleType.parse(counterStyle.value)
+                                ? listStyleType.parse(this.context, counterStyle.value)
                                 : LIST_STYLE_TYPE.DECIMAL;
 
                         anonymousReplacedElement.appendChild(
@@ -343,7 +343,7 @@ export class DocumentCloner {
                         const counterStates = this.counters.getCounterValues(counter.value);
                         const counterType =
                             counterStyle && isIdentToken(counterStyle)
-                                ? listStyleType.parse(counterStyle.value)
+                                ? listStyleType.parse(this.context, counterStyle.value)
                                 : LIST_STYLE_TYPE.DECIMAL;
                         const separator = delim && delim.type === TokenType.STRING_TOKEN ? delim.value : '';
                         const text = counterStates

@@ -1,5 +1,5 @@
 import {ElementContainer} from '../element-container';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export class CanvasElementContainer extends ElementContainer {
     canvas: HTMLCanvasElement;

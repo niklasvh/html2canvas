@@ -1,8 +1,9 @@
 import {strictEqual} from 'assert';
 import {asString, color, isTransparent, pack} from '../color';
 import {Parser} from '../../syntax/parser';
+import {Context} from '../../../core/context';
 
-const parse = (value: string) => color.parse(Parser.parseValue(value));
+const parse = (value: string) => color.parse({} as Context, Parser.parseValue(value));
 
 describe('types', () => {
     describe('<color>', () => {

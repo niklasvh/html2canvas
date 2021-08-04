@@ -1,10 +1,9 @@
 import {FEATURES} from './features';
-import type {Context} from '../context';
+import type {Context} from './context';
 
 export class CacheStorage {
     private static _link?: HTMLAnchorElement;
     private static _origin = 'about:blank';
-    private static _current: Cache | null = null;
 
     static getOrigin(url: string): string {
         const link = CacheStorage._link;
@@ -24,22 +23,6 @@ export class CacheStorage {
     static setContext(window: Window): void {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
-    }
-
-    static getInstance(): Cache {
-        const current = CacheStorage._current;
-        if (current === null) {
-            throw new Error(`No cache instance attached`);
-        }
-        return current;
-    }
-
-    static attachInstance(cache: Cache): void {
-        CacheStorage._current = cache;
-    }
-
-    static detachInstance(): void {
-        CacheStorage._current = null;
     }
 }
 

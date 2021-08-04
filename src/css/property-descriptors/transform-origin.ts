@@ -2,6 +2,7 @@ import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IProper
 import {CSSValue} from '../syntax/parser';
 import {isLengthPercentage, LengthPercentage} from '../types/length-percentage';
 import {FLAG_INTEGER, TokenType} from '../syntax/tokenizer';
+import {Context} from '../../core/context';
 export type TransformOrigin = [LengthPercentage, LengthPercentage];
 
 const DEFAULT_VALUE: LengthPercentage = {
@@ -16,7 +17,7 @@ export const transformOrigin: IPropertyListDescriptor<TransformOrigin> = {
     initialValue: '50% 50%',
     prefix: true,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]) => {
+    parse: (_context: Context, tokens: CSSValue[]) => {
         const origins: LengthPercentage[] = tokens.filter(isLengthPercentage);
 
         if (origins.length !== 2) {

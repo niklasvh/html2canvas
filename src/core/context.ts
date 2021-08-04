@@ -1,6 +1,6 @@
-import {Logger} from './core/logger';
-import {Cache, ResourceOptions} from './core/cache-storage';
-import {Bounds} from './css/layout/bounds';
+import {Logger} from './logger';
+import {Cache, ResourceOptions} from './cache-storage';
+import {Bounds} from '../css/layout/bounds';
 
 export type ContextOptions = {
     logging: boolean;

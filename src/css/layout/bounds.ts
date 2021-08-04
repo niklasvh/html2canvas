@@ -1,4 +1,4 @@
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export class Bounds {
     constructor(readonly left: number, readonly top: number, readonly width: number, readonly height: number) {}

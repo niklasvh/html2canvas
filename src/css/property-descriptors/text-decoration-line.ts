@@ -1,5 +1,6 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
+import {Context} from '../../core/context';
 
 export const enum TEXT_DECORATION_LINE {
     NONE = 0,
@@ -16,7 +17,7 @@ export const textDecorationLine: IPropertyListDescriptor<TextDecorationLine> = {
     initialValue: 'none',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): TextDecorationLine => {
+    parse: (_context: Context, tokens: CSSValue[]): TextDecorationLine => {
         return tokens
             .filter(isIdentToken)
             .map((token) => {

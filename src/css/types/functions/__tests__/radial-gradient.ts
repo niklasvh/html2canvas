@@ -5,9 +5,10 @@ import {CSSImageType, CSSRadialExtent, CSSRadialShape} from '../../image';
 import {color} from '../../color';
 import {TokenType} from '../../../syntax/tokenizer';
 import {FIFTY_PERCENT, HUNDRED_PERCENT} from '../../length-percentage';
+import {Context} from '../../../../core/context';
 
-const parse = (value: string) => radialGradient((Parser.parseValues(value)[0] as CSSFunction).values);
-const colorParse = (value: string) => color.parse(Parser.parseValue(value));
+const parse = (value: string) => radialGradient({} as Context, (Parser.parseValues(value)[0] as CSSFunction).values);
+const colorParse = (value: string) => color.parse({} as Context, Parser.parseValue(value));
 
 describe('functions', () => {
     describe('radial-gradient', () => {

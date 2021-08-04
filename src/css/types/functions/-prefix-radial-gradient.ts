@@ -20,8 +20,9 @@ import {
     FARTHEST_CORNER,
     FARTHEST_SIDE
 } from './radial-gradient';
+import {Context} from '../../../core/context';
 
-export const prefixRadialGradient = (tokens: CSSValue[]): CSSRadialGradientImage => {
+export const prefixRadialGradient = (context: Context, tokens: CSSValue[]): CSSRadialGradientImage => {
     let shape: CSSRadialShape = CSSRadialShape.CIRCLE;
     let size: CSSRadialSize = CSSRadialExtent.FARTHEST_CORNER;
     const stops: UnprocessedGradientColorStop[] = [];
@@ -90,7 +91,7 @@ export const prefixRadialGradient = (tokens: CSSValue[]): CSSRadialGradientImage
         }
 
         if (isColorStop) {
-            const colorStop = parseColorStop(arg);
+            const colorStop = parseColorStop(context, arg);
             stops.push(colorStop);
         }
     });

@@ -76,6 +76,7 @@ import {boxShadow} from './property-descriptors/box-shadow';
 import {paintOrder} from './property-descriptors/paint-order';
 import {webkitTextStrokeColor} from './property-descriptors/webkit-text-stroke-color';
 import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-stroke-width';
+import {Context} from '../core/context';
 
 export class CSSParsedDeclaration {
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
@@ -143,75 +144,80 @@ export class CSSParsedDeclaration {
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
 
-    constructor(declaration: CSSStyleDeclaration) {
-        this.backgroundClip = parse(backgroundClip, declaration.backgroundClip);
-        this.backgroundColor = parse(backgroundColor, declaration.backgroundColor);
-        this.backgroundImage = parse(backgroundImage, declaration.backgroundImage);
-        this.backgroundOrigin = parse(backgroundOrigin, declaration.backgroundOrigin);
-        this.backgroundPosition = parse(backgroundPosition, declaration.backgroundPosition);
-        this.backgroundRepeat = parse(backgroundRepeat, declaration.backgroundRepeat);
-        this.backgroundSize = parse(backgroundSize, declaration.backgroundSize);
-        this.borderTopColor = parse(borderTopColor, declaration.borderTopColor);
-        this.borderRightColor = parse(borderRightColor, declaration.borderRightColor);
-        this.borderBottomColor = parse(borderBottomColor, declaration.borderBottomColor);
-        this.borderLeftColor = parse(borderLeftColor, declaration.borderLeftColor);
-        this.borderTopLeftRadius = parse(borderTopLeftRadius, declaration.borderTopLeftRadius);
-        this.borderTopRightRadius = parse(borderTopRightRadius, declaration.borderTopRightRadius);
-        this.borderBottomRightRadius = parse(borderBottomRightRadius, declaration.borderBottomRightRadius);
-        this.borderBottomLeftRadius = parse(borderBottomLeftRadius, declaration.borderBottomLeftRadius);
-        this.borderTopStyle = parse(borderTopStyle, declaration.borderTopStyle);
-        this.borderRightStyle = parse(borderRightStyle, declaration.borderRightStyle);
-        this.borderBottomStyle = parse(borderBottomStyle, declaration.borderBottomStyle);
-        this.borderLeftStyle = parse(borderLeftStyle, declaration.borderLeftStyle);
-        this.borderTopWidth = parse(borderTopWidth, declaration.borderTopWidth);
-        this.borderRightWidth = parse(borderRightWidth, declaration.borderRightWidth);
-        this.borderBottomWidth = parse(borderBottomWidth, declaration.borderBottomWidth);
-        this.borderLeftWidth = parse(borderLeftWidth, declaration.borderLeftWidth);
-        this.boxShadow = parse(boxShadow, declaration.boxShadow);
-        this.color = parse(color, declaration.color);
-        this.display = parse(display, declaration.display);
-        this.float = parse(float, declaration.cssFloat);
-        this.fontFamily = parse(fontFamily, declaration.fontFamily);
-        this.fontSize = parse(fontSize, declaration.fontSize);
-        this.fontStyle = parse(fontStyle, declaration.fontStyle);
-        this.fontVariant = parse(fontVariant, declaration.fontVariant);
-        this.fontWeight = parse(fontWeight, declaration.fontWeight);
-        this.letterSpacing = parse(letterSpacing, declaration.letterSpacing);
-        this.lineBreak = parse(lineBreak, declaration.lineBreak);
-        this.lineHeight = parse(lineHeight, declaration.lineHeight);
-        this.listStyleImage = parse(listStyleImage, declaration.listStyleImage);
-        this.listStylePosition = parse(listStylePosition, declaration.listStylePosition);
-        this.listStyleType = parse(listStyleType, declaration.listStyleType);
-        this.marginTop = parse(marginTop, declaration.marginTop);
-        this.marginRight = parse(marginRight, declaration.marginRight);
-        this.marginBottom = parse(marginBottom, declaration.marginBottom);
-        this.marginLeft = parse(marginLeft, declaration.marginLeft);
-        this.opacity = parse(opacity, declaration.opacity);
-        const overflowTuple = parse(overflow, declaration.overflow);
+    constructor(context: Context, declaration: CSSStyleDeclaration) {
+        this.backgroundClip = parse(context, backgroundClip, declaration.backgroundClip);
+        this.backgroundColor = parse(context, backgroundColor, declaration.backgroundColor);
+        this.backgroundImage = parse(context, backgroundImage, declaration.backgroundImage);
+        this.backgroundOrigin = parse(context, backgroundOrigin, declaration.backgroundOrigin);
+        this.backgroundPosition = parse(context, backgroundPosition, declaration.backgroundPosition);
+        this.backgroundRepeat = parse(context, backgroundRepeat, declaration.backgroundRepeat);
+        this.backgroundSize = parse(context, backgroundSize, declaration.backgroundSize);
+        this.borderTopColor = parse(context, borderTopColor, declaration.borderTopColor);
+        this.borderRightColor = parse(context, borderRightColor, declaration.borderRightColor);
+        this.borderBottomColor = parse(context, borderBottomColor, declaration.borderBottomColor);
+        this.borderLeftColor = parse(context, borderLeftColor, declaration.borderLeftColor);
+        this.borderTopLeftRadius = parse(context, borderTopLeftRadius, declaration.borderTopLeftRadius);
+        this.borderTopRightRadius = parse(context, borderTopRightRadius, declaration.borderTopRightRadius);
+        this.borderBottomRightRadius = parse(context, borderBottomRightRadius, declaration.borderBottomRightRadius);
+        this.borderBottomLeftRadius = parse(context, borderBottomLeftRadius, declaration.borderBottomLeftRadius);
+        this.borderTopStyle = parse(context, borderTopStyle, declaration.borderTopStyle);
+        this.borderRightStyle = parse(context, borderRightStyle, declaration.borderRightStyle);
+        this.borderBottomStyle = parse(context, borderBottomStyle, declaration.borderBottomStyle);
+        this.borderLeftStyle = parse(context, borderLeftStyle, declaration.borderLeftStyle);
+        this.borderTopWidth = parse(context, borderTopWidth, declaration.borderTopWidth);
+        this.borderRightWidth = parse(context, borderRightWidth, declaration.borderRightWidth);
+        this.borderBottomWidth = parse(context, borderBottomWidth, declaration.borderBottomWidth);
+        this.borderLeftWidth = parse(context, borderLeftWidth, declaration.borderLeftWidth);
+        this.boxShadow = parse(context, boxShadow, declaration.boxShadow);
+        this.color = parse(context, color, declaration.color);
+        this.display = parse(context, display, declaration.display);
+        this.float = parse(context, float, declaration.cssFloat);
+        this.fontFamily = parse(context, fontFamily, declaration.fontFamily);
+        this.fontSize = parse(context, fontSize, declaration.fontSize);
+        this.fontStyle = parse(context, fontStyle, declaration.fontStyle);
+        this.fontVariant = parse(context, fontVariant, declaration.fontVariant);
+        this.fontWeight = parse(context, fontWeight, declaration.fontWeight);
+        this.letterSpacing = parse(context, letterSpacing, declaration.letterSpacing);
+        this.lineBreak = parse(context, lineBreak, declaration.lineBreak);
+        this.lineHeight = parse(context, lineHeight, declaration.lineHeight);
+        this.listStyleImage = parse(context, listStyleImage, declaration.listStyleImage);
+        this.listStylePosition = parse(context, listStylePosition, declaration.listStylePosition);
+        this.listStyleType = parse(context, listStyleType, declaration.listStyleType);
+        this.marginTop = parse(context, marginTop, declaration.marginTop);
+        this.marginRight = parse(context, marginRight, declaration.marginRight);
+        this.marginBottom = parse(context, marginBottom, declaration.marginBottom);
+        this.marginLeft = parse(context, marginLeft, declaration.marginLeft);
+        this.opacity = parse(context, opacity, declaration.opacity);
+        const overflowTuple = parse(context, overflow, declaration.overflow);
         this.overflowX = overflowTuple[0];
         this.overflowY = overflowTuple[overflowTuple.length > 1 ? 1 : 0];
-        this.overflowWrap = parse(overflowWrap, declaration.overflowWrap);
-        this.paddingTop = parse(paddingTop, declaration.paddingTop);
-        this.paddingRight = parse(paddingRight, declaration.paddingRight);
-        this.paddingBottom = parse(paddingBottom, declaration.paddingBottom);
-        this.paddingLeft = parse(paddingLeft, declaration.paddingLeft);
-        this.paintOrder = parse(paintOrder, declaration.paintOrder);
-        this.position = parse(position, declaration.position);
-        this.textAlign = parse(textAlign, declaration.textAlign);
-        this.textDecorationColor = parse(textDecorationColor, declaration.textDecorationColor ?? declaration.color);
+        this.overflowWrap = parse(context, overflowWrap, declaration.overflowWrap);
+        this.paddingTop = parse(context, paddingTop, declaration.paddingTop);
+        this.paddingRight = parse(context, paddingRight, declaration.paddingRight);
+        this.paddingBottom = parse(context, paddingBottom, declaration.paddingBottom);
+        this.paddingLeft = parse(context, paddingLeft, declaration.paddingLeft);
+        this.paintOrder = parse(context, paintOrder, declaration.paintOrder);
+        this.position = parse(context, position, declaration.position);
+        this.textAlign = parse(context, textAlign, declaration.textAlign);
+        this.textDecorationColor = parse(
+            context,
+            textDecorationColor,
+            declaration.textDecorationColor ?? declaration.color
+        );
         this.textDecorationLine = parse(
+            context,
             textDecorationLine,
             declaration.textDecorationLine ?? declaration.textDecoration
         );
-        this.textShadow = parse(textShadow, declaration.textShadow);
-        this.textTransform = parse(textTransform, declaration.textTransform);
-        this.transform = parse(transform, declaration.transform);
-        this.transformOrigin = parse(transformOrigin, declaration.transformOrigin);
-        this.visibility = parse(visibility, declaration.visibility);
-        this.webkitTextStrokeColor = parse(webkitTextStrokeColor, declaration.webkitTextStrokeColor);
-        this.webkitTextStrokeWidth = parse(webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
-        this.wordBreak = parse(wordBreak, declaration.wordBreak);
-        this.zIndex = parse(zIndex, declaration.zIndex);
+        this.textShadow = parse(context, textShadow, declaration.textShadow);
+        this.textTransform = parse(context, textTransform, declaration.textTransform);
+        this.transform = parse(context, transform, declaration.transform);
+        this.transformOrigin = parse(context, transformOrigin, declaration.transformOrigin);
+        this.visibility = parse(context, visibility, declaration.visibility);
+        this.webkitTextStrokeColor = parse(context, webkitTextStrokeColor, declaration.webkitTextStrokeColor);
+        this.webkitTextStrokeWidth = parse(context, webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
+        this.wordBreak = parse(context, wordBreak, declaration.wordBreak);
+        this.zIndex = parse(context, zIndex, declaration.zIndex);
     }
 
     isVisible(): boolean {
@@ -254,9 +260,9 @@ export class CSSParsedPseudoDeclaration {
     content: ReturnType<typeof content.parse>;
     quotes: ReturnType<typeof quotes.parse>;
 
-    constructor(declaration: CSSStyleDeclaration) {
-        this.content = parse(content, declaration.content);
-        this.quotes = parse(quotes, declaration.quotes);
+    constructor(context: Context, declaration: CSSStyleDeclaration) {
+        this.content = parse(context, content, declaration.content);
+        this.quotes = parse(context, quotes, declaration.quotes);
     }
 }
 
@@ -264,14 +270,14 @@ export class CSSParsedCounterDeclaration {
     counterIncrement: ReturnType<typeof counterIncrement.parse>;
     counterReset: ReturnType<typeof counterReset.parse>;
 
-    constructor(declaration: CSSStyleDeclaration) {
-        this.counterIncrement = parse(counterIncrement, declaration.counterIncrement);
-        this.counterReset = parse(counterReset, declaration.counterReset);
+    constructor(context: Context, declaration: CSSStyleDeclaration) {
+        this.counterIncrement = parse(context, counterIncrement, declaration.counterIncrement);
+        this.counterReset = parse(context, counterReset, declaration.counterReset);
     }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) => {
+const parse = (context: Context, descriptor: CSSPropertyDescriptor<any>, style?: string | null) => {
     const tokenizer = new Tokenizer();
     const value = style !== null && typeof style !== 'undefined' ? style.toString() : descriptor.initialValue;
     tokenizer.write(value);
@@ -279,21 +285,21 @@ const parse = (descriptor: CSSPropertyDescriptor<any>, style?: string | null) =>
     switch (descriptor.type) {
         case PropertyDescriptorParsingType.IDENT_VALUE:
             const token = parser.parseComponentValue();
-            return descriptor.parse(isIdentToken(token) ? token.value : descriptor.initialValue);
+            return descriptor.parse(context, isIdentToken(token) ? token.value : descriptor.initialValue);
         case PropertyDescriptorParsingType.VALUE:
-            return descriptor.parse(parser.parseComponentValue());
+            return descriptor.parse(context, parser.parseComponentValue());
         case PropertyDescriptorParsingType.LIST:
-            return descriptor.parse(parser.parseComponentValues());
+            return descriptor.parse(context, parser.parseComponentValues());
         case PropertyDescriptorParsingType.TOKEN_VALUE:
             return parser.parseComponentValue();
         case PropertyDescriptorParsingType.TYPE_VALUE:
             switch (descriptor.format) {
                 case 'angle':
-                    return angle.parse(parser.parseComponentValue());
+                    return angle.parse(context, parser.parseComponentValue());
                 case 'color':
-                    return colorType.parse(parser.parseComponentValue());
+                    return colorType.parse(context, parser.parseComponentValue());
                 case 'image':
-                    return image.parse(parser.parseComponentValue());
+                    return image.parse(context, parser.parseComponentValue());
                 case 'length':
                     const length = parser.parseComponentValue();
                     return isLength(length) ? length : ZERO_LENGTH;

@@ -1,7 +1,7 @@
 import {CSSParsedDeclaration} from '../css/index';
 import {TEXT_TRANSFORM} from '../css/property-descriptors/text-transform';
 import {parseTextBounds, TextBounds} from '../css/layout/text';
-import {Context} from '../context';
+import {Context} from '../core/context';
 
 export class TextContainer {
     text: string;

@@ -1,5 +1,6 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
+import {Context} from '../../core/context';
 export const enum DISPLAY {
     NONE = 0,
     BLOCK = 1 << 1,
@@ -40,7 +41,7 @@ export const display: IPropertyListDescriptor<Display> = {
     initialValue: 'inline-block',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): Display => {
+    parse: (_context: Context, tokens: CSSValue[]): Display => {
         return tokens.filter(isIdentToken).reduce((bit, token) => {
             return bit | parseDisplayValue(token.value);
         }, DISPLAY.NONE);

@@ -1,4 +1,5 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {Context} from '../../core/context';
 export enum OVERFLOW_WRAP {
     NORMAL = 'normal',
     BREAK_WORD = 'break-word'
@@ -9,7 +10,7 @@ export const overflowWrap: IPropertyIdentValueDescriptor<OVERFLOW_WRAP> = {
     initialValue: 'normal',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (overflow: string) => {
+    parse: (_context: Context, overflow: string) => {
         switch (overflow) {
             case 'break-word':
                 return OVERFLOW_WRAP.BREAK_WORD;

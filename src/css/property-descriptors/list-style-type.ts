@@ -1,4 +1,5 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {Context} from '../../core/context';
 export enum LIST_STYLE_TYPE {
     NONE = -1,
     DISC = 0,
@@ -61,7 +62,7 @@ export const listStyleType: IPropertyIdentValueDescriptor<LIST_STYLE_TYPE> = {
     initialValue: 'none',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (type: string) => {
+    parse: (_context: Context, type: string) => {
         switch (type) {
             case 'disc':
                 return LIST_STYLE_TYPE.DISC;

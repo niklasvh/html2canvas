@@ -1,6 +1,7 @@
 import {TokenType} from '../syntax/tokenizer';
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue} from '../syntax/parser';
+import {Context} from '../../core/context';
 
 export type Content = CSSValue[];
 
@@ -9,7 +10,7 @@ export const content: IPropertyListDescriptor<Content> = {
     initialValue: 'none',
     type: PropertyDescriptorParsingType.LIST,
     prefix: false,
-    parse: (tokens: CSSValue[]) => {
+    parse: (_context: Context, tokens: CSSValue[]) => {
         if (tokens.length === 0) {
             return [];
         }

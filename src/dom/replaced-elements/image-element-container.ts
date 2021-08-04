@@ -1,6 +1,5 @@
 import {ElementContainer} from '../element-container';
-import {CacheStorage} from '../../core/cache-storage';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export class ImageElementContainer extends ElementContainer {
     src: string;
@@ -12,6 +11,6 @@ export class ImageElementContainer extends ElementContainer {
         this.src = img.currentSrc || img.src;
         this.intrinsicWidth = img.naturalWidth;
         this.intrinsicHeight = img.naturalHeight;
-        CacheStorage.getInstance().addImage(this.src);
+        this.context.cache.addImage(this.src);
     }
 }

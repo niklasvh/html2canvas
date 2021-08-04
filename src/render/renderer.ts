@@ -1,4 +1,4 @@
-import {Context} from '../context';
+import {Context} from '../core/context';
 import {RenderConfigurations} from './canvas/canvas-renderer';
 
 export class Renderer {

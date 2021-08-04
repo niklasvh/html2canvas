@@ -1,12 +1,11 @@
 import {Bounds, parseBounds, parseDocumentSize} from './css/layout/bounds';
-import {color, Color, COLORS, isTransparent} from './css/types/color';
-import {Parser} from './css/syntax/parser';
+import {COLORS, isTransparent, parseColor} from './css/types/color';
 import {CloneConfigurations, CloneOptions, DocumentCloner, WindowOptions} from './dom/document-cloner';
 import {isBodyElement, isHTMLElement, parseTree} from './dom/node-parser';
 import {CacheStorage} from './core/cache-storage';
 import {CanvasRenderer, RenderConfigurations, RenderOptions} from './render/canvas/canvas-renderer';
 import {ForeignObjectRenderer} from './render/canvas/foreignobject-renderer';
-import {Context, ContextOptions} from './context';
+import {Context, ContextOptions} from './core/context';
 
 export type Options = CloneOptions &
     WindowOptions &
@@ -16,8 +15,6 @@ export type Options = CloneOptions &
         foreignObjectRendering: boolean;
         removeContainer?: boolean;
     };
-
-const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
 
 const html2canvas = (element: HTMLElement, options: Partial<Options> = {}): Promise<HTMLCanvasElement> => {
     return renderElement(element, options);
@@ -102,7 +99,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
             ? parseDocumentSize(clonedElement.ownerDocument)
             : parseBounds(context, clonedElement);
 
-    const backgroundColor = parseBackgroundColor(clonedElement, opts.backgroundColor);
+    const backgroundColor = parseBackgroundColor(context, clonedElement, opts.backgroundColor);
 
     const renderOptions: RenderConfigurations = {
         canvas: opts.canvas,
@@ -150,19 +147,19 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     return canvas;
 };
 
-const parseBackgroundColor = (element: HTMLElement, backgroundColorOverride?: string | null) => {
+const parseBackgroundColor = (context: Context, element: HTMLElement, backgroundColorOverride?: string | null) => {
     const ownerDocument = element.ownerDocument;
     // http://www.w3.org/TR/css3-background/#special-backgrounds
     const documentBackgroundColor = ownerDocument.documentElement
-        ? parseColor(getComputedStyle(ownerDocument.documentElement).backgroundColor as string)
+        ? parseColor(context, getComputedStyle(ownerDocument.documentElement).backgroundColor as string)
         : COLORS.TRANSPARENT;
     const bodyBackgroundColor = ownerDocument.body
-        ? parseColor(getComputedStyle(ownerDocument.body).backgroundColor as string)
+        ? parseColor(context, getComputedStyle(ownerDocument.body).backgroundColor as string)
         : COLORS.TRANSPARENT;
 
     const defaultBackgroundColor =
         typeof backgroundColorOverride === 'string'
-            ? parseColor(backgroundColorOverride)
+            ? parseColor(context, backgroundColorOverride)
             : backgroundColorOverride === null
             ? COLORS.TRANSPARENT
             : 0xffffffff;

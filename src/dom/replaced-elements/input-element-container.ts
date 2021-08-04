@@ -5,7 +5,7 @@ import {BACKGROUND_ORIGIN} from '../../css/property-descriptors/background-origi
 import {TokenType} from '../../css/syntax/tokenizer';
 import {LengthPercentageTuple} from '../../css/types/length-percentage';
 import {Bounds} from '../../css/layout/bounds';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 const CHECKBOX_BORDER_RADIUS: LengthPercentageTuple = [
     {

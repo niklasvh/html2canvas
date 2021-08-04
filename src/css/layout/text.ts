@@ -3,7 +3,7 @@ import {CSSParsedDeclaration} from '../index';
 import {fromCodePoint, LineBreaker, toCodePoints} from 'css-line-break';
 import {Bounds, parseBounds} from './bounds';
 import {FEATURES} from '../../core/features';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export class TextBounds {
     readonly text: string;

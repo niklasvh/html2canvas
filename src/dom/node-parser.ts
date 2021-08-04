@@ -10,7 +10,7 @@ import {InputElementContainer} from './replaced-elements/input-element-container
 import {SelectElementContainer} from './elements/select-element-container';
 import {TextareaElementContainer} from './elements/textarea-element-container';
 import {IFrameElementContainer} from './replaced-elements/iframe-element-container';
-import {Context} from '../context';
+import {Context} from '../core/context';
 
 const LIST_OWNERS = ['OL', 'UL', 'MENU'];
 

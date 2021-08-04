@@ -1,6 +1,7 @@
 import {IPropertyValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue} from '../syntax/parser';
 import {NumberValueToken, TokenType} from '../syntax/tokenizer';
+import {Context} from '../../core/context';
 export type Matrix = [number, number, number, number, number, number];
 export type Transform = Matrix | null;
 
@@ -9,7 +10,7 @@ export const transform: IPropertyValueDescriptor<Transform> = {
     initialValue: 'none',
     prefix: true,
     type: PropertyDescriptorParsingType.VALUE,
-    parse: (token: CSSValue) => {
+    parse: (_context: Context, token: CSSValue) => {
         if (token.type === TokenType.IDENT_TOKEN && token.value === 'none') {
             return null;
         }

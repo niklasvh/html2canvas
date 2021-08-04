@@ -1,6 +1,6 @@
 import {ElementContainer} from '../element-container';
 import {parseBounds} from '../../css/layout/bounds';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export class SVGElementContainer extends ElementContainer {
     svg: string;

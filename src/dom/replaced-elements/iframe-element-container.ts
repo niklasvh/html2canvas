@@ -1,10 +1,7 @@
 import {ElementContainer} from '../element-container';
 import {parseTree} from '../node-parser';
-import {Color, color, COLORS, isTransparent} from '../../css/types/color';
-import {Parser} from '../../css/syntax/parser';
-import {Context} from '../../context';
-
-const parseColor = (value: string): Color => color.parse(Parser.create(value).parseComponentValue());
+import {Color, parseColor, COLORS, isTransparent} from '../../css/types/color';
+import {Context} from '../../core/context';
 
 export class IFrameElementContainer extends ElementContainer {
     src: string;
@@ -30,11 +27,15 @@ export class IFrameElementContainer extends ElementContainer {
                 // http://www.w3.org/TR/css3-background/#special-backgrounds
                 const documentBackgroundColor = iframe.contentWindow.document.documentElement
                     ? parseColor(
+                          context,
                           getComputedStyle(iframe.contentWindow.document.documentElement).backgroundColor as string
                       )
                     : COLORS.TRANSPARENT;
                 const bodyBackgroundColor = iframe.contentWindow.document.body
-                    ? parseColor(getComputedStyle(iframe.contentWindow.document.body).backgroundColor as string)
+                    ? parseColor(
+                          context,
+                          getComputedStyle(iframe.contentWindow.document.body).backgroundColor as string
+                      )
                     : COLORS.TRANSPARENT;
 
                 this.backgroundColor = isTransparent(documentBackgroundColor)

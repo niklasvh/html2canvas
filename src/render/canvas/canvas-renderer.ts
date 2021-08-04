@@ -43,7 +43,7 @@ import {IFrameElementContainer} from '../../dom/replaced-elements/iframe-element
 import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
-import {Context} from '../../context';
+import {Context} from '../../core/context';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;

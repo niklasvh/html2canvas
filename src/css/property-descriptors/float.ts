@@ -1,4 +1,5 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
+import {Context} from '../../core/context';
 export enum FLOAT {
     NONE = 0,
     LEFT = 1,
@@ -12,7 +13,7 @@ export const float: IPropertyIdentValueDescriptor<FLOAT> = {
     initialValue: 'none',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (float: string) => {
+    parse: (_context: Context, float: string) => {
         switch (float) {
             case 'left':
                 return FLOAT.LEFT;
