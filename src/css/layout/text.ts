@@ -27,7 +27,8 @@ export const parseTextBounds = (
     textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                const trimmedText = text.trim();
+                textBounds.push(new TextBounds(trimmedText, getRangeBounds(context, node, offset, trimmedText.length)));
             } else {
                 const replacementNode = node.splitText(text.length);
                 textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
