@@ -1,10 +1,3 @@
-function getRange(node, offset, length) {
-    const range = document.createRange();
-    range.setStart(node, offset);
-    range.setEnd(node, offset + length);
-    return range.getBoundingClientRect();
-}
-
 const testRangeBounds = (document: Document) => {
     if (document.createRange) {
         const range = document.createRange();
