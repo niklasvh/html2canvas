@@ -1,21 +1,42 @@
-const testRangeBounds = (document: Document) => {
-    const TEST_HEIGHT = 123;
+function getRange(node, offset, length) {
+    const range = document.createRange();
+    range.setStart(node, offset);
+    range.setEnd(node, offset + length);
+    return range.getBoundingClientRect();
+}
 
+const testRangeBounds = (document: Document) => {
     if (document.createRange) {
         const range = document.createRange();
         if (range.getBoundingClientRect) {
             const testElement = document.createElement('boundtest');
-            testElement.style.height = `${TEST_HEIGHT}px`;
+            testElement.style.width = '0px';
             testElement.style.display = 'block';
+            testElement.textContent = 'a b c d e';
             document.body.appendChild(testElement);
+            const node = testElement.firstChild as Text;
+            const textList = node.data.split(' ');
+            let offset = 0;
+            let pos: number;
 
-            range.selectNode(testElement);
-            const rangeBounds = range.getBoundingClientRect();
-            const rangeHeight = Math.round(rangeBounds.height);
+            // ios 13 does not handle range getBoundingClientRect line changes correctly #2177
+            const supports = textList.some((text, i) => {
+                range.setStart(node, offset);
+                range.setEnd(node, offset + text.length);
+                const rect = range.getBoundingClientRect();
+                offset += text.length;
+                const newPos = Math.round(rect.y);
+                const rowChanged = newPos !== pos;
+
+                pos = newPos;
+                if (i === 0) {
+                    return false;
+                }
+                return rowChanged;
+            });
+
             document.body.removeChild(testElement);
-            if (rangeHeight === TEST_HEIGHT) {
-                return true;
-            }
+            return supports;
         }
     }
 
