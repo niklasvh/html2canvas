@@ -1,5 +1,5 @@
 import {FEATURES} from './features';
-import type {Context} from './context';
+import {Context} from './context';
 
 export class CacheStorage {
     private static _link?: HTMLAnchorElement;
