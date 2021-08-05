@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.1](https://github.com/niklasvh/html2canvas/compare/v1.2.0...v1.2.1) (2021-08-05)
+
+
+### fix
+
+* none image (#2627) ([6651fc6](https://github.com/niklasvh/html2canvas/commit/6651fc6789d5902d171dc53b4094887870433018)), closes [#2627](https://github.com/niklasvh/html2canvas/issues/2627)
+* type import that is only available ts 3.8 or higher (#2629) ([c5c6fa0](https://github.com/niklasvh/html2canvas/commit/c5c6fa00d71f36ef963ba5170ebc7b668d39c407)), closes [#2629](https://github.com/niklasvh/html2canvas/issues/2629)
+
+
+
 # [1.2.0](https://github.com/niklasvh/html2canvas/compare/v1.1.5...v1.2.0) (2021-08-04)
 
 
