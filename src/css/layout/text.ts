@@ -73,7 +73,9 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? toCodePoints(value).map((i) => fromCodePoint(i)) : breakWords(value, styles);
+    return styles.letterSpacing !== 0 || !FEATURES.SUPPORT_WORD_BREAKING
+        ? toCodePoints(value).map((i) => fromCodePoint(i))
+        : breakWords(value, styles);
 };
 
 // https://drafts.csswg.org/css-text/#word-separator

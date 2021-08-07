@@ -173,8 +173,14 @@ export const loadSerializedSVG = (svg: Node): Promise<HTMLImageElement> => {
 export const FEATURES = {
     get SUPPORT_RANGE_BOUNDS(): boolean {
         'use strict';
-        const value = testRangeBounds(document) && testIOSLineBreak(document);
+        const value = testRangeBounds(document);
         Object.defineProperty(FEATURES, 'SUPPORT_RANGE_BOUNDS', {value});
+        return value;
+    },
+    get SUPPORT_WORD_BREAKING(): boolean {
+        'use strict';
+        const value = FEATURES.SUPPORT_RANGE_BOUNDS && testIOSLineBreak(document);
+        Object.defineProperty(FEATURES, 'SUPPORT_WORD_BREAKING', {value});
         return value;
     },
     get SUPPORT_SVG_DRAWING(): boolean {
