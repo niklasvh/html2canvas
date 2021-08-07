@@ -22,18 +22,30 @@ type TestList = {[key: string]: Test[]};
 
 function onTestChange(browserTests: Test[]) {
     if (browserSelector) {
+        const currentSelection = browserSelector.value;
         while (browserSelector.firstChild) {
             browserSelector.firstChild.remove();
         }
+
+        let newSelection;
+
         browserTests.forEach((browser, i) => {
             if (i === 0) {
-                onBrowserChange(browser);
+                newSelection = browser;
             }
             const option = document.createElement('option');
             option.value = browser.id;
+            if (browser.id === currentSelection) {
+                option.selected = true;
+                newSelection = browser;
+            }
             option.textContent = browser.id.replace(/_/g, ' ');
             browserSelector.appendChild(option);
         });
+
+        if (newSelection) {
+            onBrowserChange(newSelection);
+        }
     }
 }
 
@@ -48,13 +60,20 @@ function onBrowserChange(browserTest: Test) {
             previewImage.style.transformOrigin = '';
         }
     }
+
+    if (history) {
+        history.replaceState(null, document.title, `?browser=${browserSelector?.value}&test=${testSelector?.value}`);
+    }
 }
 
 function selectTest(testName: string) {
-    if (testLink) {
-        testLink.textContent = testLink.href = testName;
+    const foundTest = testList[testName];
+    if (foundTest) {
+        if (testLink) {
+            testLink.textContent = testLink.href = testName;
+        }
+        onTestChange(foundTest);
     }
-    onTestChange(testList[testName]);
 }
 
 const UP_ARROW = 38;
@@ -116,15 +135,29 @@ if (testSelector && browserSelector) {
         false
     );
 
-    const tests: string[] = Object.keys(testList);
-    tests.forEach((testName, i) => {
-        if (i === 0) {
-            selectTest(testName);
+    let testFromUrl: string | null = null;
+
+    if (URLSearchParams) {
+        const url = new URLSearchParams(location.search);
+        testFromUrl = url.get('test');
+        if (browserSelector) {
+            const option = document.createElement('option');
+            browserSelector.appendChild(option);
+            browserSelector.value = option.value = url.get('browser') ?? '';
         }
+    }
+
+    const tests: string[] = Object.keys(testList);
+    tests.forEach((testName) => {
         const option = document.createElement('option');
         option.value = testName;
         option.textContent = testName;
+        if (option.value === testFromUrl) {
+            option.selected = true;
+        }
 
         testSelector.appendChild(option);
     });
+
+    selectTest(testSelector.value ?? testSelector.firstChild?.textContent ?? '');
 }
