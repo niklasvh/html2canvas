@@ -27,7 +27,13 @@ export const parseTextBounds = (
     textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                if (!FEATURES.SUPPORT_WORD_BREAKING) {
+                    const replacementNode = node.splitText(text.length);
+                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, 0, text.length)));
+                    node = replacementNode;
+                } else {
+                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                }
             } else {
                 const replacementNode = node.splitText(text.length);
                 textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
@@ -73,9 +79,7 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 || !FEATURES.SUPPORT_WORD_BREAKING
-        ? toCodePoints(value).map((i) => fromCodePoint(i))
-        : breakWords(value, styles);
+    return styles.letterSpacing !== 0 ? toCodePoints(value).map((i) => fromCodePoint(i)) : breakWords(value, styles);
 };
 
 // https://drafts.csswg.org/css-text/#word-separator

@@ -25,10 +25,6 @@ const testRangeBounds = (document: Document) => {
 };
 
 const testIOSLineBreak = (document: Document) => {
-    if (typeof ''.repeat !== 'function') {
-        return false;
-    }
-
     const testElement = document.createElement('boundtest');
     testElement.style.width = '50px';
     testElement.style.display = 'block';
@@ -38,7 +34,7 @@ const testIOSLineBreak = (document: Document) => {
     document.body.appendChild(testElement);
     const range = document.createRange();
 
-    testElement.innerHTML = '&#128104;'.repeat(10);
+    testElement.innerHTML = typeof ''.repeat === 'function' ? '&#128104;'.repeat(10) : '';
 
     const node = testElement.firstChild as Text;
 
