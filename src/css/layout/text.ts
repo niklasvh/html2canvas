@@ -75,7 +75,7 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
     const range = ownerDocument.createRange();
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return Bounds.fromClientRect(context, range.getBoundingClientRect());
+    return Bounds.fromClientRect(context, range.getClientRects()[0]);
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
