@@ -102,9 +102,6 @@ jobs:
             name: OSX Safari Stable
             targetBrowser: Safari_Stable
           - os: macos-latest
-            name: OSX Chrome Stable
-            targetBrowser: Chrome_Stable
-          - os: macos-latest
             name: iOS Simulator Safari 12
             targetBrowser: Safari_IOS_12
             xcode: /Applications/Xcode_10.3.app
