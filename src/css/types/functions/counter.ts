@@ -4,10 +4,7 @@ import {contains} from '../../../core/bitwise';
 import {CSSParsedCounterDeclaration} from '../../index';
 
 export class CounterState {
-    readonly counters: {[key: string]: number[]};
-    constructor() {
-        this.counters = {};
-    }
+    private readonly counters: {[key: string]: number[]} = {};
 
     getCounterValue(name: string): number {
         const counter = this.counters[name];
@@ -18,7 +15,7 @@ export class CounterState {
         return 1;
     }
 
-    getCounterValues(name: string): number[] {
+    getCounterValues(name: string): readonly number[] {
         const counter = this.counters[name];
         return counter ? counter : [];
     }
@@ -37,6 +34,9 @@ export class CounterState {
                 const counter = this.counters[entry.counter];
                 if (counter && entry.increment !== 0) {
                     canReset = false;
+                    if (!counter.length) {
+                        counter.push(1);
+                    }
                     counter[Math.max(0, counter.length - 1)] += entry.increment;
                 }
             });
