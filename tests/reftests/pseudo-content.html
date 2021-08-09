@@ -86,6 +86,20 @@
                                             of the section counter, separated
                                             by a period */
         }
+
+        .issue-2639 {
+            display: flex;
+        }
+
+        .issue-2639::before {
+            content: counter(ol0) '. ';
+            counter-increment: ol0;
+        }
+
+        .issue-2639:first-child {
+            counter-reset: ol0;
+        }
+
     </style>
 </head>
 <body>
@@ -161,6 +175,11 @@
 <ol>
     <li>item</li>          <!-- 1     -->
     <li>item</li>          <!-- 2     -->
+</ol>
+
+<ol>
+    <li class="issue-2639">one</li>
+    <li class="issue-2639">two</li>
 </ol>
 
 </body>
