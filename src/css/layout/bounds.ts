@@ -8,12 +8,14 @@ export class Bounds {
     }
 
     static fromClientRect(context: Context, clientRect: ClientRect): Bounds {
-        return new Bounds(
-            clientRect.left + context.windowBounds.left,
-            clientRect.top + context.windowBounds.top,
-            clientRect.width,
-            clientRect.height
-        );
+        return clientRect
+            ? new Bounds(
+                  clientRect.left + context.windowBounds.left,
+                  clientRect.top + context.windowBounds.top,
+                  clientRect.width,
+                  clientRect.height
+              )
+            : new Bounds(0, 0, 0, 0);
     }
 }
 
