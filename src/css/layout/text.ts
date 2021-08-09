@@ -28,7 +28,6 @@ export const parseTextBounds = (
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 if (!FEATURES.SUPPORT_WORD_BREAKING) {
-                    const range = createRange(node, offset, text.length);
                     textBounds.push(
                         new TextBounds(
                             text,
