@@ -113,6 +113,10 @@ jobs:
             name: iOS Simulator Safari 14
             targetBrowser: Safari_IOS_14
             xcode: /Applications/Xcode_12_beta.app
+          - os: macos-11
+            name: iOS Simulator Safari 15
+            targetBrowser: Safari_IOS_15
+            xcode: /Applications/Xcode_13.0.app
           - os: windows-latest
             name: Windows Internet Explorer 9 (Emulated)
             targetBrowser: IE_9
