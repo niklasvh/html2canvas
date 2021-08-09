@@ -28,9 +28,9 @@ export const parseTextBounds = (
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 if (!FEATURES.SUPPORT_WORD_BREAKING) {
-                    const replacementNode = node.splitText(text.length);
-                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, 0, text.length)));
-                    node = replacementNode;
+                    const range = createRange(node, offset, text.length);
+                    const domRect: DOMRect = range.getClientRects()[0];
+                    return domRect ? Bounds.fromClientRect(context, domRect) : Bounds.empty;
                 } else {
                     textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
                 }
@@ -64,10 +64,10 @@ const getWrapperBounds = (context: Context, node: Text): Bounds => {
         }
     }
 
-    return new Bounds(0, 0, 0, 0);
+    return Bounds.empty;
 };
 
-const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
+const createRange = (node: Text, offset: number, length: number): Range => {
     const ownerDocument = node.ownerDocument;
     if (!ownerDocument) {
         throw new Error('Node has no owner document');
@@ -75,7 +75,11 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
     const range = ownerDocument.createRange();
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return Bounds.fromClientRect(context, range.getBoundingClientRect());
+    return range;
+};
+
+const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
+    return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {

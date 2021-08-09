@@ -15,6 +15,8 @@ export class Bounds {
             clientRect.height
         );
     }
+
+    static empty = new Bounds(0, 0, 0, 0);
 }
 
 export const parseBounds = (context: Context, node: Element): Bounds => {
