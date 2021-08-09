@@ -27,7 +27,16 @@ export const parseTextBounds = (
     textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                if (!FEATURES.SUPPORT_WORD_BREAKING) {
+                    textBounds.push(
+                        new TextBounds(
+                            text,
+                            Bounds.fromDOMRectList(context, createRange(node, offset, text.length).getClientRects())
+                        )
+                    );
+                } else {
+                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                }
             } else {
                 const replacementNode = node.splitText(text.length);
                 textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
@@ -58,10 +67,10 @@ const getWrapperBounds = (context: Context, node: Text): Bounds => {
         }
     }
 
-    return new Bounds(0, 0, 0, 0);
+    return Bounds.EMPTY;
 };
 
-const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
+const createRange = (node: Text, offset: number, length: number): Range => {
     const ownerDocument = node.ownerDocument;
     if (!ownerDocument) {
         throw new Error('Node has no owner document');
@@ -69,7 +78,11 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
     const range = ownerDocument.createRange();
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return Bounds.fromClientRect(context, range.getBoundingClientRect());
+    return range;
+};
+
+const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
+    return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
