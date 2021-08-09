@@ -29,8 +29,12 @@ export const parseTextBounds = (
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 if (!FEATURES.SUPPORT_WORD_BREAKING) {
                     const range = createRange(node, offset, text.length);
-                    const domRect: DOMRect = range.getClientRects()[0];
-                    return domRect ? Bounds.fromClientRect(context, domRect) : Bounds.empty;
+                    textBounds.push(
+                        new TextBounds(
+                            text,
+                            Bounds.fromDOMRectList(context, createRange(node, offset, text.length).getClientRects())
+                        )
+                    );
                 } else {
                     textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
                 }
@@ -64,7 +68,7 @@ const getWrapperBounds = (context: Context, node: Text): Bounds => {
         }
     }
 
-    return Bounds.empty;
+    return Bounds.EMPTY;
 };
 
 const createRange = (node: Text, offset: number, length: number): Range => {
