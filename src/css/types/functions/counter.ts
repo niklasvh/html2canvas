@@ -1,5 +1,5 @@
 import {LIST_STYLE_TYPE} from '../../property-descriptors/list-style-type';
-import {fromCodePoint} from 'css-line-break';
+import {fromCodePoint} from 'text-segmentation';
 import {contains} from '../../../core/bitwise';
 import {CSSParsedCounterDeclaration} from '../../index';
 

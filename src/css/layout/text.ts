@@ -1,6 +1,5 @@
-import {OVERFLOW_WRAP} from '../property-descriptors/overflow-wrap';
 import {CSSParsedDeclaration} from '../index';
-import {fromCodePoint, LineBreaker, toCodePoints} from 'css-line-break';
+import {splitGraphemes} from 'text-segmentation';
 import {Bounds, parseBounds} from './bounds';
 import {FEATURES} from '../../core/features';
 import {Context} from '../../core/context';
@@ -21,7 +20,7 @@ export const parseTextBounds = (
     styles: CSSParsedDeclaration,
     node: Text
 ): TextBounds[] => {
-    const textList = breakText(value, styles);
+    const textList = splitGraphemes(value);
     const textBounds: TextBounds[] = [];
     let offset = 0;
     textList.forEach((text) => {
@@ -83,46 +82,4 @@ const createRange = (node: Text, offset: number, length: number): Range => {
 
 const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
     return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
-};
-
-const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? toCodePoints(value).map((i) => fromCodePoint(i)) : breakWords(value, styles);
-};
-
-// https://drafts.csswg.org/css-text/#word-separator
-const wordSeparators = [0x0020, 0x00a0, 0x1361, 0x10100, 0x10101, 0x1039, 0x1091];
-
-const breakWords = (str: string, styles: CSSParsedDeclaration): string[] => {
-    const breaker = LineBreaker(str, {
-        lineBreak: styles.lineBreak,
-        wordBreak: styles.overflowWrap === OVERFLOW_WRAP.BREAK_WORD ? 'break-word' : styles.wordBreak
-    });
-
-    const words = [];
-    let bk;
-
-    while (!(bk = breaker.next()).done) {
-        if (bk.value) {
-            const value = bk.value.slice();
-            const codePoints = toCodePoints(value);
-            let word = '';
-            codePoints.forEach((codePoint) => {
-                if (wordSeparators.indexOf(codePoint) === -1) {
-                    word += fromCodePoint(codePoint);
-                } else {
-                    if (word.length) {
-                        words.push(word);
-                    }
-                    words.push(fromCodePoint(codePoint));
-                    word = '';
-                }
-            });
-
-            if (word.length) {
-                words.push(word);
-            }
-        }
-    }
-
-    return words;
 };
