@@ -48,12 +48,6 @@ module.exports = function(config) {
             platform: 'iOS',
             sdk: '15.0'
         },
-        SauceLabs_IE9: {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            version: '9.0',
-            platform: 'Windows 7'
-        },
         SauceLabs_IE10: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
@@ -92,11 +86,6 @@ module.exports = function(config) {
             platform: 'iOS',
             version: '9.3',
             device: 'iPhone 6 Plus Simulator'
-        },
-        IE_9: {
-            base: 'IE',
-            'x-ua-compatible': 'IE=EmulateIE9',
-            flags: ['-extoff']
         },
         IE_10: {
             base: 'IE',
