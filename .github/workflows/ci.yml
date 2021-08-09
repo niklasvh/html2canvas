@@ -105,11 +105,11 @@ jobs:
           - os: macos-latest
             name: iOS Simulator Safari 13
             targetBrowser: Safari_IOS_13
-            xcode: /Applications/Xcode_11.7.app
-          - os: macos-11
+            xcode: /Applications/Xcode_11.6_beta.app
+          - os: macos-latest
             name: iOS Simulator Safari 14
             targetBrowser: Safari_IOS_14
-            xcode: /Applications/Xcode_12.5.1.app
+            xcode: /Applications/Xcode_12_beta.app
           - os: macos-11
             name: iOS Simulator Safari 15
             targetBrowser: Safari_IOS_15
