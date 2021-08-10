@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.2](https://github.com/niklasvh/html2canvas/compare/v1.2.1...v1.2.2) (2021-08-10)
+
+
+### ci
+
+* add ios15 target (#2564) ([e429e04](https://github.com/niklasvh/html2canvas/commit/e429e0443adf5c7ca3041b97a8157b8911302206)), closes [#2564](https://github.com/niklasvh/html2canvas/issues/2564)
+
+### docs
+
+* update test previewer (#2637) ([7a06d0c](https://github.com/niklasvh/html2canvas/commit/7a06d0c2c2f3b8a1d1a8a85c540f8288b782e8c6)), closes [#2637](https://github.com/niklasvh/html2canvas/issues/2637)
+
+### fix
+
+* parsing counter content in pseudo element (#2640) ([1941b9e](https://github.com/niklasvh/html2canvas/commit/1941b9e0acfd9243da0beaf70e1643cab1b4a963)), closes [#2640](https://github.com/niklasvh/html2canvas/issues/2640)
+* radial gradient ry check (#2631) ([a0dd38a](https://github.com/niklasvh/html2canvas/commit/a0dd38a8be4e540ae1c1f4b4e41f6c386f3e454f)), closes [#2631](https://github.com/niklasvh/html2canvas/issues/2631)
+* test for ios range line break error (#2635) ([f43f942](https://github.com/niklasvh/html2canvas/commit/f43f942fcd793dde9cdc6c0438f379ec3c05c405)), closes [#2635](https://github.com/niklasvh/html2canvas/issues/2635)
+
+### test
+
+* large base64 encoded background (#2636) ([e36408a](https://github.com/niklasvh/html2canvas/commit/e36408ad030fe31acd9969a37fe24c1621c0bd04)), closes [#2636](https://github.com/niklasvh/html2canvas/issues/2636)
+
+
+
 ## [1.2.1](https://github.com/niklasvh/html2canvas/compare/v1.2.0...v1.2.1) (2021-08-05)
 
 
