@@ -48,7 +48,7 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babel-plugin-dev-expression": "^0.2.1",
-    "base64-arraybuffer": "0.2.0",
+    "base64-arraybuffer": "1.0.1",
     "body-parser": "^1.19.0",
     "chai": "4.1.1",
     "chromeless": "^1.5.2",
@@ -119,6 +119,6 @@
   "license": "MIT",
   "dependencies": {
     "css-line-break": "2.0.1",
-    "text-segmentation": "^1.0.1"
+    "text-segmentation": "^1.0.2"
   }
 }
