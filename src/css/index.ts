@@ -31,6 +31,7 @@ import {
     borderTopWidth
 } from './property-descriptors/border-width';
 import {color} from './property-descriptors/color';
+import {direction} from './property-descriptors/direction';
 import {display, DISPLAY} from './property-descriptors/display';
 import {float, FLOAT} from './property-descriptors/float';
 import {letterSpacing} from './property-descriptors/letter-spacing';
@@ -107,6 +108,7 @@ export class CSSParsedDeclaration {
     borderLeftWidth: ReturnType<typeof borderLeftWidth.parse>;
     boxShadow: ReturnType<typeof boxShadow.parse>;
     color: Color;
+    direction: ReturnType<typeof direction.parse>;
     display: ReturnType<typeof display.parse>;
     float: ReturnType<typeof float.parse>;
     fontFamily: ReturnType<typeof fontFamily.parse>;
@@ -175,6 +177,7 @@ export class CSSParsedDeclaration {
         this.borderLeftWidth = parse(context, borderLeftWidth, declaration.borderLeftWidth);
         this.boxShadow = parse(context, boxShadow, declaration.boxShadow);
         this.color = parse(context, color, declaration.color);
+        this.direction = parse(context, direction, declaration.direction);
         this.display = parse(context, display, declaration.display);
         this.float = parse(context, float, declaration.cssFloat);
         this.fontFamily = parse(context, fontFamily, declaration.fontFamily);
