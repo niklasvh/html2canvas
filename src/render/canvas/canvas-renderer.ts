@@ -44,6 +44,7 @@ import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
+import {DIRECTION} from '../../css/property-descriptors/direction';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -174,6 +175,8 @@ export class CanvasRenderer extends Renderer {
 
         this.ctx.font = font;
 
+        this.ctx.direction = styles.direction === DIRECTION.RTL ? 'rtl' : 'ltr';
+        this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'alphabetic';
         const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
         const paintOrder = styles.paintOrder;
