@@ -4,10 +4,10 @@ import {isLengthPercentage, LengthPercentage} from '../types/length-percentage';
 import {StringValueToken} from '../syntax/tokenizer';
 import {Context} from '../../core/context';
 
-export const enum BACKGROUND_SIZE {
-    AUTO,
-    CONTAIN,
-    COVER
+export enum BACKGROUND_SIZE {
+    AUTO = 'auto',
+    CONTAIN = 'contain',
+    COVER = 'cover'
 }
 
 export type BackgroundSizeInfo = LengthPercentage | StringValueToken;
