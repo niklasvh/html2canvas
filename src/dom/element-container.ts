@@ -21,10 +21,21 @@ export class ElementContainer {
         this.styles = new CSSParsedDeclaration(context, window.getComputedStyle(element, null));
         this.textNodes = [];
         this.elements = [];
-        if (this.styles.transform !== null && isHTMLElementNode(element)) {
-            // getBoundingClientRect takes transforms into account
-            element.style.transform = 'none';
+
+        if (isHTMLElementNode(element)) {
+            if (this.styles.animationDuration > 0) {
+                element.style.animationDuration = '0s';
+            }
+            if (this.styles.transitionDuration > 0) {
+                element.style.transitionDuration = '0s';
+            }
+
+            if (this.styles.transform !== null) {
+                // getBoundingClientRect takes transforms into account
+                element.style.transform = 'none';
+            }
         }
+
         this.bounds = parseBounds(this.context, element);
         this.flags = 0;
     }

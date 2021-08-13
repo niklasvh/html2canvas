@@ -2,7 +2,7 @@
 
 import {fromCodePoint, toCodePoints} from 'css-line-break';
 
-export enum TokenType {
+export const enum TokenType {
     STRING_TOKEN,
     BAD_STRING_TOKEN,
     LEFT_PARENTHESIS_TOKEN,
