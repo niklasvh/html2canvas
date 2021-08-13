@@ -3,7 +3,7 @@ import {CSSValue, isIdentToken, parseFunctionArgs} from '../syntax/parser';
 import {Context} from '../../core/context';
 export type BackgroundRepeat = BACKGROUND_REPEAT[];
 
-export enum BACKGROUND_REPEAT {
+export const enum BACKGROUND_REPEAT {
     REPEAT = 0,
     NO_REPEAT = 1,
     REPEAT_X = 2,

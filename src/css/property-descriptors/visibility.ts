@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum VISIBILITY {
+export const enum VISIBILITY {
     VISIBLE = 0,
     HIDDEN = 1,
     COLLAPSE = 2

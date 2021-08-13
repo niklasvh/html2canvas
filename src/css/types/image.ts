@@ -10,7 +10,7 @@ import {radialGradient} from './functions/radial-gradient';
 import {prefixRadialGradient} from './functions/-prefix-radial-gradient';
 import {Context} from '../../core/context';
 
-export enum CSSImageType {
+export const enum CSSImageType {
     URL,
     LINEAR_GRADIENT,
     RADIAL_GRADIENT
@@ -56,12 +56,12 @@ export interface CSSLinearGradientImage extends ICSSGradientImage {
     type: CSSImageType.LINEAR_GRADIENT;
 }
 
-export enum CSSRadialShape {
+export const enum CSSRadialShape {
     CIRCLE,
     ELLIPSE
 }
 
-export enum CSSRadialExtent {
+export const enum CSSRadialExtent {
     CLOSEST_SIDE,
     FARTHEST_SIDE,
     CLOSEST_CORNER,

@@ -1,7 +1,7 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
 import {Context} from '../../core/context';
-export enum BACKGROUND_CLIP {
+export const enum BACKGROUND_CLIP {
     BORDER_BOX = 0,
     PADDING_BOX = 1,
     CONTENT_BOX = 2

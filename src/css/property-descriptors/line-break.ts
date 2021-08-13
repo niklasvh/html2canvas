@@ -1,8 +1,8 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum LINE_BREAK {
-    NORMAL = 'normal',
-    STRICT = 'strict'
+export const enum LINE_BREAK {
+    NORMAL,
+    STRICT
 }
 
 export const lineBreak: IPropertyIdentValueDescriptor<LINE_BREAK> = {
