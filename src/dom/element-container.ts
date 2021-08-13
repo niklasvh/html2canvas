@@ -21,9 +21,14 @@ export class ElementContainer {
         this.styles = new CSSParsedDeclaration(context, window.getComputedStyle(element, null));
         this.textNodes = [];
         this.elements = [];
+
         if (isHTMLElementNode(element)) {
-            element.style.animationDuration = '0s';
-            element.style.transitionDuration = '0s';
+            if (this.styles.animationDuration > 0) {
+                element.style.animationDuration = '0s';
+            }
+            if (this.styles.transitionDuration > 0) {
+                element.style.transitionDuration = '0s';
+            }
 
             if (this.styles.transform !== null) {
                 // getBoundingClientRect takes transforms into account

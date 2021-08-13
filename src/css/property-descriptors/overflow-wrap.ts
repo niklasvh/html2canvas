@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum OVERFLOW_WRAP {
+export const enum OVERFLOW_WRAP {
     NORMAL = 'normal',
     BREAK_WORD = 'break-word'
 }

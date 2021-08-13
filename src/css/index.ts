@@ -57,6 +57,7 @@ import {Tokenizer} from './syntax/tokenizer';
 import {Color, color as colorType, isTransparent} from './types/color';
 import {angle} from './types/angle';
 import {image} from './types/image';
+import {time} from './types/time';
 import {opacity} from './property-descriptors/opacity';
 import {textDecorationColor} from './property-descriptors/text-decoration-color';
 import {textDecorationLine} from './property-descriptors/text-decoration-line';
@@ -71,6 +72,7 @@ import {contains} from '../core/bitwise';
 import {content} from './property-descriptors/content';
 import {counterIncrement} from './property-descriptors/counter-increment';
 import {counterReset} from './property-descriptors/counter-reset';
+import {duration} from './property-descriptors/duration';
 import {quotes} from './property-descriptors/quotes';
 import {boxShadow} from './property-descriptors/box-shadow';
 import {paintOrder} from './property-descriptors/paint-order';
@@ -79,6 +81,7 @@ import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-stroke-w
 import {Context} from '../core/context';
 
 export class CSSParsedDeclaration {
+    animationDuration: number;
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
     backgroundColor: Color;
     backgroundImage: ReturnType<typeof backgroundImage.parse>;
@@ -138,6 +141,7 @@ export class CSSParsedDeclaration {
     textTransform: ReturnType<typeof textTransform.parse>;
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
+    transitionDuration: number;
     visibility: ReturnType<typeof visibility.parse>;
     webkitTextStrokeColor: Color;
     webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
@@ -145,6 +149,7 @@ export class CSSParsedDeclaration {
     zIndex: ReturnType<typeof zIndex.parse>;
 
     constructor(context: Context, declaration: CSSStyleDeclaration) {
+        this.animationDuration = parse(context, duration, declaration.animationDuration);
         this.backgroundClip = parse(context, backgroundClip, declaration.backgroundClip);
         this.backgroundColor = parse(context, backgroundColor, declaration.backgroundColor);
         this.backgroundImage = parse(context, backgroundImage, declaration.backgroundImage);
@@ -213,6 +218,7 @@ export class CSSParsedDeclaration {
         this.textTransform = parse(context, textTransform, declaration.textTransform);
         this.transform = parse(context, transform, declaration.transform);
         this.transformOrigin = parse(context, transformOrigin, declaration.transformOrigin);
+        this.transitionDuration = parse(context, duration, declaration.transitionDuration);
         this.visibility = parse(context, visibility, declaration.visibility);
         this.webkitTextStrokeColor = parse(context, webkitTextStrokeColor, declaration.webkitTextStrokeColor);
         this.webkitTextStrokeWidth = parse(context, webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
@@ -306,6 +312,8 @@ const parse = (context: Context, descriptor: CSSPropertyDescriptor<any>, style?:
                 case 'length-percentage':
                     const value = parser.parseComponentValue();
                     return isLengthPercentage(value) ? value : ZERO_LENGTH;
+                case 'time':
+                    return time.parse(context, parser.parseComponentValue());
             }
             break;
     }
