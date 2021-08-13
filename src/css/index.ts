@@ -81,7 +81,7 @@ import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-stroke-w
 import {Context} from '../core/context';
 
 export class CSSParsedDeclaration {
-    animationDuration: number;
+    animationDuration: ReturnType<typeof time.parse>;
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
     backgroundColor: Color;
     backgroundImage: ReturnType<typeof backgroundImage.parse>;
@@ -141,7 +141,7 @@ export class CSSParsedDeclaration {
     textTransform: ReturnType<typeof textTransform.parse>;
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
-    transitionDuration: number;
+    transitionDuration: ReturnType<typeof time.parse>;
     visibility: ReturnType<typeof visibility.parse>;
     webkitTextStrokeColor: Color;
     webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
