@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.3.0](https://github.com/niklasvh/html2canvas/compare/v1.2.2...v1.3.0) (2021-08-13)
+
+
+### feat
+
+* add rtl render support (#2653) ([6947982](https://github.com/niklasvh/html2canvas/commit/694798284838b16882e648914da0905818aa366c)), closes [#2653](https://github.com/niklasvh/html2canvas/issues/2653)
+* correctly break graphemes (#2652) ([437b367](https://github.com/niklasvh/html2canvas/commit/437b367d3ba9dfd7f9a4c8042ac8d00208c09770)), closes [#2652](https://github.com/niklasvh/html2canvas/issues/2652)
+
+### fix
+
+* correctly handle allowTaint canvas cloning (#2649) ([c378e22](https://github.com/niklasvh/html2canvas/commit/c378e220694c14cb7b3b4b8650a7757f8fc23c7a)), closes [#2649](https://github.com/niklasvh/html2canvas/issues/2649)
+* finish animation/transitions for elements (#2632) ([969638f](https://github.com/niklasvh/html2canvas/commit/969638fb94a0a14c64a667fa6e5689f79d9f1044)), closes [#2632](https://github.com/niklasvh/html2canvas/issues/2632)
+
+### test
+
+* add letter-spacing test for zwj emoji (#2650) ([f919204](https://github.com/niklasvh/html2canvas/commit/f919204efa06af219f155ca279f96124bb92862b)), closes [#2650](https://github.com/niklasvh/html2canvas/issues/2650)
+
+
+
 ## [1.2.2](https://github.com/niklasvh/html2canvas/compare/v1.2.1...v1.2.2) (2021-08-10)
 
 
