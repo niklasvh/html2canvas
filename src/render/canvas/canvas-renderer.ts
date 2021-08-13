@@ -19,7 +19,6 @@ import {
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
 import {TextBounds} from '../../css/layout/text';
-import {fromCodePoint, toCodePoints} from 'css-line-break';
 import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
 import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
@@ -44,6 +43,7 @@ import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
+import {splitGraphemes} from 'text-segmentation';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -144,7 +144,7 @@ export class CanvasRenderer extends Renderer {
         if (letterSpacing === 0) {
             this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
         } else {
-            const letters = toCodePoints(text.text).map((i) => fromCodePoint(i));
+            const letters = splitGraphemes(text.text);
             letters.reduce((left, letter) => {
                 this.ctx.fillText(letter, left, text.bounds.top + baseline);
 
