@@ -24,6 +24,7 @@ import {Context} from '../core/context';
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document, element: HTMLElement) => void;
+    allowTaint?: boolean;
 }
 
 export interface WindowOptions {
@@ -201,14 +202,16 @@ export class DocumentCloner {
             const ctx = canvas.getContext('2d');
             const clonedCtx = clonedCanvas.getContext('2d');
             if (clonedCtx) {
-                if (ctx) {
+                if (!this.options.allowTaint && ctx) {
                     clonedCtx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
                 } else {
                     clonedCtx.drawImage(canvas, 0, 0);
                 }
             }
             return clonedCanvas;
-        } catch (e) {}
+        } catch (e) {
+            this.context.logger.info(`Unable to clone canvas as it is tainted`);
+        }
 
         return clonedCanvas;
     }
