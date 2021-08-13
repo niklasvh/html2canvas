@@ -1,8 +1,8 @@
 import {CSSValue} from './syntax/parser';
-import {CSSTypes} from './types/index';
+import {CSSTypes} from './types';
 import {Context} from '../core/context';
 
-export enum PropertyDescriptorParsingType {
+export const enum PropertyDescriptorParsingType {
     VALUE,
     LIST,
     IDENT_VALUE,
