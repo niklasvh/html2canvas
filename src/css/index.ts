@@ -143,7 +143,6 @@ export class CSSParsedDeclaration {
     textTransform: ReturnType<typeof textTransform.parse>;
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
-    transitionDuration: ReturnType<typeof duration.parse>;
     visibility: ReturnType<typeof visibility.parse>;
     webkitTextStrokeColor: Color;
     webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
@@ -221,7 +220,6 @@ export class CSSParsedDeclaration {
         this.textTransform = parse(context, textTransform, declaration.textTransform);
         this.transform = parse(context, transform, declaration.transform);
         this.transformOrigin = parse(context, transformOrigin, declaration.transformOrigin);
-        this.transitionDuration = parse(context, duration, declaration.transitionDuration);
         this.visibility = parse(context, visibility, declaration.visibility);
         this.webkitTextStrokeColor = parse(context, webkitTextStrokeColor, declaration.webkitTextStrokeColor);
         this.webkitTextStrokeWidth = parse(context, webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
