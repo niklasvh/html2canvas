@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.1](https://github.com/niklasvh/html2canvas/compare/v1.3.0...v1.3.1) (2021-08-14)
+
+
+### fix
+
+* multi arg transition/animation duration (#2657) ([1b55ed5](https://github.com/niklasvh/html2canvas/commit/1b55ed5668dcbbe1c6d8d7e94736d8f2da2d31c5)), closes [#2657](https://github.com/niklasvh/html2canvas/issues/2657)
+
+
+
 # [1.3.0](https://github.com/niklasvh/html2canvas/compare/v1.2.2...v1.3.0) (2021-08-13)
 
 
