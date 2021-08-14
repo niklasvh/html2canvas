@@ -194,7 +194,7 @@ export class DocumentCloner {
                 img.src = canvas.toDataURL();
                 return img;
             } catch (e) {
-                this.context.logger.info(`Unable to clone canvas contents, canvas is tainted`);
+                this.context.logger.info(`Unable to inline canvas contents, canvas is tainted`, canvas);
             }
         }
 
@@ -209,12 +209,23 @@ export class DocumentCloner {
                 if (!this.options.allowTaint && ctx) {
                     clonedCtx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
                 } else {
+                    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+                    if (gl) {
+                        const attribs = gl.getContextAttributes();
+                        if (attribs?.preserveDrawingBuffer === false) {
+                            this.context.logger.warn(
+                                'Unable to clone WebGL context as it has preserveDrawingBuffer=false',
+                                canvas
+                            );
+                        }
+                    }
+
                     clonedCtx.drawImage(canvas, 0, 0);
                 }
             }
             return clonedCanvas;
         } catch (e) {
-            this.context.logger.info(`Unable to clone canvas as it is tainted`);
+            this.context.logger.info(`Unable to clone canvas as it is tainted`, canvas);
         }
 
         return clonedCanvas;
