@@ -20,6 +20,7 @@ import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-s
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
 import {Context} from '../core/context';
+import {DebuggerType, isDebugging} from '../core/debugger';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
@@ -136,6 +137,9 @@ export class DocumentCloner {
     }
 
     createElementClone<T extends HTMLElement | SVGElement>(node: T): HTMLElement | SVGElement {
+        if (isDebugging(node, DebuggerType.CLONE)) {
+            debugger;
+        }
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
