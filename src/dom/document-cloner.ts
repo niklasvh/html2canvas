@@ -233,6 +233,7 @@ export class DocumentCloner {
 
         if (window && isElementNode(node) && (isHTMLElementNode(node) || isSVGElementNode(node))) {
             const clone = this.createElementClone(node);
+            clone.style.transitionProperty = 'none';
 
             const style = window.getComputedStyle(node);
             const styleBefore = window.getComputedStyle(node, ':before');
