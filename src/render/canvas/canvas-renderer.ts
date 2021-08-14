@@ -1,6 +1,6 @@
 import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
 import {asString, Color, isTransparent} from '../../css/types/color';
-import {ElementContainer} from '../../dom/element-container';
+import {ElementContainer, FLAGS} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css/index';
 import {TextContainer} from '../../dom/text-container';
@@ -135,6 +135,10 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNode(paint: ElementPaint): Promise<void> {
+        if (contains(paint.container.flags, FLAGS.DEBUG_RENDER)) {
+            debugger;
+        }
+
         if (paint.container.styles.isVisible()) {
             await this.renderNodeBackgroundAndBorders(paint);
             await this.renderNodeContent(paint);
@@ -468,6 +472,9 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderStackContent(stack: StackingContext): Promise<void> {
+        if (contains(stack.element.container.flags, FLAGS.DEBUG_RENDER)) {
+            debugger;
+        }
         // https://www.w3.org/TR/css-position-3/#painting-order
         // 1. the background and borders of the element forming the stacking context.
         await this.renderNodeBackgroundAndBorders(stack.element);
