@@ -23,10 +23,10 @@ export class ElementContainer {
         this.elements = [];
 
         if (isHTMLElementNode(element)) {
-            if (this.styles.animationDuration > 0) {
+            if (this.styles.animationDuration.some((duration) => duration > 0)) {
                 element.style.animationDuration = '0s';
             }
-            if (this.styles.transitionDuration > 0) {
+            if (this.styles.transitionDuration.some((duration) => duration > 0)) {
                 element.style.transitionDuration = '0s';
             }
 
