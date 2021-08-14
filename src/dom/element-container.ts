@@ -17,7 +17,7 @@ export class ElementContainer {
     readonly textNodes: TextContainer[] = [];
     readonly elements: ElementContainer[] = [];
     bounds: Bounds;
-    flags: number = 0;
+    flags = 0;
 
     constructor(protected readonly context: Context, element: Element) {
         if (isDebugging(element, DebuggerType.PARSE)) {
