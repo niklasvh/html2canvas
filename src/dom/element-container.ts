@@ -24,10 +24,6 @@ export class ElementContainer {
             debugger;
         }
 
-        if (isHTMLElementNode(element)) {
-            element.style.transitionProperty = 'none';
-        }
-
         this.styles = new CSSParsedDeclaration(context, window.getComputedStyle(element, null));
 
         if (isHTMLElementNode(element)) {
