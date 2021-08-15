@@ -87,12 +87,12 @@ export class CanvasRenderer extends Renderer {
         );
     }
 
-    applyEffects(effects: IElementEffect[], target: EffectTarget): void {
+    applyEffects(effects: IElementEffect[]): void {
         while (this._activeEffects.length) {
             this.popEffect();
         }
 
-        effects.filter((effect) => contains(effect.target, target)).forEach((effect) => this.applyEffect(effect));
+        effects.forEach((effect) => this.applyEffect(effect));
     }
 
     applyEffect(effect: IElementEffect): void {
@@ -293,7 +293,7 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNodeContent(paint: ElementPaint): Promise<void> {
-        this.applyEffects(paint.effects, EffectTarget.CONTENT);
+        this.applyEffects(paint.getEffects(EffectTarget.CONTENT));
         const container = paint.container;
         const curves = paint.curves;
         const styles = container.styles;
@@ -692,7 +692,7 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNodeBackgroundAndBorders(paint: ElementPaint): Promise<void> {
-        this.applyEffects(paint.effects, EffectTarget.BACKGROUND_BORDERS);
+        this.applyEffects(paint.getEffects(EffectTarget.BACKGROUND_BORDERS));
         const styles = paint.container.styles;
         const hasBackground = !isTransparent(styles.backgroundColor) || styles.backgroundImage.length;
 
@@ -906,7 +906,7 @@ export class CanvasRenderer extends Renderer {
         const stack = parseStackingContexts(element);
 
         await this.renderStack(stack);
-        this.applyEffects([], EffectTarget.BACKGROUND_BORDERS);
+        this.applyEffects([]);
         return this.canvas;
     }
 }
