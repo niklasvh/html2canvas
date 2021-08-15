@@ -68,11 +68,21 @@ export class ElementPaint {
         let parent = this.parent;
         const effects = this.effects.slice(0);
         while (parent) {
+            const croplessEffects = parent.effects.filter((effect) => !isClipEffect(effect));
             if (inFlow || parent.container.styles.position !== POSITION.STATIC || !parent.parent) {
-                effects.unshift(...parent.effects);
+                effects.unshift(...croplessEffects);
                 inFlow = [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(parent.container.styles.position) === -1;
+                if (parent.container.styles.overflowX !== OVERFLOW.VISIBLE) {
+                    const borderBox = calculateBorderBoxPath(parent.curves);
+                    const paddingBox = calculatePaddingBoxPath(parent.curves);
+                    if (!equalPath(borderBox, paddingBox)) {
+                        effects.unshift(
+                            new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
+                        );
+                    }
+                }
             } else {
-                effects.unshift(...parent.effects.filter((effect) => !isClipEffect(effect)));
+                effects.unshift(...croplessEffects);
             }
 
             parent = parent.parent;
