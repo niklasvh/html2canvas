@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.2](https://github.com/niklasvh/html2canvas/compare/v1.3.1...v1.3.2) (2021-08-15)
+
+
+### docs
+
+* add warning for webgl cloning with preserveDrawingBuffer=false (#2661) ([01ed879](https://github.com/niklasvh/html2canvas/commit/01ed87907ad9c7688880e2c5cb8ebc22ef73a4d8)), closes [#2661](https://github.com/niklasvh/html2canvas/issues/2661)
+* include src files on www (#2660) ([58ff000](https://github.com/niklasvh/html2canvas/commit/58ff0003f77d825ac027eeec95fa80c0123eaf8f)), closes [#2660](https://github.com/niklasvh/html2canvas/issues/2660)
+
+### feat
+
+* add support for data-html2canvas-debug property for debugging (#2658) ([cd0d725](https://github.com/niklasvh/html2canvas/commit/cd0d7258c3a93f2989d5d9ec0244ba2763ea2d23)), closes [#2658](https://github.com/niklasvh/html2canvas/issues/2658)
+
+### fix
+
+* disable transition properties (#2659) ([f143166](https://github.com/niklasvh/html2canvas/commit/f1431665513e0a4636fb167a241f4a0571ba728a)), closes [#2659](https://github.com/niklasvh/html2canvas/issues/2659)
+* overflows with absolutely positioned content (#2663) ([38c6829](https://github.com/niklasvh/html2canvas/commit/38c682955a9299ca7785af71d8f251df799405b0)), closes [#2663](https://github.com/niklasvh/html2canvas/issues/2663)
+
+
+
 ## [1.3.1](https://github.com/niklasvh/html2canvas/compare/v1.3.0...v1.3.1) (2021-08-14)
 
 
