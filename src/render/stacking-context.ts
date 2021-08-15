@@ -1,7 +1,7 @@
 import {ElementContainer, FLAGS} from '../dom/element-container';
 import {contains} from '../core/bitwise';
 import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
-import {ClipEffect, EffectTarget, IElementEffect, OpacityEffect, TransformEffect} from './effects';
+import {ClipEffect, EffectTarget, IElementEffect, isClipEffect, OpacityEffect, TransformEffect} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
 import {DISPLAY} from '../css/property-descriptors/display';
@@ -33,8 +33,7 @@ export class StackingContext {
 }
 
 export class ElementPaint {
-    readonly overflowEffects: ClipEffect[] = this.getParentOverflowEffect();
-    readonly effects: IElementEffect[] = this.getParentEffects();
+    readonly effects: IElementEffect[] = [];
     readonly curves: BoundCurves;
     listValue?: string;
 
@@ -56,63 +55,30 @@ export class ElementPaint {
             const paddingBox = calculatePaddingBoxPath(this.curves);
 
             if (equalPath(borderBox, paddingBox)) {
-                this.overflowEffects.push(
-                    new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
-                );
+                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT));
             } else {
-                this.overflowEffects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
-                this.overflowEffects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
+                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
+                this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
             }
         }
     }
 
     getEffects(target: EffectTarget): IElementEffect[] {
-        const effects = this.effects.concat(this.overflowEffects);
-        return effects.filter((effect) => contains(effect.target, target));
-    }
-
-    private getPositionAncestor(): ElementPaint {
+        let inFlow = [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(this.container.styles.position) === -1;
         let parent = this.parent;
+        const effects = this.effects.slice(0);
         while (parent) {
-            if (parent.container.styles.position !== POSITION.STATIC) {
-                return parent;
+            if (inFlow || parent.container.styles.position !== POSITION.STATIC || !parent.parent) {
+                effects.unshift(...parent.effects);
+                inFlow = [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(parent.container.styles.position) === -1;
+            } else {
+                effects.unshift(...parent.effects.filter((effect) => !isClipEffect(effect)));
             }
+
             parent = parent.parent;
         }
 
-        return this;
-    }
-
-    private getParentOverflowEffect(): ClipEffect[] {
-        if (!this.parent) {
-            return [];
-        }
-        const parent =
-            [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(this.container.styles.position) !== -1
-                ? this.getPositionAncestor()
-                : this.parent;
-
-        const parentOverflowEffects = parent.overflowEffects ?? [];
-
-        if (parent.container.styles.overflowX !== OVERFLOW.VISIBLE) {
-            const borderBox = calculateBorderBoxPath(parent.curves);
-            const paddingBox = calculatePaddingBoxPath(parent.curves);
-            if (!equalPath(borderBox, paddingBox)) {
-                return parentOverflowEffects.concat([
-                    new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
-                ]);
-            }
-        }
-
-        return parentOverflowEffects.slice(0);
-    }
-
-    getParentEffects(): IElementEffect[] {
-        if (!this.parent) {
-            return [];
-        }
-
-        return this.parent.effects.slice(0);
+        return effects.filter((effect) => contains(effect.target, target));
     }
 }
 
