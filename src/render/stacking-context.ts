@@ -8,6 +8,7 @@ import {DISPLAY} from '../css/property-descriptors/display';
 import {OLElementContainer} from '../dom/elements/ol-element-container';
 import {LIElementContainer} from '../dom/elements/li-element-container';
 import {createCounterText} from '../css/types/functions/counter';
+import {POSITION} from '../css/property-descriptors/position';
 
 export class StackingContext {
     element: ElementPaint;
@@ -32,49 +33,86 @@ export class StackingContext {
 }
 
 export class ElementPaint {
-    container: ElementContainer;
-    effects: IElementEffect[];
-    curves: BoundCurves;
+    readonly overflowEffects: ClipEffect[] = this.getParentOverflowEffect();
+    readonly effects: IElementEffect[] = this.getParentEffects();
+    readonly curves: BoundCurves;
     listValue?: string;
 
-    constructor(element: ElementContainer, parentStack: IElementEffect[]) {
-        this.container = element;
-        this.effects = parentStack.slice(0);
-        this.curves = new BoundCurves(element);
-        if (element.styles.opacity < 1) {
-            this.effects.push(new OpacityEffect(element.styles.opacity));
+    constructor(readonly container: ElementContainer, readonly parent: ElementPaint | null) {
+        this.curves = new BoundCurves(this.container);
+        if (this.container.styles.opacity < 1) {
+            this.effects.push(new OpacityEffect(this.container.styles.opacity));
         }
 
-        if (element.styles.transform !== null) {
-            const offsetX = element.bounds.left + element.styles.transformOrigin[0].number;
-            const offsetY = element.bounds.top + element.styles.transformOrigin[1].number;
-            const matrix = element.styles.transform;
+        if (this.container.styles.transform !== null) {
+            const offsetX = this.container.bounds.left + this.container.styles.transformOrigin[0].number;
+            const offsetY = this.container.bounds.top + this.container.styles.transformOrigin[1].number;
+            const matrix = this.container.styles.transform;
             this.effects.push(new TransformEffect(offsetX, offsetY, matrix));
         }
 
-        if (element.styles.overflowX !== OVERFLOW.VISIBLE) {
+        if (this.container.styles.overflowX !== OVERFLOW.VISIBLE) {
             const borderBox = calculateBorderBoxPath(this.curves);
             const paddingBox = calculatePaddingBoxPath(this.curves);
 
             if (equalPath(borderBox, paddingBox)) {
-                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT));
+                this.overflowEffects.push(
+                    new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
+                );
             } else {
-                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
-                this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
+                this.overflowEffects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
+                this.overflowEffects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
             }
         }
     }
 
-    getParentEffects(): IElementEffect[] {
-        const effects = this.effects.slice(0);
-        if (this.container.styles.overflowX !== OVERFLOW.VISIBLE) {
-            const borderBox = calculateBorderBoxPath(this.curves);
-            const paddingBox = calculatePaddingBoxPath(this.curves);
+    getEffects(target: EffectTarget): IElementEffect[] {
+        const effects = this.effects.concat(this.overflowEffects);
+        return effects.filter((effect) => contains(effect.target, target));
+    }
+
+    private getPositionAncestor(): ElementPaint {
+        let parent = this.parent;
+        while (parent) {
+            if (parent.container.styles.position !== POSITION.STATIC) {
+                return parent;
+            }
+            parent = parent.parent;
+        }
+
+        return this;
+    }
+
+    private getParentOverflowEffect(): ClipEffect[] {
+        if (!this.parent) {
+            return [];
+        }
+        const parent =
+            [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(this.container.styles.position) !== -1
+                ? this.getPositionAncestor()
+                : this.parent;
+
+        const parentOverflowEffects = parent.overflowEffects ?? [];
+
+        if (parent.container.styles.overflowX !== OVERFLOW.VISIBLE) {
+            const borderBox = calculateBorderBoxPath(parent.curves);
+            const paddingBox = calculatePaddingBoxPath(parent.curves);
             if (!equalPath(borderBox, paddingBox)) {
-                effects.push(new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT));
+                return parentOverflowEffects.concat([
+                    new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
+                ]);
             }
         }
-        return effects;
+
+        return parentOverflowEffects.slice(0);
+    }
+
+    getParentEffects(): IElementEffect[] {
+        if (!this.parent) {
+            return [];
+        }
+
+        return this.parent.effects.slice(0);
     }
 }
 
@@ -87,7 +125,7 @@ const parseStackTree = (
     parent.container.elements.forEach((child) => {
         const treatAsRealStackingContext = contains(child.flags, FLAGS.CREATES_REAL_STACKING_CONTEXT);
         const createsStackingContext = contains(child.flags, FLAGS.CREATES_STACKING_CONTEXT);
-        const paintContainer = new ElementPaint(child, parent.getParentEffects());
+        const paintContainer = new ElementPaint(child, parent);
         if (contains(child.styles.display, DISPLAY.LIST_ITEM)) {
             listItems.push(paintContainer);
         }
@@ -182,7 +220,7 @@ const processListItems = (owner: ElementContainer, elements: ElementPaint[]) => 
 };
 
 export const parseStackingContexts = (container: ElementContainer): StackingContext => {
-    const paintContainer = new ElementPaint(container, []);
+    const paintContainer = new ElementPaint(container, null);
     const root = new StackingContext(paintContainer);
     const listItems: ElementPaint[] = [];
     parseStackTree(paintContainer, root, root, listItems);

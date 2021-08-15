@@ -5,7 +5,8 @@ export enum OVERFLOW {
     VISIBLE = 0,
     HIDDEN = 1,
     SCROLL = 2,
-    AUTO = 3
+    CLIP = 3,
+    AUTO = 4
 }
 
 export const overflow: IPropertyListDescriptor<OVERFLOW[]> = {
@@ -20,6 +21,8 @@ export const overflow: IPropertyListDescriptor<OVERFLOW[]> = {
                     return OVERFLOW.HIDDEN;
                 case 'scroll':
                     return OVERFLOW.SCROLL;
+                case 'clip':
+                    return OVERFLOW.CLIP;
                 case 'auto':
                     return OVERFLOW.AUTO;
                 case 'visible':

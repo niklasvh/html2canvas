@@ -51,6 +51,9 @@
         .scroll {
             overflow: scroll;
         }
+        .clip {
+            overflow: clip;
+        }
         .auto {
             overflow: auto;
         }
@@ -69,6 +72,10 @@
 <div class="cell">
     scroll
     <p class="scroll">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec luctus pretium facilisis. Praesent rutrum eget nisl in tristique. Sed tincidunt nisl et tellus vulputate, nec rhoncus orci pretium.</p>
+</div>
+<div class="cell">
+    clip
+    <p class="clip">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec luctus pretium facilisis. Praesent rutrum eget nisl in tristique. Sed tincidunt nisl et tellus vulputate, nec rhoncus orci pretium.</p>
 </div>
 <div class="cell">
     auto
@@ -129,5 +136,17 @@
     </script>
 </div>
 <div class="hidden">Hidden<div style="opacity: 0.5">With opacity</div></div>
+<div class="hidden" style="height: 0px; width: 50px;">
+    <div style="position: absolute; width: 50px; height: 50px; left:400px;">absolute on static parent</div>
+</div>
+<div class="hidden" style="height: 0px; width: 50px;">
+    <div style="position: relative; width: 10px; height: 10px; left:400px;">relative on static parent</div>
+</div>
+<div class="hidden" style="height: 0px; width: 50px;">
+    <div style="position: fixed; width: 50px; height: 50px; left:400px; top:0;">fixed on static parent</div>
+</div>
+<div class="hidden" style="height: 0px; width: 50px;position: relative;">
+    <div style="position: absolute; width: 10px; height: 10px; left:400px;">absolute on relative parent</div>
+</div>
 </body>
 </html>
