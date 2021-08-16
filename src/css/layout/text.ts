@@ -29,12 +29,24 @@ export const parseTextBounds = (
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
                 if (!FEATURES.SUPPORT_WORD_BREAKING) {
-                    textBounds.push(
-                        new TextBounds(
-                            text,
-                            Bounds.fromDOMRectList(context, createRange(node, offset, text.length).getClientRects())
-                        )
-                    );
+                    const rects = createRange(node, offset, text.length).getClientRects();
+                    if (rects.length > 1) {
+                        let graphemeOffset = 0;
+                        splitGraphemes(text).forEach((grapheme) => {
+                            textBounds.push(
+                                new TextBounds(
+                                    grapheme,
+                                    Bounds.fromDOMRectList(
+                                        context,
+                                        createRange(node, graphemeOffset + offset, grapheme.length).getClientRects()
+                                    )
+                                )
+                            );
+                            graphemeOffset += grapheme.length;
+                        });
+                    } else {
+                        textBounds.push(new TextBounds(text, Bounds.fromDOMRectList(context, rects)));
+                    }
                 } else {
                     textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
                 }
