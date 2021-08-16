@@ -1,9 +1,9 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
 export const enum FONT_STYLE {
-    NORMAL,
-    ITALIC,
-    OBLIQUE
+    NORMAL = 'normal',
+    ITALIC = 'italic',
+    OBLIQUE = 'oblique'
 }
 
 export const fontStyle: IPropertyIdentValueDescriptor<FONT_STYLE> = {
