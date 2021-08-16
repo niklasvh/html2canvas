@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum FLOAT {
+export const enum FLOAT {
     NONE = 0,
     LEFT = 1,
     RIGHT = 2,

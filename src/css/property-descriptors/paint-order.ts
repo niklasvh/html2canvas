@@ -1,7 +1,7 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
 import {Context} from '../../core/context';
-export enum PAINT_ORDER_LAYER {
+export const enum PAINT_ORDER_LAYER {
     FILL,
     STROKE,
     MARKERS
