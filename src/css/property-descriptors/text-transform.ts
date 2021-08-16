@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum TEXT_TRANSFORM {
+export const enum TEXT_TRANSFORM {
     NONE = 0,
     LOWERCASE = 1,
     UPPERCASE = 2,

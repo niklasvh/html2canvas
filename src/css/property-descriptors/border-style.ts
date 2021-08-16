@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum BORDER_STYLE {
+export const enum BORDER_STYLE {
     NONE = 0,
     SOLID = 1,
     DASHED = 2,

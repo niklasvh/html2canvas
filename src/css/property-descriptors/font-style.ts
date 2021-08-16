@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum FONT_STYLE {
+export const enum FONT_STYLE {
     NORMAL = 'normal',
     ITALIC = 'italic',
     OBLIQUE = 'oblique'

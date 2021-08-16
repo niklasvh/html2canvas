@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum LIST_STYLE_TYPE {
+export const enum LIST_STYLE_TYPE {
     NONE = -1,
     DISC = 0,
     CIRCLE = 1,

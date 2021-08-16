@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum TEXT_ALIGN {
+export const enum TEXT_ALIGN {
     LEFT = 0,
     CENTER = 1,
     RIGHT = 2

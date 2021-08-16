@@ -1,6 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
-export enum POSITION {
+export const enum POSITION {
     STATIC = 0,
     RELATIVE = 1,
     ABSOLUTE = 2,
