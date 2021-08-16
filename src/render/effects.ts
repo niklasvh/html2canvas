@@ -20,36 +20,21 @@ export interface IElementEffect {
 export class TransformEffect implements IElementEffect {
     readonly type: EffectType = EffectType.TRANSFORM;
     readonly target: number = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
-    readonly offsetX: number;
-    readonly offsetY: number;
-    readonly matrix: Matrix;
 
-    constructor(offsetX: number, offsetY: number, matrix: Matrix) {
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.matrix = matrix;
-    }
+    constructor(readonly offsetX: number, readonly offsetY: number, readonly matrix: Matrix) {}
 }
 
 export class ClipEffect implements IElementEffect {
     readonly type: EffectType = EffectType.CLIP;
-    readonly target: number;
-    readonly path: Path[];
 
-    constructor(path: Path[], target: EffectTarget) {
-        this.target = target;
-        this.path = path;
-    }
+    constructor(readonly path: Path[], readonly target: EffectTarget) {}
 }
 
 export class OpacityEffect implements IElementEffect {
     readonly type: EffectType = EffectType.OPACITY;
     readonly target: number = EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT;
-    readonly opacity: number;
 
-    constructor(opacity: number) {
-        this.opacity = opacity;
-    }
+    constructor(readonly opacity: number) {}
 }
 
 export const isTransformEffect = (effect: IElementEffect): effect is TransformEffect =>

@@ -20,6 +20,7 @@ import {LIST_STYLE_TYPE, listStyleType} from '../css/property-descriptors/list-s
 import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/index';
 import {getQuote} from '../css/property-descriptors/quotes';
 import {Context} from '../core/context';
+import {DebuggerType, isDebugging} from '../core/debugger';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
@@ -136,6 +137,9 @@ export class DocumentCloner {
     }
 
     createElementClone<T extends HTMLElement | SVGElement>(node: T): HTMLElement | SVGElement {
+        if (isDebugging(node, DebuggerType.CLONE)) {
+            debugger;
+        }
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
@@ -190,7 +194,7 @@ export class DocumentCloner {
                 img.src = canvas.toDataURL();
                 return img;
             } catch (e) {
-                this.context.logger.info(`Unable to clone canvas contents, canvas is tainted`);
+                this.context.logger.info(`Unable to inline canvas contents, canvas is tainted`, canvas);
             }
         }
 
@@ -205,12 +209,23 @@ export class DocumentCloner {
                 if (!this.options.allowTaint && ctx) {
                     clonedCtx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
                 } else {
+                    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+                    if (gl) {
+                        const attribs = gl.getContextAttributes();
+                        if (attribs?.preserveDrawingBuffer === false) {
+                            this.context.logger.warn(
+                                'Unable to clone WebGL context as it has preserveDrawingBuffer=false',
+                                canvas
+                            );
+                        }
+                    }
+
                     clonedCtx.drawImage(canvas, 0, 0);
                 }
             }
             return clonedCanvas;
         } catch (e) {
-            this.context.logger.info(`Unable to clone canvas as it is tainted`);
+            this.context.logger.info(`Unable to clone canvas as it is tainted`, canvas);
         }
 
         return clonedCanvas;
@@ -229,6 +244,7 @@ export class DocumentCloner {
 
         if (window && isElementNode(node) && (isHTMLElementNode(node) || isSVGElementNode(node))) {
             const clone = this.createElementClone(node);
+            clone.style.transitionProperty = 'none';
 
             const style = window.getComputedStyle(node);
             const styleBefore = window.getComputedStyle(node, ':before');

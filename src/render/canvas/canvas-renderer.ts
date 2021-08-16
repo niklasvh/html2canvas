@@ -1,6 +1,6 @@
 import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-context';
 import {asString, Color, isTransparent} from '../../css/types/color';
-import {ElementContainer} from '../../dom/element-container';
+import {ElementContainer, FLAGS} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css/index';
 import {TextContainer} from '../../dom/text-container';
@@ -19,7 +19,6 @@ import {
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
 import {TextBounds} from '../../css/layout/text';
-import {fromCodePoint, toCodePoints} from 'css-line-break';
 import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
 import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
@@ -44,6 +43,8 @@ import {TextShadow} from '../../css/property-descriptors/text-shadow';
 import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
+import {DIRECTION} from '../../css/property-descriptors/direction';
+import {splitGraphemes} from 'text-segmentation';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -86,12 +87,12 @@ export class CanvasRenderer extends Renderer {
         );
     }
 
-    applyEffects(effects: IElementEffect[], target: EffectTarget): void {
+    applyEffects(effects: IElementEffect[]): void {
         while (this._activeEffects.length) {
             this.popEffect();
         }
 
-        effects.filter((effect) => contains(effect.target, target)).forEach((effect) => this.applyEffect(effect));
+        effects.forEach((effect) => this.applyEffect(effect));
     }
 
     applyEffect(effect: IElementEffect): void {
@@ -134,6 +135,10 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNode(paint: ElementPaint): Promise<void> {
+        if (contains(paint.container.flags, FLAGS.DEBUG_RENDER)) {
+            debugger;
+        }
+
         if (paint.container.styles.isVisible()) {
             await this.renderNodeBackgroundAndBorders(paint);
             await this.renderNodeContent(paint);
@@ -144,7 +149,7 @@ export class CanvasRenderer extends Renderer {
         if (letterSpacing === 0) {
             this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
         } else {
-            const letters = toCodePoints(text.text).map((i) => fromCodePoint(i));
+            const letters = splitGraphemes(text.text);
             letters.reduce((left, letter) => {
                 this.ctx.fillText(letter, left, text.bounds.top + baseline);
 
@@ -174,6 +179,8 @@ export class CanvasRenderer extends Renderer {
 
         this.ctx.font = font;
 
+        this.ctx.direction = styles.direction === DIRECTION.RTL ? 'rtl' : 'ltr';
+        this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'alphabetic';
         const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
         const paintOrder = styles.paintOrder;
@@ -286,7 +293,7 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNodeContent(paint: ElementPaint): Promise<void> {
-        this.applyEffects(paint.effects, EffectTarget.CONTENT);
+        this.applyEffects(paint.getEffects(EffectTarget.CONTENT));
         const container = paint.container;
         const curves = paint.curves;
         const styles = container.styles;
@@ -465,6 +472,9 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderStackContent(stack: StackingContext): Promise<void> {
+        if (contains(stack.element.container.flags, FLAGS.DEBUG_RENDER)) {
+            debugger;
+        }
         // https://www.w3.org/TR/css-position-3/#painting-order
         // 1. the background and borders of the element forming the stacking context.
         await this.renderNodeBackgroundAndBorders(stack.element);
@@ -682,7 +692,7 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderNodeBackgroundAndBorders(paint: ElementPaint): Promise<void> {
-        this.applyEffects(paint.effects, EffectTarget.BACKGROUND_BORDERS);
+        this.applyEffects(paint.getEffects(EffectTarget.BACKGROUND_BORDERS));
         const styles = paint.container.styles;
         const hasBackground = !isTransparent(styles.backgroundColor) || styles.backgroundImage.length;
 
@@ -896,7 +906,7 @@ export class CanvasRenderer extends Renderer {
         const stack = parseStackingContexts(element);
 
         await this.renderStack(stack);
-        this.applyEffects([], EffectTarget.BACKGROUND_BORDERS);
+        this.applyEffects([]);
         return this.canvas;
     }
 }
