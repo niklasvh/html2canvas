@@ -94,7 +94,7 @@ export class Cache {
             img.onload = () => resolve(img);
             img.onerror = reject;
             //ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
-            if (isInlineBase64Image(src) || useCORS) {
+            if (isInlineImage(src) || useCORS) {
                 img.crossOrigin = 'anonymous';
             }
             img.src = src;
@@ -166,12 +166,10 @@ export class Cache {
 }
 
 const INLINE_SVG = /^data:image\/svg\+xml/i;
-const INLINE_BASE64 = /^data:image\/.*;base64,/i;
 const INLINE_IMG = /^data:image\/.*/i;
 
 const isRenderable = (src: string): boolean => FEATURES.SUPPORT_SVG_DRAWING || !isSVG(src);
 const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
-const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
 const isBlobImage = (src: string): boolean => src.substr(0, 4) === 'blob';
 
 const isSVG = (src: string): boolean => src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
