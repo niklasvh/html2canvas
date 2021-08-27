@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Escaped SVG background tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        .svg {
+            position: absolute;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='605' height='2'%3E%3Cpath stroke='%23F00' stroke-dasharray='11,11' d='M.25.25l604 .25'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 500px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class='svg'>
+    </div>
+</body>
+
+</html>
