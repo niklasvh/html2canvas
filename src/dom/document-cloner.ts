@@ -109,7 +109,7 @@ export class DocumentCloner {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
             }
 
-            if (documentClone.fonts && documentClone.fonts.status === "loading" && documentClone.fonts.ready) {
+            if (documentClone.fonts && documentClone.fonts.status === 'loading' && documentClone.fonts.ready) {
                 await documentClone.fonts.ready;
             }
 
