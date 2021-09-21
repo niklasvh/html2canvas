@@ -35,6 +35,21 @@
                 display:block;
             }
 
+            div.psudo-after::before {
+                background-image: radial-gradient(circle, #6ca233 30%, rgba(255, 255, 255, 0) 0%);
+                background-position: center;
+                background-size: 10px 10px;
+                background-repeat: repeat-y;
+                height: calc(20% - 50px + 25px);
+                z-index: 1;
+                content: "";
+                position: absolute;
+                width: 5px;
+                left: 35px;
+            }
+
+
+
         </style>
 
     </head>
@@ -51,6 +66,9 @@
             <div style="background:url(../../assets/image.jpg) repeat-x;"></div>
             <div style="background:url(../../assets/image.jpg) repeat-y;"></div>
             <div style="background:url(../../assets/image.jpg) no-repeat;"></div>
+        </div>
+
+        <div class="psudo-after">
         </div>
 
     </body>

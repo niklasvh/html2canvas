@@ -16,7 +16,7 @@ import {
     parsePathForBorderDoubleOuter,
     parsePathForBorderStroke
 } from '../border';
-import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
+import {calculateBackgroundRendering, calculateBackgroundRepeatPath, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
 import {TextBounds} from '../../css/layout/text';
 import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
@@ -633,20 +633,34 @@ export class CanvasRenderer extends Renderer {
                     null,
                     null
                 ]);
+
+                const newBounds = new Bounds(0, 0, width, height);
+                const normalisedPath = calculateBackgroundRepeatPath(
+                    getBackgroundValueForIndex(container.styles.backgroundRepeat, index),
+                    [0, 0],
+                    [width, height],
+                    newBounds,
+                    newBounds
+                );
                 const position = backgroundImage.position.length === 0 ? [FIFTY_PERCENT] : backgroundImage.position;
                 const x = getAbsoluteValue(position[0], width);
                 const y = getAbsoluteValue(position[position.length - 1], height);
 
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
                 const [rx, ry] = calculateRadius(backgroundImage, x, y, width, height);
                 if (rx > 0 && ry > 0) {
-                    const radialGradient = this.ctx.createRadialGradient(left + x, top + y, 0, left + x, top + y, rx);
+                    const radialGradient = ctx.createRadialGradient(0 + x, 0 + y, 0, 0 + x, 0 + y, rx);
 
                     processColorStops(backgroundImage.stops, rx * 2).forEach((colorStop) =>
                         radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
                     );
 
-                    this.path(path);
-                    this.ctx.fillStyle = radialGradient;
+                    this.path.bind({ctx, formatPath: this.formatPath.bind({ctx})})(normalisedPath);
+                    ctx.fillStyle = radialGradient;
                     if (rx !== ry) {
                         // transforms for elliptical radial gradient
                         const midX = container.bounds.left + 0.5 * container.bounds.width;
@@ -654,15 +668,20 @@ export class CanvasRenderer extends Renderer {
                         const f = ry / rx;
                         const invF = 1 / f;
 
-                        this.ctx.save();
-                        this.ctx.translate(midX, midY);
-                        this.ctx.transform(1, 0, 0, f, 0, 0);
-                        this.ctx.translate(-midX, -midY);
+                        ctx.save();
+                        ctx.translate(midX, midY);
+                        ctx.transform(1, 0, 0, f, 0, 0);
+                        ctx.translate(-midX, -midY);
 
-                        this.ctx.fillRect(left, invF * (top - midY) + midY, width, height * invF);
-                        this.ctx.restore();
+                        ctx.fillRect(0, invF * (0 - midY) + midY, width, height * invF);
+                        ctx.restore();
                     } else {
-                        this.ctx.fill();
+                        ctx.fill();
+                    }
+
+                    if (width > 0 && height > 0) {
+                        const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                        this.renderRepeat(path, pattern, left, top);
                     }
                 }
             }
