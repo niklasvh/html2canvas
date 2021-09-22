@@ -11,8 +11,8 @@ export class CacheStorage {
             return 'about:blank';
         }
 
-        link.href = url;
-        link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
+        link.href = encodeURI(url);
+        link.href = encodeURI(link.href); // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
         return link.protocol + link.hostname + link.port;
     }
 
