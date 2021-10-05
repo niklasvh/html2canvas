@@ -603,7 +603,9 @@ export class CanvasRenderer extends Renderer {
                     ]);
                     // prevent image resolution loss: render and copy img at current scale, instead of downscaling then rescaling
                     // recalculate for null transformation
-                    path = path.map(function(v){v.x = (v.x-this.options.x)*this.options.scale; v.y = (v.y-this.options.y)*this.options.scale; return v});
+                    path = (path as Vector[]).map(v => {
+                        return new Vector((v.x-this.options.x)*this.options.scale, (v.y-this.options.y)*this.options.scale);
+                    });
                     x = (x - this.options.x) * this.options.scale;
                     y = (y - this.options.y) * this.options.scale;
                     width *= this.options.scale;
