@@ -97,7 +97,9 @@ export class Cache {
             if (isInlineBase64Image(src) || useCORS) {
                 img.crossOrigin = 'anonymous';
             }
-            img.src = src;
+            // キャッシュにより画像が読み込めないエラーの回避のため後ろにランダムな文字列を挿入する
+            // 参考URL: https://www.fixes.pub/program/136376.html
+            img.src = src + '?_' + this.makeRndStr();
             if (img.complete === true) {
                 // Inline XML images may fail to parse, throwing an Error later on
                 setTimeout(() => resolve(img), 500);
@@ -109,6 +111,16 @@ export class Cache {
                 );
             }
         });
+    }
+
+    private makeRndStr() {
+        let strLen: number = 5;
+        let rndStr: string = '';
+        let possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (let i = 0; i < strLen; i++) {
+            rndStr = possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return rndStr;
     }
 
     private has(key: string): boolean {
