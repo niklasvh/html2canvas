@@ -1,8 +1,9 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken, parseFunctionArgs} from '../syntax/parser';
+import {Context} from '../../core/context';
 export type BackgroundRepeat = BACKGROUND_REPEAT[];
 
-export enum BACKGROUND_REPEAT {
+export const enum BACKGROUND_REPEAT {
     REPEAT = 0,
     NO_REPEAT = 1,
     REPEAT_X = 2,
@@ -14,12 +15,12 @@ export const backgroundRepeat: IPropertyListDescriptor<BackgroundRepeat> = {
     initialValue: 'repeat',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): BackgroundRepeat => {
+    parse: (_context: Context, tokens: CSSValue[]): BackgroundRepeat => {
         return parseFunctionArgs(tokens)
-            .map(values =>
+            .map((values) =>
                 values
                     .filter(isIdentToken)
-                    .map(token => token.value)
+                    .map((token) => token.value)
                     .join(' ')
             )
             .map(parseBackgroundRepeat);

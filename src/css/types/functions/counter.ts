@@ -4,12 +4,9 @@ import {contains} from '../../../core/bitwise';
 import {CSSParsedCounterDeclaration} from '../../index';
 
 export class CounterState {
-    readonly counters: {[key: string]: number[]};
-    constructor() {
-        this.counters = {};
-    }
+    private readonly counters: {[key: string]: number[]} = {};
 
-    getCounterValue(name: string) {
+    getCounterValue(name: string): number {
         const counter = this.counters[name];
 
         if (counter && counter.length) {
@@ -18,13 +15,13 @@ export class CounterState {
         return 1;
     }
 
-    getCounterValues(name: string): number[] {
+    getCounterValues(name: string): readonly number[] {
         const counter = this.counters[name];
         return counter ? counter : [];
     }
 
-    pop(counters: string[]) {
-        counters.forEach(counter => this.counters[counter].pop());
+    pop(counters: string[]): void {
+        counters.forEach((counter) => this.counters[counter].pop());
     }
 
     parse(style: CSSParsedCounterDeclaration): string[] {
@@ -33,10 +30,13 @@ export class CounterState {
         let canReset = true;
 
         if (counterIncrement !== null) {
-            counterIncrement.forEach(entry => {
+            counterIncrement.forEach((entry) => {
                 const counter = this.counters[entry.counter];
                 if (counter && entry.increment !== 0) {
                     canReset = false;
+                    if (!counter.length) {
+                        counter.push(1);
+                    }
                     counter[Math.max(0, counter.length - 1)] += entry.increment;
                 }
             });
@@ -44,7 +44,7 @@ export class CounterState {
 
         const counterNames: string[] = [];
         if (canReset) {
-            counterReset.forEach(entry => {
+            counterReset.forEach((entry) => {
                 let counter = this.counters[entry.counter];
                 counterNames.push(entry.counter);
                 if (!counter) {
@@ -70,42 +70,8 @@ const ROMAN_UPPER: CounterSymbols = {
 
 const ARMENIAN: CounterSymbols = {
     integers: [
-        9000,
-        8000,
-        7000,
-        6000,
-        5000,
-        4000,
-        3000,
-        2000,
-        1000,
-        900,
-        800,
-        700,
-        600,
-        500,
-        400,
-        300,
-        200,
-        100,
-        90,
-        80,
-        70,
-        60,
-        50,
-        40,
-        30,
-        20,
-        10,
-        9,
-        8,
-        7,
-        6,
-        5,
-        4,
-        3,
-        2,
-        1
+        9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70,
+        60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
     ],
     values: [
         'Ք',
@@ -149,43 +115,8 @@ const ARMENIAN: CounterSymbols = {
 
 const HEBREW: CounterSymbols = {
     integers: [
-        10000,
-        9000,
-        8000,
-        7000,
-        6000,
-        5000,
-        4000,
-        3000,
-        2000,
-        1000,
-        400,
-        300,
-        200,
-        100,
-        90,
-        80,
-        70,
-        60,
-        50,
-        40,
-        30,
-        20,
-        19,
-        18,
-        17,
-        16,
-        15,
-        10,
-        9,
-        8,
-        7,
-        6,
-        5,
-        4,
-        3,
-        2,
-        1
+        10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20,
+        19, 18, 17, 16, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
     ],
     values: [
         'י׳',
@@ -230,43 +161,8 @@ const HEBREW: CounterSymbols = {
 
 const GEORGIAN: CounterSymbols = {
     integers: [
-        10000,
-        9000,
-        8000,
-        7000,
-        6000,
-        5000,
-        4000,
-        3000,
-        2000,
-        1000,
-        900,
-        800,
-        700,
-        600,
-        500,
-        400,
-        300,
-        200,
-        100,
-        90,
-        80,
-        70,
-        60,
-        50,
-        40,
-        30,
-        20,
-        10,
-        9,
-        8,
-        7,
-        6,
-        5,
-        4,
-        3,
-        2,
-        1
+        10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90,
+        80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
     ],
     values: [
         'ჵ',
@@ -362,21 +258,21 @@ const createCounterStyleFromRange = (
 
     return (
         (value < 0 ? '-' : '') +
-        (createCounterStyleWithSymbolResolver(Math.abs(value), codePointRangeLength, isNumeric, codePoint =>
+        (createCounterStyleWithSymbolResolver(Math.abs(value), codePointRangeLength, isNumeric, (codePoint) =>
             fromCodePoint(Math.floor(codePoint % codePointRangeLength) + codePointRangeStart)
         ) +
             suffix)
     );
 };
 
-const createCounterStyleFromSymbols = (value: number, symbols: string, suffix: string = '. '): string => {
+const createCounterStyleFromSymbols = (value: number, symbols: string, suffix = '. '): string => {
     const codePointRangeLength = symbols.length;
     return (
         createCounterStyleWithSymbolResolver(
             Math.abs(value),
             codePointRangeLength,
             false,
-            codePoint => symbols[Math.floor(codePoint % codePointRangeLength)]
+            (codePoint) => symbols[Math.floor(codePoint % codePointRangeLength)]
         ) + suffix
     );
 };
@@ -405,7 +301,7 @@ const createCJKCounter = (
     }
 
     for (let digit = 0; tmp > 0 && digit <= 4; digit++) {
-        let coefficient = tmp % 10;
+        const coefficient = tmp % 10;
 
         if (coefficient === 0 && contains(flags, CJK_ZEROS) && string !== '') {
             string = numbers[coefficient] + string;

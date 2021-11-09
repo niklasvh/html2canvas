@@ -1,5 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
-export enum VISIBILITY {
+import {Context} from '../../core/context';
+export const enum VISIBILITY {
     VISIBLE = 0,
     HIDDEN = 1,
     COLLAPSE = 2
@@ -10,7 +11,7 @@ export const visibility: IPropertyIdentValueDescriptor<VISIBILITY> = {
     initialValue: 'none',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (visibility: string) => {
+    parse: (_context: Context, visibility: string) => {
         switch (visibility) {
             case 'hidden':
                 return VISIBILITY.HIDDEN;

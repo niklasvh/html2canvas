@@ -1,27 +1,38 @@
-export class Bounds {
-    readonly top: number;
-    readonly left: number;
-    readonly width: number;
-    readonly height: number;
+import {Context} from '../../core/context';
 
-    constructor(x: number, y: number, w: number, h: number) {
-        this.left = x;
-        this.top = y;
-        this.width = w;
-        this.height = h;
-    }
+export class Bounds {
+    constructor(readonly left: number, readonly top: number, readonly width: number, readonly height: number) {}
 
     add(x: number, y: number, w: number, h: number): Bounds {
         return new Bounds(this.left + x, this.top + y, this.width + w, this.height + h);
     }
 
-    static fromClientRect(clientRect: ClientRect): Bounds {
-        return new Bounds(clientRect.left, clientRect.top, clientRect.width, clientRect.height);
+    static fromClientRect(context: Context, clientRect: ClientRect): Bounds {
+        return new Bounds(
+            clientRect.left + context.windowBounds.left,
+            clientRect.top + context.windowBounds.top,
+            clientRect.width,
+            clientRect.height
+        );
     }
+
+    static fromDOMRectList(context: Context, domRectList: DOMRectList): Bounds {
+        const domRect = domRectList[0];
+        return domRect
+            ? new Bounds(
+                  domRect.x + context.windowBounds.left,
+                  domRect.y + context.windowBounds.top,
+                  domRect.width,
+                  domRect.height
+              )
+            : Bounds.EMPTY;
+    }
+
+    static EMPTY = new Bounds(0, 0, 0, 0);
 }
 
-export const parseBounds = (node: Element): Bounds => {
-    return Bounds.fromClientRect(node.getBoundingClientRect());
+export const parseBounds = (context: Context, node: Element): Bounds => {
+    return Bounds.fromClientRect(context, node.getBoundingClientRect());
 };
 
 export const parseDocumentSize = (document: Document): Bounds => {

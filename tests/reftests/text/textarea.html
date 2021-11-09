@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>textarea</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        textarea{
+            font-family: Arial;
+            font-size: 14px;
+            width: 10em;
+            height: 90px;
+        }
+        div {
+            display: inline-block;
+        }
+    </style>
+
+</head>
+<body>
+<div>
+    <p>1. word wrap</p>
+    <textarea> A long text with many words that should be wrapped on various lines.
+    </textarea>
+
+    <p>2. padding</p>
+    <textarea style="padding: 1em">A long text with many words that should be wrapped on various lines.
+    </textarea>
+
+    <p>3. line height</p>
+    <textarea style="line-height: 25px">A long text with many words.
+    </textarea>
+
+    <p>4. letter spacing</p>
+    <textarea style="letter-spacing: 5px"> A long text with many words that should be wrapped on various lines.</textarea>
+</div>
+<div>
+    <p>5. multiple spaces</p>
+    <textarea>A long text with many           words     that should be wrapped on various lines.
+    </textarea>
+
+    <p>6. newlines</p>
+    <textarea>A long text with many
+          words that
+
+        should be wrapped on various lines.
+    </textarea>
+
+    <p>7. long word</p>
+    <textarea>Donaudampfschifffahrtsgesellschaftskapitänskochmütze</textarea>
+
+    <p>8. hyphen</p>
+    <textarea>A text with many-manymany manys.</textarea>
+</div>
+<div>
+    <p>9. kerning</p>
+    <textarea>AVAVAVAVAVAVAVAV TeTeTeTeTeTeTeTeTe YaYaYaYaYaYaYaYaY</textarea>
+
+    <p>10. kerning with letter spacing</p>
+    <textarea style="letter-spacing: 1px">AVAVAVAVAVAVAV TeTeTeTeTeTeTeTe YaYaYaYaYaYaYaY</textarea>
+
+    <p>11. kerning with letter spacing</p>
+    <textarea style="letter-spacing: 5px">AVAVAVAVAV TeTeTeTeTeT YaYaYaYaYa</textarea>
+
+</div>
+</body>
+</html>

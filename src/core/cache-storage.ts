@@ -1,28 +1,9 @@
 import {FEATURES} from './features';
-import {Logger} from './logger';
+import {Context} from './context';
 
 export class CacheStorage {
-    private static _caches: {[key: string]: Cache} = {};
     private static _link?: HTMLAnchorElement;
-    private static _origin: string = 'about:blank';
-    private static _current: Cache | null = null;
-
-    static create(name: string, options: ResourceOptions): Cache {
-        return (CacheStorage._caches[name] = new Cache(name, options));
-    }
-
-    static destroy(name: string): void {
-        delete CacheStorage._caches[name];
-    }
-
-    static open(name: string): Cache {
-        const cache = CacheStorage._caches[name];
-        if (typeof cache !== 'undefined') {
-            return cache;
-        }
-
-        throw new Error(`Cache with key "${name}" not found`);
-    }
+    private static _origin = 'about:blank';
 
     static getOrigin(url: string): string {
         const link = CacheStorage._link;
@@ -39,25 +20,9 @@ export class CacheStorage {
         return CacheStorage.getOrigin(src) === CacheStorage._origin;
     }
 
-    static setContext(window: Window) {
+    static setContext(window: Window): void {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
-    }
-
-    static getInstance(): Cache {
-        const current = CacheStorage._current;
-        if (current === null) {
-            throw new Error(`No cache instance attached`);
-        }
-        return current;
-    }
-
-    static attachInstance(cache: Cache) {
-        CacheStorage._current = cache;
-    }
-
-    static detachInstance() {
-        CacheStorage._current = null;
     }
 }
 
@@ -70,15 +35,9 @@ export interface ResourceOptions {
 
 export class Cache {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private readonly _cache: {[key: string]: Promise<any>};
-    private readonly _options: ResourceOptions;
-    private readonly id: string;
+    private readonly _cache: {[key: string]: Promise<any>} = {};
 
-    constructor(id: string, options: ResourceOptions) {
-        this.id = id;
-        this._options = options;
-        this._cache = {};
-    }
+    constructor(private readonly context: Context, private readonly _options: ResourceOptions) {}
 
     addImage(src: string): Promise<void> {
         const result = Promise.resolve();
@@ -87,7 +46,9 @@ export class Cache {
         }
 
         if (isBlobImage(src) || isRenderable(src)) {
-            this._cache[src] = this.loadImage(src);
+            (this._cache[src] = this.loadImage(src)).catch(() => {
+                // prevent unhandled rejection
+            });
             return result;
         }
 
@@ -106,10 +67,18 @@ export class Cache {
         const useProxy =
             !isInlineImage(key) &&
             !isSameOrigin &&
+            !isBlobImage(key) &&
             typeof this._options.proxy === 'string' &&
             FEATURES.SUPPORT_CORS_XHR &&
             !useCORS;
-        if (!isSameOrigin && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
+        if (
+            !isSameOrigin &&
+            this._options.allowTaint === false &&
+            !isInlineImage(key) &&
+            !isBlobImage(key) &&
+            !useProxy &&
+            !useCORS
+        ) {
             return;
         }
 
@@ -118,7 +87,7 @@ export class Cache {
             src = await this.proxy(src);
         }
 
-        Logger.getInstance(this.id).debug(`Added image ${key.substring(0, 256)}`);
+        this.context.logger.debug(`Added image ${key.substring(0, 256)}`);
 
         return await new Promise((resolve, reject) => {
             const img = new Image();
@@ -178,7 +147,7 @@ export class Cache {
                     } else {
                         const reader = new FileReader();
                         reader.addEventListener('load', () => resolve(reader.result as string), false);
-                        reader.addEventListener('error', e => reject(e), false);
+                        reader.addEventListener('error', (e) => reject(e), false);
                         reader.readAsDataURL(xhr.response);
                     }
                 } else {
@@ -187,7 +156,8 @@ export class Cache {
             };
 
             xhr.onerror = reject;
-            xhr.open('GET', `${proxy}?url=${encodeURIComponent(src)}&responseType=${responseType}`);
+            const queryString = proxy.indexOf('?') > -1 ? '&' : '?';
+            xhr.open('GET', `${proxy}${queryString}url=${encodeURIComponent(src)}&responseType=${responseType}`);
 
             if (responseType !== 'text' && xhr instanceof XMLHttpRequest) {
                 xhr.responseType = responseType;

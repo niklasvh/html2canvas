@@ -3,6 +3,7 @@ import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';
 import {HUNDRED_PERCENT, ZERO_LENGTH} from './length-percentage';
 import {GradientCorner} from './image';
+import {Context} from '../../core/context';
 
 const DEG = 'deg';
 const GRAD = 'grad';
@@ -11,7 +12,7 @@ const TURN = 'turn';
 
 export const angle: ITypeDescriptor<number> = {
     name: 'angle',
-    parse: (value: CSSValue): number => {
+    parse: (_context: Context, value: CSSValue): number => {
         if (value.type === TokenType.DIMENSION_TOKEN) {
             switch (value.unit) {
                 case DEG:
@@ -41,7 +42,7 @@ export const isAngle = (value: CSSValue): boolean => {
 export const parseNamedSide = (tokens: CSSValue[]): number | GradientCorner => {
     const sideOrCorner = tokens
         .filter(isIdentToken)
-        .map(ident => ident.value)
+        .map((ident) => ident.value)
         .join(' ');
 
     switch (sideOrCorner) {

@@ -5,46 +5,93 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../test.js"></script>
     <style>
-        span {
-            color:blue;
-        }
-        p {
-            background-color: green;
-        }
-        div {
-            background: red;
-            border: 5px solid blue;
-            animation: spin 3s linear 1s infinite;
-        }
         body {
             font-family: Arial;
         }
 
-        @-webkit-keyframes spin {
+        @keyframes rotate0 {
             0% {
-                -webkit-transform: rotate(0deg);
                 transform: rotate(0deg);
-                /* Firefox 16+, IE 10+, Opera */ }
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-                /* Firefox 16+, IE 10+, Opera */ } }
+            }
+        }
 
-        @keyframes spin {
+        @keyframes rotate45 {
             0% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-                /* Firefox 16+, IE 10+, Opera */ }
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-                /* Firefox 16+, IE 10+, Opera */ } }
+                transform: rotate(45deg);
+            }
+        }
+
+        p {
+            font: 22px/1 Arial, sans-serif;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            width: 50%;
+            height: 50%;
+            color: #fff;
+            background-color: #666;
+            line-height: 90px;
+            text-align: center;
+        }
+
+        .transformed.working p {
+            transform: rotate(45deg);
+        }
+
+        .animated.working p {
+            animation-name: rotate0;
+            animation-duration: 1ms, 1ms;
+            animation-play-state: paused;
+        }
+
+        .animated.broken p {
+            animation-name: rotate45;
+            animation-duration: 1ms;
+            animation-play-state: paused;
+        }
+
+        .transitioned p {
+            transition: 1ms, 1ms;
+            transform: rotate(45deg)
+        }
+
+        .transition-delay {
+            transition: 1ms;
+            transition-delay: 50ms;
+            transform: rotate(45deg)
+        }
+
+        div {
+            float: left;
+            clear: left;
+            margin-right: 10px;
+            background-color: #ccc;
+            width: 180px;
+            height: 180px;
+            position: relative;
+        }
     </style>
 
 </head>
 <body>
-<div style="clip: rect(0px, 400px, 50px, 200px); ">Some inline text <span> followed by text in span </span> followed by more inline text.
-    <p>Then a block level element.</p>
-    Then more inline text.</div>
+<div class="transformed working">
+    <p>Hello</p>
+</div>
+
+<div class="animated working">
+    <p>Hello</p>
+</div>
+
+<div class="animated broken">
+    <p>Hello</p>
+</div>
+
+<div class="transitioned broken">
+    <p>Hello</p>
+</div>
+
+<div class="transition-delay">
+    <p>Hello</p>
+</div>
 </body>
 </html>

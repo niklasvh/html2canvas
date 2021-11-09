@@ -1,10 +1,12 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
-export enum OVERFLOW {
+import {Context} from '../../core/context';
+export const enum OVERFLOW {
     VISIBLE = 0,
     HIDDEN = 1,
     SCROLL = 2,
-    AUTO = 3
+    CLIP = 3,
+    AUTO = 4
 }
 
 export const overflow: IPropertyListDescriptor<OVERFLOW[]> = {
@@ -12,13 +14,15 @@ export const overflow: IPropertyListDescriptor<OVERFLOW[]> = {
     initialValue: 'visible',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): OVERFLOW[] => {
-        return tokens.filter(isIdentToken).map(overflow => {
+    parse: (_context: Context, tokens: CSSValue[]): OVERFLOW[] => {
+        return tokens.filter(isIdentToken).map((overflow) => {
             switch (overflow.value) {
                 case 'hidden':
                     return OVERFLOW.HIDDEN;
                 case 'scroll':
                     return OVERFLOW.SCROLL;
+                case 'clip':
+                    return OVERFLOW.CLIP;
                 case 'auto':
                     return OVERFLOW.AUTO;
                 case 'visible':

@@ -17,7 +17,7 @@ export class Logger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debug(...args: any) {
+    debug(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.debug === 'function') {
@@ -33,24 +33,8 @@ export class Logger {
         return Date.now() - this.start;
     }
 
-    static create(options: LoggerOptions) {
-        Logger.instances[options.id] = new Logger(options);
-    }
-
-    static destroy(id: string) {
-        delete Logger.instances[id];
-    }
-
-    static getInstance(id: string): Logger {
-        const instance = Logger.instances[id];
-        if (typeof instance === 'undefined') {
-            throw new Error(`No logger instance found with id ${id}`);
-        }
-        return instance;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    info(...args: any) {
+    info(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.info === 'function') {
@@ -61,7 +45,20 @@ export class Logger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error(...args: any) {
+    warn(...args: unknown[]): void {
+        if (this.enabled) {
+            // eslint-disable-next-line no-console
+            if (typeof window !== 'undefined' && window.console && typeof console.warn === 'function') {
+                // eslint-disable-next-line no-console
+                console.warn(this.id, `${this.getTime()}ms`, ...args);
+            } else {
+                this.info(...args);
+            }
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error(...args: unknown[]): void {
         if (this.enabled) {
             // eslint-disable-next-line no-console
             if (typeof window !== 'undefined' && window.console && typeof console.error === 'function') {

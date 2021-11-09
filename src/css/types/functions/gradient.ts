@@ -9,9 +9,10 @@ import {
 } from '../image';
 import {color as colorType} from '../color';
 import {getAbsoluteValue, HUNDRED_PERCENT, isLengthPercentage, ZERO_LENGTH} from '../length-percentage';
+import {Context} from '../../../core/context';
 
-export const parseColorStop = (args: CSSValue[]): UnprocessedGradientColorStop => {
-    const color = colorType.parse(args[0]);
+export const parseColorStop = (context: Context, args: CSSValue[]): UnprocessedGradientColorStop => {
+    const color = colorType.parse(context, args[0]);
     const stop = args[1];
     return stop && isLengthPercentage(stop) ? {color, stop} : {color, stop: null};
 };
@@ -98,7 +99,12 @@ export const calculateGradientDirection = (
 const distance = (a: number, b: number): number => Math.sqrt(a * a + b * b);
 
 const findCorner = (width: number, height: number, x: number, y: number, closest: boolean): [number, number] => {
-    const corners = [[0, 0], [0, height], [width, 0], [width, height]];
+    const corners = [
+        [0, 0],
+        [0, height],
+        [width, 0],
+        [width, height]
+    ];
 
     return corners.reduce(
         (stat, corner) => {

@@ -1,7 +1,8 @@
 import {CSSValue} from './syntax/parser';
-import {CSSTypes} from './types/index';
+import {CSSTypes} from './types';
+import {Context} from '../core/context';
 
-export enum PropertyDescriptorParsingType {
+export const enum PropertyDescriptorParsingType {
     VALUE,
     LIST,
     IDENT_VALUE,
@@ -18,7 +19,7 @@ export interface IPropertyDescriptor {
 
 export interface IPropertyIdentValueDescriptor<T> extends IPropertyDescriptor {
     type: PropertyDescriptorParsingType.IDENT_VALUE;
-    parse: (token: string) => T;
+    parse: (context: Context, token: string) => T;
 }
 
 export interface IPropertyTypeValueDescriptor extends IPropertyDescriptor {
@@ -28,12 +29,12 @@ export interface IPropertyTypeValueDescriptor extends IPropertyDescriptor {
 
 export interface IPropertyValueDescriptor<T> extends IPropertyDescriptor {
     type: PropertyDescriptorParsingType.VALUE;
-    parse: (token: CSSValue) => T;
+    parse: (context: Context, token: CSSValue) => T;
 }
 
 export interface IPropertyListDescriptor<T> extends IPropertyDescriptor {
     type: PropertyDescriptorParsingType.LIST;
-    parse: (tokens: CSSValue[]) => T;
+    parse: (context: Context, tokens: CSSValue[]) => T;
 }
 
 export interface IPropertyTokenValueDescriptor extends IPropertyDescriptor {

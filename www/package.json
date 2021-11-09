@@ -19,7 +19,7 @@
     "gatsby-transformer-remark": "^2.3.8",
     "glamor": "^2.20.40",
     "gzip-size": "^5.0.0",
-    "html2canvas": "^1.0.0-alpha.12",
+    "html2canvas": "file:../",
     "mkdirp": "^0.5.1",
     "prismjs": "^1.16.0",
     "react": "^16.8.6",
@@ -32,8 +32,10 @@
   "license": "MIT",
   "main": "n/a",
   "scripts": {
-    "copybuild": "mkdirp public/dist && cpy ../dist/*.js public/dist",
-    "build": "npm run copybuild && gatsby build",
+    "copy:build": "mkdirp public/dist && cpy ../dist/*.js public/dist",
+    "copy:src": "mkdirp public/src && cpy ../src/**/*.ts public/src --parents",
+    "copy": "npm run copy:build && npm run copy:src",
+    "build": "npm run copy && gatsby build",
     "start": "gatsby develop",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

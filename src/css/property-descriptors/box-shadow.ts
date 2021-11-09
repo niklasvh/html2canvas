@@ -3,6 +3,7 @@ import {CSSValue, isIdentWithValue, parseFunctionArgs} from '../syntax/parser';
 import {ZERO_LENGTH} from '../types/length-percentage';
 import {color, Color} from '../types/color';
 import {isLength, Length} from '../types/length';
+import {Context} from '../../core/context';
 
 export type BoxShadow = BoxShadowItem[];
 interface BoxShadowItem {
@@ -19,7 +20,7 @@ export const boxShadow: IPropertyListDescriptor<BoxShadow> = {
     initialValue: 'none',
     type: PropertyDescriptorParsingType.LIST,
     prefix: false,
-    parse: (tokens: CSSValue[]): BoxShadow => {
+    parse: (context: Context, tokens: CSSValue[]): BoxShadow => {
         if (tokens.length === 1 && isIdentWithValue(tokens[0], 'none')) {
             return [];
         }
@@ -50,7 +51,7 @@ export const boxShadow: IPropertyListDescriptor<BoxShadow> = {
                     }
                     c++;
                 } else {
-                    shadow.color = color.parse(token);
+                    shadow.color = color.parse(context, token);
                 }
             }
             return shadow;

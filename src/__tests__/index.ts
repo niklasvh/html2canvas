@@ -21,7 +21,6 @@ jest.mock('../render/stacking-context');
 jest.mock('../render/canvas/canvas-renderer');
 
 describe('html2canvas', () => {
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     const element = {
         ownerDocument: {
             defaultView: {
@@ -36,14 +35,17 @@ describe('html2canvas', () => {
         await html2canvas(element);
         expect(CanvasRenderer).toHaveBeenLastCalledWith(
             expect.objectContaining({
+                cache: expect.any(Object),
+                logger: expect.any(Object),
+                windowBounds: expect.objectContaining({left: 12, top: 34})
+            }),
+            expect.objectContaining({
                 backgroundColor: 0xffffffff,
                 scale: 1,
                 height: 50,
                 width: 200,
                 x: 0,
                 y: 0,
-                scrollX: 12,
-                scrollY: 34,
                 canvas: undefined
             })
         );
@@ -53,6 +55,7 @@ describe('html2canvas', () => {
     it('should have transparent background with backgroundColor: null', async () => {
         await html2canvas(element, {backgroundColor: null});
         expect(CanvasRenderer).toHaveBeenLastCalledWith(
+            expect.anything(),
             expect.objectContaining({
                 backgroundColor: COLORS.TRANSPARENT
             })
@@ -60,10 +63,10 @@ describe('html2canvas', () => {
     });
 
     it('should use existing canvas when given as option', async () => {
-        // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
         const canvas = {} as HTMLCanvasElement;
         await html2canvas(element, {canvas});
         expect(CanvasRenderer).toHaveBeenLastCalledWith(
+            expect.anything(),
             expect.objectContaining({
                 canvas
             })
@@ -74,6 +77,7 @@ describe('html2canvas', () => {
         DocumentCloner.destroy = jest.fn();
         await html2canvas(element, {removeContainer: false});
         expect(CanvasRenderer).toHaveBeenLastCalledWith(
+            expect.anything(),
             expect.objectContaining({
                 backgroundColor: 0xffffffff,
                 scale: 1,
@@ -81,8 +85,6 @@ describe('html2canvas', () => {
                 width: 200,
                 x: 0,
                 y: 0,
-                scrollX: 12,
-                scrollY: 34,
                 canvas: undefined
             })
         );

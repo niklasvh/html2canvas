@@ -5,6 +5,7 @@ import {BACKGROUND_ORIGIN} from '../../css/property-descriptors/background-origi
 import {TokenType} from '../../css/syntax/tokenizer';
 import {LengthPercentageTuple} from '../../css/types/length-percentage';
 import {Bounds} from '../../css/layout/bounds';
+import {Context} from '../../core/context';
 
 const CHECKBOX_BORDER_RADIUS: LengthPercentageTuple = [
     {
@@ -48,18 +49,29 @@ export class InputElementContainer extends ElementContainer {
     readonly checked: boolean;
     readonly value: string;
 
-    constructor(input: HTMLInputElement) {
-        super(input);
+    constructor(context: Context, input: HTMLInputElement) {
+        super(context, input);
         this.type = input.type.toLowerCase();
         this.checked = input.checked;
         this.value = getInputValue(input);
 
         if (this.type === CHECKBOX || this.type === RADIO) {
             this.styles.backgroundColor = 0xdededeff;
-            this.styles.borderTopColor = this.styles.borderRightColor = this.styles.borderBottomColor = this.styles.borderLeftColor = 0xa5a5a5ff;
-            this.styles.borderTopWidth = this.styles.borderRightWidth = this.styles.borderBottomWidth = this.styles.borderLeftWidth = 1;
-            this.styles.borderTopStyle = this.styles.borderRightStyle = this.styles.borderBottomStyle = this.styles.borderLeftStyle =
-                BORDER_STYLE.SOLID;
+            this.styles.borderTopColor =
+                this.styles.borderRightColor =
+                this.styles.borderBottomColor =
+                this.styles.borderLeftColor =
+                    0xa5a5a5ff;
+            this.styles.borderTopWidth =
+                this.styles.borderRightWidth =
+                this.styles.borderBottomWidth =
+                this.styles.borderLeftWidth =
+                    1;
+            this.styles.borderTopStyle =
+                this.styles.borderRightStyle =
+                this.styles.borderBottomStyle =
+                this.styles.borderLeftStyle =
+                    BORDER_STYLE.SOLID;
             this.styles.backgroundClip = [BACKGROUND_CLIP.BORDER_BOX];
             this.styles.backgroundOrigin = [BACKGROUND_ORIGIN.BORDER_BOX];
             this.bounds = reformatInputBounds(this.bounds);
@@ -67,10 +79,18 @@ export class InputElementContainer extends ElementContainer {
 
         switch (this.type) {
             case CHECKBOX:
-                this.styles.borderTopRightRadius = this.styles.borderTopLeftRadius = this.styles.borderBottomRightRadius = this.styles.borderBottomLeftRadius = CHECKBOX_BORDER_RADIUS;
+                this.styles.borderTopRightRadius =
+                    this.styles.borderTopLeftRadius =
+                    this.styles.borderBottomRightRadius =
+                    this.styles.borderBottomLeftRadius =
+                        CHECKBOX_BORDER_RADIUS;
                 break;
             case RADIO:
-                this.styles.borderTopRightRadius = this.styles.borderTopLeftRadius = this.styles.borderBottomRightRadius = this.styles.borderBottomLeftRadius = RADIO_BORDER_RADIUS;
+                this.styles.borderTopRightRadius =
+                    this.styles.borderTopLeftRadius =
+                    this.styles.borderBottomRightRadius =
+                    this.styles.borderBottomLeftRadius =
+                        RADIO_BORDER_RADIUS;
                 break;
         }
     }

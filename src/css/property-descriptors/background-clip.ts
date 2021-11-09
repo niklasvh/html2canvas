@@ -1,6 +1,7 @@
 import {IPropertyListDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {CSSValue, isIdentToken} from '../syntax/parser';
-export enum BACKGROUND_CLIP {
+import {Context} from '../../core/context';
+export const enum BACKGROUND_CLIP {
     BORDER_BOX = 0,
     PADDING_BOX = 1,
     CONTENT_BOX = 2
@@ -13,8 +14,8 @@ export const backgroundClip: IPropertyListDescriptor<BackgroundClip> = {
     initialValue: 'border-box',
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
-    parse: (tokens: CSSValue[]): BackgroundClip => {
-        return tokens.map(token => {
+    parse: (_context: Context, tokens: CSSValue[]): BackgroundClip => {
+        return tokens.map((token) => {
             if (isIdentToken(token)) {
                 switch (token.value) {
                     case 'padding-box':

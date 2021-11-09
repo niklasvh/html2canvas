@@ -1,5 +1,6 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
-export enum POSITION {
+import {Context} from '../../core/context';
+export const enum POSITION {
     STATIC = 0,
     RELATIVE = 1,
     ABSOLUTE = 2,
@@ -12,7 +13,7 @@ export const position: IPropertyIdentValueDescriptor<POSITION> = {
     initialValue: 'static',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: (position: string) => {
+    parse: (_context: Context, position: string) => {
         switch (position) {
             case 'relative':
                 return POSITION.RELATIVE;

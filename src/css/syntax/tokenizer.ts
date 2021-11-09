@@ -2,7 +2,7 @@
 
 import {fromCodePoint, toCodePoints} from 'css-line-break';
 
-export enum TokenType {
+export const enum TokenType {
     STRING_TOKEN,
     BAD_STRING_TOKEN,
     LEFT_PARENTHESIS_TOKEN,
@@ -315,7 +315,7 @@ export class Tokenizer {
         this._value = [];
     }
 
-    write(chunk: string) {
+    write(chunk: string): void {
         this._value = this._value.concat(toCodePoints(chunk));
     }
 
@@ -542,8 +542,11 @@ export class Tokenizer {
         }
 
         if (questionMarks) {
-            const start = parseInt(fromCodePoint(...digits.map(digit => (digit === QUESTION_MARK ? ZERO : digit))), 16);
-            const end = parseInt(fromCodePoint(...digits.map(digit => (digit === QUESTION_MARK ? F : digit))), 16);
+            const start = parseInt(
+                fromCodePoint(...digits.map((digit) => (digit === QUESTION_MARK ? ZERO : digit))),
+                16
+            );
+            const end = parseInt(fromCodePoint(...digits.map((digit) => (digit === QUESTION_MARK ? F : digit))), 16);
             return {type: TokenType.UNICODE_RANGE_TOKEN, start, end};
         }
 
@@ -642,7 +645,7 @@ export class Tokenizer {
 
     private consumeBadUrlRemnants(): void {
         while (true) {
-            let codePoint = this.consumeCodePoint();
+            const codePoint = this.consumeCodePoint();
             if (codePoint === RIGHT_PARENTHESIS || codePoint === EOF) {
                 return;
             }
@@ -702,7 +705,7 @@ export class Tokenizer {
     }
 
     private consumeNumber() {
-        let repr = [];
+        const repr = [];
         let type = FLAG_INTEGER;
         let c1 = this.peekCodePoint(0);
         if (c1 === PLUS_SIGN || c1 === HYPHEN_MINUS) {
@@ -724,7 +727,7 @@ export class Tokenizer {
 
         c1 = this.peekCodePoint(0);
         c2 = this.peekCodePoint(1);
-        let c3 = this.peekCodePoint(2);
+        const c3 = this.peekCodePoint(2);
         if ((c1 === E || c1 === e) && (((c2 === PLUS_SIGN || c2 === HYPHEN_MINUS) && isDigit(c3)) || isDigit(c2))) {
             repr.push(this.consumeCodePoint(), this.consumeCodePoint());
             type = FLAG_NUMBER;
@@ -743,7 +746,7 @@ export class Tokenizer {
         const c3 = this.peekCodePoint(2);
 
         if (isIdentifierStart(c1, c2, c3)) {
-            let unit = this.consumeName();
+            const unit = this.consumeName();
             return {type: TokenType.DIMENSION_TOKEN, number, flags, unit};
         }
 

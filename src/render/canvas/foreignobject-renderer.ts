@@ -1,14 +1,16 @@
 import {RenderConfigurations} from './canvas-renderer';
-import {Logger} from '../../core/logger';
 import {createForeignObjectSVG} from '../../core/features';
 import {asString} from '../../css/types/color';
+import {Renderer} from '../renderer';
+import {Context} from '../../core/context';
 
-export class ForeignObjectRenderer {
+export class ForeignObjectRenderer extends Renderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     options: RenderConfigurations;
 
-    constructor(options: RenderConfigurations) {
+    constructor(context: Context, options: RenderConfigurations) {
+        super(context, options);
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.options = options;
@@ -18,20 +20,18 @@ export class ForeignObjectRenderer {
         this.canvas.style.height = `${options.height}px`;
 
         this.ctx.scale(this.options.scale, this.options.scale);
-        this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
-        Logger.getInstance(options.id).debug(
-            `EXPERIMENTAL ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${
-                options.y
-            }) with scale ${options.scale}`
+        this.ctx.translate(-options.x, -options.y);
+        this.context.logger.debug(
+            `EXPERIMENTAL ForeignObject renderer initialized (${options.width}x${options.height} at ${options.x},${options.y}) with scale ${options.scale}`
         );
     }
 
-    async render(element: HTMLElement) {
+    async render(element: HTMLElement): Promise<HTMLCanvasElement> {
         const svg = createForeignObjectSVG(
-            Math.max(this.options.windowWidth, this.options.width) * this.options.scale,
-            Math.max(this.options.windowHeight, this.options.height) * this.options.scale,
-            this.options.scrollX * this.options.scale,
-            this.options.scrollY * this.options.scale,
+            this.options.width * this.options.scale,
+            this.options.height * this.options.scale,
+            this.options.scale,
+            this.options.scale,
             element
         );
 

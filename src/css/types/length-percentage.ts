@@ -31,10 +31,10 @@ export const getAbsoluteValueForTuple = (
     width: number,
     height: number
 ): [number, number] => {
-    let [x, y] = tuple;
+    const [x, y] = tuple;
     return [getAbsoluteValue(x, width), getAbsoluteValue(typeof y !== 'undefined' ? y : x, height)];
 };
-export const getAbsoluteValue = (token: LengthPercentage, parent: number) => {
+export const getAbsoluteValue = (token: LengthPercentage, parent: number): number => {
     if (token.type === TokenType.PERCENTAGE_TOKEN) {
         return (token.number / 100) * parent;
     }

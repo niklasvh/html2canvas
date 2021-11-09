@@ -1,19 +1,20 @@
-import {CSSValue, nonFunctionArgSeparator} from '../syntax/parser';
+import {CSSValue, nonFunctionArgSeparator, Parser} from '../syntax/parser';
 import {TokenType} from '../syntax/tokenizer';
 import {ITypeDescriptor} from '../ITypeDescriptor';
 import {angle, deg} from './angle';
 import {getAbsoluteValue, isLengthPercentage} from './length-percentage';
+import {Context} from '../../core/context';
 export type Color = number;
 
 export const color: ITypeDescriptor<Color> = {
     name: 'color',
-    parse: (value: CSSValue): Color => {
+    parse: (context: Context, value: CSSValue): Color => {
         if (value.type === TokenType.FUNCTION) {
             const colorFunction = SUPPORTED_COLOR_FUNCTIONS[value.name];
             if (typeof colorFunction === 'undefined') {
                 throw new Error(`Attempting to parse an unsupported color function "${value.name}"`);
             }
-            return colorFunction(value.values);
+            return colorFunction(context, value.values);
         }
 
         if (value.type === TokenType.HASH_TOKEN) {
@@ -59,9 +60,9 @@ export const color: ITypeDescriptor<Color> = {
     }
 };
 
-export const isTransparent = (color: Color) => (0xff & color) === 0;
+export const isTransparent = (color: Color): boolean => (0xff & color) === 0;
 
-export const asString = (color: Color) => {
+export const asString = (color: Color): string => {
     const alpha = 0xff & color;
     const blue = 0xff & (color >> 8);
     const green = 0xff & (color >> 16);
@@ -85,7 +86,7 @@ const getTokenColorValue = (token: CSSValue, i: number): number => {
     return 0;
 };
 
-const rgb = (args: CSSValue[]): number => {
+const rgb = (_context: Context, args: CSSValue[]): number => {
     const tokens = args.filter(nonFunctionArgSeparator);
 
     if (tokens.length === 3) {
@@ -120,11 +121,11 @@ function hue2rgb(t1: number, t2: number, hue: number): number {
     }
 }
 
-const hsl = (args: CSSValue[]): number => {
+const hsl = (context: Context, args: CSSValue[]): number => {
     const tokens = args.filter(nonFunctionArgSeparator);
     const [hue, saturation, lightness, alpha] = tokens;
 
-    const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(hue)) / (Math.PI * 2);
+    const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(context, hue)) / (Math.PI * 2);
     const s = isLengthPercentage(saturation) ? saturation.number / 100 : 0;
     const l = isLengthPercentage(lightness) ? lightness.number / 100 : 0;
     const a = typeof alpha !== 'undefined' && isLengthPercentage(alpha) ? getAbsoluteValue(alpha, 1) : 1;
@@ -143,13 +144,16 @@ const hsl = (args: CSSValue[]): number => {
 };
 
 const SUPPORTED_COLOR_FUNCTIONS: {
-    [key: string]: (args: CSSValue[]) => number;
+    [key: string]: (context: Context, args: CSSValue[]) => number;
 } = {
     hsl: hsl,
     hsla: hsl,
     rgb: rgb,
     rgba: rgb
 };
+
+export const parseColor = (context: Context, value: string): Color =>
+    color.parse(context, Parser.create(value).parseComponentValue());
 
 export const COLORS: {[key: string]: Color} = {
     ALICEBLUE: 0xf0f8ffff,

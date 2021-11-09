@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>crop test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        h2cOptions = {
+            x: 30,
+            y: 50,
+            width: 100,
+            height: 100
+        };
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        #div1 {
+            position: absolute;
+            left: 250px;
+            top: 250px;
+            width: 100px;
+            height: 100px;
+            background: green;
+            border-width: 50px 20px 100px 30px;
+            border-color: red;
+            border-style: solid;
+        }
+
+        body, html {
+            background: red;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="div1">
+    great success
+</div>
+<script>
+    var forceElement = document.querySelector('#div1');
+    h2cSelector = forceElement;
+</script>
+</body>
+</html>
