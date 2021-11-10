@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var assert_1 = require("assert");
 var parser_1 = require("../../syntax/parser");
 var font_family_1 = require("../font-family");
-var fontFamilyParse = function (value) { return font_family_1.fontFamily.parse(parser_1.Parser.parseValues(value)); };
+var fontFamilyParse = function (value) { return font_family_1.fontFamily.parse({}, parser_1.Parser.parseValues(value)); };
 describe('property-descriptors', function () {
     describe('font-family', function () {
         it('sans-serif', function () { return assert_1.deepEqual(fontFamilyParse('sans-serif'), ['sans-serif']); });

@@ -1,10 +1,9 @@
-import { CloneOptions } from './dom/document-cloner';
-import { ResourceOptions } from './core/cache-storage';
+import { CloneOptions, WindowOptions } from './dom/document-cloner';
 import { RenderOptions } from './render/canvas/canvas-renderer';
-export declare type Options = CloneOptions & RenderOptions & ResourceOptions & {
+import { ContextOptions } from './core/context';
+export declare type Options = CloneOptions & WindowOptions & RenderOptions & ContextOptions & {
     backgroundColor: string | null;
     foreignObjectRendering: boolean;
-    logging: boolean;
     removeContainer?: boolean;
 };
 declare const html2canvas: (element: HTMLElement, options?: Partial<Options>) => Promise<HTMLCanvasElement>;

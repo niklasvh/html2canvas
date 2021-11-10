@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.backgroundSize = exports.BACKGROUND_SIZE = void 0;
 var parser_1 = require("../syntax/parser");
 var length_percentage_1 = require("../types/length-percentage");
 var BACKGROUND_SIZE;
@@ -13,8 +13,8 @@ exports.backgroundSize = {
     name: 'background-size',
     initialValue: '0',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.LIST,
-    parse: function (tokens) {
+    type: 1 /* LIST */,
+    parse: function (_context, tokens) {
         return parser_1.parseFunctionArgs(tokens).map(function (values) { return values.filter(isBackgroundSizeInfoToken); });
     }
 };

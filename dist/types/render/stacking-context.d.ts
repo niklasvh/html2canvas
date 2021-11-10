@@ -1,6 +1,6 @@
 import { ElementContainer } from '../dom/element-container';
 import { BoundCurves } from './bound-curves';
-import { IElementEffect } from './effects';
+import { EffectTarget, IElementEffect } from './effects';
 export declare class StackingContext {
     element: ElementPaint;
     negativeZIndex: StackingContext[];
@@ -13,11 +13,12 @@ export declare class StackingContext {
     constructor(container: ElementPaint);
 }
 export declare class ElementPaint {
-    container: ElementContainer;
-    effects: IElementEffect[];
-    curves: BoundCurves;
+    readonly container: ElementContainer;
+    readonly parent: ElementPaint | null;
+    readonly effects: IElementEffect[];
+    readonly curves: BoundCurves;
     listValue?: string;
-    constructor(element: ElementContainer, parentStack: IElementEffect[]);
-    getParentEffects(): IElementEffect[];
+    constructor(container: ElementContainer, parent: ElementPaint | null);
+    getEffects(target: EffectTarget): IElementEffect[];
 }
 export declare const parseStackingContexts: (container: ElementContainer) => StackingContext;

@@ -1,43 +1,8 @@
 "use strict";
 // https://www.w3.org/TR/css-syntax-3
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tokenizer = exports.EOF_TOKEN = exports.FLAG_NUMBER = exports.FLAG_INTEGER = exports.FLAG_ID = exports.FLAG_UNRESTRICTED = void 0;
 var css_line_break_1 = require("css-line-break");
-var TokenType;
-(function (TokenType) {
-    TokenType[TokenType["STRING_TOKEN"] = 0] = "STRING_TOKEN";
-    TokenType[TokenType["BAD_STRING_TOKEN"] = 1] = "BAD_STRING_TOKEN";
-    TokenType[TokenType["LEFT_PARENTHESIS_TOKEN"] = 2] = "LEFT_PARENTHESIS_TOKEN";
-    TokenType[TokenType["RIGHT_PARENTHESIS_TOKEN"] = 3] = "RIGHT_PARENTHESIS_TOKEN";
-    TokenType[TokenType["COMMA_TOKEN"] = 4] = "COMMA_TOKEN";
-    TokenType[TokenType["HASH_TOKEN"] = 5] = "HASH_TOKEN";
-    TokenType[TokenType["DELIM_TOKEN"] = 6] = "DELIM_TOKEN";
-    TokenType[TokenType["AT_KEYWORD_TOKEN"] = 7] = "AT_KEYWORD_TOKEN";
-    TokenType[TokenType["PREFIX_MATCH_TOKEN"] = 8] = "PREFIX_MATCH_TOKEN";
-    TokenType[TokenType["DASH_MATCH_TOKEN"] = 9] = "DASH_MATCH_TOKEN";
-    TokenType[TokenType["INCLUDE_MATCH_TOKEN"] = 10] = "INCLUDE_MATCH_TOKEN";
-    TokenType[TokenType["LEFT_CURLY_BRACKET_TOKEN"] = 11] = "LEFT_CURLY_BRACKET_TOKEN";
-    TokenType[TokenType["RIGHT_CURLY_BRACKET_TOKEN"] = 12] = "RIGHT_CURLY_BRACKET_TOKEN";
-    TokenType[TokenType["SUFFIX_MATCH_TOKEN"] = 13] = "SUFFIX_MATCH_TOKEN";
-    TokenType[TokenType["SUBSTRING_MATCH_TOKEN"] = 14] = "SUBSTRING_MATCH_TOKEN";
-    TokenType[TokenType["DIMENSION_TOKEN"] = 15] = "DIMENSION_TOKEN";
-    TokenType[TokenType["PERCENTAGE_TOKEN"] = 16] = "PERCENTAGE_TOKEN";
-    TokenType[TokenType["NUMBER_TOKEN"] = 17] = "NUMBER_TOKEN";
-    TokenType[TokenType["FUNCTION"] = 18] = "FUNCTION";
-    TokenType[TokenType["FUNCTION_TOKEN"] = 19] = "FUNCTION_TOKEN";
-    TokenType[TokenType["IDENT_TOKEN"] = 20] = "IDENT_TOKEN";
-    TokenType[TokenType["COLUMN_TOKEN"] = 21] = "COLUMN_TOKEN";
-    TokenType[TokenType["URL_TOKEN"] = 22] = "URL_TOKEN";
-    TokenType[TokenType["BAD_URL_TOKEN"] = 23] = "BAD_URL_TOKEN";
-    TokenType[TokenType["CDC_TOKEN"] = 24] = "CDC_TOKEN";
-    TokenType[TokenType["CDO_TOKEN"] = 25] = "CDO_TOKEN";
-    TokenType[TokenType["COLON_TOKEN"] = 26] = "COLON_TOKEN";
-    TokenType[TokenType["SEMICOLON_TOKEN"] = 27] = "SEMICOLON_TOKEN";
-    TokenType[TokenType["LEFT_SQUARE_BRACKET_TOKEN"] = 28] = "LEFT_SQUARE_BRACKET_TOKEN";
-    TokenType[TokenType["RIGHT_SQUARE_BRACKET_TOKEN"] = 29] = "RIGHT_SQUARE_BRACKET_TOKEN";
-    TokenType[TokenType["UNICODE_RANGE_TOKEN"] = 30] = "UNICODE_RANGE_TOKEN";
-    TokenType[TokenType["WHITESPACE_TOKEN"] = 31] = "WHITESPACE_TOKEN";
-    TokenType[TokenType["EOF_TOKEN"] = 32] = "EOF_TOKEN";
-})(TokenType = exports.TokenType || (exports.TokenType = {}));
 exports.FLAG_UNRESTRICTED = 1 << 0;
 exports.FLAG_ID = 1 << 1;
 exports.FLAG_INTEGER = 1 << 2;
@@ -190,38 +155,38 @@ var stringToNumber = function (codePoints) {
     return sign * (int + frac * Math.pow(10, -fracd)) * Math.pow(10, expsign * exp);
 };
 var LEFT_PARENTHESIS_TOKEN = {
-    type: TokenType.LEFT_PARENTHESIS_TOKEN
+    type: 2 /* LEFT_PARENTHESIS_TOKEN */
 };
 var RIGHT_PARENTHESIS_TOKEN = {
-    type: TokenType.RIGHT_PARENTHESIS_TOKEN
+    type: 3 /* RIGHT_PARENTHESIS_TOKEN */
 };
-var COMMA_TOKEN = { type: TokenType.COMMA_TOKEN };
-var SUFFIX_MATCH_TOKEN = { type: TokenType.SUFFIX_MATCH_TOKEN };
-var PREFIX_MATCH_TOKEN = { type: TokenType.PREFIX_MATCH_TOKEN };
-var COLUMN_TOKEN = { type: TokenType.COLUMN_TOKEN };
-var DASH_MATCH_TOKEN = { type: TokenType.DASH_MATCH_TOKEN };
-var INCLUDE_MATCH_TOKEN = { type: TokenType.INCLUDE_MATCH_TOKEN };
+var COMMA_TOKEN = { type: 4 /* COMMA_TOKEN */ };
+var SUFFIX_MATCH_TOKEN = { type: 13 /* SUFFIX_MATCH_TOKEN */ };
+var PREFIX_MATCH_TOKEN = { type: 8 /* PREFIX_MATCH_TOKEN */ };
+var COLUMN_TOKEN = { type: 21 /* COLUMN_TOKEN */ };
+var DASH_MATCH_TOKEN = { type: 9 /* DASH_MATCH_TOKEN */ };
+var INCLUDE_MATCH_TOKEN = { type: 10 /* INCLUDE_MATCH_TOKEN */ };
 var LEFT_CURLY_BRACKET_TOKEN = {
-    type: TokenType.LEFT_CURLY_BRACKET_TOKEN
+    type: 11 /* LEFT_CURLY_BRACKET_TOKEN */
 };
 var RIGHT_CURLY_BRACKET_TOKEN = {
-    type: TokenType.RIGHT_CURLY_BRACKET_TOKEN
+    type: 12 /* RIGHT_CURLY_BRACKET_TOKEN */
 };
-var SUBSTRING_MATCH_TOKEN = { type: TokenType.SUBSTRING_MATCH_TOKEN };
-var BAD_URL_TOKEN = { type: TokenType.BAD_URL_TOKEN };
-var BAD_STRING_TOKEN = { type: TokenType.BAD_STRING_TOKEN };
-var CDO_TOKEN = { type: TokenType.CDO_TOKEN };
-var CDC_TOKEN = { type: TokenType.CDC_TOKEN };
-var COLON_TOKEN = { type: TokenType.COLON_TOKEN };
-var SEMICOLON_TOKEN = { type: TokenType.SEMICOLON_TOKEN };
+var SUBSTRING_MATCH_TOKEN = { type: 14 /* SUBSTRING_MATCH_TOKEN */ };
+var BAD_URL_TOKEN = { type: 23 /* BAD_URL_TOKEN */ };
+var BAD_STRING_TOKEN = { type: 1 /* BAD_STRING_TOKEN */ };
+var CDO_TOKEN = { type: 25 /* CDO_TOKEN */ };
+var CDC_TOKEN = { type: 24 /* CDC_TOKEN */ };
+var COLON_TOKEN = { type: 26 /* COLON_TOKEN */ };
+var SEMICOLON_TOKEN = { type: 27 /* SEMICOLON_TOKEN */ };
 var LEFT_SQUARE_BRACKET_TOKEN = {
-    type: TokenType.LEFT_SQUARE_BRACKET_TOKEN
+    type: 28 /* LEFT_SQUARE_BRACKET_TOKEN */
 };
 var RIGHT_SQUARE_BRACKET_TOKEN = {
-    type: TokenType.RIGHT_SQUARE_BRACKET_TOKEN
+    type: 29 /* RIGHT_SQUARE_BRACKET_TOKEN */
 };
-var WHITESPACE_TOKEN = { type: TokenType.WHITESPACE_TOKEN };
-exports.EOF_TOKEN = { type: TokenType.EOF_TOKEN };
+var WHITESPACE_TOKEN = { type: 31 /* WHITESPACE_TOKEN */ };
+exports.EOF_TOKEN = { type: 32 /* EOF_TOKEN */ };
 var Tokenizer = /** @class */ (function () {
     function Tokenizer() {
         this._value = [];
@@ -250,7 +215,7 @@ var Tokenizer = /** @class */ (function () {
                 if (isNameCodePoint(c1) || isValidEscape(c2, c3)) {
                     var flags = isIdentifierStart(c1, c2, c3) ? exports.FLAG_ID : exports.FLAG_UNRESTRICTED;
                     var value = this.consumeName();
-                    return { type: TokenType.HASH_TOKEN, value: value, flags: flags };
+                    return { type: 5 /* HASH_TOKEN */, value: value, flags: flags };
                 }
                 break;
             case DOLLAR_SIGN:
@@ -339,7 +304,7 @@ var Tokenizer = /** @class */ (function () {
                 var a3 = this.peekCodePoint(2);
                 if (isIdentifierStart(a1, a2, a3)) {
                     var value = this.consumeName();
-                    return { type: TokenType.AT_KEYWORD_TOKEN, value: value };
+                    return { type: 7 /* AT_KEYWORD_TOKEN */, value: value };
                 }
                 break;
             case LEFT_SQUARE_BRACKET:
@@ -403,7 +368,7 @@ var Tokenizer = /** @class */ (function () {
             this.reconsumeCodePoint(codePoint);
             return this.consumeIdentLikeToken();
         }
-        return { type: TokenType.DELIM_TOKEN, value: css_line_break_1.fromCodePoint(codePoint) };
+        return { type: 6 /* DELIM_TOKEN */, value: css_line_break_1.fromCodePoint(codePoint) };
     };
     Tokenizer.prototype.consumeCodePoint = function () {
         var value = this._value.shift();
@@ -434,7 +399,7 @@ var Tokenizer = /** @class */ (function () {
         if (questionMarks) {
             var start_1 = parseInt(css_line_break_1.fromCodePoint.apply(void 0, digits.map(function (digit) { return (digit === QUESTION_MARK ? ZERO : digit); })), 16);
             var end = parseInt(css_line_break_1.fromCodePoint.apply(void 0, digits.map(function (digit) { return (digit === QUESTION_MARK ? F : digit); })), 16);
-            return { type: TokenType.UNICODE_RANGE_TOKEN, start: start_1, end: end };
+            return { type: 30 /* UNICODE_RANGE_TOKEN */, start: start_1, end: end };
         }
         var start = parseInt(css_line_break_1.fromCodePoint.apply(void 0, digits), 16);
         if (this.peekCodePoint(0) === HYPHEN_MINUS && isHex(this.peekCodePoint(1))) {
@@ -446,10 +411,10 @@ var Tokenizer = /** @class */ (function () {
                 codePoint = this.consumeCodePoint();
             }
             var end = parseInt(css_line_break_1.fromCodePoint.apply(void 0, endDigits), 16);
-            return { type: TokenType.UNICODE_RANGE_TOKEN, start: start, end: end };
+            return { type: 30 /* UNICODE_RANGE_TOKEN */, start: start, end: end };
         }
         else {
-            return { type: TokenType.UNICODE_RANGE_TOKEN, start: start, end: start };
+            return { type: 30 /* UNICODE_RANGE_TOKEN */, start: start, end: start };
         }
     };
     Tokenizer.prototype.consumeIdentLikeToken = function () {
@@ -460,24 +425,24 @@ var Tokenizer = /** @class */ (function () {
         }
         else if (this.peekCodePoint(0) === LEFT_PARENTHESIS) {
             this.consumeCodePoint();
-            return { type: TokenType.FUNCTION_TOKEN, value: value };
+            return { type: 19 /* FUNCTION_TOKEN */, value: value };
         }
-        return { type: TokenType.IDENT_TOKEN, value: value };
+        return { type: 20 /* IDENT_TOKEN */, value: value };
     };
     Tokenizer.prototype.consumeUrlToken = function () {
         var value = [];
         this.consumeWhiteSpace();
         if (this.peekCodePoint(0) === EOF) {
-            return { type: TokenType.URL_TOKEN, value: '' };
+            return { type: 22 /* URL_TOKEN */, value: '' };
         }
         var next = this.peekCodePoint(0);
         if (next === APOSTROPHE || next === QUOTATION_MARK) {
             var stringToken = this.consumeStringToken(this.consumeCodePoint());
-            if (stringToken.type === TokenType.STRING_TOKEN) {
+            if (stringToken.type === 0 /* STRING_TOKEN */) {
                 this.consumeWhiteSpace();
                 if (this.peekCodePoint(0) === EOF || this.peekCodePoint(0) === RIGHT_PARENTHESIS) {
                     this.consumeCodePoint();
-                    return { type: TokenType.URL_TOKEN, value: stringToken.value };
+                    return { type: 22 /* URL_TOKEN */, value: stringToken.value };
                 }
             }
             this.consumeBadUrlRemnants();
@@ -486,13 +451,13 @@ var Tokenizer = /** @class */ (function () {
         while (true) {
             var codePoint = this.consumeCodePoint();
             if (codePoint === EOF || codePoint === RIGHT_PARENTHESIS) {
-                return { type: TokenType.URL_TOKEN, value: css_line_break_1.fromCodePoint.apply(void 0, value) };
+                return { type: 22 /* URL_TOKEN */, value: css_line_break_1.fromCodePoint.apply(void 0, value) };
             }
             else if (isWhiteSpace(codePoint)) {
                 this.consumeWhiteSpace();
                 if (this.peekCodePoint(0) === EOF || this.peekCodePoint(0) === RIGHT_PARENTHESIS) {
                     this.consumeCodePoint();
-                    return { type: TokenType.URL_TOKEN, value: css_line_break_1.fromCodePoint.apply(void 0, value) };
+                    return { type: 22 /* URL_TOKEN */, value: css_line_break_1.fromCodePoint.apply(void 0, value) };
                 }
                 this.consumeBadUrlRemnants();
                 return BAD_URL_TOKEN;
@@ -552,7 +517,7 @@ var Tokenizer = /** @class */ (function () {
             var codePoint = this._value[i];
             if (codePoint === EOF || codePoint === undefined || codePoint === endingCodePoint) {
                 value += this.consumeStringSlice(i);
-                return { type: TokenType.STRING_TOKEN, value: value };
+                return { type: 0 /* STRING_TOKEN */, value: value };
             }
             if (codePoint === LINE_FEED) {
                 this._value.splice(0, i);
@@ -614,13 +579,13 @@ var Tokenizer = /** @class */ (function () {
         var c3 = this.peekCodePoint(2);
         if (isIdentifierStart(c1, c2, c3)) {
             var unit = this.consumeName();
-            return { type: TokenType.DIMENSION_TOKEN, number: number, flags: flags, unit: unit };
+            return { type: 15 /* DIMENSION_TOKEN */, number: number, flags: flags, unit: unit };
         }
         if (c1 === PERCENTAGE_SIGN) {
             this.consumeCodePoint();
-            return { type: TokenType.PERCENTAGE_TOKEN, number: number, flags: flags };
+            return { type: 16 /* PERCENTAGE_TOKEN */, number: number, flags: flags };
         }
-        return { type: TokenType.NUMBER_TOKEN, number: number, flags: flags };
+        return { type: 17 /* NUMBER_TOKEN */, number: number, flags: flags };
     };
     Tokenizer.prototype.consumeEscapedCodePoint = function () {
         var codePoint = this.consumeCodePoint();

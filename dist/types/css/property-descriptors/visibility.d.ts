@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum VISIBILITY {
+export declare const enum VISIBILITY {
     VISIBLE = 0,
     HIDDEN = 1,
     COLLAPSE = 2

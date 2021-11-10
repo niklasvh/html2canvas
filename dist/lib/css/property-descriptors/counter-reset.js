@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.counterReset = void 0;
 var parser_1 = require("../syntax/parser");
 exports.counterReset = {
     name: 'counter-reset',
     initialValue: 'none',
     prefix: true,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.LIST,
-    parse: function (tokens) {
+    type: 1 /* LIST */,
+    parse: function (_context, tokens) {
         if (tokens.length === 0) {
             return [];
         }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.lineBreak = exports.LINE_BREAK = void 0;
 var LINE_BREAK;
 (function (LINE_BREAK) {
     LINE_BREAK["NORMAL"] = "normal";
@@ -10,8 +10,8 @@ exports.lineBreak = {
     name: 'line-break',
     initialValue: 'normal',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: function (lineBreak) {
+    type: 2 /* IDENT_VALUE */,
+    parse: function (_context, lineBreak) {
         switch (lineBreak) {
             case 'strict':
                 return LINE_BREAK.STRICT;

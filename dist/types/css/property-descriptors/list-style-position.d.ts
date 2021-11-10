@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum LIST_STYLE_POSITION {
+export declare const enum LIST_STYLE_POSITION {
     INSIDE = 0,
     OUTSIDE = 1
 }

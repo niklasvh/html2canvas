@@ -1,2 +1,2 @@
 export declare const Bounds: any;
-export declare const parseBounds: () => any;
+export declare const parseBounds: () => typeof Bounds;

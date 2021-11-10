@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum LIST_STYLE_TYPE {
+export declare const enum LIST_STYLE_TYPE {
     NONE = -1,
     DISC = 0,
     CIRCLE = 1,

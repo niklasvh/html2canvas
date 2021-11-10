@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseFunctionArgs = exports.nonFunctionArgSeparator = exports.nonWhiteSpace = exports.isIdentWithValue = exports.isStringToken = exports.isIdentToken = exports.isNumberToken = exports.isDimensionToken = exports.Parser = void 0;
 var tokenizer_1 = require("./tokenizer");
 var Parser = /** @class */ (function () {
     function Parser(tokens) {
@@ -18,18 +19,18 @@ var Parser = /** @class */ (function () {
     };
     Parser.prototype.parseComponentValue = function () {
         var token = this.consumeToken();
-        while (token.type === tokenizer_1.TokenType.WHITESPACE_TOKEN) {
+        while (token.type === 31 /* WHITESPACE_TOKEN */) {
             token = this.consumeToken();
         }
-        if (token.type === tokenizer_1.TokenType.EOF_TOKEN) {
+        if (token.type === 32 /* EOF_TOKEN */) {
             throw new SyntaxError("Error parsing CSS component value, unexpected EOF");
         }
         this.reconsumeToken(token);
         var value = this.consumeComponentValue();
         do {
             token = this.consumeToken();
-        } while (token.type === tokenizer_1.TokenType.WHITESPACE_TOKEN);
-        if (token.type === tokenizer_1.TokenType.EOF_TOKEN) {
+        } while (token.type === 31 /* WHITESPACE_TOKEN */);
+        if (token.type === 32 /* EOF_TOKEN */) {
             return value;
         }
         throw new SyntaxError("Error parsing CSS component value, multiple values found when expecting only one");
@@ -38,7 +39,7 @@ var Parser = /** @class */ (function () {
         var values = [];
         while (true) {
             var value = this.consumeComponentValue();
-            if (value.type === tokenizer_1.TokenType.EOF_TOKEN) {
+            if (value.type === 32 /* EOF_TOKEN */) {
                 return values;
             }
             values.push(value);
@@ -48,11 +49,11 @@ var Parser = /** @class */ (function () {
     Parser.prototype.consumeComponentValue = function () {
         var token = this.consumeToken();
         switch (token.type) {
-            case tokenizer_1.TokenType.LEFT_CURLY_BRACKET_TOKEN:
-            case tokenizer_1.TokenType.LEFT_SQUARE_BRACKET_TOKEN:
-            case tokenizer_1.TokenType.LEFT_PARENTHESIS_TOKEN:
+            case 11 /* LEFT_CURLY_BRACKET_TOKEN */:
+            case 28 /* LEFT_SQUARE_BRACKET_TOKEN */:
+            case 2 /* LEFT_PARENTHESIS_TOKEN */:
                 return this.consumeSimpleBlock(token.type);
-            case tokenizer_1.TokenType.FUNCTION_TOKEN:
+            case 19 /* FUNCTION_TOKEN */:
                 return this.consumeFunction(token);
         }
         return token;
@@ -61,7 +62,7 @@ var Parser = /** @class */ (function () {
         var block = { type: type, values: [] };
         var token = this.consumeToken();
         while (true) {
-            if (token.type === tokenizer_1.TokenType.EOF_TOKEN || isEndingTokenFor(token, type)) {
+            if (token.type === 32 /* EOF_TOKEN */ || isEndingTokenFor(token, type)) {
                 return block;
             }
             this.reconsumeToken(token);
@@ -73,11 +74,11 @@ var Parser = /** @class */ (function () {
         var cssFunction = {
             name: functionToken.value,
             values: [],
-            type: tokenizer_1.TokenType.FUNCTION
+            type: 18 /* FUNCTION */
         };
         while (true) {
             var token = this.consumeToken();
-            if (token.type === tokenizer_1.TokenType.EOF_TOKEN || token.type === tokenizer_1.TokenType.RIGHT_PARENTHESIS_TOKEN) {
+            if (token.type === 32 /* EOF_TOKEN */ || token.type === 3 /* RIGHT_PARENTHESIS_TOKEN */) {
                 return cssFunction;
             }
             this.reconsumeToken(token);
@@ -94,22 +95,29 @@ var Parser = /** @class */ (function () {
     return Parser;
 }());
 exports.Parser = Parser;
-exports.isDimensionToken = function (token) { return token.type === tokenizer_1.TokenType.DIMENSION_TOKEN; };
-exports.isNumberToken = function (token) { return token.type === tokenizer_1.TokenType.NUMBER_TOKEN; };
-exports.isIdentToken = function (token) { return token.type === tokenizer_1.TokenType.IDENT_TOKEN; };
-exports.isStringToken = function (token) { return token.type === tokenizer_1.TokenType.STRING_TOKEN; };
-exports.isIdentWithValue = function (token, value) {
+var isDimensionToken = function (token) { return token.type === 15 /* DIMENSION_TOKEN */; };
+exports.isDimensionToken = isDimensionToken;
+var isNumberToken = function (token) { return token.type === 17 /* NUMBER_TOKEN */; };
+exports.isNumberToken = isNumberToken;
+var isIdentToken = function (token) { return token.type === 20 /* IDENT_TOKEN */; };
+exports.isIdentToken = isIdentToken;
+var isStringToken = function (token) { return token.type === 0 /* STRING_TOKEN */; };
+exports.isStringToken = isStringToken;
+var isIdentWithValue = function (token, value) {
     return exports.isIdentToken(token) && token.value === value;
 };
-exports.nonWhiteSpace = function (token) { return token.type !== tokenizer_1.TokenType.WHITESPACE_TOKEN; };
-exports.nonFunctionArgSeparator = function (token) {
-    return token.type !== tokenizer_1.TokenType.WHITESPACE_TOKEN && token.type !== tokenizer_1.TokenType.COMMA_TOKEN;
+exports.isIdentWithValue = isIdentWithValue;
+var nonWhiteSpace = function (token) { return token.type !== 31 /* WHITESPACE_TOKEN */; };
+exports.nonWhiteSpace = nonWhiteSpace;
+var nonFunctionArgSeparator = function (token) {
+    return token.type !== 31 /* WHITESPACE_TOKEN */ && token.type !== 4 /* COMMA_TOKEN */;
 };
-exports.parseFunctionArgs = function (tokens) {
+exports.nonFunctionArgSeparator = nonFunctionArgSeparator;
+var parseFunctionArgs = function (tokens) {
     var args = [];
     var arg = [];
     tokens.forEach(function (token) {
-        if (token.type === tokenizer_1.TokenType.COMMA_TOKEN) {
+        if (token.type === 4 /* COMMA_TOKEN */) {
             if (arg.length === 0) {
                 throw new Error("Error parsing function args, zero tokens for arg");
             }
@@ -117,7 +125,7 @@ exports.parseFunctionArgs = function (tokens) {
             arg = [];
             return;
         }
-        if (token.type !== tokenizer_1.TokenType.WHITESPACE_TOKEN) {
+        if (token.type !== 31 /* WHITESPACE_TOKEN */) {
             arg.push(token);
         }
     });
@@ -126,13 +134,14 @@ exports.parseFunctionArgs = function (tokens) {
     }
     return args;
 };
+exports.parseFunctionArgs = parseFunctionArgs;
 var isEndingTokenFor = function (token, type) {
-    if (type === tokenizer_1.TokenType.LEFT_CURLY_BRACKET_TOKEN && token.type === tokenizer_1.TokenType.RIGHT_CURLY_BRACKET_TOKEN) {
+    if (type === 11 /* LEFT_CURLY_BRACKET_TOKEN */ && token.type === 12 /* RIGHT_CURLY_BRACKET_TOKEN */) {
         return true;
     }
-    if (type === tokenizer_1.TokenType.LEFT_SQUARE_BRACKET_TOKEN && token.type === tokenizer_1.TokenType.RIGHT_SQUARE_BRACKET_TOKEN) {
+    if (type === 28 /* LEFT_SQUARE_BRACKET_TOKEN */ && token.type === 29 /* RIGHT_SQUARE_BRACKET_TOKEN */) {
         return true;
     }
-    return type === tokenizer_1.TokenType.LEFT_PARENTHESIS_TOKEN && token.type === tokenizer_1.TokenType.RIGHT_PARENTHESIS_TOKEN;
+    return type === 2 /* LEFT_PARENTHESIS_TOKEN */ && token.type === 3 /* RIGHT_PARENTHESIS_TOKEN */;
 };
 //# sourceMappingURL=parser.js.map

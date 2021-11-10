@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum FONT_STYLE {
+export declare const enum FONT_STYLE {
     NORMAL = "normal",
     ITALIC = "italic",
     OBLIQUE = "oblique"

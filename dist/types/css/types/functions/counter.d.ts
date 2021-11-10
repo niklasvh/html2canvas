@@ -1,12 +1,9 @@
 import { LIST_STYLE_TYPE } from '../../property-descriptors/list-style-type';
 import { CSSParsedCounterDeclaration } from '../../index';
 export declare class CounterState {
-    readonly counters: {
-        [key: string]: number[];
-    };
-    constructor();
+    private readonly counters;
     getCounterValue(name: string): number;
-    getCounterValues(name: string): number[];
+    getCounterValues(name: string): readonly number[];
     pop(counters: string[]): void;
     parse(style: CSSParsedCounterDeclaration): string[];
 }

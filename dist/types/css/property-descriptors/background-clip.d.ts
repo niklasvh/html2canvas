@@ -1,5 +1,5 @@
 import { IPropertyListDescriptor } from '../IPropertyDescriptor';
-export declare enum BACKGROUND_CLIP {
+export declare const enum BACKGROUND_CLIP {
     BORDER_BOX = 0,
     PADDING_BOX = 1,
     CONTENT_BOX = 2

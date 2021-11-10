@@ -1,9 +1,25 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -35,21 +51,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = require("../../core/logger");
+exports.loadSerializedSVG = exports.ForeignObjectRenderer = void 0;
 var features_1 = require("../../core/features");
 var color_1 = require("../../css/types/color");
-var ForeignObjectRenderer = /** @class */ (function () {
-    function ForeignObjectRenderer(options) {
-        this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.options = options;
-        this.canvas.width = Math.floor(options.width * options.scale);
-        this.canvas.height = Math.floor(options.height * options.scale);
-        this.canvas.style.width = options.width + "px";
-        this.canvas.style.height = options.height + "px";
-        this.ctx.scale(this.options.scale, this.options.scale);
-        this.ctx.translate(-options.x + options.scrollX, -options.y + options.scrollY);
-        logger_1.Logger.getInstance(options.id).debug("EXPERIMENTAL ForeignObject renderer initialized (" + options.width + "x" + options.height + " at " + options.x + "," + options.y + ") with scale " + options.scale);
+var renderer_1 = require("../renderer");
+var ForeignObjectRenderer = /** @class */ (function (_super) {
+    __extends(ForeignObjectRenderer, _super);
+    function ForeignObjectRenderer(context, options) {
+        var _this = _super.call(this, context, options) || this;
+        _this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
+        _this.ctx = _this.canvas.getContext('2d');
+        _this.options = options;
+        _this.canvas.width = Math.floor(options.width * options.scale);
+        _this.canvas.height = Math.floor(options.height * options.scale);
+        _this.canvas.style.width = options.width + "px";
+        _this.canvas.style.height = options.height + "px";
+        _this.ctx.scale(_this.options.scale, _this.options.scale);
+        _this.ctx.translate(-options.x, -options.y);
+        _this.context.logger.debug("EXPERIMENTAL ForeignObject renderer initialized (" + options.width + "x" + options.height + " at " + options.x + "," + options.y + ") with scale " + options.scale);
+        return _this;
     }
     ForeignObjectRenderer.prototype.render = function (element) {
         return __awaiter(this, void 0, void 0, function () {
@@ -57,7 +77,7 @@ var ForeignObjectRenderer = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        svg = features_1.createForeignObjectSVG(Math.max(this.options.windowWidth, this.options.width) * this.options.scale, Math.max(this.options.windowHeight, this.options.height) * this.options.scale, this.options.scrollX * this.options.scale, this.options.scrollY * this.options.scale, element);
+                        svg = features_1.createForeignObjectSVG(this.options.width * this.options.scale, this.options.height * this.options.scale, this.options.scale, this.options.scale, element);
                         return [4 /*yield*/, exports.loadSerializedSVG(svg)];
                     case 1:
                         img = _a.sent();
@@ -72,9 +92,9 @@ var ForeignObjectRenderer = /** @class */ (function () {
         });
     };
     return ForeignObjectRenderer;
-}());
+}(renderer_1.Renderer));
 exports.ForeignObjectRenderer = ForeignObjectRenderer;
-exports.loadSerializedSVG = function (svg) {
+var loadSerializedSVG = function (svg) {
     return new Promise(function (resolve, reject) {
         var img = new Image();
         img.onload = function () {
@@ -84,4 +104,5 @@ exports.loadSerializedSVG = function (svg) {
         img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg));
     });
 };
+exports.loadSerializedSVG = loadSerializedSVG;
 //# sourceMappingURL=foreignobject-renderer.js.map

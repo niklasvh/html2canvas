@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.prefixRadialGradient = void 0;
 var parser_1 = require("../../syntax/parser");
-var image_1 = require("../image");
 var gradient_1 = require("./gradient");
 var length_percentage_1 = require("../length-percentage");
 var length_1 = require("../length");
 var radial_gradient_1 = require("./radial-gradient");
-exports.prefixRadialGradient = function (tokens) {
-    var shape = image_1.CSSRadialShape.CIRCLE;
-    var size = image_1.CSSRadialExtent.FARTHEST_CORNER;
+var prefixRadialGradient = function (context, tokens) {
+    var shape = 0 /* CIRCLE */;
+    var size = 3 /* FARTHEST_CORNER */;
     var stops = [];
     var position = [];
     parser_1.parseFunctionArgs(tokens).forEach(function (arg, i) {
@@ -42,24 +42,24 @@ exports.prefixRadialGradient = function (tokens) {
                 if (parser_1.isIdentToken(token)) {
                     switch (token.value) {
                         case radial_gradient_1.CIRCLE:
-                            shape = image_1.CSSRadialShape.CIRCLE;
+                            shape = 0 /* CIRCLE */;
                             return false;
                         case radial_gradient_1.ELLIPSE:
-                            shape = image_1.CSSRadialShape.ELLIPSE;
+                            shape = 1 /* ELLIPSE */;
                             return false;
                         case radial_gradient_1.CONTAIN:
                         case radial_gradient_1.CLOSEST_SIDE:
-                            size = image_1.CSSRadialExtent.CLOSEST_SIDE;
+                            size = 0 /* CLOSEST_SIDE */;
                             return false;
                         case radial_gradient_1.FARTHEST_SIDE:
-                            size = image_1.CSSRadialExtent.FARTHEST_SIDE;
+                            size = 1 /* FARTHEST_SIDE */;
                             return false;
                         case radial_gradient_1.CLOSEST_CORNER:
-                            size = image_1.CSSRadialExtent.CLOSEST_CORNER;
+                            size = 2 /* CLOSEST_CORNER */;
                             return false;
                         case radial_gradient_1.COVER:
                         case radial_gradient_1.FARTHEST_CORNER:
-                            size = image_1.CSSRadialExtent.FARTHEST_CORNER;
+                            size = 3 /* FARTHEST_CORNER */;
                             return false;
                     }
                 }
@@ -74,10 +74,11 @@ exports.prefixRadialGradient = function (tokens) {
             }, isColorStop);
         }
         if (isColorStop) {
-            var colorStop = gradient_1.parseColorStop(arg);
+            var colorStop = gradient_1.parseColorStop(context, arg);
             stops.push(colorStop);
         }
     });
-    return { size: size, shape: shape, stops: stops, position: position, type: image_1.CSSImageType.RADIAL_GRADIENT };
+    return { size: size, shape: shape, stops: stops, position: position, type: 2 /* RADIAL_GRADIENT */ };
 };
+exports.prefixRadialGradient = prefixRadialGradient;
 //# sourceMappingURL=-prefix-radial-gradient.js.map

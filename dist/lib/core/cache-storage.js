@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -35,24 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Cache = exports.CacheStorage = void 0;
 var features_1 = require("./features");
-var logger_1 = require("./logger");
 var CacheStorage = /** @class */ (function () {
     function CacheStorage() {
     }
-    CacheStorage.create = function (name, options) {
-        return (CacheStorage._caches[name] = new Cache(name, options));
-    };
-    CacheStorage.destroy = function (name) {
-        delete CacheStorage._caches[name];
-    };
-    CacheStorage.open = function (name) {
-        var cache = CacheStorage._caches[name];
-        if (typeof cache !== 'undefined') {
-            return cache;
-        }
-        throw new Error("Cache with key \"" + name + "\" not found");
-    };
     CacheStorage.getOrigin = function (url) {
         var link = CacheStorage._link;
         if (!link) {
@@ -69,29 +57,15 @@ var CacheStorage = /** @class */ (function () {
         CacheStorage._link = window.document.createElement('a');
         CacheStorage._origin = CacheStorage.getOrigin(window.location.href);
     };
-    CacheStorage.getInstance = function () {
-        var current = CacheStorage._current;
-        if (current === null) {
-            throw new Error("No cache instance attached");
-        }
-        return current;
-    };
-    CacheStorage.attachInstance = function (cache) {
-        CacheStorage._current = cache;
-    };
-    CacheStorage.detachInstance = function () {
-        CacheStorage._current = null;
-    };
-    CacheStorage._caches = {};
     CacheStorage._origin = 'about:blank';
-    CacheStorage._current = null;
     return CacheStorage;
 }());
 exports.CacheStorage = CacheStorage;
 var Cache = /** @class */ (function () {
-    function Cache(id, options) {
-        this.id = id;
-        this._options = options;
+    function Cache(context, _options) {
+        this.context = context;
+        this._options = _options;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this._cache = {};
     }
     Cache.prototype.addImage = function (src) {
@@ -100,7 +74,9 @@ var Cache = /** @class */ (function () {
             return result;
         }
         if (isBlobImage(src) || isRenderable(src)) {
-            this._cache[src] = this.loadImage(src);
+            (this._cache[src] = this.loadImage(src)).catch(function () {
+                // prevent unhandled rejection
+            });
             return result;
         }
         return result;
@@ -120,10 +96,16 @@ var Cache = /** @class */ (function () {
                         useCORS = !isInlineImage(key) && this._options.useCORS === true && features_1.FEATURES.SUPPORT_CORS_IMAGES && !isSameOrigin;
                         useProxy = !isInlineImage(key) &&
                             !isSameOrigin &&
+                            !isBlobImage(key) &&
                             typeof this._options.proxy === 'string' &&
                             features_1.FEATURES.SUPPORT_CORS_XHR &&
                             !useCORS;
-                        if (!isSameOrigin && this._options.allowTaint === false && !isInlineImage(key) && !useProxy && !useCORS) {
+                        if (!isSameOrigin &&
+                            this._options.allowTaint === false &&
+                            !isInlineImage(key) &&
+                            !isBlobImage(key) &&
+                            !useProxy &&
+                            !useCORS) {
                             return [2 /*return*/];
                         }
                         src = key;
@@ -133,7 +115,7 @@ var Cache = /** @class */ (function () {
                         src = _a.sent();
                         _a.label = 2;
                     case 2:
-                        logger_1.Logger.getInstance(this.id).debug("Added image " + key.substring(0, 256));
+                        this.context.logger.debug("Added image " + key.substring(0, 256));
                         return [4 /*yield*/, new Promise(function (resolve, reject) {
                                 var img = new Image();
                                 img.onload = function () { return resolve(img); };
@@ -198,7 +180,8 @@ var Cache = /** @class */ (function () {
                 }
             };
             xhr.onerror = reject;
-            xhr.open('GET', proxy + "?url=" + encodeURIComponent(src) + "&responseType=" + responseType);
+            var queryString = proxy.indexOf('?') > -1 ? '&' : '?';
+            xhr.open('GET', "" + proxy + queryString + "url=" + encodeURIComponent(src) + "&responseType=" + responseType);
             if (responseType !== 'text' && xhr instanceof XMLHttpRequest) {
                 xhr.responseType = responseType;
             }

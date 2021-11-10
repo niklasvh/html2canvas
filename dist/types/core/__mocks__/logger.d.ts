@@ -6,3 +6,4 @@ export declare class Logger {
     info(): void;
     error(): void;
 }
+export declare const logger: Logger;

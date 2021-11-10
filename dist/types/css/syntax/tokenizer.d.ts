@@ -1,4 +1,4 @@
-export declare enum TokenType {
+export declare const enum TokenType {
     STRING_TOKEN = 0,
     BAD_STRING_TOKEN = 1,
     LEFT_PARENTHESIS_TOKEN = 2,

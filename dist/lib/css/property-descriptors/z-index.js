@@ -1,15 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.zIndex = void 0;
 var parser_1 = require("../syntax/parser");
-var tokenizer_1 = require("../syntax/tokenizer");
 exports.zIndex = {
     name: 'z-index',
     initialValue: 'auto',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.VALUE,
-    parse: function (token) {
-        if (token.type === tokenizer_1.TokenType.IDENT_TOKEN) {
+    type: 0 /* VALUE */,
+    parse: function (_context, token) {
+        if (token.type === 20 /* IDENT_TOKEN */) {
             return { auto: true, order: 0 };
         }
         if (parser_1.isNumberToken(token)) {

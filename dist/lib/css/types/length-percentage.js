@@ -1,35 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAbsoluteValue = exports.getAbsoluteValueForTuple = exports.HUNDRED_PERCENT = exports.FIFTY_PERCENT = exports.ZERO_LENGTH = exports.parseLengthPercentageTuple = exports.isLengthPercentage = void 0;
 var tokenizer_1 = require("../syntax/tokenizer");
 var parser_1 = require("../syntax/parser");
 var length_1 = require("./length");
-exports.isLengthPercentage = function (token) {
-    return token.type === tokenizer_1.TokenType.PERCENTAGE_TOKEN || length_1.isLength(token);
+var isLengthPercentage = function (token) {
+    return token.type === 16 /* PERCENTAGE_TOKEN */ || length_1.isLength(token);
 };
-exports.parseLengthPercentageTuple = function (tokens) {
+exports.isLengthPercentage = isLengthPercentage;
+var parseLengthPercentageTuple = function (tokens) {
     return tokens.length > 1 ? [tokens[0], tokens[1]] : [tokens[0]];
 };
+exports.parseLengthPercentageTuple = parseLengthPercentageTuple;
 exports.ZERO_LENGTH = {
-    type: tokenizer_1.TokenType.NUMBER_TOKEN,
+    type: 17 /* NUMBER_TOKEN */,
     number: 0,
     flags: tokenizer_1.FLAG_INTEGER
 };
 exports.FIFTY_PERCENT = {
-    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+    type: 16 /* PERCENTAGE_TOKEN */,
     number: 50,
     flags: tokenizer_1.FLAG_INTEGER
 };
 exports.HUNDRED_PERCENT = {
-    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+    type: 16 /* PERCENTAGE_TOKEN */,
     number: 100,
     flags: tokenizer_1.FLAG_INTEGER
 };
-exports.getAbsoluteValueForTuple = function (tuple, width, height) {
+var getAbsoluteValueForTuple = function (tuple, width, height) {
     var x = tuple[0], y = tuple[1];
     return [exports.getAbsoluteValue(x, width), exports.getAbsoluteValue(typeof y !== 'undefined' ? y : x, height)];
 };
-exports.getAbsoluteValue = function (token, parent) {
-    if (token.type === tokenizer_1.TokenType.PERCENTAGE_TOKEN) {
+exports.getAbsoluteValueForTuple = getAbsoluteValueForTuple;
+var getAbsoluteValue = function (token, parent) {
+    if (token.type === 16 /* PERCENTAGE_TOKEN */) {
         return (token.number / 100) * parent;
     }
     if (parser_1.isDimensionToken(token)) {
@@ -44,4 +48,5 @@ exports.getAbsoluteValue = function (token, parent) {
     }
     return token.number;
 };
+exports.getAbsoluteValue = getAbsoluteValue;
 //# sourceMappingURL=length-percentage.js.map

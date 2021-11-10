@@ -1,3 +1,4 @@
 import { CSSValue } from '../../syntax/parser';
 import { CSSLinearGradientImage, CSSRadialGradientImage } from '../image';
-export declare const webkitGradient: (tokens: CSSValue[]) => CSSLinearGradientImage | CSSRadialGradientImage;
+import { Context } from '../../../core/context';
+export declare const webkitGradient: (context: Context, tokens: CSSValue[]) => CSSLinearGradientImage | CSSRadialGradientImage;

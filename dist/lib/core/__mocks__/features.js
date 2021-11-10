@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FEATURES = void 0;
 exports.FEATURES = {
     SUPPORT_RANGE_BOUNDS: true,
     SUPPORT_SVG_DRAWING: true,

@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum OVERFLOW_WRAP {
+export declare const enum OVERFLOW_WRAP {
     NORMAL = "normal",
     BREAK_WORD = "break-word"
 }

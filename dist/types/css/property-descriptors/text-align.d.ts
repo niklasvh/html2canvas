@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum TEXT_ALIGN {
+export declare const enum TEXT_ALIGN {
     LEFT = 0,
     CENTER = 1,
     RIGHT = 2

@@ -10,11 +10,9 @@ export declare class Logger {
     private readonly enabled;
     private readonly start;
     constructor({ id, enabled }: LoggerOptions);
-    debug(...args: any): void;
+    debug(...args: unknown[]): void;
     getTime(): number;
-    static create(options: LoggerOptions): void;
-    static destroy(id: string): void;
-    static getInstance(id: string): Logger;
-    info(...args: any): void;
-    error(...args: any): void;
+    info(...args: unknown[]): void;
+    warn(...args: unknown[]): void;
+    error(...args: unknown[]): void;
 }

@@ -6,32 +6,38 @@ var image_1 = require("../image");
 var color_1 = require("../color");
 var tokenizer_1 = require("../../syntax/tokenizer");
 var angle_1 = require("../angle");
-var parse = function (value) { return image_1.image.parse(parser_1.Parser.parseValue(value)); };
-var colorParse = function (value) { return color_1.color.parse(parser_1.Parser.parseValue(value)); };
-jest.mock('../../../core/cache-storage');
+var parse = function (context, value) { return image_1.image.parse(context, parser_1.Parser.parseValue(value)); };
+var colorParse = function (context, value) { return color_1.color.parse(context, parser_1.Parser.parseValue(value)); };
 jest.mock('../../../core/features');
+jest.mock('../../../core/context');
+var context_1 = require("../../../core/context");
 describe('types', function () {
+    var context;
+    beforeEach(function () {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        context = new context_1.Context({}, {});
+    });
     describe('<image>', function () {
         describe('parsing', function () {
             describe('url', function () {
                 it('url(test.jpg)', function () {
-                    return assert_1.deepStrictEqual(parse('url(http://example.com/test.jpg)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'url(http://example.com/test.jpg)'), {
                         url: 'http://example.com/test.jpg',
-                        type: image_1.CSSImageType.URL
+                        type: 0 /* URL */
                     });
                 });
                 it('url("test.jpg")', function () {
-                    return assert_1.deepStrictEqual(parse('url("http://example.com/test.jpg")'), {
+                    return assert_1.deepStrictEqual(parse(context, 'url("http://example.com/test.jpg")'), {
                         url: 'http://example.com/test.jpg',
-                        type: image_1.CSSImageType.URL
+                        type: 0 /* URL */
                     });
                 });
             });
             describe('linear-gradient', function () {
                 it('linear-gradient(#f69d3c, #3f87a6)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(#f69d3c, #3f87a6)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(#f69d3c, #3f87a6)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
+                        type: 1 /* LINEAR_GRADIENT */,
                         stops: [
                             { color: color_1.pack(0xf6, 0x9d, 0x3c, 1), stop: null },
                             { color: color_1.pack(0x3f, 0x87, 0xa6, 1), stop: null }
@@ -39,60 +45,75 @@ describe('types', function () {
                     });
                 });
                 it('linear-gradient(yellow, blue)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(yellow, blue)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(yellow, blue)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
-                        stops: [{ color: colorParse('yellow'), stop: null }, { color: colorParse('blue'), stop: null }]
+                        type: 1 /* LINEAR_GRADIENT */,
+                        stops: [
+                            { color: colorParse(context, 'yellow'), stop: null },
+                            { color: colorParse(context, 'blue'), stop: null }
+                        ]
                     });
                 });
                 it('linear-gradient(to bottom, yellow, blue)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(to bottom, yellow, blue)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(to bottom, yellow, blue)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
-                        stops: [{ color: colorParse('yellow'), stop: null }, { color: colorParse('blue'), stop: null }]
+                        type: 1 /* LINEAR_GRADIENT */,
+                        stops: [
+                            { color: colorParse(context, 'yellow'), stop: null },
+                            { color: colorParse(context, 'blue'), stop: null }
+                        ]
                     });
                 });
                 it('linear-gradient(180deg, yellow, blue)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(180deg, yellow, blue)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(180deg, yellow, blue)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
-                        stops: [{ color: colorParse('yellow'), stop: null }, { color: colorParse('blue'), stop: null }]
+                        type: 1 /* LINEAR_GRADIENT */,
+                        stops: [
+                            { color: colorParse(context, 'yellow'), stop: null },
+                            { color: colorParse(context, 'blue'), stop: null }
+                        ]
                     });
                 });
                 it('linear-gradient(to top, blue, yellow)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(to top, blue, yellow)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(to top, blue, yellow)'), {
                         angle: 0,
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
-                        stops: [{ color: colorParse('blue'), stop: null }, { color: colorParse('yellow'), stop: null }]
+                        type: 1 /* LINEAR_GRADIENT */,
+                        stops: [
+                            { color: colorParse(context, 'blue'), stop: null },
+                            { color: colorParse(context, 'yellow'), stop: null }
+                        ]
                     });
                 });
                 it('linear-gradient(to top right, blue, yellow)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(to top right, blue, yellow)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(to top right, blue, yellow)'), {
                         angle: [
-                            { type: tokenizer_1.TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4 },
-                            { type: tokenizer_1.TokenType.NUMBER_TOKEN, number: 0, flags: 4 }
+                            { type: 16 /* PERCENTAGE_TOKEN */, number: 100, flags: 4 },
+                            { type: 17 /* NUMBER_TOKEN */, number: 0, flags: 4 }
                         ],
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
-                        stops: [{ color: colorParse('blue'), stop: null }, { color: colorParse('yellow'), stop: null }]
+                        type: 1 /* LINEAR_GRADIENT */,
+                        stops: [
+                            { color: colorParse(context, 'blue'), stop: null },
+                            { color: colorParse(context, 'yellow'), stop: null }
+                        ]
                     });
                 });
                 it('linear-gradient(to bottom, yellow 0%, blue 100%)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(to bottom, yellow 0%, blue 100%)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(to bottom, yellow 0%, blue 100%)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
+                        type: 1 /* LINEAR_GRADIENT */,
                         stops: [
                             {
-                                color: colorParse('yellow'),
+                                color: colorParse(context, 'yellow'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 0,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
                             },
                             {
-                                color: colorParse('blue'),
+                                color: colorParse(context, 'blue'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 100,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
@@ -101,36 +122,36 @@ describe('types', function () {
                     });
                 });
                 it('linear-gradient(to top left, lightpink, lightpink 5px, white 5px, white 10px)', function () {
-                    return assert_1.deepStrictEqual(parse('linear-gradient(to top left, lightpink, lightpink 5px, white 5px, white 10px)'), {
+                    return assert_1.deepStrictEqual(parse(context, 'linear-gradient(to top left, lightpink, lightpink 5px, white 5px, white 10px)'), {
                         angle: [
-                            { type: tokenizer_1.TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4 },
-                            { type: tokenizer_1.TokenType.PERCENTAGE_TOKEN, number: 100, flags: 4 }
+                            { type: 16 /* PERCENTAGE_TOKEN */, number: 100, flags: 4 },
+                            { type: 16 /* PERCENTAGE_TOKEN */, number: 100, flags: 4 }
                         ],
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
+                        type: 1 /* LINEAR_GRADIENT */,
                         stops: [
-                            { color: colorParse('lightpink'), stop: null },
+                            { color: colorParse(context, 'lightpink'), stop: null },
                             {
-                                color: colorParse('lightpink'),
+                                color: colorParse(context, 'lightpink'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.DIMENSION_TOKEN,
+                                    type: 15 /* DIMENSION_TOKEN */,
                                     number: 5,
                                     flags: tokenizer_1.FLAG_INTEGER,
                                     unit: 'px'
                                 }
                             },
                             {
-                                color: colorParse('white'),
+                                color: colorParse(context, 'white'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.DIMENSION_TOKEN,
+                                    type: 15 /* DIMENSION_TOKEN */,
                                     number: 5,
                                     flags: tokenizer_1.FLAG_INTEGER,
                                     unit: 'px'
                                 }
                             },
                             {
-                                color: colorParse('white'),
+                                color: colorParse(context, 'white'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.DIMENSION_TOKEN,
+                                    type: 15 /* DIMENSION_TOKEN */,
                                     number: 10,
                                     flags: tokenizer_1.FLAG_INTEGER,
                                     unit: 'px'
@@ -142,38 +163,38 @@ describe('types', function () {
             });
             describe('-prefix-linear-gradient', function () {
                 it('-webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #3a8bc2 84%, #26558b 100%)', function () {
-                    return assert_1.deepStrictEqual(parse('-webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #3a8bc2 84%, #26558b 100%)'), {
+                    return assert_1.deepStrictEqual(parse(context, '-webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #3a8bc2 84%, #26558b 100%)'), {
                         angle: angle_1.deg(90),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
+                        type: 1 /* LINEAR_GRADIENT */,
                         stops: [
                             {
-                                color: colorParse('#cedbe9'),
+                                color: colorParse(context, '#cedbe9'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 0,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
                             },
                             {
-                                color: colorParse('#aac5de'),
+                                color: colorParse(context, '#aac5de'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 17,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
                             },
                             {
-                                color: colorParse('#3a8bc2'),
+                                color: colorParse(context, '#3a8bc2'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 84,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
                             },
                             {
-                                color: colorParse('#26558b'),
+                                color: colorParse(context, '#26558b'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 100,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
@@ -182,22 +203,22 @@ describe('types', function () {
                     });
                 });
                 it('-moz-linear-gradient(top, #cce5f4 0%, #00263c 100%)', function () {
-                    return assert_1.deepStrictEqual(parse('-moz-linear-gradient(top, #cce5f4 0%, #00263c 100%)'), {
+                    return assert_1.deepStrictEqual(parse(context, '-moz-linear-gradient(top, #cce5f4 0%, #00263c 100%)'), {
                         angle: angle_1.deg(180),
-                        type: image_1.CSSImageType.LINEAR_GRADIENT,
+                        type: 1 /* LINEAR_GRADIENT */,
                         stops: [
                             {
-                                color: colorParse('#cce5f4'),
+                                color: colorParse(context, '#cce5f4'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 0,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }
                             },
                             {
-                                color: colorParse('#00263c'),
+                                color: colorParse(context, '#00263c'),
                                 stop: {
-                                    type: tokenizer_1.TokenType.PERCENTAGE_TOKEN,
+                                    type: 16 /* PERCENTAGE_TOKEN */,
                                     number: 100,
                                     flags: tokenizer_1.FLAG_INTEGER
                                 }

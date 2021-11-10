@@ -13,4 +13,4 @@ export declare const calculateBackgroundRendering: (container: ElementContainer,
 export declare const isAuto: (token: CSSValue) => boolean;
 export declare const calculateBackgroundSize: (size: BackgroundSizeInfo[], [intrinsicWidth, intrinsicHeight, intrinsicProportion]: [number | null, number | null, number | null], bounds: Bounds) => [number, number];
 export declare const getBackgroundValueForIndex: <T>(values: T[], index: number) => T;
-export declare const calculateBackgroundRepeatPath: (repeat: BACKGROUND_REPEAT, [x, y]: [number, number], [width, height]: [number, number], backgroundPositioningArea: Bounds, backgroundPaintingArea: Bounds) => Vector[];
+export declare const calculateBackgroundRepeatPath: (repeat: BACKGROUND_REPEAT, [x, y]: [number, number], [width, height]: [number, number], backgroundPositioningArea: Bounds, backgroundPaintingArea: Bounds) => [Vector, Vector, Vector, Vector];

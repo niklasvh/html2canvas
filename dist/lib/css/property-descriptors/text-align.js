@@ -1,27 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
-var TEXT_ALIGN;
-(function (TEXT_ALIGN) {
-    TEXT_ALIGN[TEXT_ALIGN["LEFT"] = 0] = "LEFT";
-    TEXT_ALIGN[TEXT_ALIGN["CENTER"] = 1] = "CENTER";
-    TEXT_ALIGN[TEXT_ALIGN["RIGHT"] = 2] = "RIGHT";
-})(TEXT_ALIGN = exports.TEXT_ALIGN || (exports.TEXT_ALIGN = {}));
+exports.textAlign = void 0;
 exports.textAlign = {
     name: 'text-align',
     initialValue: 'left',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: function (textAlign) {
+    type: 2 /* IDENT_VALUE */,
+    parse: function (_context, textAlign) {
         switch (textAlign) {
             case 'right':
-                return TEXT_ALIGN.RIGHT;
+                return 2 /* RIGHT */;
             case 'center':
             case 'justify':
-                return TEXT_ALIGN.CENTER;
+                return 1 /* CENTER */;
             case 'left':
             default:
-                return TEXT_ALIGN.LEFT;
+                return 0 /* LEFT */;
         }
     }
 };

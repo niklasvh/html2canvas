@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum POSITION {
+export declare const enum POSITION {
     STATIC = 0,
     RELATIVE = 1,
     ABSOLUTE = 2,

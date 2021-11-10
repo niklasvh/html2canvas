@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.calculatePaddingBoxPath = exports.calculateContentBoxPath = exports.calculateBorderBoxPath = exports.BoundCurves = void 0;
 var length_percentage_1 = require("../css/types/length-percentage");
 var vector_1 = require("./vector");
 var bezier_curve_1 = require("./bezier-curve");
@@ -39,6 +40,54 @@ var BoundCurves = /** @class */ (function () {
         var paddingRight = length_percentage_1.getAbsoluteValue(styles.paddingRight, element.bounds.width);
         var paddingBottom = length_percentage_1.getAbsoluteValue(styles.paddingBottom, element.bounds.width);
         var paddingLeft = length_percentage_1.getAbsoluteValue(styles.paddingLeft, element.bounds.width);
+        this.topLeftBorderDoubleOuterBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + borderLeftWidth / 3, bounds.top + borderTopWidth / 3, tlh - borderLeftWidth / 3, tlv - borderTopWidth / 3, CORNER.TOP_LEFT)
+                : new vector_1.Vector(bounds.left + borderLeftWidth / 3, bounds.top + borderTopWidth / 3);
+        this.topRightBorderDoubleOuterBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + topWidth, bounds.top + borderTopWidth / 3, trh - borderRightWidth / 3, trv - borderTopWidth / 3, CORNER.TOP_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth / 3, bounds.top + borderTopWidth / 3);
+        this.bottomRightBorderDoubleOuterBox =
+            brh > 0 || brv > 0
+                ? getCurvePoints(bounds.left + bottomWidth, bounds.top + rightHeight, brh - borderRightWidth / 3, brv - borderBottomWidth / 3, CORNER.BOTTOM_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth / 3, bounds.top + bounds.height - borderBottomWidth / 3);
+        this.bottomLeftBorderDoubleOuterBox =
+            blh > 0 || blv > 0
+                ? getCurvePoints(bounds.left + borderLeftWidth / 3, bounds.top + leftHeight, blh - borderLeftWidth / 3, blv - borderBottomWidth / 3, CORNER.BOTTOM_LEFT)
+                : new vector_1.Vector(bounds.left + borderLeftWidth / 3, bounds.top + bounds.height - borderBottomWidth / 3);
+        this.topLeftBorderDoubleInnerBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + (borderLeftWidth * 2) / 3, bounds.top + (borderTopWidth * 2) / 3, tlh - (borderLeftWidth * 2) / 3, tlv - (borderTopWidth * 2) / 3, CORNER.TOP_LEFT)
+                : new vector_1.Vector(bounds.left + (borderLeftWidth * 2) / 3, bounds.top + (borderTopWidth * 2) / 3);
+        this.topRightBorderDoubleInnerBox =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + topWidth, bounds.top + (borderTopWidth * 2) / 3, trh - (borderRightWidth * 2) / 3, trv - (borderTopWidth * 2) / 3, CORNER.TOP_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - (borderRightWidth * 2) / 3, bounds.top + (borderTopWidth * 2) / 3);
+        this.bottomRightBorderDoubleInnerBox =
+            brh > 0 || brv > 0
+                ? getCurvePoints(bounds.left + bottomWidth, bounds.top + rightHeight, brh - (borderRightWidth * 2) / 3, brv - (borderBottomWidth * 2) / 3, CORNER.BOTTOM_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - (borderRightWidth * 2) / 3, bounds.top + bounds.height - (borderBottomWidth * 2) / 3);
+        this.bottomLeftBorderDoubleInnerBox =
+            blh > 0 || blv > 0
+                ? getCurvePoints(bounds.left + (borderLeftWidth * 2) / 3, bounds.top + leftHeight, blh - (borderLeftWidth * 2) / 3, blv - (borderBottomWidth * 2) / 3, CORNER.BOTTOM_LEFT)
+                : new vector_1.Vector(bounds.left + (borderLeftWidth * 2) / 3, bounds.top + bounds.height - (borderBottomWidth * 2) / 3);
+        this.topLeftBorderStroke =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + borderLeftWidth / 2, bounds.top + borderTopWidth / 2, tlh - borderLeftWidth / 2, tlv - borderTopWidth / 2, CORNER.TOP_LEFT)
+                : new vector_1.Vector(bounds.left + borderLeftWidth / 2, bounds.top + borderTopWidth / 2);
+        this.topRightBorderStroke =
+            tlh > 0 || tlv > 0
+                ? getCurvePoints(bounds.left + topWidth, bounds.top + borderTopWidth / 2, trh - borderRightWidth / 2, trv - borderTopWidth / 2, CORNER.TOP_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth / 2, bounds.top + borderTopWidth / 2);
+        this.bottomRightBorderStroke =
+            brh > 0 || brv > 0
+                ? getCurvePoints(bounds.left + bottomWidth, bounds.top + rightHeight, brh - borderRightWidth / 2, brv - borderBottomWidth / 2, CORNER.BOTTOM_RIGHT)
+                : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth / 2, bounds.top + bounds.height - borderBottomWidth / 2);
+        this.bottomLeftBorderStroke =
+            blh > 0 || blv > 0
+                ? getCurvePoints(bounds.left + borderLeftWidth / 2, bounds.top + leftHeight, blh - borderLeftWidth / 2, blv - borderBottomWidth / 2, CORNER.BOTTOM_LEFT)
+                : new vector_1.Vector(bounds.left + borderLeftWidth / 2, bounds.top + bounds.height - borderBottomWidth / 2);
         this.topLeftBorderBox =
             tlh > 0 || tlv > 0
                 ? getCurvePoints(bounds.left, bounds.top, tlh, tlv, CORNER.TOP_LEFT)
@@ -61,15 +110,15 @@ var BoundCurves = /** @class */ (function () {
                 : new vector_1.Vector(bounds.left + borderLeftWidth, bounds.top + borderTopWidth);
         this.topRightPaddingBox =
             trh > 0 || trv > 0
-                ? getCurvePoints(bounds.left + Math.min(topWidth, bounds.width + borderLeftWidth), bounds.top + borderTopWidth, topWidth > bounds.width + borderLeftWidth ? 0 : trh - borderLeftWidth, trv - borderTopWidth, CORNER.TOP_RIGHT)
+                ? getCurvePoints(bounds.left + Math.min(topWidth, bounds.width - borderRightWidth), bounds.top + borderTopWidth, topWidth > bounds.width + borderRightWidth ? 0 : Math.max(0, trh - borderRightWidth), Math.max(0, trv - borderTopWidth), CORNER.TOP_RIGHT)
                 : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth, bounds.top + borderTopWidth);
         this.bottomRightPaddingBox =
             brh > 0 || brv > 0
-                ? getCurvePoints(bounds.left + Math.min(bottomWidth, bounds.width - borderLeftWidth), bounds.top + Math.min(rightHeight, bounds.height + borderTopWidth), Math.max(0, brh - borderRightWidth), brv - borderBottomWidth, CORNER.BOTTOM_RIGHT)
+                ? getCurvePoints(bounds.left + Math.min(bottomWidth, bounds.width - borderLeftWidth), bounds.top + Math.min(rightHeight, bounds.height - borderBottomWidth), Math.max(0, brh - borderRightWidth), Math.max(0, brv - borderBottomWidth), CORNER.BOTTOM_RIGHT)
                 : new vector_1.Vector(bounds.left + bounds.width - borderRightWidth, bounds.top + bounds.height - borderBottomWidth);
         this.bottomLeftPaddingBox =
             blh > 0 || blv > 0
-                ? getCurvePoints(bounds.left + borderLeftWidth, bounds.top + leftHeight, Math.max(0, blh - borderLeftWidth), blv - borderBottomWidth, CORNER.BOTTOM_LEFT)
+                ? getCurvePoints(bounds.left + borderLeftWidth, bounds.top + Math.min(leftHeight, bounds.height - borderBottomWidth), Math.max(0, blh - borderLeftWidth), Math.max(0, blv - borderBottomWidth), CORNER.BOTTOM_LEFT)
                 : new vector_1.Vector(bounds.left + borderLeftWidth, bounds.top + bounds.height - borderBottomWidth);
         this.topLeftContentBox =
             tlh > 0 || tlv > 0
@@ -116,10 +165,11 @@ var getCurvePoints = function (x, y, r1, r2, position) {
             return new bezier_curve_1.BezierCurve(new vector_1.Vector(xm, ym), new vector_1.Vector(xm - ox, ym), new vector_1.Vector(x, y + oy), new vector_1.Vector(x, y));
     }
 };
-exports.calculateBorderBoxPath = function (curves) {
+var calculateBorderBoxPath = function (curves) {
     return [curves.topLeftBorderBox, curves.topRightBorderBox, curves.bottomRightBorderBox, curves.bottomLeftBorderBox];
 };
-exports.calculateContentBoxPath = function (curves) {
+exports.calculateBorderBoxPath = calculateBorderBoxPath;
+var calculateContentBoxPath = function (curves) {
     return [
         curves.topLeftContentBox,
         curves.topRightContentBox,
@@ -127,7 +177,8 @@ exports.calculateContentBoxPath = function (curves) {
         curves.bottomLeftContentBox
     ];
 };
-exports.calculatePaddingBoxPath = function (curves) {
+exports.calculateContentBoxPath = calculateContentBoxPath;
+var calculatePaddingBoxPath = function (curves) {
     return [
         curves.topLeftPaddingBox,
         curves.topRightPaddingBox,
@@ -135,4 +186,5 @@ exports.calculatePaddingBoxPath = function (curves) {
         curves.bottomLeftPaddingBox
     ];
 };
+exports.calculatePaddingBoxPath = calculatePaddingBoxPath;
 //# sourceMappingURL=bound-curves.js.map

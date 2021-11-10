@@ -1,22 +1,30 @@
 import { Bounds } from '../css/layout/bounds';
+import { Context } from '../core/context';
 export interface CloneOptions {
-    id: string;
     ignoreElements?: (element: Element) => boolean;
-    onclone?: (document: Document) => void;
+    onclone?: (document: Document, element: HTMLElement) => void;
+    allowTaint?: boolean;
+}
+export interface WindowOptions {
+    scrollX: number;
+    scrollY: number;
+    windowWidth: number;
+    windowHeight: number;
 }
 export declare type CloneConfigurations = CloneOptions & {
     inlineImages: boolean;
     copyStyles: boolean;
 };
 export declare class DocumentCloner {
-    private readonly scrolledElements;
+    private readonly context;
     private readonly options;
+    private readonly scrolledElements;
     private readonly referenceElement;
     clonedReferenceElement?: HTMLElement;
     private readonly documentElement;
     private readonly counters;
     private quoteDepth;
-    constructor(element: HTMLElement, options: CloneConfigurations);
+    constructor(context: Context, element: HTMLElement, options: CloneConfigurations);
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement>;
     createElementClone<T extends HTMLElement | SVGElement>(node: T): HTMLElement | SVGElement;
     createStyleClone(node: HTMLStyleElement): HTMLStyleElement;

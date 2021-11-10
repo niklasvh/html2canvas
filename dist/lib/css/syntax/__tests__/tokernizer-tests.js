@@ -9,25 +9,25 @@ var tokenize = function (value) {
 };
 describe('tokenizer', function () {
     describe('<ident>', function () {
-        it('auto', function () { return assert_1.deepEqual(tokenize('auto'), [{ type: tokenizer_1.TokenType.IDENT_TOKEN, value: 'auto' }]); });
-        it('url', function () { return assert_1.deepEqual(tokenize('url'), [{ type: tokenizer_1.TokenType.IDENT_TOKEN, value: 'url' }]); });
+        it('auto', function () { return assert_1.deepEqual(tokenize('auto'), [{ type: 20 /* IDENT_TOKEN */, value: 'auto' }]); });
+        it('url', function () { return assert_1.deepEqual(tokenize('url'), [{ type: 20 /* IDENT_TOKEN */, value: 'url' }]); });
         it('auto test', function () {
             return assert_1.deepEqual(tokenize('auto        test'), [
-                { type: tokenizer_1.TokenType.IDENT_TOKEN, value: 'auto' },
-                { type: tokenizer_1.TokenType.WHITESPACE_TOKEN },
-                { type: tokenizer_1.TokenType.IDENT_TOKEN, value: 'test' }
+                { type: 20 /* IDENT_TOKEN */, value: 'auto' },
+                { type: 31 /* WHITESPACE_TOKEN */ },
+                { type: 20 /* IDENT_TOKEN */, value: 'test' }
             ]);
         });
     });
     describe('<url-token>', function () {
         it('url(test.jpg)', function () {
-            return assert_1.deepEqual(tokenize('url(test.jpg)'), [{ type: tokenizer_1.TokenType.URL_TOKEN, value: 'test.jpg' }]);
+            return assert_1.deepEqual(tokenize('url(test.jpg)'), [{ type: 22 /* URL_TOKEN */, value: 'test.jpg' }]);
         });
         it('url("test.jpg")', function () {
-            return assert_1.deepEqual(tokenize('url("test.jpg")'), [{ type: tokenizer_1.TokenType.URL_TOKEN, value: 'test.jpg' }]);
+            return assert_1.deepEqual(tokenize('url("test.jpg")'), [{ type: 22 /* URL_TOKEN */, value: 'test.jpg' }]);
         });
         it("url('test.jpg')", function () {
-            return assert_1.deepEqual(tokenize("url('test.jpg')"), [{ type: tokenizer_1.TokenType.URL_TOKEN, value: 'test.jpg' }]);
+            return assert_1.deepEqual(tokenize("url('test.jpg')"), [{ type: 22 /* URL_TOKEN */, value: 'test.jpg' }]);
         });
     });
 });

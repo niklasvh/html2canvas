@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var assert_1 = require("assert");
 var color_1 = require("../color");
 var parser_1 = require("../../syntax/parser");
-var parse = function (value) { return color_1.color.parse(parser_1.Parser.parseValue(value)); };
+var parse = function (value) { return color_1.color.parse({}, parser_1.Parser.parseValue(value)); };
 describe('types', function () {
     describe('<color>', function () {
         describe('parsing', function () {

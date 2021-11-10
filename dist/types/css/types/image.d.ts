@@ -2,7 +2,7 @@ import { CSSValue } from '../syntax/parser';
 import { Color } from './color';
 import { ITypeDescriptor } from '../ITypeDescriptor';
 import { LengthPercentage } from './length-percentage';
-export declare enum CSSImageType {
+export declare const enum CSSImageType {
     URL = 0,
     LINEAR_GRADIENT = 1,
     RADIAL_GRADIENT = 2
@@ -32,11 +32,11 @@ export interface CSSLinearGradientImage extends ICSSGradientImage {
     angle: number | GradientCorner;
     type: CSSImageType.LINEAR_GRADIENT;
 }
-export declare enum CSSRadialShape {
+export declare const enum CSSRadialShape {
     CIRCLE = 0,
     ELLIPSE = 1
 }
-export declare enum CSSRadialExtent {
+export declare const enum CSSRadialExtent {
     CLOSEST_SIDE = 0,
     FARTHEST_SIDE = 1,
     CLOSEST_CORNER = 2,
@@ -50,5 +50,5 @@ export interface CSSRadialGradientImage extends ICSSGradientImage {
     position: LengthPercentage[];
 }
 export declare const image: ITypeDescriptor<ICSSImage>;
-export declare function isSupportedImage(value: CSSValue): true | ((args: CSSValue[]) => ICSSImage);
+export declare function isSupportedImage(value: CSSValue): boolean;
 export {};

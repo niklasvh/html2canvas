@@ -1,5 +1,6 @@
 import { ElementContainer } from './element-container';
-export declare const parseTree: (element: HTMLElement) => ElementContainer;
+import { Context } from '../core/context';
+export declare const parseTree: (context: Context, element: HTMLElement) => ElementContainer;
 export declare const isTextNode: (node: Node) => node is Text;
 export declare const isElementNode: (node: Node) => node is Element;
 export declare const isHTMLElementNode: (node: Node) => node is HTMLElement;
@@ -17,3 +18,4 @@ export declare const isStyleElement: (node: Element) => node is HTMLStyleElement
 export declare const isScriptElement: (node: Element) => node is HTMLScriptElement;
 export declare const isTextareaElement: (node: Element) => node is HTMLTextAreaElement;
 export declare const isSelectElement: (node: Element) => node is HTMLSelectElement;
+export declare const isSlotElement: (node: Element) => node is HTMLSlotElement;

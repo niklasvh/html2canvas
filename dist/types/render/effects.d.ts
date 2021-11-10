@@ -14,23 +14,23 @@ export interface IElementEffect {
     readonly target: number;
 }
 export declare class TransformEffect implements IElementEffect {
-    readonly type: EffectType;
-    readonly target: number;
     readonly offsetX: number;
     readonly offsetY: number;
     readonly matrix: Matrix;
+    readonly type: EffectType;
+    readonly target: number;
     constructor(offsetX: number, offsetY: number, matrix: Matrix);
 }
 export declare class ClipEffect implements IElementEffect {
-    readonly type: EffectType;
-    readonly target: number;
     readonly path: Path[];
+    readonly target: EffectTarget;
+    readonly type: EffectType;
     constructor(path: Path[], target: EffectTarget);
 }
 export declare class OpacityEffect implements IElementEffect {
+    readonly opacity: number;
     readonly type: EffectType;
     readonly target: number;
-    readonly opacity: number;
     constructor(opacity: number);
 }
 export declare const isTransformEffect: (effect: IElementEffect) => effect is TransformEffect;

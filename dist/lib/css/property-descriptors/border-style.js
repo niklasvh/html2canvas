@@ -1,22 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
-var BORDER_STYLE;
-(function (BORDER_STYLE) {
-    BORDER_STYLE[BORDER_STYLE["NONE"] = 0] = "NONE";
-    BORDER_STYLE[BORDER_STYLE["SOLID"] = 1] = "SOLID";
-})(BORDER_STYLE = exports.BORDER_STYLE || (exports.BORDER_STYLE = {}));
+exports.borderLeftStyle = exports.borderBottomStyle = exports.borderRightStyle = exports.borderTopStyle = void 0;
 var borderStyleForSide = function (side) { return ({
     name: "border-" + side + "-style",
     initialValue: 'solid',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: function (style) {
+    type: 2 /* IDENT_VALUE */,
+    parse: function (_context, style) {
         switch (style) {
             case 'none':
-                return BORDER_STYLE.NONE;
+                return 0 /* NONE */;
+            case 'dashed':
+                return 2 /* DASHED */;
+            case 'dotted':
+                return 3 /* DOTTED */;
+            case 'double':
+                return 4 /* DOUBLE */;
         }
-        return BORDER_STYLE.SOLID;
+        return 1 /* SOLID */;
     }
 }); };
 exports.borderTopStyle = borderStyleForSide('top');

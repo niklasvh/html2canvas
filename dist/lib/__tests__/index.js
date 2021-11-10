@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -34,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../index");
 var canvas_renderer_1 = require("../render/canvas/canvas-renderer");
@@ -55,7 +55,6 @@ jest.mock('../dom/node-parser', function () {
 jest.mock('../render/stacking-context');
 jest.mock('../render/canvas/canvas-renderer');
 describe('html2canvas', function () {
-    // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
     var element = {
         ownerDocument: {
             defaultView: {
@@ -64,7 +63,7 @@ describe('html2canvas', function () {
             }
         }
     };
-    it('should render with an element', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should render with an element', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -73,14 +72,16 @@ describe('html2canvas', function () {
                 case 1:
                     _a.sent();
                     expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.objectContaining({
+                        cache: expect.any(Object),
+                        logger: expect.any(Object),
+                        windowBounds: expect.objectContaining({ left: 12, top: 34 })
+                    }), expect.objectContaining({
                         backgroundColor: 0xffffffff,
                         scale: 1,
                         height: 50,
                         width: 200,
                         x: 0,
                         y: 0,
-                        scrollX: 12,
-                        scrollY: 34,
                         canvas: undefined
                     }));
                     expect(document_cloner_1.DocumentCloner.destroy).toBeCalled();
@@ -88,20 +89,20 @@ describe('html2canvas', function () {
             }
         });
     }); });
-    it('should have transparent background with backgroundColor: null', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should have transparent background with backgroundColor: null', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, index_1.default(element, { backgroundColor: null })];
                 case 1:
                     _a.sent();
-                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.objectContaining({
+                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.anything(), expect.objectContaining({
                         backgroundColor: color_1.COLORS.TRANSPARENT
                     }));
                     return [2 /*return*/];
             }
         });
     }); });
-    it('should use existing canvas when given as option', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should use existing canvas when given as option', function () { return __awaiter(void 0, void 0, void 0, function () {
         var canvas;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -110,14 +111,14 @@ describe('html2canvas', function () {
                     return [4 /*yield*/, index_1.default(element, { canvas: canvas })];
                 case 1:
                     _a.sent();
-                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.objectContaining({
+                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.anything(), expect.objectContaining({
                         canvas: canvas
                     }));
                     return [2 /*return*/];
             }
         });
     }); });
-    it('should not remove cloned window when removeContainer: false', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should not remove cloned window when removeContainer: false', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -125,15 +126,13 @@ describe('html2canvas', function () {
                     return [4 /*yield*/, index_1.default(element, { removeContainer: false })];
                 case 1:
                     _a.sent();
-                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.objectContaining({
+                    expect(canvas_renderer_1.CanvasRenderer).toHaveBeenLastCalledWith(expect.anything(), expect.objectContaining({
                         backgroundColor: 0xffffffff,
                         scale: 1,
                         height: 50,
                         width: 200,
                         x: 0,
                         y: 0,
-                        scrollX: 12,
-                        scrollY: 34,
                         canvas: undefined
                     }));
                     expect(document_cloner_1.DocumentCloner.destroy).not.toBeCalled();

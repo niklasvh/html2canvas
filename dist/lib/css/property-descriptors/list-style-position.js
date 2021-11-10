@@ -1,23 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
-var LIST_STYLE_POSITION;
-(function (LIST_STYLE_POSITION) {
-    LIST_STYLE_POSITION[LIST_STYLE_POSITION["INSIDE"] = 0] = "INSIDE";
-    LIST_STYLE_POSITION[LIST_STYLE_POSITION["OUTSIDE"] = 1] = "OUTSIDE";
-})(LIST_STYLE_POSITION = exports.LIST_STYLE_POSITION || (exports.LIST_STYLE_POSITION = {}));
+exports.listStylePosition = void 0;
 exports.listStylePosition = {
     name: 'list-style-position',
     initialValue: 'outside',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.IDENT_VALUE,
-    parse: function (position) {
+    type: 2 /* IDENT_VALUE */,
+    parse: function (_context, position) {
         switch (position) {
             case 'inside':
-                return LIST_STYLE_POSITION.INSIDE;
+                return 0 /* INSIDE */;
             case 'outside':
             default:
-                return LIST_STYLE_POSITION.OUTSIDE;
+                return 1 /* OUTSIDE */;
         }
     }
 };

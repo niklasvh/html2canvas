@@ -1,6 +1,18 @@
 import { ElementContainer } from '../dom/element-container';
 import { Path } from './path';
 export declare class BoundCurves {
+    readonly topLeftBorderDoubleOuterBox: Path;
+    readonly topRightBorderDoubleOuterBox: Path;
+    readonly bottomRightBorderDoubleOuterBox: Path;
+    readonly bottomLeftBorderDoubleOuterBox: Path;
+    readonly topLeftBorderDoubleInnerBox: Path;
+    readonly topRightBorderDoubleInnerBox: Path;
+    readonly bottomRightBorderDoubleInnerBox: Path;
+    readonly bottomLeftBorderDoubleInnerBox: Path;
+    readonly topLeftBorderStroke: Path;
+    readonly topRightBorderStroke: Path;
+    readonly bottomRightBorderStroke: Path;
+    readonly bottomLeftBorderStroke: Path;
     readonly topLeftBorderBox: Path;
     readonly topRightBorderBox: Path;
     readonly bottomRightBorderBox: Path;

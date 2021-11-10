@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var image_1 = require("../image");
+exports.calculateRadius = exports.calculateGradientDirection = exports.processColorStops = exports.parseColorStop = void 0;
 var color_1 = require("../color");
 var length_percentage_1 = require("../length-percentage");
-exports.parseColorStop = function (args) {
-    var color = color_1.color.parse(args[0]);
+var parseColorStop = function (context, args) {
+    var color = color_1.color.parse(context, args[0]);
     var stop = args[1];
     return stop && length_percentage_1.isLengthPercentage(stop) ? { color: color, stop: stop } : { color: color, stop: null };
 };
-exports.processColorStops = function (stops, lineLength) {
+exports.parseColorStop = parseColorStop;
+var processColorStops = function (stops, lineLength) {
     var first = stops[0];
     var last = stops[stops.length - 1];
     if (first.stop === null) {
@@ -58,6 +59,7 @@ exports.processColorStops = function (stops, lineLength) {
         return { color: color, stop: Math.max(Math.min(1, processStops[i] / lineLength), 0) };
     });
 };
+exports.processColorStops = processColorStops;
 var getAngleFromCorner = function (corner, width, height) {
     var centerX = width / 2;
     var centerY = height / 2;
@@ -65,7 +67,7 @@ var getAngleFromCorner = function (corner, width, height) {
     var y = centerY - length_percentage_1.getAbsoluteValue(corner[1], height);
     return (Math.atan2(y, x) + Math.PI * 2) % (Math.PI * 2);
 };
-exports.calculateGradientDirection = function (angle, width, height) {
+var calculateGradientDirection = function (angle, width, height) {
     var radian = typeof angle === 'number' ? angle : getAngleFromCorner(angle, width, height);
     var lineLength = Math.abs(width * Math.sin(radian)) + Math.abs(height * Math.cos(radian));
     var halfWidth = width / 2;
@@ -75,9 +77,15 @@ exports.calculateGradientDirection = function (angle, width, height) {
     var xDiff = Math.cos(radian - Math.PI / 2) * halfLineLength;
     return [lineLength, halfWidth - xDiff, halfWidth + xDiff, halfHeight - yDiff, halfHeight + yDiff];
 };
+exports.calculateGradientDirection = calculateGradientDirection;
 var distance = function (a, b) { return Math.sqrt(a * a + b * b); };
 var findCorner = function (width, height, x, y, closest) {
-    var corners = [[0, 0], [0, height], [width, 0], [width, height]];
+    var corners = [
+        [0, 0],
+        [0, height],
+        [width, 0],
+        [width, height]
+    ];
     return corners.reduce(function (stat, corner) {
         var cx = corner[0], cy = corner[1];
         var d = distance(x - cx, y - cy);
@@ -93,28 +101,28 @@ var findCorner = function (width, height, x, y, closest) {
         optimumCorner: null
     }).optimumCorner;
 };
-exports.calculateRadius = function (gradient, x, y, width, height) {
+var calculateRadius = function (gradient, x, y, width, height) {
     var rx = 0;
     var ry = 0;
     switch (gradient.size) {
-        case image_1.CSSRadialExtent.CLOSEST_SIDE:
+        case 0 /* CLOSEST_SIDE */:
             // The ending shape is sized so that that it exactly meets the side of the gradient box closest to the gradient’s center.
             // If the shape is an ellipse, it exactly meets the closest side in each dimension.
-            if (gradient.shape === image_1.CSSRadialShape.CIRCLE) {
+            if (gradient.shape === 0 /* CIRCLE */) {
                 rx = ry = Math.min(Math.abs(x), Math.abs(x - width), Math.abs(y), Math.abs(y - height));
             }
-            else if (gradient.shape === image_1.CSSRadialShape.ELLIPSE) {
+            else if (gradient.shape === 1 /* ELLIPSE */) {
                 rx = Math.min(Math.abs(x), Math.abs(x - width));
                 ry = Math.min(Math.abs(y), Math.abs(y - height));
             }
             break;
-        case image_1.CSSRadialExtent.CLOSEST_CORNER:
+        case 2 /* CLOSEST_CORNER */:
             // The ending shape is sized so that that it passes through the corner of the gradient box closest to the gradient’s center.
             // If the shape is an ellipse, the ending shape is given the same aspect-ratio it would have if closest-side were specified.
-            if (gradient.shape === image_1.CSSRadialShape.CIRCLE) {
+            if (gradient.shape === 0 /* CIRCLE */) {
                 rx = ry = Math.min(distance(x, y), distance(x, y - height), distance(x - width, y), distance(x - width, y - height));
             }
-            else if (gradient.shape === image_1.CSSRadialShape.ELLIPSE) {
+            else if (gradient.shape === 1 /* ELLIPSE */) {
                 // Compute the ratio ry/rx (which is to be the same as for "closest-side")
                 var c = Math.min(Math.abs(y), Math.abs(y - height)) / Math.min(Math.abs(x), Math.abs(x - width));
                 var _a = findCorner(width, height, x, y, true), cx = _a[0], cy = _a[1];
@@ -122,23 +130,23 @@ exports.calculateRadius = function (gradient, x, y, width, height) {
                 ry = c * rx;
             }
             break;
-        case image_1.CSSRadialExtent.FARTHEST_SIDE:
+        case 1 /* FARTHEST_SIDE */:
             // Same as closest-side, except the ending shape is sized based on the farthest side(s)
-            if (gradient.shape === image_1.CSSRadialShape.CIRCLE) {
+            if (gradient.shape === 0 /* CIRCLE */) {
                 rx = ry = Math.max(Math.abs(x), Math.abs(x - width), Math.abs(y), Math.abs(y - height));
             }
-            else if (gradient.shape === image_1.CSSRadialShape.ELLIPSE) {
+            else if (gradient.shape === 1 /* ELLIPSE */) {
                 rx = Math.max(Math.abs(x), Math.abs(x - width));
                 ry = Math.max(Math.abs(y), Math.abs(y - height));
             }
             break;
-        case image_1.CSSRadialExtent.FARTHEST_CORNER:
+        case 3 /* FARTHEST_CORNER */:
             // Same as closest-corner, except the ending shape is sized based on the farthest corner.
             // If the shape is an ellipse, the ending shape is given the same aspect ratio it would have if farthest-side were specified.
-            if (gradient.shape === image_1.CSSRadialShape.CIRCLE) {
+            if (gradient.shape === 0 /* CIRCLE */) {
                 rx = ry = Math.max(distance(x, y), distance(x, y - height), distance(x - width, y), distance(x - width, y - height));
             }
-            else if (gradient.shape === image_1.CSSRadialShape.ELLIPSE) {
+            else if (gradient.shape === 1 /* ELLIPSE */) {
                 // Compute the ratio ry/rx (which is to be the same as for "farthest-side")
                 var c = Math.max(Math.abs(y), Math.abs(y - height)) / Math.max(Math.abs(x), Math.abs(x - width));
                 var _b = findCorner(width, height, x, y, false), cx = _b[0], cy = _b[1];
@@ -153,4 +161,5 @@ exports.calculateRadius = function (gradient, x, y, width, height) {
     }
     return [rx, ry];
 };
+exports.calculateRadius = calculateRadius;
 //# sourceMappingURL=gradient.js.map

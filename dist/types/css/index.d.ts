@@ -7,6 +7,7 @@ import { backgroundSize } from './property-descriptors/background-size';
 import { borderBottomLeftRadius, borderBottomRightRadius, borderTopLeftRadius, borderTopRightRadius } from './property-descriptors/border-radius';
 import { borderBottomStyle, borderLeftStyle, borderRightStyle, borderTopStyle } from './property-descriptors/border-style';
 import { borderBottomWidth, borderLeftWidth, borderRightWidth, borderTopWidth } from './property-descriptors/border-width';
+import { direction } from './property-descriptors/direction';
 import { display } from './property-descriptors/display';
 import { float } from './property-descriptors/float';
 import { letterSpacing } from './property-descriptors/letter-spacing';
@@ -37,9 +38,14 @@ import { fontStyle } from './property-descriptors/font-style';
 import { content } from './property-descriptors/content';
 import { counterIncrement } from './property-descriptors/counter-increment';
 import { counterReset } from './property-descriptors/counter-reset';
+import { duration } from './property-descriptors/duration';
 import { quotes } from './property-descriptors/quotes';
 import { boxShadow } from './property-descriptors/box-shadow';
+import { paintOrder } from './property-descriptors/paint-order';
+import { webkitTextStrokeWidth } from './property-descriptors/webkit-text-stroke-width';
+import { Context } from '../core/context';
 export declare class CSSParsedDeclaration {
+    animationDuration: ReturnType<typeof duration.parse>;
     backgroundClip: ReturnType<typeof backgroundClip.parse>;
     backgroundColor: Color;
     backgroundImage: ReturnType<typeof backgroundImage.parse>;
@@ -65,6 +71,7 @@ export declare class CSSParsedDeclaration {
     borderLeftWidth: ReturnType<typeof borderLeftWidth.parse>;
     boxShadow: ReturnType<typeof boxShadow.parse>;
     color: Color;
+    direction: ReturnType<typeof direction.parse>;
     display: ReturnType<typeof display.parse>;
     float: ReturnType<typeof float.parse>;
     fontFamily: ReturnType<typeof fontFamily.parse>;
@@ -90,6 +97,7 @@ export declare class CSSParsedDeclaration {
     paddingRight: LengthPercentage;
     paddingBottom: LengthPercentage;
     paddingLeft: LengthPercentage;
+    paintOrder: ReturnType<typeof paintOrder.parse>;
     position: ReturnType<typeof position.parse>;
     textAlign: ReturnType<typeof textAlign.parse>;
     textDecorationColor: Color;
@@ -99,9 +107,11 @@ export declare class CSSParsedDeclaration {
     transform: ReturnType<typeof transform.parse>;
     transformOrigin: ReturnType<typeof transformOrigin.parse>;
     visibility: ReturnType<typeof visibility.parse>;
+    webkitTextStrokeColor: Color;
+    webkitTextStrokeWidth: ReturnType<typeof webkitTextStrokeWidth.parse>;
     wordBreak: ReturnType<typeof wordBreak.parse>;
     zIndex: ReturnType<typeof zIndex.parse>;
-    constructor(declaration: CSSStyleDeclaration);
+    constructor(context: Context, declaration: CSSStyleDeclaration);
     isVisible(): boolean;
     isTransparent(): boolean;
     isTransformed(): boolean;
@@ -113,10 +123,10 @@ export declare class CSSParsedDeclaration {
 export declare class CSSParsedPseudoDeclaration {
     content: ReturnType<typeof content.parse>;
     quotes: ReturnType<typeof quotes.parse>;
-    constructor(declaration: CSSStyleDeclaration);
+    constructor(context: Context, declaration: CSSStyleDeclaration);
 }
 export declare class CSSParsedCounterDeclaration {
     counterIncrement: ReturnType<typeof counterIncrement.parse>;
     counterReset: ReturnType<typeof counterReset.parse>;
-    constructor(declaration: CSSStyleDeclaration);
+    constructor(context: Context, declaration: CSSStyleDeclaration);
 }

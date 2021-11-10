@@ -1,6 +1,6 @@
 export declare class DocumentCloner {
     clonedReferenceElement?: HTMLElement;
     constructor();
-    toIFrame(): Promise<{}>;
+    toIFrame(): Promise<HTMLIFrameElement>;
     static destroy(): boolean;
 }

@@ -1,13 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.calculateBackgroundRepeatPath = exports.getBackgroundValueForIndex = exports.calculateBackgroundSize = exports.isAuto = exports.calculateBackgroundRendering = exports.calculateBackgroundPaintingArea = exports.calculateBackgroundPositioningArea = void 0;
 var background_size_1 = require("../css/property-descriptors/background-size");
 var vector_1 = require("./vector");
-var background_repeat_1 = require("../css/property-descriptors/background-repeat");
 var length_percentage_1 = require("../css/types/length-percentage");
 var parser_1 = require("../css/syntax/parser");
 var box_sizing_1 = require("./box-sizing");
-var background_clip_1 = require("../css/property-descriptors/background-clip");
-exports.calculateBackgroundPositioningArea = function (backgroundOrigin, element) {
+var calculateBackgroundPositioningArea = function (backgroundOrigin, element) {
     if (backgroundOrigin === 0 /* BORDER_BOX */) {
         return element.bounds;
     }
@@ -16,16 +15,18 @@ exports.calculateBackgroundPositioningArea = function (backgroundOrigin, element
     }
     return box_sizing_1.paddingBox(element);
 };
-exports.calculateBackgroundPaintingArea = function (backgroundClip, element) {
-    if (backgroundClip === background_clip_1.BACKGROUND_CLIP.BORDER_BOX) {
+exports.calculateBackgroundPositioningArea = calculateBackgroundPositioningArea;
+var calculateBackgroundPaintingArea = function (backgroundClip, element) {
+    if (backgroundClip === 0 /* BORDER_BOX */) {
         return element.bounds;
     }
-    if (backgroundClip === background_clip_1.BACKGROUND_CLIP.CONTENT_BOX) {
+    if (backgroundClip === 2 /* CONTENT_BOX */) {
         return box_sizing_1.contentBox(element);
     }
     return box_sizing_1.paddingBox(element);
 };
-exports.calculateBackgroundRendering = function (container, index, intrinsicSize) {
+exports.calculateBackgroundPaintingArea = calculateBackgroundPaintingArea;
+var calculateBackgroundRendering = function (container, index, intrinsicSize) {
     var backgroundPositioningArea = exports.calculateBackgroundPositioningArea(exports.getBackgroundValueForIndex(container.styles.backgroundOrigin, index), container);
     var backgroundPaintingArea = exports.calculateBackgroundPaintingArea(exports.getBackgroundValueForIndex(container.styles.backgroundClip, index), container);
     var backgroundImageSize = exports.calculateBackgroundSize(exports.getBackgroundValueForIndex(container.styles.backgroundSize, index), intrinsicSize, backgroundPositioningArea);
@@ -36,11 +37,16 @@ exports.calculateBackgroundRendering = function (container, index, intrinsicSize
     var offsetY = Math.round(backgroundPositioningArea.top + position[1]);
     return [path, offsetX, offsetY, sizeWidth, sizeHeight];
 };
-exports.isAuto = function (token) { return parser_1.isIdentToken(token) && token.value === background_size_1.BACKGROUND_SIZE.AUTO; };
+exports.calculateBackgroundRendering = calculateBackgroundRendering;
+var isAuto = function (token) { return parser_1.isIdentToken(token) && token.value === background_size_1.BACKGROUND_SIZE.AUTO; };
+exports.isAuto = isAuto;
 var hasIntrinsicValue = function (value) { return typeof value === 'number'; };
-exports.calculateBackgroundSize = function (size, _a, bounds) {
+var calculateBackgroundSize = function (size, _a, bounds) {
     var intrinsicWidth = _a[0], intrinsicHeight = _a[1], intrinsicProportion = _a[2];
     var first = size[0], second = size[1];
+    if (!first) {
+        return [0, 0];
+    }
     if (length_percentage_1.isLengthPercentage(first) && second && length_percentage_1.isLengthPercentage(second)) {
         return [length_percentage_1.getAbsoluteValue(first, bounds.width), length_percentage_1.getAbsoluteValue(second, bounds.height)];
     }
@@ -134,32 +140,34 @@ exports.calculateBackgroundSize = function (size, _a, bounds) {
     }
     throw new Error("Unable to calculate background-size for element");
 };
-exports.getBackgroundValueForIndex = function (values, index) {
+exports.calculateBackgroundSize = calculateBackgroundSize;
+var getBackgroundValueForIndex = function (values, index) {
     var value = values[index];
     if (typeof value === 'undefined') {
         return values[0];
     }
     return value;
 };
-exports.calculateBackgroundRepeatPath = function (repeat, _a, _b, backgroundPositioningArea, backgroundPaintingArea) {
+exports.getBackgroundValueForIndex = getBackgroundValueForIndex;
+var calculateBackgroundRepeatPath = function (repeat, _a, _b, backgroundPositioningArea, backgroundPaintingArea) {
     var x = _a[0], y = _a[1];
     var width = _b[0], height = _b[1];
     switch (repeat) {
-        case background_repeat_1.BACKGROUND_REPEAT.REPEAT_X:
+        case 2 /* REPEAT_X */:
             return [
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left), Math.round(backgroundPositioningArea.top + y)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + backgroundPositioningArea.width), Math.round(backgroundPositioningArea.top + y)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + backgroundPositioningArea.width), Math.round(height + backgroundPositioningArea.top + y)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left), Math.round(height + backgroundPositioningArea.top + y))
             ];
-        case background_repeat_1.BACKGROUND_REPEAT.REPEAT_Y:
+        case 3 /* REPEAT_Y */:
             return [
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x), Math.round(backgroundPositioningArea.top)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x + width), Math.round(backgroundPositioningArea.top)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x + width), Math.round(backgroundPositioningArea.height + backgroundPositioningArea.top)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x), Math.round(backgroundPositioningArea.height + backgroundPositioningArea.top))
             ];
-        case background_repeat_1.BACKGROUND_REPEAT.NO_REPEAT:
+        case 1 /* NO_REPEAT */:
             return [
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x), Math.round(backgroundPositioningArea.top + y)),
                 new vector_1.Vector(Math.round(backgroundPositioningArea.left + x + width), Math.round(backgroundPositioningArea.top + y)),
@@ -175,4 +183,5 @@ exports.calculateBackgroundRepeatPath = function (repeat, _a, _b, backgroundPosi
             ];
     }
 };
+exports.calculateBackgroundRepeatPath = calculateBackgroundRepeatPath;
 //# sourceMappingURL=background.js.map

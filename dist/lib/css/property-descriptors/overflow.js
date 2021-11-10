@@ -1,31 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.overflow = void 0;
 var parser_1 = require("../syntax/parser");
-var OVERFLOW;
-(function (OVERFLOW) {
-    OVERFLOW[OVERFLOW["VISIBLE"] = 0] = "VISIBLE";
-    OVERFLOW[OVERFLOW["HIDDEN"] = 1] = "HIDDEN";
-    OVERFLOW[OVERFLOW["SCROLL"] = 2] = "SCROLL";
-    OVERFLOW[OVERFLOW["AUTO"] = 3] = "AUTO";
-})(OVERFLOW = exports.OVERFLOW || (exports.OVERFLOW = {}));
 exports.overflow = {
     name: 'overflow',
     initialValue: 'visible',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.LIST,
-    parse: function (tokens) {
+    type: 1 /* LIST */,
+    parse: function (_context, tokens) {
         return tokens.filter(parser_1.isIdentToken).map(function (overflow) {
             switch (overflow.value) {
                 case 'hidden':
-                    return OVERFLOW.HIDDEN;
+                    return 1 /* HIDDEN */;
                 case 'scroll':
-                    return OVERFLOW.SCROLL;
+                    return 2 /* SCROLL */;
+                case 'clip':
+                    return 3 /* CLIP */;
                 case 'auto':
-                    return OVERFLOW.AUTO;
+                    return 4 /* AUTO */;
                 case 'visible':
                 default:
-                    return OVERFLOW.VISIBLE;
+                    return 0 /* VISIBLE */;
             }
         });
     }

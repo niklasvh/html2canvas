@@ -1,4 +1,5 @@
 import { ElementContainer } from '../element-container';
+import { Context } from '../../core/context';
 export declare const CHECKBOX = "checkbox";
 export declare const RADIO = "radio";
 export declare const PASSWORD = "password";
@@ -7,5 +8,5 @@ export declare class InputElementContainer extends ElementContainer {
     readonly type: string;
     readonly checked: boolean;
     readonly value: string;
-    constructor(input: HTMLInputElement);
+    constructor(context: Context, input: HTMLInputElement);
 }

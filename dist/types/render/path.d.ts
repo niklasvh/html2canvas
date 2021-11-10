@@ -1,6 +1,6 @@
 import { BezierCurve } from './bezier-curve';
 import { Vector } from './vector';
-export declare enum PathType {
+export declare const enum PathType {
     VECTOR = 0,
     BEZIER_CURVE = 1
 }

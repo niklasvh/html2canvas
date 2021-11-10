@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FEATURES = exports.loadSerializedSVG = exports.createForeignObjectSVG = void 0;
+var css_line_break_1 = require("css-line-break");
 var testRangeBounds = function (document) {
     var TEST_HEIGHT = 123;
     if (document.createRange) {
@@ -19,6 +21,36 @@ var testRangeBounds = function (document) {
         }
     }
     return false;
+};
+var testIOSLineBreak = function (document) {
+    var testElement = document.createElement('boundtest');
+    testElement.style.width = '50px';
+    testElement.style.display = 'block';
+    testElement.style.fontSize = '12px';
+    testElement.style.letterSpacing = '0px';
+    testElement.style.wordSpacing = '0px';
+    document.body.appendChild(testElement);
+    var range = document.createRange();
+    testElement.innerHTML = typeof ''.repeat === 'function' ? '&#128104;'.repeat(10) : '';
+    var node = testElement.firstChild;
+    var textList = css_line_break_1.toCodePoints(node.data).map(function (i) { return css_line_break_1.fromCodePoint(i); });
+    var offset = 0;
+    var prev = {};
+    // ios 13 does not handle range getBoundingClientRect line changes correctly #2177
+    var supports = textList.every(function (text, i) {
+        range.setStart(node, offset);
+        range.setEnd(node, offset + text.length);
+        var rect = range.getBoundingClientRect();
+        offset += text.length;
+        var boundAhead = rect.x > prev.x || rect.y > prev.y;
+        prev = rect;
+        if (i === 0) {
+            return true;
+        }
+        return boundAhead;
+    });
+    document.body.removeChild(testElement);
+    return supports;
 };
 var testCORS = function () { return typeof new Image().crossOrigin !== 'undefined'; };
 var testResponseType = function () { return typeof new XMLHttpRequest().responseType === 'string'; };
@@ -80,7 +112,7 @@ var testForeignObject = function (document) {
     })
         .catch(function () { return false; });
 };
-exports.createForeignObjectSVG = function (width, height, x, y, node) {
+var createForeignObjectSVG = function (width, height, x, y, node) {
     var xmlns = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(xmlns, 'svg');
     var foreignObject = document.createElementNS(xmlns, 'foreignObject');
@@ -95,7 +127,8 @@ exports.createForeignObjectSVG = function (width, height, x, y, node) {
     foreignObject.appendChild(node);
     return svg;
 };
-exports.loadSerializedSVG = function (svg) {
+exports.createForeignObjectSVG = createForeignObjectSVG;
+var loadSerializedSVG = function (svg) {
     return new Promise(function (resolve, reject) {
         var img = new Image();
         img.onload = function () { return resolve(img); };
@@ -103,11 +136,18 @@ exports.loadSerializedSVG = function (svg) {
         img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg));
     });
 };
+exports.loadSerializedSVG = loadSerializedSVG;
 exports.FEATURES = {
     get SUPPORT_RANGE_BOUNDS() {
         'use strict';
         var value = testRangeBounds(document);
         Object.defineProperty(exports.FEATURES, 'SUPPORT_RANGE_BOUNDS', { value: value });
+        return value;
+    },
+    get SUPPORT_WORD_BREAKING() {
+        'use strict';
+        var value = exports.FEATURES.SUPPORT_RANGE_BOUNDS && testIOSLineBreak(document);
+        Object.defineProperty(exports.FEATURES, 'SUPPORT_WORD_BREAKING', { value: value });
         return value;
     },
     get SUPPORT_SVG_DRAWING() {

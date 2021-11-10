@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IPropertyDescriptor_1 = require("../IPropertyDescriptor");
+exports.borderLeftColor = exports.borderBottomColor = exports.borderRightColor = exports.borderTopColor = void 0;
 var borderColorForSide = function (side) { return ({
     name: "border-" + side + "-color",
     initialValue: 'transparent',
     prefix: false,
-    type: IPropertyDescriptor_1.PropertyDescriptorParsingType.TYPE_VALUE,
+    type: 3 /* TYPE_VALUE */,
     format: 'color'
 }); };
 exports.borderTopColor = borderColorForSide('top');

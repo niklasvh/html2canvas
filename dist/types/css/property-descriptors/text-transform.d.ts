@@ -1,5 +1,5 @@
 import { IPropertyIdentValueDescriptor } from '../IPropertyDescriptor';
-export declare enum TEXT_TRANSFORM {
+export declare const enum TEXT_TRANSFORM {
     NONE = 0,
     LOWERCASE = 1,
     UPPERCASE = 2,

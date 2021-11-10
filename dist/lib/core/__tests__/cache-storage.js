@@ -11,10 +11,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -45,12 +46,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var assert_1 = require("assert");
 var features_1 = require("../features");
 var cache_storage_1 = require("../cache-storage");
-var logger_1 = require("../logger");
+var context_1 = require("../context");
+var bounds_1 = require("../../css/layout/bounds");
 var proxy = 'http://example.com/proxy';
 var createMockContext = function (origin, opts) {
     if (opts === void 0) { opts = {}; }
@@ -82,12 +83,11 @@ var createMockContext = function (origin, opts) {
         }
     };
     cache_storage_1.CacheStorage.setContext(context);
-    logger_1.Logger.create({ id: 'test', enabled: false });
-    return cache_storage_1.CacheStorage.create('test', __assign({ imageTimeout: 0, useCORS: false, allowTaint: false, proxy: proxy }, opts));
+    return new context_1.Context(__assign({ logging: false, imageTimeout: 0, useCORS: false, allowTaint: false, proxy: proxy }, opts), new bounds_1.Bounds(0, 0, 0, 0));
 };
 var images = [];
 var xhr = [];
-var sleep = function (timeout) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+var sleep = function (timeout) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
         case 0: return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, timeout); })];
         case 1: return [2 /*return*/, _a.sent()];
@@ -159,12 +159,12 @@ describe('cache-storage', function () {
         xhr.splice(0, xhr.length);
         images.splice(0, images.length);
     });
-    it('addImage adds images to cache', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('addImage adds images to cache', function () { return __awaiter(void 0, void 0, void 0, function () {
         var cache;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    cache = createMockContext('http://example.com', { proxy: null });
+                    cache = createMockContext('http://example.com', { proxy: null }).cache;
                     return [4 /*yield*/, cache.addImage('http://example.com/test.jpg')];
                 case 1:
                     _a.sent();
@@ -178,12 +178,12 @@ describe('cache-storage', function () {
             }
         });
     }); });
-    it('addImage should not add duplicate entries', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('addImage should not add duplicate entries', function () { return __awaiter(void 0, void 0, void 0, function () {
         var cache;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    cache = createMockContext('http://example.com');
+                    cache = createMockContext('http://example.com').cache;
                     return [4 /*yield*/, cache.addImage('http://example.com/test.jpg')];
                 case 1:
                     _a.sent();
@@ -197,12 +197,12 @@ describe('cache-storage', function () {
         });
     }); });
     describe('svg', function () {
-        it('should add svg images correctly', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('should add svg images correctly', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cache = createMockContext('http://example.com');
+                        cache = createMockContext('http://example.com').cache;
                         return [4 /*yield*/, cache.addImage('http://example.com/test.svg')];
                     case 1:
                         _a.sent();
@@ -216,13 +216,13 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('should omit svg images if not supported', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('should omit svg images if not supported', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         setFeatures({ SUPPORT_SVG_DRAWING: false });
-                        cache = createMockContext('http://example.com');
+                        cache = createMockContext('http://example.com').cache;
                         return [4 /*yield*/, cache.addImage('http://example.com/test.svg')];
                     case 1:
                         _a.sent();
@@ -236,14 +236,14 @@ describe('cache-storage', function () {
         }); });
     });
     describe('cross-origin', function () {
-        it('addImage should not add images it cannot load/render', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should not add images it cannot load/render', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         cache = createMockContext('http://example.com', {
                             proxy: undefined
-                        });
+                        }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -252,7 +252,7 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('addImage should add images if tainting enabled', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should add images if tainting enabled', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -260,7 +260,7 @@ describe('cache-storage', function () {
                         cache = createMockContext('http://example.com', {
                             allowTaint: true,
                             proxy: undefined
-                        });
+                        }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -271,12 +271,12 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('addImage should add images if cors enabled', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should add images if cors enabled', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cache = createMockContext('http://example.com', { useCORS: true });
+                        cache = createMockContext('http://example.com', { useCORS: true }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -287,7 +287,7 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('addImage should not add images if cors enabled but not supported', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should not add images if cors enabled but not supported', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -296,7 +296,7 @@ describe('cache-storage', function () {
                         cache = createMockContext('http://example.com', {
                             useCORS: true,
                             proxy: undefined
-                        });
+                        }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -305,12 +305,12 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('addImage should not add images to proxy if cors enabled', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should not add images to proxy if cors enabled', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cache = createMockContext('http://example.com', { useCORS: true });
+                        cache = createMockContext('http://example.com', { useCORS: true }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -321,12 +321,12 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('addImage should use proxy ', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('addImage should use proxy ', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        cache = createMockContext('http://example.com');
+                        cache = createMockContext('http://example.com').cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -341,14 +341,14 @@ describe('cache-storage', function () {
                 }
             });
         }); });
-        it('proxy should respect imageTimeout', function () { return __awaiter(_this, void 0, void 0, function () {
+        it('proxy should respect imageTimeout', function () { return __awaiter(void 0, void 0, void 0, function () {
             var cache, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         cache = createMockContext('http://example.com', {
                             imageTimeout: 10
-                        });
+                        }).cache;
                         return [4 /*yield*/, cache.addImage('http://html2canvas.hertzen.com/test.jpg')];
                     case 1:
                         _a.sent();
@@ -374,12 +374,12 @@ describe('cache-storage', function () {
             });
         }); });
     });
-    it('match should return cache entry', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('match should return cache entry', function () { return __awaiter(void 0, void 0, void 0, function () {
         var cache, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    cache = createMockContext('http://example.com');
+                    cache = createMockContext('http://example.com').cache;
                     return [4 /*yield*/, cache.addImage('http://example.com/test.jpg')];
                 case 1:
                     _a.sent();
@@ -394,12 +394,12 @@ describe('cache-storage', function () {
             }
         });
     }); });
-    it('image should respect imageTimeout', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('image should respect imageTimeout', function () { return __awaiter(void 0, void 0, void 0, function () {
         var cache, e_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    cache = createMockContext('http://example.com', { imageTimeout: 10 });
+                    cache = createMockContext('http://example.com', { imageTimeout: 10 }).cache;
                     cache.addImage('http://example.com/test.jpg');
                     _a.label = 1;
                 case 1:
