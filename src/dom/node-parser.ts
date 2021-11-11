@@ -21,32 +21,30 @@ const parseNodeTree = (context: Context, node: Node, parent: ElementContainer, r
         if (isTextNode(childNode) && childNode.data.trim().length > 0) {
             parent.textNodes.push(new TextContainer(context, childNode, parent.styles));
         } else if (isElementNode(childNode)) {
-            if (isSlotElement(childNode) && childNode.assignedNodes) {
-                childNode.assignedNodes().forEach((childNode) => parseNodeTree(context, childNode, parent, root));
-            } else {
-                const container = createContainer(context, childNode);
-                if (container.styles.isVisible()) {
-                    if (createsRealStackingContext(childNode, container, root)) {
-                        container.flags |= FLAGS.CREATES_REAL_STACKING_CONTEXT;
-                    } else if (createsStackingContext(container.styles)) {
-                        container.flags |= FLAGS.CREATES_STACKING_CONTEXT;
-                    }
+            const container = createContainer(context, childNode);
+            if (container.styles.isVisible()) {
+                if (createsRealStackingContext(childNode, container, root)) {
+                    container.flags |= FLAGS.CREATES_REAL_STACKING_CONTEXT;
+                } else if (createsStackingContext(container.styles)) {
+                    container.flags |= FLAGS.CREATES_STACKING_CONTEXT;
+                }
 
-                    if (LIST_OWNERS.indexOf(childNode.tagName) !== -1) {
-                        container.flags |= FLAGS.IS_LIST_OWNER;
-                    }
+                if (LIST_OWNERS.indexOf(childNode.tagName) !== -1) {
+                    container.flags |= FLAGS.IS_LIST_OWNER;
+                }
 
-                    parent.elements.push(container);
-                    childNode.slot;
-                    if (childNode.shadowRoot) {
-                        parseNodeTree(context, childNode.shadowRoot, container, root);
-                    } else if (
-                        !isTextareaElement(childNode) &&
-                        !isSVGElement(childNode) &&
-                        !isSelectElement(childNode)
-                    ) {
-                        parseNodeTree(context, childNode, container, root);
-                    }
+                parent.elements.push(container);
+
+                if (childNode.shadowRoot) {
+                    parseNodeTree(context, childNode.shadowRoot, container, root);
+                }
+
+                if (
+                    !isTextareaElement(childNode) &&
+                    !isSVGElement(childNode) &&
+                    !isSelectElement(childNode)
+                ) {
+                    parseNodeTree(context, childNode, container, root);
                 }
             }
         }
@@ -130,4 +128,3 @@ export const isStyleElement = (node: Element): node is HTMLStyleElement => node.
 export const isScriptElement = (node: Element): node is HTMLScriptElement => node.tagName === 'SCRIPT';
 export const isTextareaElement = (node: Element): node is HTMLTextAreaElement => node.tagName === 'TEXTAREA';
 export const isSelectElement = (node: Element): node is HTMLSelectElement => node.tagName === 'SELECT';
-export const isSlotElement = (node: Element): node is HTMLSlotElement => node.tagName === 'SLOT';
