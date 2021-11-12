@@ -39,11 +39,7 @@ const parseNodeTree = (context: Context, node: Node, parent: ElementContainer, r
                     parseNodeTree(context, childNode.shadowRoot, container, root);
                 }
 
-                if (
-                    !isTextareaElement(childNode) &&
-                    !isSVGElement(childNode) &&
-                    !isSelectElement(childNode)
-                ) {
+                if (!isTextareaElement(childNode) && !isSVGElement(childNode) && !isSelectElement(childNode)) {
                     parseNodeTree(context, childNode, container, root);
                 }
             }
