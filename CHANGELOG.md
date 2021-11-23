@@ -211,9 +211,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 * update www deps (#2525) ([2a013e2](https://github.com/niklasvh/html2canvas/commit/2a013e20c814b7dbaea98f54f0bde8f553eb79a2)), closes [#2525](https://github.com/niklasvh/html2canvas/issues/2525)
 
+### feat
+
+* add support for border-style dashed, dotted, double (#2531) ([72cd528](https://github.com/niklasvh/html2canvas/commit/72cd5284296e4cdb3fe88f2982ec7528604b6618))
+
 ### fix
 
 * opacity with overflow hidden (#2450) ([82b7da5](https://github.com/niklasvh/html2canvas/commit/82b7da558c342e7f53d298bb1d843a5db86c3b21)), closes [#2450](https://github.com/niklasvh/html2canvas/issues/2450)
+* top right border radius (#2522) ([ba17267](https://github.com/niklasvh/html2canvas/commit/ba172678f07f962e9f54b398df087e86217d7a13))
 
 ### test
 
@@ -361,16 +366,16 @@ All notable changes to this project will be documented in this file. See [standa
  * Fix white space appearing on element rendering (Fix #1438)
  * Reset canvas transform on finish (Fix #1494)
 
-# v1.0.0-alpha.11 - 1.4.2018 
- * Fix IE11 member not found error 
+# v1.0.0-alpha.11 - 1.4.2018
+ * Fix IE11 member not found error
  * Support blob image resources in non-foreignObjectRendering mode
 
-# v1.0.0-alpha.10 - 15.2.2018 
+# v1.0.0-alpha.10 - 15.2.2018
  * Re-introduce `onclone` option (Fix #1434)
  * Add `ignoreElements` predicate function option
  * Fix version console logging
 
-# v1.0.0-alpha.9 - 7.1.2018 
+# v1.0.0-alpha.9 - 7.1.2018
  * Fix dynamic style sheets
  * Fix > 50% border-radius values
 
@@ -382,7 +387,7 @@ All notable changes to this project will be documented in this file. See [standa
  * Fix form input rendering (#1338)
  * Improve word line breaking algorithm
 
-# v1.0.0-alpha.6 - 28.12.2017 
+# v1.0.0-alpha.6 - 28.12.2017
  * Fix list-style: none (#1340)
  * Extend supported values for pseudo element content
 
@@ -392,7 +397,7 @@ All notable changes to this project will be documented in this file. See [standa
  * Fix overflow: auto
  * Added support for rendering list-style
 
- v1.0.0-alpha.4 - 12.12.2017 
+ v1.0.0-alpha.4 - 12.12.2017
  * Fix rendering with multiple fonts defined (Fix #796)
  * Add support for radial-gradients
  * Fix logging option (#1302)
@@ -414,8 +419,8 @@ All notable changes to this project will be documented in this file. See [standa
  ##### Breaking Changes #####
  * Remove deprecated onrendered callback, calling `html2canvas` returns a `Promise<HTMLCanvasElement>`
  * Removed option `type`, same results can be achieved by assigning `x`, `y`, `scrollX`, `scrollY`, `width` and `height` properties.
- 
- ## New featues / fixes 
+
+ ## New featues / fixes
  * Add support for scaling canvas (defaults to device pixel ratio)
  * Add support for multiple text-shadows
  * Add support for multiple text-decorations
@@ -424,7 +429,7 @@ All notable changes to this project will be documented in this file. See [standa
  * Correctly handle px and percentage values in linear-gradients
  * Correctly support all angle types for linear-gradients
  * Add support for multiple values for background-repeat, background-position and background-size
- 
+
 # v0.5.0-beta4 - 23.1.2016
  * Fix logger requiring access to window object
  * Derequire browserify build
@@ -444,11 +449,11 @@ All notable changes to this project will be documented in this file. See [standa
  * Fix transparent colors breaking gradients
  * Preserve scrolling positions on render
 
-# v0.5.0-alpha2 - 3.2.2015 
+# v0.5.0-alpha2 - 3.2.2015
  * Switch to using browserify for building
  * Fix (#517) Chrome stretches background images with 'auto' or single attributes
 
-# v0.5.0-alpha - 19.1.2015 
+# v0.5.0-alpha - 19.1.2015
  * Complete rewrite of library
  * Switched interface to return Promise
  * Uses hidden iframe window to perform rendering, allowing async rendering and doesn't force the viewport to be scrolled to the top anymore.
@@ -459,14 +464,14 @@ All notable changes to this project will be documented in this file. See [standa
  * Changed format for proxy requests, permitting binary responses with CORS headers as well
  * Fixed many layering issues (see z-index tests)
 
-# v0.4.1 - 7.9.2013 
+# v0.4.1 - 7.9.2013
  * Added support for bower
  * Improved z-index ordering
  * Basic implementation for CSS transformations
  * Fixed inline text in top element
  * Basic implementation for text-shadow
 
-# v0.4.0 - 30.1.2013 
+# v0.4.0 - 30.1.2013
  * Added rendering tests with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>
  * Switched to using grunt for building
  * Removed support for IE<9, including any FlashCanvas bits
@@ -476,7 +481,7 @@ All notable changes to this project will be documented in this file. See [standa
  * Support for placeholder rendering
  * Reformatted all tests to small units to test specific features
 
-# v0.3.4 - 26.6.2012 
+# v0.3.4 - 26.6.2012
 
 * Removed (last?) jQuery dependencies (<a href="https://github.com/niklasvh/html2canvas/commit/343b86705fe163766fcf735eb0217130e4bd5b17">niklasvh</a>)
 * SVG-powered rendering (<a href="https://github.com/niklasvh/html2canvas/commit/67d3e0d0f59a5a654caf71a2e3be6494ff146c75">niklasvh</a>)
