@@ -27,6 +27,7 @@ export class FontMetrics {
         container.style.fontSize = fontSize;
         container.style.margin = '0';
         container.style.padding = '0';
+        container.style.whiteSpace = 'nowrap';
 
         body.appendChild(container);
 
