@@ -101,15 +101,15 @@ jobs:
           - os: macos-latest
             name: OSX Safari Stable
             targetBrowser: Safari_Stable
-          - os: macos-latest
+          - os: macos-10.15
             name: iOS Simulator Safari 12
             targetBrowser: Safari_IOS_12
             xcode: /Applications/Xcode_10.3.app
-          - os: macos-latest
+          - os: macos-10.15
             name: iOS Simulator Safari 13
             targetBrowser: Safari_IOS_13
             xcode: /Applications/Xcode_11.7.app
-          - os: macos-latest
+          - os: macos-10.15
             name: iOS Simulator Safari 14
             targetBrowser: Safari_IOS_14
             xcode: /Applications/Xcode_12.4.app
