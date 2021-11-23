@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.3](https://github.com/niklasvh/html2canvas/compare/v1.3.2...v1.3.3) (2021-11-23)
+
+
+### ci
+
+* fix macos action runners (#2757) ([ed57781](https://github.com/niklasvh/html2canvas/commit/ed577815949b6a565df54f2101cf6f0fb731c290)), closes [#2757](https://github.com/niklasvh/html2canvas/issues/2757)
+
+### fix
+
+* "offsets" text when font is big ([fd22a01](https://github.com/niklasvh/html2canvas/commit/fd22a01a3c9e39293f47caaed0c0e13d2dc8170c))
+* const enums (#2651) ([eeda86b](https://github.com/niklasvh/html2canvas/commit/eeda86bd5e81fb4e97675fe9bee3d4d15899997f)), closes [#2651](https://github.com/niklasvh/html2canvas/issues/2651)
+
+
+
 ## [1.3.2](https://github.com/niklasvh/html2canvas/compare/v1.3.1...v1.3.2) (2021-08-15)
 
 
