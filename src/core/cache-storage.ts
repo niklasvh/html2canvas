@@ -12,7 +12,6 @@ export class CacheStorage {
         }
 
         link.href = url;
-        link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
         return link.protocol + link.hostname + link.port;
     }
 

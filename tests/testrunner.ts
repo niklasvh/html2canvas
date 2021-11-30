@@ -8,15 +8,14 @@ import {ScreenshotRequest} from './types';
 // @ts-ignore
 window.Promise = Promise;
 const testRunnerUrl = location.href;
-const hasHistoryApi = typeof window.history !== 'undefined' && typeof window.history.replaceState !== 'undefined';
 
 const uploadResults = (canvas: HTMLCanvasElement, url: string) => {
-    return new Promise((resolve: () => void, reject: (error: string) => void) => {
-        // @ts-ignore
-        const xhr = 'withCredentials' in new XMLHttpRequest() ? new XMLHttpRequest() : new XDomainRequest();
+    // @ts-ignore
+    return new Promise((resolve: () => void, reject: (error: any) => void) => {
+        const xhr = new XMLHttpRequest();
 
         xhr.onload = () => {
-            if (typeof xhr.status !== 'number' || xhr.status === 200) {
+            if (xhr.status === 200) {
                 resolve();
             } else {
                 reject(`Failed to send screenshot with status ${xhr.status}`);
@@ -62,21 +61,17 @@ testList
                 testContainer.onload = () => done();
 
                 testContainer.src = url + '?selenium&run=false&reftest&' + Math.random();
-                if (hasHistoryApi) {
-                    // Chrome does not resolve relative background urls correctly inside of a nested iframe
-                    try {
-                        history.replaceState(null, '', url);
-                    } catch (e) {}
-                }
+                // Chrome does not resolve relative background urls correctly inside of a nested iframe
+                try {
+                    history.replaceState(null, '', url);
+                } catch (e) {}
 
                 document.body.appendChild(testContainer);
             });
             after(() => {
-                if (hasHistoryApi) {
-                    try {
-                        history.replaceState(null, '', testRunnerUrl);
-                    } catch (e) {}
-                }
+                try {
+                    history.replaceState(null, '', testRunnerUrl);
+                } catch (e) {}
                 document.body.removeChild(testContainer);
             });
 
