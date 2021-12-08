@@ -175,14 +175,14 @@ export class CanvasRenderer extends Renderer {
     }
 
     async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration): Promise<void> {
-        const [font, fontFamily, fontSize] = this.createFontStyle(styles);
+        const [font] = this.createFontStyle(styles);
 
         this.ctx.font = font;
 
         this.ctx.direction = styles.direction === DIRECTION.RTL ? 'rtl' : 'ltr';
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'alphabetic';
-        const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+        const {baseline, middle} = this.fontMetrics.getMetrics(font);
         const paintOrder = styles.paintOrder;
 
         text.textBounds.forEach((text) => {
@@ -389,10 +389,10 @@ export class CanvasRenderer extends Renderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            const [fontFamily, fontSize] = this.createFontStyle(styles);
-            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+            const [font] = this.createFontStyle(styles);
+            const {baseline} = this.fontMetrics.getMetrics(font);
 
-            this.ctx.font = fontFamily;
+            this.ctx.font = font;
             this.ctx.fillStyle = asString(styles.color);
 
             this.ctx.textBaseline = 'alphabetic';
