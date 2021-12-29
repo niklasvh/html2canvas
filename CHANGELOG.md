@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.4](https://github.com/niklasvh/html2canvas/compare/v1.3.3...v1.3.4) (2021-12-29)
+
+
+### ci
+
+* add ios 15.0 testing (#2780) ([d922207](https://github.com/niklasvh/html2canvas/commit/d9222075daaed08884491b0563fc899ee0ced731)), closes [#2780](https://github.com/niklasvh/html2canvas/issues/2780)
+
+### fix
+
+* ios 15 font rendering crash (#2645) ([ba2b1cd](https://github.com/niklasvh/html2canvas/commit/ba2b1cd8e9a9d7932675d7abffce1526a609e769)), closes [#2645](https://github.com/niklasvh/html2canvas/issues/2645)
+
+
+
 ## [1.3.3](https://github.com/niklasvh/html2canvas/compare/v1.3.2...v1.3.3) (2021-11-23)
 
 
