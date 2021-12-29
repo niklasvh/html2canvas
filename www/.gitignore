@@ -9,3 +9,5 @@ yarn-error.log
 src/results.json
 static/tests/preview.js
 src/preview.js
+.docusaurus
+build/
