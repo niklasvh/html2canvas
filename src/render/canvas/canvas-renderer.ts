@@ -162,7 +162,7 @@ export class CanvasRenderer extends Renderer {
         const fontVariant = styles.fontVariant
             .filter((variant) => variant === 'normal' || variant === 'small-caps')
             .join('');
-        const fontFamily = styles.fontFamily.join(', ');
+        const fontFamily = fixIOSSystemFonts(styles.fontFamily).join(', ');
         const fontSize = isDimensionToken(styles.fontSize)
             ? `${styles.fontSize.number}${styles.fontSize.unit}`
             : `${styles.fontSize.number}px`;
@@ -946,4 +946,13 @@ const canvasTextAlign = (textAlign: TEXT_ALIGN): CanvasTextAlign => {
         default:
             return 'left';
     }
+};
+
+// see https://github.com/niklasvh/html2canvas/pull/2645
+const iOSBrokenFonts = ['-apple-system', 'system-ui'];
+
+const fixIOSSystemFonts = (fontFamilies: string[]): string[] => {
+    return /iPhone OS 15_(0|1)/.test(window.navigator.userAgent)
+        ? fontFamilies.filter((fontFamily) => iOSBrokenFonts.indexOf(fontFamily) === -1)
+        : fontFamilies;
 };
