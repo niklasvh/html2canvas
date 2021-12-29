@@ -42,9 +42,15 @@ module.exports = function(config) {
             platform: 'iOS',
             sdk: '14.4'
         },
+        Safari_IOS_15_0: {
+            base: 'MobileSafari',
+            name: 'iPhone 13',
+            platform: 'iOS',
+            sdk: '15.0'
+        },
         Safari_IOS_15: {
             base: 'MobileSafari',
-            name: 'iPhone 8',
+            name: 'iPhone 13',
             platform: 'iOS',
             sdk: '15.2'
         },
