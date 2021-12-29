@@ -949,7 +949,7 @@ const canvasTextAlign = (textAlign: TEXT_ALIGN): CanvasTextAlign => {
 };
 
 // see https://github.com/niklasvh/html2canvas/pull/2645
-const iOSBrokenFonts = ['-apple-system'];
+const iOSBrokenFonts = ['-apple-system', 'system-ui'];
 
 const fixIOSSystemFonts = (fontFamilies: string[]): string[] => {
     return /iPhone OS 15_(0|1)/.test(window.navigator.userAgent)
