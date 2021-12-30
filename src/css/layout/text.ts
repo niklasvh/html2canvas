@@ -88,7 +88,9 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
 
 export const segmentGraphemes = (value: string): string[] => {
     if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'grapheme'});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
     }
 
@@ -97,7 +99,9 @@ export const segmentGraphemes = (value: string): string[] => {
 
 const segmentWords = (value: string, styles: CSSParsedDeclaration): string[] => {
     if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'word'});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
     }
 

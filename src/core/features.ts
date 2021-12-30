@@ -214,6 +214,7 @@ export const FEATURES = {
     },
     get SUPPORT_NATIVE_TEXT_SEGMENTATION(): boolean {
         'use strict';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const value = !!(Intl && (Intl as any).Segmenter);
         Object.defineProperty(FEATURES, 'SUPPORT_NATIVE_TEXT_SEGMENTATION', {value});
         return value;
