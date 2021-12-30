@@ -86,8 +86,26 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
     return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
 };
 
+export const segmentGraphemes = (value: string): string[] => {
+    if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'grapheme'});
+        return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
+    }
+
+    return splitGraphemes(value);
+};
+
+const segmentWords = (value: string, styles: CSSParsedDeclaration): string[] => {
+    if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'word'});
+        return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
+    }
+
+    return breakWords(value, styles);
+};
+
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? splitGraphemes(value) : breakWords(value, styles);
+    return styles.letterSpacing !== 0 ? segmentGraphemes(value) : segmentWords(value, styles);
 };
 
 // https://drafts.csswg.org/css-text/#word-separator
