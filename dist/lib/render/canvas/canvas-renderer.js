@@ -170,13 +170,14 @@ var CanvasRenderer = /** @class */ (function (_super) {
     CanvasRenderer.prototype.renderTextWithLetterSpacing = function (text, letterSpacing, baseline) {
         var _this = this;
         var texttopbound = text.bounds.top - text.bounds.height / 2;
+        console.log(baseline);
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, texttopbound + baseline);
+            this.ctx.fillText(text.text, text.bounds.left, texttopbound);
         }
         else {
             var letters = text_segmentation_1.splitGraphemes(text.text);
             letters.reduce(function (left, letter) {
-                _this.ctx.fillText(letter, left, texttopbound + baseline);
+                _this.ctx.fillText(letter, left, texttopbound);
                 return left + _this.ctx.measureText(letter).width;
             }, text.bounds.left);
         }
