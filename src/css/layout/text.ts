@@ -22,7 +22,7 @@ export const parseTextBounds = (
     styles: CSSParsedDeclaration,
     node: Text
 ): TextBounds[] => {
-    const textList = breakText(value, styles);
+    const textList = breakText(value, styles, node);
     const textBounds: TextBounds[] = [];
     let offset = 0;
     textList.forEach((text) => {
@@ -86,8 +86,34 @@ const getRangeBounds = (context: Context, node: Text, offset: number, length: nu
     return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
 };
 
-const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? splitGraphemes(value) : breakWords(value, styles);
+const breakText = (value: string, styles: CSSParsedDeclaration, node: Text): string[] => {
+    return styles.letterSpacing !== 0 ? splitGraphemes(value) : breakLines(value, styles, node);
+};
+
+const breakLines = (value: string, styles: CSSParsedDeclaration, node: Text): string[] => {
+    const words = breakWords(value, styles);
+    const lines: string[] = [];
+
+    let offset = 0;
+    let acc = '';
+
+    for (const word of words) {
+        const rects = createRange(node, offset, acc.length + word.length).getClientRects();
+
+        if (rects.length <= 1) {
+            acc += word;
+        } else {
+            offset += acc.length;
+            lines.push(acc);
+            acc = word;
+        }
+    }
+
+    if (acc.length > 0) {
+        lines.push(acc);
+    }
+
+    return lines;
 };
 
 // https://drafts.csswg.org/css-text/#word-separator
