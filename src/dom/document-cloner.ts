@@ -252,7 +252,7 @@ export class DocumentCloner {
         return clonedCanvas;
     }
 
-    cloneChildNodes(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean): Node {
+    appendChildNode(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean) {
         if (
             !isElementNode(child) ||
             (!isScriptElement(child) &&
@@ -306,10 +306,10 @@ export class DocumentCloner {
                 if (isElementNode(child) && isSlotElement(child)) {
                     let assignedNodes = child.assignedNodes() as ChildNode[];
                     if (assignedNodes.length > 0) {
-                        assignedNodes.forEach((assignedNode) => this.cloneChildNodes(clone, assignedNode, copyStyles));
+                        assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
                     }
                 } else {
-                    this.cloneChildNodes(clone, child, copyStyles);
+                    this.appendChildNode(clone, child, copyStyles);
                 }
             }
 
