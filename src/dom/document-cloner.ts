@@ -171,15 +171,7 @@ export class DocumentCloner {
 
     createCustomElementClone(node: HTMLElement): HTMLElement {
         const clone = document.createElement('html2canvascustomelement');
-        copyCSSStyles(clone.style, clone);
-        if (typeof node.getAttributeNames === 'function') {
-            let attrNames = node.getAttributeNames();
-            for (let i = 0; i < attrNames.length; i += 1) {
-                let attrName = attrNames[i];
-                let attrValue = node.getAttribute(attrName) as string;
-                clone.setAttribute(attrName, attrValue);
-            }
-        }
+        copyCSSStyles(node.style, clone);
 
         return clone;
     }
