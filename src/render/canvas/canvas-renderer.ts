@@ -146,13 +146,13 @@ export class CanvasRenderer extends Renderer {
     }
 
     renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number): void {
-        text.bounds.top = text.bounds.top - text.bounds.height / 2
+        let texttopbound =  text.bounds.top - text.bounds.height / 2
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
+            this.ctx.fillText(text.text, text.bounds.left, texttopbound+ baseline);
         } else {
             const letters = splitGraphemes(text.text);
             letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + baseline);
+                this.ctx.fillText(letter, left, texttopbound + baseline);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
