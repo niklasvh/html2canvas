@@ -17,7 +17,7 @@ export class Bounds {
     }
 
     static fromDOMRectList(context: Context, domRectList: DOMRectList): Bounds {
-        const domRect = domRectList[0];
+        const domRect = Array.from(domRectList).find(rect => rect.width !== 0);
         return domRect
             ? new Bounds(
                   domRect.x + context.windowBounds.left,
