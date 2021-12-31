@@ -295,7 +295,7 @@ export class DocumentCloner {
                 child;
                 child = child.nextSibling
             ) {
-                if (isElementNode(child) && isSlotElement(child)) {
+                if (isElementNode(child) && isSlotElement(child) && typeof child.assignedNodes === 'function') {
                     const assignedNodes = child.assignedNodes() as ChildNode[];
                     if (assignedNodes.length) {
                         assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
