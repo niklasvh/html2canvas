@@ -211,5 +211,12 @@ export const FEATURES = {
         const value = 'withCredentials' in new XMLHttpRequest();
         Object.defineProperty(FEATURES, 'SUPPORT_CORS_XHR', {value});
         return value;
+    },
+    get SUPPORT_NATIVE_TEXT_SEGMENTATION(): boolean {
+        'use strict';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const value = !!(typeof Intl !== 'undefined' && (Intl as any).Segmenter);
+        Object.defineProperty(FEATURES, 'SUPPORT_NATIVE_TEXT_SEGMENTATION', {value});
+        return value;
     }
 };
