@@ -5,7 +5,6 @@ import {splitGraphemes} from 'text-segmentation';
 import {Bounds, parseBounds} from './bounds';
 import {FEATURES} from '../../core/features';
 import {Context} from '../../core/context';
-import {WORD_BREAK} from '../property-descriptors/word-break';
 
 export class TextBounds {
     readonly text: string;
