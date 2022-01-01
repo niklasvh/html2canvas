@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.4.0](https://github.com/niklasvh/html2canvas/compare/v1.3.4...v1.4.0) (2022-01-01)
+
+
+### feat
+
+* use native text segmenter where available (#2782) ([6521a48](https://github.com/niklasvh/html2canvas/commit/6521a487d78172f7179f7c973c1a3af40eb92009)), closes [#2782](https://github.com/niklasvh/html2canvas/issues/2782)
+
+### fix
+
+* adopted stylesheets (#2785) ([74696fa](https://github.com/niklasvh/html2canvas/commit/74696faf47c07b48b9c9587db0b999da1c08a8be)), closes [#2785](https://github.com/niklasvh/html2canvas/issues/2785)
+* ios text wrapping with 0 width rect (#2786) ([0476d06](https://github.com/niklasvh/html2canvas/commit/0476d065158c33d2020a9f602b3043e5e2f90c75)), closes [#2786](https://github.com/niklasvh/html2canvas/issues/2786)
+* reduce SLICE_STACK_SIZE to 50k (#2784) ([1cc853a](https://github.com/niklasvh/html2canvas/commit/1cc853a3186853eaca00af060f651697dc3497a9)), closes [#2784](https://github.com/niklasvh/html2canvas/issues/2784)
+
+
+
 ## [1.3.4](https://github.com/niklasvh/html2canvas/compare/v1.3.3...v1.3.4) (2021-12-29)
 
 
