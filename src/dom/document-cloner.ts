@@ -2,12 +2,14 @@ import {Bounds} from '../css/layout/bounds';
 import {
     isBodyElement,
     isCanvasElement,
+    isCustomElement,
     isElementNode,
     isHTMLElementNode,
     isIFrameElement,
     isImageElement,
     isScriptElement,
     isSelectElement,
+    isSlotElement,
     isStyleElement,
     isSVGElementNode,
     isTextareaElement,
@@ -63,7 +65,7 @@ export class DocumentCloner {
             throw new Error('Cloned element does not have an owner document');
         }
 
-        this.documentElement = this.cloneNode(element.ownerDocument.documentElement) as HTMLElement;
+        this.documentElement = this.cloneNode(element.ownerDocument.documentElement, false) as HTMLElement;
     }
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
@@ -160,6 +162,17 @@ export class DocumentCloner {
             }
         }
 
+        if (isCustomElement(clone)) {
+            return this.createCustomElementClone(clone);
+        }
+
+        return clone;
+    }
+
+    createCustomElementClone(node: HTMLElement): HTMLElement {
+        const clone = document.createElement('html2canvascustomelement');
+        copyCSSStyles(node.style, clone);
+
         return clone;
     }
 
@@ -231,7 +244,20 @@ export class DocumentCloner {
         return clonedCanvas;
     }
 
-    cloneNode(node: Node): Node {
+    appendChildNode(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean): void {
+        if (
+            !isElementNode(child) ||
+            (!isScriptElement(child) &&
+                !child.hasAttribute(IGNORE_ATTRIBUTE) &&
+                (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
+        ) {
+            if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
+                clone.appendChild(this.cloneNode(child, copyStyles));
+            }
+        }
+    }
+
+    cloneNode(node: Node, copyStyles: boolean): Node {
         if (isTextNode(node)) {
             return document.createTextNode(node.data);
         }
@@ -260,16 +286,22 @@ export class DocumentCloner {
             const counters = this.counters.parse(new CSSParsedCounterDeclaration(this.context, style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
-            for (let child = node.firstChild; child; child = child.nextSibling) {
-                if (
-                    !isElementNode(child) ||
-                    (!isScriptElement(child) &&
-                        !child.hasAttribute(IGNORE_ATTRIBUTE) &&
-                        (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
-                ) {
-                    if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
-                        clone.appendChild(this.cloneNode(child));
+            if (isCustomElement(node)) {
+                copyStyles = true;
+            }
+
+            for (
+                let child = node.shadowRoot ? node.shadowRoot.firstChild : node.firstChild;
+                child;
+                child = child.nextSibling
+            ) {
+                if (isElementNode(child) && isSlotElement(child) && typeof child.assignedNodes === 'function') {
+                    const assignedNodes = child.assignedNodes() as ChildNode[];
+                    if (assignedNodes.length) {
+                        assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
                     }
+                } else {
+                    this.appendChildNode(clone, child, copyStyles);
                 }
             }
 
@@ -284,7 +316,10 @@ export class DocumentCloner {
 
             this.counters.pop(counters);
 
-            if (style && (this.options.copyStyles || isSVGElementNode(node)) && !isIFrameElement(node)) {
+            if (
+                (style && (this.options.copyStyles || isSVGElementNode(node)) && !isIFrameElement(node)) ||
+                copyStyles
+            ) {
                 copyCSSStyles(style, clone);
             }
 
