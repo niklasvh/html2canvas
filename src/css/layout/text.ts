@@ -29,15 +29,24 @@ export const parseTextBounds = (
     textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                if (!FEATURES.SUPPORT_WORD_BREAKING) {
-                    textBounds.push(
-                        new TextBounds(
-                            text,
-                            Bounds.fromDOMRectList(context, createRange(node, offset, text.length).getClientRects())
-                        )
-                    );
+                const clientRects = createRange(node, offset, text.length).getClientRects();
+                if (clientRects.length > 1) {
+                    const subSegments = segmentGraphemes(text);
+                    let subOffset = 0;
+                    subSegments.forEach((subSegment) => {
+                        textBounds.push(
+                            new TextBounds(
+                                subSegment,
+                                Bounds.fromDOMRectList(
+                                    context,
+                                    createRange(node, subOffset + offset, subSegment.length).getClientRects()
+                                )
+                            )
+                        );
+                        subOffset += subSegment.length;
+                    });
                 } else {
-                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                    textBounds.push(new TextBounds(text, Bounds.fromDOMRectList(context, clientRects)));
                 }
             } else {
                 const replacementNode = node.splitText(text.length);
@@ -102,10 +111,7 @@ const segmentWords = (value: string, styles: CSSParsedDeclaration): string[] => 
     if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const segmenter = new (Intl as any).Segmenter(void 0, {
-            granularity:
-                WORD_BREAK.BREAK_ALL === styles.wordBreak || styles.overflowWrap === OVERFLOW_WRAP.BREAK_WORD
-                    ? 'grapheme'
-                    : 'word'
+            granularity: 'word'
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
