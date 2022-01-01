@@ -2,7 +2,7 @@ import {ElementPaint, parseStackingContexts, StackingContext} from '../stacking-
 import {asString, Color, isTransparent} from '../../css/types/color';
 import {ElementContainer, FLAGS} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
-import {CSSParsedDeclaration} from '../../css/index';
+import {CSSParsedDeclaration} from '../../css';
 import {TextContainer} from '../../dom/text-container';
 import {Path, transformPath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
@@ -18,12 +18,12 @@ import {
 } from '../border';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
-import {TextBounds} from '../../css/layout/text';
+import {segmentGraphemes, TextBounds} from '../../css/layout/text';
 import {ImageElementContainer} from '../../dom/replaced-elements/image-element-container';
 import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
 import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
-import {ReplacedElementContainer} from '../../dom/replaced-elements/index';
+import {ReplacedElementContainer} from '../../dom/replaced-elements';
 import {EffectTarget, IElementEffect, isClipEffect, isOpacityEffect, isTransformEffect} from '../effects';
 import {contains} from '../../core/bitwise';
 import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
@@ -44,7 +44,6 @@ import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
 import {DIRECTION} from '../../css/property-descriptors/direction';
-import {splitGraphemes} from 'text-segmentation';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -149,7 +148,7 @@ export class CanvasRenderer extends Renderer {
         if (letterSpacing === 0) {
             this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
         } else {
-            const letters = splitGraphemes(text.text);
+            const letters = segmentGraphemes(text.text);
             letters.reduce((left, letter) => {
                 this.ctx.fillText(letter, left, text.bounds.top + baseline);
 
