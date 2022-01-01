@@ -5,6 +5,7 @@ import {splitGraphemes} from 'text-segmentation';
 import {Bounds, parseBounds} from './bounds';
 import {FEATURES} from '../../core/features';
 import {Context} from '../../core/context';
+import {WORD_BREAK} from '../property-descriptors/word-break';
 
 export class TextBounds {
     readonly text: string;
@@ -100,7 +101,12 @@ export const segmentGraphemes = (value: string): string[] => {
 const segmentWords = (value: string, styles: CSSParsedDeclaration): string[] => {
     if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'word'});
+        const segmenter = new (Intl as any).Segmenter(void 0, {
+            granularity:
+                WORD_BREAK.BREAK_ALL === styles.wordBreak || styles.overflowWrap === OVERFLOW_WRAP.BREAK_WORD
+                    ? 'grapheme'
+                    : 'word'
+        });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
     }
