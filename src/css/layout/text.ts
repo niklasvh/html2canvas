@@ -91,10 +91,6 @@ const createRange = (node: Text, offset: number, length: number): Range => {
     return range;
 };
 
-const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
-    return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
-};
-
 export const segmentGraphemes = (value: string): string[] => {
     if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
