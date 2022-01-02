@@ -13,7 +13,8 @@ import {
     isStyleElement,
     isSVGElementNode,
     isTextareaElement,
-    isTextNode
+    isTextNode,
+    isVideoElement
 } from './node-parser';
 import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
 import {TokenType} from '../css/syntax/tokenizer';
@@ -145,7 +146,9 @@ export class DocumentCloner {
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
-
+        if (isVideoElement(node)) {
+            return this.createVideoClone(node);
+        }
         if (isStyleElement(node)) {
             return this.createStyleClone(node);
         }
@@ -244,6 +247,32 @@ export class DocumentCloner {
         return clonedCanvas;
     }
 
+    createVideoClone(video: HTMLVideoElement): HTMLCanvasElement {
+        const canvas = video.ownerDocument.createElement('canvas');
+
+        canvas.width = video.offsetWidth;
+        canvas.height = video.offsetHeight;
+        const ctx = canvas.getContext('2d');
+
+        try {
+            if (ctx) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                if (!this.options.allowTaint) {
+                    ctx.getImageData(0, 0, canvas.width, canvas.height);
+                }
+            }
+            return canvas;
+        } catch (e) {
+            this.context.logger.info(`Unable to clone video as it is tainted`, video);
+        }
+
+        const blankCanvas = video.ownerDocument.createElement('canvas');
+
+        blankCanvas.width = video.offsetWidth;
+        blankCanvas.height = video.offsetHeight;
+        return blankCanvas;
+    }
+
     appendChildNode(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean): void {
         if (
             !isElementNode(child) ||
@@ -253,6 +282,23 @@ export class DocumentCloner {
         ) {
             if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
                 clone.appendChild(this.cloneNode(child, copyStyles));
+            }
+        }
+    }
+
+    cloneChildNodes(node: Element, clone: HTMLElement | SVGElement, copyStyles: boolean): void {
+        for (
+            let child = node.shadowRoot ? node.shadowRoot.firstChild : node.firstChild;
+            child;
+            child = child.nextSibling
+        ) {
+            if (isElementNode(child) && isSlotElement(child) && typeof child.assignedNodes === 'function') {
+                const assignedNodes = child.assignedNodes() as ChildNode[];
+                if (assignedNodes.length) {
+                    assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
+                }
+            } else {
+                this.appendChildNode(clone, child, copyStyles);
             }
         }
     }
@@ -290,19 +336,8 @@ export class DocumentCloner {
                 copyStyles = true;
             }
 
-            for (
-                let child = node.shadowRoot ? node.shadowRoot.firstChild : node.firstChild;
-                child;
-                child = child.nextSibling
-            ) {
-                if (isElementNode(child) && isSlotElement(child) && typeof child.assignedNodes === 'function') {
-                    const assignedNodes = child.assignedNodes() as ChildNode[];
-                    if (assignedNodes.length) {
-                        assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
-                    }
-                } else {
-                    this.appendChildNode(clone, child, copyStyles);
-                }
+            if (!isVideoElement(node)) {
+                this.cloneChildNodes(node, clone, copyStyles);
             }
 
             if (before) {
