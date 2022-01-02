@@ -257,7 +257,9 @@ export class DocumentCloner {
         try {
             if (ctx) {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                ctx.getImageData(0, 0, canvas.width, canvas.height);
+                if (!this.options.allowTaint) {
+                    ctx.getImageData(0, 0, canvas.width, canvas.height);
+                }
             }
             return canvas;
         } catch (e) {
