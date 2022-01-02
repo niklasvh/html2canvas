@@ -12,7 +12,7 @@ const mkdirp = require('mkdirp');
 
 export const app = express();
 app.use('/', serveIndex(path.resolve(__dirname, '../'), {icons: true}));
-app.use('/', express.static(path.resolve(__dirname, '../')));
+app.use([/^\/src($|\/)/, '/'], express.static(path.resolve(__dirname, '../')));
 
 export const corsApp = express();
 corsApp.use('/proxy', proxy());
