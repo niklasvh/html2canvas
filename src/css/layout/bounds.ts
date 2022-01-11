@@ -20,8 +20,8 @@ export class Bounds {
         const domRect = Array.from(domRectList).find((rect) => rect.width !== 0);
         return domRect
             ? new Bounds(
-                  domRect.x + context.windowBounds.left,
-                  domRect.y + context.windowBounds.top,
+                  domRect.left + context.windowBounds.left,
+                  domRect.top + context.windowBounds.top,
                   domRect.width,
                   domRect.height
               )
