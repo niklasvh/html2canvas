@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### feat
 
-* add support for <video> elements (#2788) ([181d1b1](https://github.com/niklasvh/html2canvas/commit/181d1b1103910d6e1b5277d5c007fc5e3006c6bf)), closes [#2788](https://github.com/niklasvh/html2canvas/issues/2788)
+* add support for `<video>` elements (#2788) ([181d1b1](https://github.com/niklasvh/html2canvas/commit/181d1b1103910d6e1b5277d5c007fc5e3006c6bf)), closes [#2788](https://github.com/niklasvh/html2canvas/issues/2788)
 
 ### fix
 
