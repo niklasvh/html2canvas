@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/niklasvh/html2canvas/compare/v1.4.0...v1.4.1) (2022-01-22)
+
+
+### deps
+
+* fix source maps (#2812) ([67c5e8d](https://github.com/niklasvh/html2canvas/commit/67c5e8dec4b2af9260a2b5b75b3399495fd1fee9)), closes [#2812](https://github.com/niklasvh/html2canvas/issues/2812)
+
+### feat
+
+* add support for <video> elements (#2788) ([181d1b1](https://github.com/niklasvh/html2canvas/commit/181d1b1103910d6e1b5277d5c007fc5e3006c6bf)), closes [#2788](https://github.com/niklasvh/html2canvas/issues/2788)
+
+### fix
+
+* Properties x and y of BoundingRect is undefined in old browser (#2797) ([e587a82](https://github.com/niklasvh/html2canvas/commit/e587a82dca01d9ada78cae34fd1bdb934e547f9b)), closes [#2797](https://github.com/niklasvh/html2canvas/issues/2797)
+* source maps (#2787) ([46db867](https://github.com/niklasvh/html2canvas/commit/46db86755f064828559a4b0b37310f3ae94f5494)), closes [#2787](https://github.com/niklasvh/html2canvas/issues/2787)
+
+
+
 # [1.4.0](https://github.com/niklasvh/html2canvas/compare/v1.3.4...v1.4.0) (2022-01-01)
 
 
