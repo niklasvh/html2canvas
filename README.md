@@ -10,10 +10,11 @@ html2canvas
 
 #### JavaScript HTML renderer ####
 
- The script allows you to take "screenshots" of webpages or parts of it, directly on the users browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
+The script allows you to take "screenshots" of webpages or parts of it, directly on the user's browser. The screenshot is based on the DOM and as such may not be 100% accurate to the real representation as it does not make an actual screenshot, but builds the screenshot based on the information available on the page.
 
 
 ### How does it work? ###
+
 The script renders the current page as a canvas image, by reading the DOM and the different styles applied to the elements.
 
 It does **not require any rendering from the server**, as the whole image is created on the **client's browser**. However, as it is heavily dependent on the browser, this library is *not suitable* to be used in nodejs.
@@ -40,13 +41,18 @@ support [older browsers](http://caniuse.com/#search=promise) that do not nativel
 [es6-promise](https://github.com/jakearchibald/es6-promise) before including `html2canvas`.
 
 To render an `element` with html2canvas, simply call:
-` html2canvas(element[, options]);`
+
+```javascript
+html2canvas(element[, options]);
+```
 
 The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fulfillment handler to the promise using `then`:
 
-    html2canvas(document.body).then(function(canvas) {
-        document.body.appendChild(canvas);
-    });
+```javascript
+html2canvas(document.body).then(function(canvas) {
+    document.body.appendChild(canvas);
+});
+```
 
 ### Building ###
 
@@ -60,7 +66,7 @@ Install dependencies:
 
     $ npm install
 
-Build browser bundle
+Build browser bundle:
 
     $ npm run build
 
