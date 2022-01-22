@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        .small {
+            font-size: 14px;
+            line-height: 1vw;
+        }
+
+        .medium {
+            font-size: 18px;
+            line-height: 2vw;
+        }
+
+        .large {
+            font-size: 24px;
+            line-height: 3vw;
+        }
+
+        div {
+            float: left;
+        }
+
+        h2 {
+            clear: both;
+        }
+
+        h1 {
+            font-size: 36px;
+            line-height: 4vw;
+        }
+
+        h2 {
+            font-size: 24px;
+            line-height: 3vw;
+        }
+
+        h3 {
+            font-size: 16px;
+            line-height: 2vw;
+        }
+
+        .raw {
+            font-size: 60px;
+            word-spacing: 30px;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>&lt;h1&gt; text-decoration</h1>
+<div style="font-family:Arial;">
+    <h2>Arial</h2>
+    <ol class="small">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+
+    <ol class="medium">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+    <ol class="large">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+</div>
+
+<div style="font-family:Verdana;">
+    <h2>Verdana</h2>
+    <ol class="small">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+    <ol class="medium">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+    <ol class="large">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+</div>
+<div style="font-family:Tahoma;">
+    <h2>Tahoma</h2>
+    <ol class="small">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+
+    <ol class="medium">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+    <ol class="large">
+        <li style="text-decoration:none;">text-decoration:none;</li>
+        <li style="text-decoration:underline;">text-decoration:underline;</li>
+        <li style="text-decoration:overline;">text-decoration:overline;</li>
+        <li style="text-decoration:line-through;">text-decoration:line-through;</li>
+    </ol>
+</div>
+
+<h2>&lt;h2&gt; text-transform</h2>
+<ul>
+    <li style="text-transform:none;">text-transform:none;</li>
+    <li style="text-transform:capitalize;">text-transform: capitalize; (including foreign characters such as Öaäå)
+    </li>
+    <li style="text-transform:uppercase;">text-transform:uppercase;</li>
+    <li style="text-transform:lowercase;">text-transform:lowercase;</li>
+</ul>
+<h3>&lt;h3&gt; misc text alignments</h3>
+<ul>
+    <li style="word-spacing:5px;">word-spacing:5px; (as each letter is rendered individually, the bounds will always
+        be correct)
+    </li>
+    <li style="line-height:35px;">line-height:35px; <br/>(same goes for line-height)</li>
+    <li style="letter-spacing:5px;">letter-spacing:5px;</li>
+    <li style="letter-spacing:0.9px;">letter-spacing:0.9px;</li>
+    <li style="text-align:right;width:300px;">text-align:right;width:300px;</li>
+    <li style="font-variant:small-caps;">font-variant:small-caps;</li>
+</ul>
+
+<div style="font-family: 'Inconsolata', Monaco, Consolas, 'Andale Mono', monospace">npm install --save html2canvas</div>
+<div class="raw" style="">
+    <span>[AB / CD]</span>
+</div>
+<div>Emojis 🤷🏾‍♂️👨‍👩‍👧‍👦 :)</div>
+<div style="letter-spacing: 2px">Emojis with letter-spacing 🤷🏾‍♂️👨‍👩‍👧‍👦 :) ❤️❤️❤️👨‍❤️‍💋‍👨👨‍❤️‍👨</div>
+</body>
+</html>

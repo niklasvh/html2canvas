@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Text-decoration:underline tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <script type="text/javascript">
+            function setUp() {
+                var container = document.querySelector('#test');
+                container.innerHTML = '';
+
+                ['arial','verdana','courier new'].forEach(function(e) {
+                    var div = document.createElement('div');
+                    div.style.fontFamily = e;
+                    container.appendChild(div);
+                    for(var i=1;i<=10;i*=2) {
+                        var text = document.createElement('div');
+                        text.innerText = 'Testing texts';
+                        text.style.marginTop = '1px';
+                        text.style.fontSize = (16+i*6) + 'px';
+                        div.appendChild(text);
+                    }
+                });
+            }
+        </script>
+
+        <style>
+            .small{
+                font-size:14px;
+            }
+
+            .medium{
+                font-size:18px;
+            }
+            .large{
+                font-size:24px;
+            }
+
+            div{
+                text-decoration:underline;
+                line-height: 1em;
+            }
+
+            .lineheight{
+                line-height:40px;
+            }
+
+            h2 {
+                clear:both;
+            }
+        </style>
+
+    </head>
+    <body>
+    test <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> label u
+        <div id="test">
+            Creating content through JavaScript
+        </div>
+    </body>
+</html>

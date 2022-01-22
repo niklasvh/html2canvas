@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Text stroke tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        div span:first-child {
+            font-size: 2em;
+        }
+
+        div span:nth-child(2) {
+            font-size: 5em;
+        }
+
+        .stroke1 {
+            -webkit-text-stroke-width: .09em;
+            -webkit-text-stroke-color: red;
+            font-size: 1em;
+        }
+
+        .stroke2 {
+            -webkit-text-stroke-width: .12em;
+            -webkit-text-stroke-color: green;
+            font-size: 2em;
+        }
+
+        .stroke3 {
+            -webkit-text-stroke-width: .19em;
+            -webkit-text-stroke-color: blue;
+            font-size: 3em;
+        }
+
+        .ordered {
+            paint-order: stroke fill;
+        }
+
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+<div class="stroke1">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke2">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke3">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke1 ordered">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke2 ordered">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke3 ordered">
+    Some text <span> with bigger text </span> that should have a stroke
+    <strong>Bolder stroke</strong> that makes things pretty
+</div>
+<div class="stroke4">
+    Some text <span> with bigger text </span> that should have no stroke
+    <strong>Bolder text</strong> that makes things pretty
+</div>
+</body>
+</html>

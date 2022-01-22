@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+    <title>Negative z-indexes</title>
+    <script type="text/javascript" src="../../test.js"></script>
+
+    <style type="text/css">
+        html {
+            padding: 20px;
+            font: 12px/20px Arial, sans-serif;
+        }
+        #div1 {
+            padding: 10px;
+            position: relative;
+        }
+
+        #div2 {
+            background: #7cb659;
+            position: absolute;
+            z-index:-999998;
+            left: 0px;
+            top: 0px;
+        }
+
+        #div3 {
+            background: #b69f1a;
+            position: absolute;
+            z-index: -999999;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
+</head>
+<body>
+<div id="div1">
+    <div id="div2">
+        <h1>Div Element #2</h1>
+        <div id="div3">
+            <div>
+                <h1>Div Element #3</h1>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

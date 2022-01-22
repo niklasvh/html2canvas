@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>body text above children with negative index but body bgcolor below</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style type="text/css">
+    * {margin:0;padding:0;}
+    body {
+        background-color: green;
+        font-family: Arial;
+    }
+    #div1 {
+        background-color:cyan;
+        width:200px;
+        height:200px;
+        z-index:-1;
+        position:absolute;
+        top:0; left:0;
+    }
+    </style></head>
+
+  <body>body
+    <div id="div1"></div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video tests</title>
+    <script type="text/javascript" src="../../test.js"></script>
+</head>
+<body>
+<h2>Same origin</h2>
+<video controls width="250">
+    <source src="../../assets/cc0-video.mp4" type="video/mp4">
+    Sorry, your browser doesn't support embedded videos.
+</video>
+<h2>Cross-origin (doesn't taint)</h2>
+<video controls width="250">
+    <source src="http://localhost:8081/cors/tests/assets/cc0-video.mp4" type="video/mp4">
+    Sorry, your browser doesn't support embedded videos.
+</video>
+</body>
+</html>

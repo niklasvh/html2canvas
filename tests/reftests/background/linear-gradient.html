@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            html {
+                background-color: red;
+            }
+            .small div{
+                width:100px;
+                height:100px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .horizontal {
+                width: auto !important;
+                height: auto !important;
+            }
+
+            .medium div{
+                width:210px;
+                height:200px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .medium .horizontal div{
+                width:200px;
+                height:100px;
+            }
+
+            .small, .medium{
+                clear:both;
+            }
+
+            div{
+                display:block;
+            }
+
+            .linearGradient {
+                /*background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(255, 0, 0)), to(rgb(0, 0, 255)));*/
+                background: -webkit-linear-gradient(top left, #f00, #00f, #BADA55, rgba(0, 0, 255,0.5));
+                background: -moz-linear-gradient(top left, #f00, #00f, #BADA55, rgba(0, 0, 255,0.5));
+            }
+
+            .linearGradient2 {
+                background: -webkit-gradient(linear, 0% 0, 0% 100%, from(rgb(252, 252, 252)), color-stop(0.3, #000000), to(rgb(232, 232, 232)));
+            }
+
+            .linearGradient3 {
+                /* FF 3.6+ */
+                background: -moz-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                /* Chrome,Safari4+ */
+                background: -webkit-gradient(linear, left top, right top, color-stop(#ff0000), color-stop(#ffff00), color-stop(#00ff00));
+                /* Chrome 10+, Safari 5.1+ */
+                background: -webkit-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                /* Opera 11.10+ */
+                background: -o-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                /* IE 10+ */
+                background: -ms-linear-gradient(left, #ff0000, #ffff00, #00ff00);
+                /* W3C */
+                background: linear-gradient(left, #ff0000, #ffff00, #00ff00);
+            }
+
+            .linearGradient4 {
+                /* FF 3.6+ */
+                background: -moz-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                /* Chrome, Safari 4+ */
+                background: -webkit-gradient(linear, left top, right top, color-stop(0%, #cedbe9), color-stop(17%, #aac5de), color-stop(50%, #6199c7), color-stop(51%, #3a84c3), color-stop(59%, #419ad6), color-stop(71%, #4bb8f0), color-stop(84%, #3a8bc2), color-stop(100%, #26558b));
+                /* Chrome 10+, Safari 5.1+ */
+                background: -webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                /* Opera 11.10+ */
+                background: -o-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                /* IE10+ */
+                background: -ms-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+                /* W3C */
+                background: linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%, #4bb8f0 71%, #3a8bc2 84%, #26558b 100%);
+            }
+
+            .linearGradient5 {
+                /* FF 3.6+ */
+                background: -moz-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                /* Chrome, Safari 4+ */
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f0b7a1), color-stop(50%, #8c3310), color-stop(51%, #752201), color-stop(100%, #bf6e4e));
+                /* Chrome 10+, Safari 5.1+ */
+                background: -webkit-linear-gradient(top,  #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                /* Opera 11.10+ */
+                background: -o-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                /* IE 10+ */
+                background: -ms-linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+                /* W3C */
+                background: linear-gradient(top, #f0b7a1 0%, #8c3310 50%, #752201 51%, #bf6e4e 100%);
+            }
+
+            .linearGradient6 {
+                /* FF 3.6+ */
+                background: -moz-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6, #26558b 100%);
+                /* Chrome 10+, Safari 5.1+ */
+                background: -webkit-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6, #26558b 100%);
+                /* Opera 11.10+ */
+                background: -o-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6, #26558b 100%);
+                /* IE10+ */
+                background: -ms-linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6, #26558b 100%);
+                /* W3C */
+                background: linear-gradient(left, #cedbe9 0%, #aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6, #26558b 100%);
+            }
+            .linearGradient7 {
+                background: #cce5f4;
+                background: -moz-linear-gradient(top, #cce5f4 0%, #00263c 100%);
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #cce5f4), color-stop(100%, #00263c));
+                background: -webkit-linear-gradient(top, #cce5f4 0%, #00263c 100%);
+                background: -o-linear-gradient(top, #cce5f4 0%, #00263c 100%);
+                background: -ms-linear-gradient(top, #cce5f4 0%, #00263c 100%);
+                background: linear-gradient(to bottom, #cce5f4 0%, #00263c 100%);
+            }
+
+            .linearGradient8 {
+                background: linear-gradient(to bottom left, #fff 0%, #00263c 100%);
+            }
+
+            .linearGradient9 {
+                background: linear-gradient(to bottom left, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient10 {
+                background: linear-gradient(to left top, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient11 {
+                background: linear-gradient(to bottom right, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient12 {
+                background: linear-gradient(to top right, #0000Ff, rgb(255, 0,0) 50px, green 199px, rgba(0, 0, 0, 0.5) 100.0%);
+            }
+
+            .linearGradient13 {
+                background: linear-gradient(to top left, white 0%, black 100%);
+            }
+
+            .linearGradient14 {
+                background: linear-gradient(-375.5grad, yellow, blue, red 60%, blue);
+            }
+
+            .linearGradient15 {
+                background: linear-gradient(-375.5turn, yellow, red 60%, blue);
+            }
+
+            .linearGradient16 {
+                background: linear-gradient(-375.5rad, yellow, orange, red 60%, blue);
+            }
+
+            .linearGradient17 {
+                background: linear-gradient(-375.5deg, yellow, red 60%, blue);
+                width: 800px !important;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <div class="medium">
+            <div class="linearGradient">&nbsp;</div>
+            <div class="linearGradient2">&nbsp;</div>
+            <div class="linearGradient3">&nbsp;</div>
+            <div class="linearGradient4">&nbsp;</div>
+            <div class="linearGradient5">&nbsp;</div>
+            <div class="linearGradient6">&nbsp;</div>
+            <div class="linearGradient7">&nbsp;</div>
+            <div class="linearGradient8">&nbsp;</div>
+            <div class="linearGradient9">&nbsp;</div>
+            <div class="linearGradient10">&nbsp;</div>
+            <div class="linearGradient11">&nbsp;</div>
+            <div class="linearGradient12">&nbsp;</div>
+            <div class="horizontal">
+                <div class="linearGradient9">&nbsp;</div>
+                <div class="linearGradient10">&nbsp;</div>
+                <div class="linearGradient11">&nbsp;</div>
+                <div class="linearGradient12">&nbsp;</div>
+            </div>
+            <div class="linearGradient13">&nbsp;</div>
+            <div class="linearGradient14">&nbsp;</div>
+            <div class="linearGradient15">&nbsp;</div>
+            <div class="linearGradient16">&nbsp;</div>
+            <div class="linearGradient17">&nbsp;</div>
+        </div>
+    </body>
+</html>

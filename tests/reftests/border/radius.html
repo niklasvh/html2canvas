@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Borders tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style type="text/css">
+      .box {
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        margin: 10px;
+        background:#6F428C;
+        border-style: solid;
+        border-radius: 50px;
+      }
+
+      .box1 {
+        border-width: 1px;
+        border-left-color: #00b5e2;
+        border-top-color: red;
+        border-right-color: green;
+      }
+
+      .box2 {
+        border-width: 3px;
+        border-left-color: #00b5e2;
+        border-top-color: red;
+        border-right-color: green;
+      }
+
+      .box3 {
+        border-width: 10px;
+        border-left-color: transparent;
+        border-top-color: red;
+        border-right-color: green;
+      }
+
+      .box4 {
+        border-width: 50px;
+        border-left-color: transparent;
+        border-top-color: red;
+        border-top-width: 10px;
+        border-right-color: green;
+        border-bottom-right-radius: 190px;
+        background-clip: padding-box;
+      }
+
+      .box5 {
+          margin: 100px;
+          border-width: 50px;
+          border-left-color: transparent;
+          border-top-color: red;
+          border-top-width: 10px;
+          border-right-color: green;
+          border-radius: 25px;
+          background-clip: padding-box;
+      }
+
+      .box6 {
+        height: 200px;
+        width: 200px;
+        border-radius: 200px;
+      }
+
+      .box7 {
+          border-width: 10px 10px 10px 1px;
+          border-left-color: transparent;
+          border-top-color: red;
+          border-right-color: green;
+      }
+
+      .gauge{
+          display: inline-block;
+          width: 100px;
+          height: 50px;
+          background: green;
+          margin-bottom: 20px;
+      }
+
+       .gauge1{ border-radius: 25px 25px 0 0   / 25px 25px 0 0; }
+       .gauge2{ border-radius: 100px 100px 0 0 / 50px 50px 0 0; }
+       .gauge3{ border-radius: 100px 100px 0 0 / 100px 100px 0 0; }
+       .gauge4{ border-radius: 300px 100px 0 0  / 100px 100px 0 0; }
+       .gauge5{ border-radius: 400px 400px 50px 50px / 50px 50px 50px 50px; }
+
+
+      html {
+        background: #3a84c3;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="box box1">&nbsp;</div>
+    <div class="box box2">&nbsp;</div>
+    <div class="box box3">&nbsp;</div>
+    <div class="box box4">&nbsp;</div>
+    <div class="box box5">&nbsp;</div>
+    <div class="box box6">&nbsp;</div>
+    <div class="box box7">&nbsp;</div>
+    <div class="gauge gauge1"></div>
+    <div class="gauge gauge2"></div>
+    <div class="gauge gauge3"></div>
+    <div class="gauge gauge4"></div>
+    <div class="gauge gauge5"></div>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Text-decoration:line-through tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <script type="text/javascript">
+            function setUp() {
+                $('body').empty();
+                $.each(['arial','verdana','courier new'],function(i,e){
+                    var div = $('<div />').css('font-family',e).appendTo('body');
+                    for(var i=0;i<=5;i++){
+                        $('<div />').text('Testing texts').css('margin-top',1).css('border','1px solid black').css('font-size',(16+i*6)).appendTo(div);
+                    }
+                });
+            }
+        </script>
+
+        <style>
+            .small{
+                font-size:14px;
+            }
+
+            .medium{
+                font-size:18px;
+            }
+            .large{
+                font-size:24px;
+            }
+
+            div{
+                text-decoration:line-through;
+
+            }
+
+            .lineheight{
+                line-height:40px;
+            }
+
+            h2 {
+                clear:both;
+            }
+        </style>
+
+    </head>
+    <body>
+        Creating content through JavaScript
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>word-break</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+        }
+        .normal {
+            width: 13em;
+            background: gold;
+            overflow-wrap: normal;
+        }
+
+        .break-word {
+            width: 13em;
+            background: lime;
+            overflow-wrap: break-word;
+        }
+
+        .word-normal {
+            width: 13em;
+            background: gold;
+            word-wrap: normal;
+        }
+
+        .word-break-word {
+            width: 13em;
+            background: lime;
+            word-wrap: break-word;
+        }
+    </style>
+
+</head>
+<body>
+<div>
+    <p>1. <code>overflow-wrap: normal</code></p>
+    <p class="normal">FStrPrivFinÄndG (Gesetz zur Änderung des
+        Fernstraßenbauprivatfinanzierungsgesetzes
+        und straßenverkehrsrechtlicher Vorschriften)</p>
+    <p>2. <code>overflow-wrap: break-word</code></p>
+    <p class="break-word">FStrPrivFinÄndG (Gesetz zur Änderung des
+        Fernstraßenbauprivatfinanzierungsgesetzes
+        und straßenverkehrsrechtlicher Vorschriften)</p>
+    <p>3. <code>word-wrap: normal</code></p>
+    <p class="word-normal">FStrPrivFinÄndG (Gesetz zur Änderung des
+        Fernstraßenbauprivatfinanzierungsgesetzes
+        und straßenverkehrsrechtlicher Vorschriften)</p>
+    <p>4. <code>word-wrap: break-word</code></p>
+    <p class="word-break-word">FStrPrivFinÄndG (Gesetz zur Änderung des
+        Fernstraßenbauprivatfinanzierungsgesetzes
+        und straßenverkehrsrechtlicher Vorschriften)</p>
+</div>
+
+</body>
+</html>

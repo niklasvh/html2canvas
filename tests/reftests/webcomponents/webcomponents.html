@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web components tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync('* { color: red !important; }')
+    </script>
+    <script type="text/javascript" src="../../test.js"></script>
+</head>
+<body>
+<div>
+    <h1>Autonomous custom element</h1>
+    <autonomous-custom-element img="../../assets/image.jpg" text="This is text"></autonomous-custom-element>
+    <h1>Slot element</h1>
+    <summary-display>
+        <ul slot="master-list">
+            <li>Apples</li>
+            <li>Pears</li>
+            <li>Bananas</li>
+            <li>Oranges</li>
+            <li>Peaches</li>
+            <li>Strawberries</li>
+            <li>Blueberries</li>
+        </ul>
+
+        <p data-name="Apples">A common, sweet, crunchy fruit, usually green or yellow in color.</p>
+        <p data-name="Pears">A fairly common, sweet, usually green fruit, usually softer than Apples.</p>
+        <p data-name="Bananas">A long, curved, yellow fruit, with a fairly gentle flavor.</p>
+        <p data-name="Oranges">Orange in color, usually sweet but can be sharp, often contains pips.</p>
+        <p data-name="Peaches">An orange fruit with big stone in the middle, and sweet, juicy flesh.</p>
+        <p data-name="Strawberries">A red fruit with yellow seeds on the outside; has a sweet flavor and a pretty shape.</p>
+        <p data-name="Blueberries">They are berries and they are blue; sweet in flavor, small in size, round.</p>
+    </summary-display>
+
+    <template id="summary-display-template">
+        <article>
+            <div>
+                <slot name="master-list"></slot>
+            </div>
+            <div>
+                <slot name="choice"></slot>
+            </div>
+        </article>
+    </template>
+
+    <script src="autonomous-custom-element.js"></script>
+    <script src="slot-element.js"></script>
+</div>
+
+
+</body>
+</html>

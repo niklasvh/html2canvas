@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            html {
+                background-color: red;
+            }
+            body {
+                background-color: lime;
+            }
+            .small div{
+                width:100px;
+                height:100px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .medium div{
+                width:100px;
+                height:100px;
+                float:left;
+                margin:10px;
+                border:20px solid transparent;
+                border-width: 10px 20px 30px 40px;
+                background: green;
+                padding: 25px 15px;
+            }
+
+            .small, .medium{
+                clear:both;
+            }
+
+            div{
+                display:block;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <div class="medium">
+            <div style="background:url(../../assets/image.jpg);background-clip: border-box;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: padding-box;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: content-box;"></div>
+            <div style="background:url(../../assets/image.jpg);"></div>
+        </div>
+
+        <div class="medium">
+            <div style="background:url(../../assets/image.jpg);background-clip: border-box; background-repeat: no-repeat;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: padding-box; background-repeat: repeat-y;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: padding-box; background-repeat: repeat-x;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: content-box; background-repeat: repeat-y;"></div>
+            <div style="background:url(../../assets/image.jpg);background-clip: content-box; background-repeat: repeat-x;"></div>
+            <div style="background:url(../../assets/image.jpg); background-repeat: no-repeat;"></div>
+        </div>
+
+        <div class="medium">
+            <div style="background-clip: border-box;"></div>
+            <div style="background-clip: padding-box;"></div>
+            <div style="background-clip: content-box;"></div>
+            <div style=""></div>
+        </div>
+
+    </body>
+</html>

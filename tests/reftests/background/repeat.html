@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            html {
+                background-color: red;
+            }
+            body {
+                background-color: lime;
+            }
+            .small div{
+                width:100px;
+                height:100px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .medium div{
+                width:200px;
+                height:200px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .small, .medium{
+                clear:both;
+            }
+
+            div{
+                display:block;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+        <div class="medium">
+            <div style="background:url(../../assets/image.jpg);"></div>
+            <div style="background:url(../../assets/image.jpg) repeat-x;"></div>
+            <div style="background:url(../../assets/image.jpg) repeat-y;"></div>
+            <div style="background:url(../../assets/image.jpg) no-repeat;"></div>
+        </div>
+        <div class="small">
+            <div style="background:url(../../assets/image.jpg);"></div>
+            <div style="background:url(../../assets/image.jpg) repeat-x;"></div>
+            <div style="background:url(../../assets/image.jpg) repeat-y;"></div>
+            <div style="background:url(../../assets/image.jpg) no-repeat;"></div>
+        </div>
+
+    </body>
+</html>

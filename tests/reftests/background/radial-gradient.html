@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Background attribute tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            html {
+                background-color: red;
+            }
+            body {
+                background-color: lime;
+            }
+            .small div{
+                width:100px;
+                height:100px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .medium div{
+                width:200px;
+                height:200px;
+                float:left;
+                margin:10px;
+                border:1px solid #000;
+            }
+
+            .small, .medium{
+                clear:both;
+            }
+
+            div{
+                display:block;
+            }
+
+            .radialGradient {
+                /* FF 3.6+ */
+                background: -moz-radial-gradient(center, ellipse cover,  #959595 0%, #0d0d0d 48%, #2f7bd8 50%, #0a0a0a 64%, #4e4e4e 80%, #383838 87%, #1b1b1b 100%);
+                /* Chrome, Safari 4+ */
+                background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#959595), color-stop(48%,#0d0d0d), color-stop(50%,#2f7bd8), color-stop(64%,#0a0a0a), color-stop(80%,#4e4e4e), color-stop(87%,#383838), color-stop(100%,#1b1b1b));
+                /* Chrome 10+, Safari 5.1+ */
+                background: -webkit-radial-gradient(center, ellipse cover,  #959595 0%, #0d0d0d 48%,#2f7bd8 50%,#0a0a0a 64%,#4e4e4e 80%,#383838 87%,#1b1b1b 100%);
+                /* Opera 12+ */
+                background: -o-radial-gradient(center, ellipse cover,  #959595 0%, #0d0d0d 48%,#2f7bd8 50%,#0a0a0a 64%,#4e4e4e 80%,#383838 87%,#1b1b1b 100%);
+                /* IE 10+ */
+                background: -ms-radial-gradient(center, ellipse cover,  #959595 0%,#0d0d0d 48%,#2f7bd8 50%,#0a0a0a 64%,#4e4e4e 80%,#383838 87%,#1b1b1b 100%);
+                /* W3C */
+                background: radial-gradient(center, ellipse cover,  #959595 0%,#0d0d0d 48%,#2f7bd8 50%,#0a0a0a 64%,#4e4e4e 80%,#383838 87%,#1b1b1b 100%);
+            }
+
+            .radialGradient2 {
+                /* thx to https://twitter.com/#!/markjmclaren/status/13067366701 */
+
+                background-color: #FFF;
+
+                background-image:
+                    -webkit-gradient(radial, 45 45, 10, 52 50, 30, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62)),
+                    -webkit-gradient(radial, 105 105, 20, 112 120, 50, from(#ff5f98), to(rgba(255,1,136,0)), color-stop(75%, #ff0188)),
+                    -webkit-gradient(radial, 95 15, 15, 102 20, 40, from(#00c9ff), to(rgba(0,201,255,0)), color-stop(80%, #00b5e2)),
+                    -webkit-gradient(radial, 0 150, 50, 0 140, 90, from(#f4f201), to(rgba(228, 199,0,0)), color-stop(80%, #e4c700));
+
+                background-image:
+                    -moz-radial-gradient(42px 42px, circle farthest-corner, #A7D30C 0%, #A7D30C 3%, rgba(1,159,98,0) 11%),
+                    -moz-radial-gradient(45px 45px, circle farthest-corner, #019F62 0%, #019F62 13%, rgba(255,255,255,0) 16%, rgba(255,255,255,0) 100%),
+
+                    -moz-radial-gradient(102px 102px, circle farthest-corner, #ff5f98 0%, #ff5f98 15%,  rgba(255,1,136,0) 27%),
+                    -moz-radial-gradient(105px 105px, circle farthest-corner, #FF0188 0%, #FF0188 28%,  rgba(255,255,255,0) 32%, rgba(255,255,255,0) 100%),
+
+                    -moz-radial-gradient(92px 12px, circle farthest-corner, #00c9ff 0%, #00c9ff 10%, rgba(0,181,226,0) 26%),
+                    -moz-radial-gradient(95px 15px, circle farthest-corner, #00b5e2 0%, #00b5e2 28%, rgba(255,255,255,0) 31%, rgba(255,255,255,0) 100%),
+
+                    -moz-radial-gradient(0px 150px, circle farthest-corner, #f4f201 0%, #f4f201 25%, rgba(228,199,0,0) 45%),
+                    -moz-radial-gradient(0px 150px, circle farthest-corner, #e4c700 0%, #e4c700 47%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+            }
+
+            .radialGradient3 {
+                background: -moz-radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, ellipse closest-side, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+
+            .radialGradient4 {
+                background: -moz-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, ellipse closest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient5 {
+                background: -moz-radial-gradient(75% 19%, ellipse farthest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, ellipse farthest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, ellipse farthest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, ellipse farthest-side, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, ellipse farthest-side, #ababab, #0000ff 33%,#991f1f 100%)
+            }
+            .radialGradient6 {
+                background: -moz-radial-gradient(75% 19%, ellipse farthest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, ellipse farthest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, ellipse farthest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, ellipse farthest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, ellipse farthest-corner, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient7 {
+                background: -moz-radial-gradient(75% 19%, circle contain, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, circle contain, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, circle contain, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, circle contain, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, circle contain, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient8 {
+                background: -moz-radial-gradient(75% 19%, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(75% 19%, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(75% 19%, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(75% 19%, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(75% 19%, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient9 {
+                background: -moz-radial-gradient(right 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(right 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(right 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(right 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(right 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient10 {
+                background: -moz-radial-gradient(left 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(left 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(left 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(left 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(left 19%, ellipse cover, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+            .radialGradient11 {
+                background: -moz-radial-gradient(left top, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -webkit-radial-gradient(left top, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -o-radial-gradient(left top, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: -ms-radial-gradient(left top, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+                background: radial-gradient(left top, circle cover, #ababab, #0000ff 33%,#991f1f 100%);
+            }
+        </style>
+
+    </head>
+    <body>
+        <div class="medium">
+            <div class="radialGradient">&nbsp;</div>
+            <div class="radialGradient2">&nbsp;</div>
+            <div class="radialGradient3">&nbsp;</div>
+            <div class="radialGradient4">&nbsp;</div>
+            <div class="radialGradient5">&nbsp;</div>
+            <div class="radialGradient6">&nbsp;</div>
+            <div class="radialGradient7">&nbsp;</div>
+            <div class="radialGradient8">&nbsp;</div>
+            <div class="radialGradient9">&nbsp;</div>
+            <div class="radialGradient10">&nbsp;</div>
+            <div class="radialGradient11">&nbsp;</div>
+        </div>
+
+    </body>
+</html>

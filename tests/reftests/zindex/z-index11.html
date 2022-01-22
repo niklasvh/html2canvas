@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+    <title>static position inside position relative</title>
+    <script type="text/javascript" src="../../test.js"></script>
+
+    <style type="text/css">
+        html {
+            padding: 20px;
+            font: 12px/20px Arial, sans-serif;
+        }
+        #div1 {
+            padding: 10px;
+            background: #9bfff8;
+            position: relative;
+        }
+
+        #div2 {
+            background: #7cb659;
+            display: table;
+        }
+
+        #div3 {
+            float:left;
+        }
+        code {
+            font-family: monospace;
+        }
+    </style>
+
+</head>
+<body>
+<div id="div1">
+    <h1>Div Element #1</h1>
+    <code>position: relative;</code>
+    <div id="div2">
+        <h1>Div Element #2</h1>
+        <code>position: static;</code>
+        <div id="div3">
+            <div>
+                <h1>Div Element #3</h1>
+                <code>float: left;</code>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

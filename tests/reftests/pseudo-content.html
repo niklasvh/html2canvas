@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+    <script type="text/javascript" src="../test.js"></script>
+
+    <style>
+        body {
+            quotes: "<{" "}>" "->" "<-" "(" ")" "-:" ":-";
+        }
+
+        .counter1,
+        .counter2,
+        .quotes1,
+        .attr-url {
+            border: 1px solid deepskyblue;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .counter1 {
+            counter-reset: c1 3;
+        }
+
+        .counter1 > div::before {
+            content: "«\"" counter(c1) "\»";
+            counter-increment: c1 -1;
+        }
+
+        .counter2 {
+            counter-reset: c2;
+        }
+
+        .counter2 > div::before {
+            content: "["counters(c2, " < ", upper-roman) ']';
+            counter-increment: c2 2;
+        }
+
+        .counter-divs {
+            counter-reset: c5 3;
+        }
+
+        .counter-divs div {
+            counter-increment: c5 1;
+        }
+
+        .counter-divs > div::before {
+            content: "["counter(c5) ']';
+            counter-increment: c5 2;
+        }
+
+        .quotes1::before {
+            content: open-quote "!" open-quote close-quote open-quote;
+        }
+
+        .quotes1::after {
+            content: "!" close-quote close-quote;
+        }
+
+        .quotes2 {
+            quotes: "«" "»" "“" "”";
+        }
+
+        .quotes2::before {
+            content: open-quote;
+        }
+
+        .quotes2::after {
+            content: close-quote close-quote close-quote close-quote;
+        }
+
+        .attr-url > div::after {
+            content: url(../assets/image.jpg) "///" attr(data-text);
+        }
+
+        ol {
+            counter-reset: section;                /* Creates a new instance of the
+                                            section counter with each ol
+                                            element */
+            list-style-type: none;
+        }
+
+        li::before {
+            counter-increment: section;            /* Increments only this instance
+                                            of the section counter */
+            content: counters(section, ".") " ";   /* Combines the values of all instances
+                                            of the section counter, separated
+                                            by a period */
+        }
+
+        .issue-2639 {
+            display: flex;
+        }
+
+        .issue-2639::before {
+            content: counter(ol0) '. ';
+            counter-increment: ol0;
+        }
+
+        .issue-2639:first-child {
+            counter-reset: ol0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="counter1">
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+</div>
+
+<div class="counter2">
+    <div>A</div>
+    <div>B</div>
+    <div>
+        C
+        <div class="counter2">
+            <div>a</div>
+            <div>b</div>
+            <div>
+                c
+                <div class="counter2">
+                    <div>Aa</div>
+                    <div>Bb</div>
+                    <div>Cc</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>D</div>
+</div>
+
+<div class="quotes1">
+    Hello
+    <div class="quotes2">
+        Quoted
+        <div class="quotes2">World</div>
+    </div>
+</div>
+
+<div class="attr-url">
+    <div data-text="Hello World"></div>
+</div>
+
+<div class="counter-divs">
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+</div>
+<ol>
+    <li>item</li>          <!-- 1     -->
+    <li>item               <!-- 2     -->
+        <ol>
+            <li>item</li>      <!-- 2.1   -->
+            <li>item</li>      <!-- 2.2   -->
+            <li>item           <!-- 2.3   -->
+                <ol>
+                    <li>item</li>  <!-- 2.3.1 -->
+                    <li>item</li>  <!-- 2.3.2 -->
+                </ol>
+                <ol>
+                    <li>item</li>  <!-- 2.3.1 -->
+                    <li>item</li>  <!-- 2.3.2 -->
+                    <li>item</li>  <!-- 2.3.3 -->
+                </ol>
+            </li>
+            <li>item</li>      <!-- 2.4   -->
+        </ol>
+    </li>
+    <li>item</li>          <!-- 3     -->
+    <li>item</li>          <!-- 4     -->
+</ol>
+<ol>
+    <li>item</li>          <!-- 1     -->
+    <li>item</li>          <!-- 2     -->
+</ol>
+
+<ol>
+    <li class="issue-2639">one</li>
+    <li class="issue-2639">two</li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script type="text/javascript" src="../../test.js"></script>
+    <script type="text/javascript">
+        function setUp() {
+            var ctx = document.querySelector('#testcanvas').getContext('2d');
+
+            ctx.fillStyle = "rgb(200,0,0)";
+            ctx.fillRect (10, 10, 55, 50);
+
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect (30, 30, 55, 50);
+
+            var gl = document.querySelector('#webglcanvas').getContext('webgl', {preserveDrawingBuffer: true});
+            if (gl) {
+                gl.clearColor(0.0, 1.0, 0.0, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+            }
+        }
+    </script>
+</head>
+<body>
+<canvas id="testcanvas" style="width:700px;height:300px;"></canvas>
+<canvas id="webglcanvas" style="width:300px;height:300px;"></canvas>
+</body>
+</html>

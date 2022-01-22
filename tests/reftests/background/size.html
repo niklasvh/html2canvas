@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Background size tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        .horizontal div, .vertical div {
+            display: block;
+            background:url("../../assets/image.jpg") center center;
+        }
+        .sliver div {
+            background:url("../../assets/bg-sliver.png") center center;
+            background-size: 650px auto;
+        }
+
+        .vertical {
+            float: right;
+        }
+
+        .horizontal {
+            float: left;
+        }
+
+        .horizontal div {
+            width: 400px; height: 100px;
+        }
+
+        .vertical div {
+            width: 200px; height: 200px;
+        }
+
+        .container {
+            float: left;
+            border: 1px solid black;
+            width: 150px;
+            height: 200px;
+            background-image: url(../../assets/image.jpg);
+            background-size: 34px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container"></div>
+<div class="container" style="background-repeat: repeat-y"></div>
+<div class="container" style="background-repeat: repeat-x"></div>
+<div class="container" style="background-size: 150% auto"></div>
+<div class="horizontal">
+    <div style='background-size: cover;'></div>
+    <div style='background-size: contain;'></div>
+    <div style='background-size: auto 100%;'></div>
+    <div style='background-size: auto;'></div>
+</div>
+
+<div class="vertical">
+    <div style='background-size: cover;'></div>
+    <div style='background-size: contain;'></div>
+    <div style='background-size: auto 100%;'></div>
+    <div style='background-size: auto;'></div>
+</div>
+<div class="container" style="padding: 10px; background-size: contain; background-origin: content-box; background-clip: content-box"></div>
+<div class="container" style="background-size: calc(100% - 10px)"></div>
+<div class="sliver">
+    <div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic style</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../test.js"></script>
+    <style id="style">
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
+        }
+        body { font-family: "Roboto", serif }
+
+        div {
+            padding: 20px;
+        }
+        .div1 {
+            background: darkred;
+            color: white;
+        }
+        @media (min-width: 10px) {
+            .div1 {
+                background: darkgreen;
+            }
+        }
+    </style>
+    <script>
+        document.querySelector('#style').sheet.insertRule(
+            '.div2 { background: darkgreen; color:white; }',
+            document.querySelector('#style').sheet.cssRules.length
+        );
+    </script>
+</head>
+<body>
+<div class="div1">Static styles</div>
+<div class="div2">Dynamic styles</div>
+</body>
+</html>
+

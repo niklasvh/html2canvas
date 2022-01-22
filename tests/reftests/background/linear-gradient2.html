@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Background attribute tests</title>
+		<script type="text/javascript" src="../../test.js"></script>
+
+		<style>
+			body {
+				background-color: blanchedalmond;
+			}
+
+			div {
+				display: inline-block;
+				width: 100px;
+				height: 100px;
+				padding: 10px;
+				border: 15px solid transparent;
+			}
+            .linearGradient {
+                width: 200px;
+                height: 200px;
+                background-image: linear-gradient(rgba(0, 0, 0, 0.7) 0.1em, transparent 0.1em), linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0.1em, transparent 0.1em);
+                background-size: 1em 1em;
+            }
+		</style>
+	</head>
+	<body>
+		<div style="background: -webkit-linear-gradient(90deg, blue, red);"></div>
+		<div style="background: linear-gradient(90deg, blue, red);"></div>
+		<div style="background: linear-gradient(45deg, blue, red);"></div>
+		<div style="background: linear-gradient(45deg, blue, red); width:200px;"></div>
+		<div style="background-image: linear-gradient(45deg, blue, red); background-position: 20px 30px; background-size: 60px; background-repeat: no-repeat"></div>
+		<div style="background-image: linear-gradient(45deg, blue, red); background-position: 20px 30px; background-size: 60px;"></div>
+		<div style="background-image: linear-gradient(45deg, blue, red);padding:0"></div>
+		<div style="background: linear-gradient(red, red 60%, blue);"></div>
+		<div style="background: linear-gradient(90deg, red 60%, blue);"></div>
+		<div style="background: linear-gradient(135deg, red, red 60%, blue);"></div>
+		<div style="background: linear-gradient(to right, red, red 60%, blue);"></div>
+		<div style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);"></div>
+		<div style="background: linear-gradient(60deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%);"></div>
+		<div style="background: linear-gradient(45deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%); background-origin: content-box"></div>
+		<div style="background: linear-gradient(90deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%); background-origin: padding-box"></div>
+		<div style="background: linear-gradient(90deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%); background-origin: border-box"></div>
+		<div style="background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); "></div>
+		<div style="background: linear-gradient(90deg, yellow 0%, orange 10%, red 50%, blue 90%, cyan 100%) content-box;"></div>
+		<div style="background: linear-gradient(60deg, hsla(120,80%,50%,0.8) 0%, transparent 50%, rgba(255,100,100,0.5) 100%);"></div>
+		<div style="background: linear-gradient(to right, red 20%, orange 20% 40%, yellow 40% 60%, green 60% 80%, blue 80%);"></div>
+		<div style="background: linear-gradient(-45deg, #FF0000 40%, #00FF00 50%);"></div>
+		<div style="background:linear-gradient(217deg, rgba(255, 0, 0, 0.8) 10%, rgba(255, 0, 0, 0) 70.71%), linear-gradient(127deg, rgba(0, 255, 0, 0.8) 20%, rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(0, 0, 255, 0.8) 40%, rgba(0, 0, 255, 0) 70.71%), rgb(255, 255, 255);"></div>
+		<div class="linearGradient"></div>
+	</body>
+</html>

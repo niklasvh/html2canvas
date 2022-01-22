@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Overflow tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../test.js"></script>
+        <style>
+            #body-bg{
+                width: 300px;
+                overflow: hidden;
+                position: relative;
+                border:2px solid #000;
+                height: 300px;
+            }
+            .img-1{
+                display: inline-block;
+                height: 617px;
+                left: -56.8px;
+                position: absolute;
+                resize: none;
+                top: -412.317px;
+                transform: rotate(3.5455rad);
+                width: 629px;
+                z-index: 2;
+                background: #f0f;
+            }
+            .img-2{
+                display: inline-block;
+                height: 620px;
+                left: -150px;
+                position: absolute;
+                resize: none;
+                top: 205px;
+                transform: rotate(3.5455rad);
+                width: 461px;background: #ff0000;
+                z-index: 1;
+            }
+            body {
+                font-family: Arial;
+                line-height: 17px;
+                font-size: 1em;
+            }
+
+
+            #app {
+                background-color: lightcoral;
+                width: 300px;
+                color: #333;
+                margin-top: 20px;
+            }
+
+            #box {
+                background-color: lightgreen;
+                width: 200px;
+                height: 200px;
+                overflow: hidden;
+            }
+
+            .content {
+                background-color: lightskyblue;
+                width: 150px;
+                height: 150px;
+                transform: translate(100px, 0);
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+    <div id="body-bg">
+        <p>Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un peintre anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. Il n'a pas fait que survivre cinq siècles, mais s'est aussi adapté à la bureautique informatique, sans que son contenu n'en soit modifié. Il a été popularisé dans les années 1960 grâce à la vente de feuilles Letraset contenant des passages du Lorem Ipsum, et, plus récemment, par son inclusion dans des applications de mise en page de texte, comme Aldus PageMaker. </p>
+        <div class="img-1"></div>
+        <div class="img-2"></div>
+    </div>
+
+
+    <div id="app">
+        This is app
+        <div id="box">
+            This is box, overflow hidden
+            <div class="content">
+                This is content
+            </div>
+        </div>
+    </div>
+
+    </body>
+</html>

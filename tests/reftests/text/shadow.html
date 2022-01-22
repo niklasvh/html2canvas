@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text shadow tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        .shadow1 span{
+            text-shadow: 1px 1px 3px #888;
+        }
+        .shadow1 strong {
+            text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+        }
+
+        .shadow2 {
+            font-size: 48px;
+        }
+
+        .shadow2 span{
+            color: transparent;
+            text-shadow: 0 0 5px #00f, 2px 2px 0 #f00;
+        }
+
+        .shadow2 strong {
+            color: rgba(0, 255, 0, 0.5);
+            text-shadow: 0 0 5px #00f, 2px 2px 0 #f00;
+            text-decoration: underline;
+        }
+
+        .white-text-with-blue-shadow {
+            text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+            color: white;
+            font: 1.5em Georgia, serif;
+        }
+        .red-text-shadow {
+            text-shadow: 0 -2px;
+        }
+
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+<div class="shadow1">
+    Some text <span> followed by text with shadow </span> followed by more text without shadow.
+    <strong>Multi text shadow</strong> and some more text without shadow
+</div>
+<div class="shadow2">
+    <span>testing with transparent</span>
+    <strong>testing with low opacity</strong>
+</div>
+
+<div id="capture" style="padding: 10px; background: #f5da55; border:2px solid blue;">
+    <h4 style="color: #000;text-shadow:0px 0px 5px green;">Hello world!</h4>
+    <div id="sampleDiv" style="border:2px solid red;padding:5px;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;background-color:pink; padding:5px;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;color:blue; padding:5px;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;padding:5px;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;padding:5px;text-shadow:0px 0px 5px red;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;padding:5px;margin:5px;">Sample Div with Border</div>
+    <div style="border:2px solid red;padding:5px;margin:5px;">Sample Div with Border</div>
+</div>
+
+<p class="white-text-with-blue-shadow">Sed ut perspiciatis unde omnis iste
+    natus error sit voluptatem accusantium doloremque laudantium,
+    totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+<p class="red-text-shadow">Sed ut perspiciatis unde omnis iste
+    natus error sit voluptatem accusantium doloremque laudantium,
+    totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+</body>
+</html>

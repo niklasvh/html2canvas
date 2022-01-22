@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8" />
+        <title>z-index20</title>
+        <style>
+            .container {
+                width: 375px;
+                height: 603px;
+                background-color: #999;
+                position: relative;
+                margin-bottom: 30px;
+            }
+            .child1 {
+                height: 500px;
+                width: 200px;
+                background-color: red;
+                z-index: 20;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            .child2 {
+                height: 50px;
+                width: 100px;
+                background-color: blue;
+                z-index: 20;
+                position: absolute;
+                left: 30px;
+                top: 30px;
+            }
+        </style>
+        <script type="text/javascript" src="../../test.js"></script>
+    </head>
+    <body>
+        <div class="container" id="___id___">
+            <div class="child1"></div>
+            <div class="child2"></div>
+        </div>
+    </body>
+</html>
