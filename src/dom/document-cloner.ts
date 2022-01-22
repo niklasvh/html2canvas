@@ -113,7 +113,24 @@ export class DocumentCloner {
             }
 
             if (documentClone.fonts && documentClone.fonts.ready) {
-                await documentClone.fonts.ready;
+                // Fix documentClone.fonts.ready not resolved even though documentClone.fonts.status is 'loaded' in IOS 13.6
+
+                if (documentClone.fonts.status !== 'loaded') {
+                    await Promise.race([
+                        documentClone.fonts.ready,
+                        new Promise((resolve) => {
+                            const check = () => {
+                                if (documentClone.fonts.status === 'loaded') {
+                                    resolve(null);
+                                } else {
+                                    setTimeout(check, 100);
+                                }
+                            };
+
+                            setTimeout(check, 100);
+                        })
+                    ]);
+                }
             }
 
             if (/(AppleWebKit)/g.test(navigator.userAgent)) {
