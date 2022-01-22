@@ -118,7 +118,7 @@
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
-    "css-line-break": "2.0.1",
-    "text-segmentation": "^1.0.2"
+    "css-line-break": "^2.1.0",
+    "text-segmentation": "^1.0.3"
   }
 }
