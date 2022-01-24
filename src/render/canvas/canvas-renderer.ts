@@ -595,16 +595,31 @@ export class CanvasRenderer extends Renderer {
                 }
 
                 if (image) {
-                    const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [
+                    let [path, x, y, width, height] = calculateBackgroundRendering(container, index, [
                         image.width,
                         image.height,
                         image.width / image.height
                     ]);
+                    // prevent image resolution loss: render and copy img at current scale, instead of downscaling then rescaling
+                    // recalculate for null transformation
+                    path = (path as Vector[]).map(v => {
+                        return new Vector((v.x-this.options.x)*this.options.scale, (v.y-this.options.y)*this.options.scale);
+                    });
+                    x = (x - this.options.x) * this.options.scale;
+                    y = (y - this.options.y) * this.options.scale;
+                    width *= this.options.scale;
+                    height *= this.options.scale;
+                    // backup context and change to null transform
+                    this.ctx.save();
+                    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    // draw
                     const pattern = this.ctx.createPattern(
                         this.resizeImage(image, width, height),
                         'repeat'
                     ) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
+                    // restore context
+                    this.ctx.restore();
                 }
             } else if (isLinearGradient(backgroundImage)) {
                 const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
