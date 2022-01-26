@@ -523,11 +523,14 @@ export class CanvasRenderer extends Renderer {
 
     mask(paths: Path[]): void {
         this.ctx.beginPath();
+        this.ctx.save();
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(this.canvas.width, 0);
         this.ctx.lineTo(this.canvas.width, this.canvas.height);
         this.ctx.lineTo(0, this.canvas.height);
         this.ctx.lineTo(0, 0);
+        this.ctx.restore();
         this.formatPath(paths.slice(0).reverse());
         this.ctx.closePath();
     }
@@ -720,18 +723,19 @@ export class CanvasRenderer extends Renderer {
             await this.renderBackgroundImage(paint.container);
 
             this.ctx.restore();
+            const borderBoxArea = calculateBorderBoxPath(paint.curves);
 
             styles.boxShadow
                 .slice(0)
                 .reverse()
                 .forEach((shadow) => {
                     this.ctx.save();
-                    const borderBoxArea = calculateBorderBoxPath(paint.curves);
                     const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
+                    const shadowDirection = shadow.inset ? 1 : -1;
                     const shadowPaintingArea = transformPath(
                         borderBoxArea,
-                        -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
-                        (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.offsetX.number - maskOffset + shadowDirection * shadow.spread.number,
+                        shadow.offsetY.number + shadowDirection * shadow.spread.number,
                         shadow.spread.number * (shadow.inset ? -2 : 2),
                         shadow.spread.number * (shadow.inset ? -2 : 2)
                     );
@@ -746,8 +750,8 @@ export class CanvasRenderer extends Renderer {
                         this.path(shadowPaintingArea);
                     }
 
-                    this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
-                    this.ctx.shadowOffsetY = shadow.offsetY.number;
+                    this.ctx.shadowOffsetX = maskOffset;
+                    this.ctx.shadowOffsetY = 0;
                     this.ctx.shadowColor = asString(shadow.color);
                     this.ctx.shadowBlur = shadow.blur.number;
                     this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
