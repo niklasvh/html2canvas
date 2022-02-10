@@ -563,12 +563,19 @@ export class CanvasRenderer extends Renderer {
     renderRepeat(path: Path[], pattern: CanvasPattern | CanvasGradient, offsetX: number, offsetY: number): void {
         this.path(path);
         this.ctx.fillStyle = pattern;
+        this.ctx.save();
         this.ctx.translate(offsetX, offsetY);
+        if (this.options.scale) {
+            this.ctx.scale(1 / this.options.scale, 1 / this.options.scale);
+        }
         this.ctx.fill();
-        this.ctx.translate(-offsetX, -offsetY);
+        this.ctx.restore();
     }
 
     resizeImage(image: HTMLImageElement, width: number, height: number): HTMLCanvasElement | HTMLImageElement {
+        width *= this.options.scale || 1;
+        height *= this.options.scale || 1;
+
         if (image.width === width && image.height === height) {
             return image;
         }
@@ -607,13 +614,17 @@ export class CanvasRenderer extends Renderer {
                     this.renderRepeat(path, pattern, x, y);
                 }
             } else if (isLinearGradient(backgroundImage)) {
-                const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
+                let [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
                 const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
+
+                width *= this.options.scale || 1;
+                height *= this.options.scale || 1;
 
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+                ctx.scale(this.options.scale || 1, this.options.scale || 1);
                 const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 
                 processColorStops(backgroundImage.stops, lineLength).forEach((colorStop) =>
