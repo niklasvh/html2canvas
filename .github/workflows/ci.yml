@@ -101,22 +101,26 @@ jobs:
           - os: macos-latest
             name: OSX Safari Stable
             targetBrowser: Safari_Stable
-          - os: macos-latest
+          - os: macos-10.15
             name: iOS Simulator Safari 12
             targetBrowser: Safari_IOS_12
             xcode: /Applications/Xcode_10.3.app
-          - os: macos-latest
+          - os: macos-10.15
             name: iOS Simulator Safari 13
             targetBrowser: Safari_IOS_13
-            xcode: /Applications/Xcode_11.6_beta.app
-          - os: macos-latest
+            xcode: /Applications/Xcode_11.7.app
+          - os: macos-10.15
             name: iOS Simulator Safari 14
             targetBrowser: Safari_IOS_14
-            xcode: /Applications/Xcode_12_beta.app
+            xcode: /Applications/Xcode_12.4.app
+          - os: macos-11
+            name: iOS Simulator Safari 15.0
+            targetBrowser: Safari_IOS_15_0
+            xcode: /Applications/Xcode_13.0.app
           - os: macos-11
             name: iOS Simulator Safari 15
             targetBrowser: Safari_IOS_15
-            xcode: /Applications/Xcode_13.0.app
+            xcode: /Applications/Xcode_13.2.app
           - os: windows-latest
             name: Windows Internet Explorer 9 (Emulated)
             targetBrowser: IE_9

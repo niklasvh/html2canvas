@@ -657,7 +657,7 @@ export class Tokenizer {
     }
 
     private consumeStringSlice(count: number): string {
-        const SLICE_STACK_SIZE = 60000;
+        const SLICE_STACK_SIZE = 50000;
         let value = '';
         while (count > 0) {
             const amount = Math.min(SLICE_STACK_SIZE, count);

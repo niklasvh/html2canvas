@@ -2,16 +2,19 @@ import {Bounds} from '../css/layout/bounds';
 import {
     isBodyElement,
     isCanvasElement,
+    isCustomElement,
     isElementNode,
     isHTMLElementNode,
     isIFrameElement,
     isImageElement,
     isScriptElement,
     isSelectElement,
+    isSlotElement,
     isStyleElement,
     isSVGElementNode,
     isTextareaElement,
-    isTextNode
+    isTextNode,
+    isVideoElement
 } from './node-parser';
 import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
 import {TokenType} from '../css/syntax/tokenizer';
@@ -63,7 +66,7 @@ export class DocumentCloner {
             throw new Error('Cloned element does not have an owner document');
         }
 
-        this.documentElement = this.cloneNode(element.ownerDocument.documentElement) as HTMLElement;
+        this.documentElement = this.cloneNode(element.ownerDocument.documentElement, false) as HTMLElement;
     }
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
@@ -143,7 +146,9 @@ export class DocumentCloner {
         if (isCanvasElement(node)) {
             return this.createCanvasClone(node);
         }
-
+        if (isVideoElement(node)) {
+            return this.createVideoClone(node);
+        }
         if (isStyleElement(node)) {
             return this.createStyleClone(node);
         }
@@ -159,6 +164,17 @@ export class DocumentCloner {
                 clone.loading = 'eager';
             }
         }
+
+        if (isCustomElement(clone)) {
+            return this.createCustomElementClone(clone);
+        }
+
+        return clone;
+    }
+
+    createCustomElementClone(node: HTMLElement): HTMLElement {
+        const clone = document.createElement('html2canvascustomelement');
+        copyCSSStyles(node.style, clone);
 
         return clone;
     }
@@ -231,7 +247,63 @@ export class DocumentCloner {
         return clonedCanvas;
     }
 
-    cloneNode(node: Node): Node {
+    createVideoClone(video: HTMLVideoElement): HTMLCanvasElement {
+        const canvas = video.ownerDocument.createElement('canvas');
+
+        canvas.width = video.offsetWidth;
+        canvas.height = video.offsetHeight;
+        const ctx = canvas.getContext('2d');
+
+        try {
+            if (ctx) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                if (!this.options.allowTaint) {
+                    ctx.getImageData(0, 0, canvas.width, canvas.height);
+                }
+            }
+            return canvas;
+        } catch (e) {
+            this.context.logger.info(`Unable to clone video as it is tainted`, video);
+        }
+
+        const blankCanvas = video.ownerDocument.createElement('canvas');
+
+        blankCanvas.width = video.offsetWidth;
+        blankCanvas.height = video.offsetHeight;
+        return blankCanvas;
+    }
+
+    appendChildNode(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean): void {
+        if (
+            !isElementNode(child) ||
+            (!isScriptElement(child) &&
+                !child.hasAttribute(IGNORE_ATTRIBUTE) &&
+                (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
+        ) {
+            if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
+                clone.appendChild(this.cloneNode(child, copyStyles));
+            }
+        }
+    }
+
+    cloneChildNodes(node: Element, clone: HTMLElement | SVGElement, copyStyles: boolean): void {
+        for (
+            let child = node.shadowRoot ? node.shadowRoot.firstChild : node.firstChild;
+            child;
+            child = child.nextSibling
+        ) {
+            if (isElementNode(child) && isSlotElement(child) && typeof child.assignedNodes === 'function') {
+                const assignedNodes = child.assignedNodes() as ChildNode[];
+                if (assignedNodes.length) {
+                    assignedNodes.forEach((assignedNode) => this.appendChildNode(clone, assignedNode, copyStyles));
+                }
+            } else {
+                this.appendChildNode(clone, child, copyStyles);
+            }
+        }
+    }
+
+    cloneNode(node: Node, copyStyles: boolean): Node {
         if (isTextNode(node)) {
             return document.createTextNode(node.data);
         }
@@ -260,17 +332,12 @@ export class DocumentCloner {
             const counters = this.counters.parse(new CSSParsedCounterDeclaration(this.context, style));
             const before = this.resolvePseudoContent(node, clone, styleBefore, PseudoElementType.BEFORE);
 
-            for (let child = node.firstChild; child; child = child.nextSibling) {
-                if (
-                    !isElementNode(child) ||
-                    (!isScriptElement(child) &&
-                        !child.hasAttribute(IGNORE_ATTRIBUTE) &&
-                        (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
-                ) {
-                    if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
-                        clone.appendChild(this.cloneNode(child));
-                    }
-                }
+            if (isCustomElement(node)) {
+                copyStyles = true;
+            }
+
+            if (!isVideoElement(node)) {
+                this.cloneChildNodes(node, clone, copyStyles);
             }
 
             if (before) {
@@ -284,7 +351,10 @@ export class DocumentCloner {
 
             this.counters.pop(counters);
 
-            if (style && (this.options.copyStyles || isSVGElementNode(node)) && !isIFrameElement(node)) {
+            if (
+                (style && (this.options.copyStyles || isSVGElementNode(node)) && !isIFrameElement(node)) ||
+                copyStyles
+            ) {
                 copyCSSStyles(style, clone);
             }
 

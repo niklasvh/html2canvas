@@ -6,7 +6,7 @@
   "module": "dist/html2canvas.esm.js",
   "typings": "dist/types/index.d.ts",
   "browser": "dist/html2canvas.js",
-  "version": "1.3.2",
+  "version": "1.4.1",
   "author": {
     "name": "Niklas von Hertzen",
     "email": "niklasvh@gmail.com",
@@ -118,7 +118,7 @@
   "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
-    "css-line-break": "2.0.1",
-    "text-segmentation": "^1.0.2"
+    "css-line-break": "^2.1.0",
+    "text-segmentation": "^1.0.3"
   }
 }

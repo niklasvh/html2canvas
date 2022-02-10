@@ -28,15 +28,24 @@ export const parseTextBounds = (
     textList.forEach((text) => {
         if (styles.textDecorationLine.length || text.trim().length > 0) {
             if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-                if (!FEATURES.SUPPORT_WORD_BREAKING) {
-                    textBounds.push(
-                        new TextBounds(
-                            text,
-                            Bounds.fromDOMRectList(context, createRange(node, offset, text.length).getClientRects())
-                        )
-                    );
+                const clientRects = createRange(node, offset, text.length).getClientRects();
+                if (clientRects.length > 1) {
+                    const subSegments = segmentGraphemes(text);
+                    let subOffset = 0;
+                    subSegments.forEach((subSegment) => {
+                        textBounds.push(
+                            new TextBounds(
+                                subSegment,
+                                Bounds.fromDOMRectList(
+                                    context,
+                                    createRange(node, subOffset + offset, subSegment.length).getClientRects()
+                                )
+                            )
+                        );
+                        subOffset += subSegment.length;
+                    });
                 } else {
-                    textBounds.push(new TextBounds(text, getRangeBounds(context, node, offset, text.length)));
+                    textBounds.push(new TextBounds(text, Bounds.fromDOMRectList(context, clientRects)));
                 }
             } else {
                 const replacementNode = node.splitText(text.length);
@@ -82,12 +91,32 @@ const createRange = (node: Text, offset: number, length: number): Range => {
     return range;
 };
 
-const getRangeBounds = (context: Context, node: Text, offset: number, length: number): Bounds => {
-    return Bounds.fromClientRect(context, createRange(node, offset, length).getBoundingClientRect());
+export const segmentGraphemes = (value: string): string[] => {
+    if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const segmenter = new (Intl as any).Segmenter(void 0, {granularity: 'grapheme'});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
+    }
+
+    return splitGraphemes(value);
+};
+
+const segmentWords = (value: string, styles: CSSParsedDeclaration): string[] => {
+    if (FEATURES.SUPPORT_NATIVE_TEXT_SEGMENTATION) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const segmenter = new (Intl as any).Segmenter(void 0, {
+            granularity: 'word'
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return Array.from(segmenter.segment(value)).map((segment: any) => segment.segment);
+    }
+
+    return breakWords(value, styles);
 };
 
 const breakText = (value: string, styles: CSSParsedDeclaration): string[] => {
-    return styles.letterSpacing !== 0 ? splitGraphemes(value) : breakWords(value, styles);
+    return styles.letterSpacing !== 0 ? segmentGraphemes(value) : segmentWords(value, styles);
 };
 
 // https://drafts.csswg.org/css-text/#word-separator
