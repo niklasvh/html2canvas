@@ -144,9 +144,9 @@ export class CanvasRenderer extends Renderer {
         }
     }
 
-    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number): void {
+    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number, isRTL: Boolean = false): void {
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
+            this.ctx.fillText(text.text+(isRTL?'\u200F':''), text.bounds.left, text.bounds.top + baseline);
         } else {
             const letters = segmentGraphemes(text.text);
             letters.reduce((left, letter) => {
@@ -189,7 +189,7 @@ export class CanvasRenderer extends Renderer {
                 switch (paintOrderLayer) {
                     case PAINT_ORDER_LAYER.FILL:
                         this.ctx.fillStyle = asString(styles.color);
-                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline,styles.direction === DIRECTION.RTL);
                         const textShadows: TextShadow = styles.textShadow;
 
                         if (textShadows.length && text.text.trim().length) {
@@ -202,7 +202,7 @@ export class CanvasRenderer extends Renderer {
                                     this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
                                     this.ctx.shadowBlur = textShadow.blur.number;
 
-                                    this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                                    this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline,styles.direction === DIRECTION.RTL);
                                 });
 
                             this.ctx.shadowColor = '';
