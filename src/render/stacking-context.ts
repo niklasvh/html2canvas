@@ -70,7 +70,6 @@ export class ElementPaint {
         while (parent) {
             const croplessEffects = parent.effects.filter((effect) => !isClipEffect(effect));
             if (inFlow || parent.container.styles.position !== POSITION.STATIC || !parent.parent) {
-                effects.unshift(...croplessEffects);
                 inFlow = [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(parent.container.styles.position) === -1;
                 if (parent.container.styles.overflowX !== OVERFLOW.VISIBLE) {
                     const borderBox = calculateBorderBoxPath(parent.curves);
@@ -81,6 +80,7 @@ export class ElementPaint {
                         );
                     }
                 }
+                effects.unshift(...croplessEffects);
             } else {
                 effects.unshift(...croplessEffects);
             }
