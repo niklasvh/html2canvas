@@ -18,6 +18,13 @@ class AutonomousCustomElement extends HTMLElement {
         const style = document.createElement('style');
 
         style.textContent = `
+
+      /* Non-namespaced style that will leak into the page DOM if the style
+         is cloned outside of a shadow root*/
+      body {
+        background: red;
+      }
+
       .wrapper {
         position: relative;
       }
