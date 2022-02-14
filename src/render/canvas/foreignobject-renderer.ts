@@ -30,8 +30,8 @@ export class ForeignObjectRenderer extends Renderer {
         const svg = createForeignObjectSVG(
             this.options.width * this.options.scale,
             this.options.height * this.options.scale,
-            this.options.scale,
-            this.options.scale,
+            0,
+            0,
             element
         );
 
