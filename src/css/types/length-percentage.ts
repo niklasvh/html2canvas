@@ -128,17 +128,17 @@ export const resolveThreeValueSyntax = (
         absoluteX = getAbsoluteValue(tuple[0], width);
 
         if (tuple[1].type == TokenType.DIMENSION_TOKEN && tuple[0].number == 100) {
-          absoluteX = getAbsoluteValue(tuple[0], width) - getAbsoluteValue(tuple[1], width);
+            absoluteX = getAbsoluteValue(tuple[0], width) - getAbsoluteValue(tuple[1], width);
         }
 
         if (tuple[2].type == TokenType.PERCENTAGE_TOKEN) {
-          absoluteY = getAbsoluteValue(tuple[2], height);
+            absoluteY = getAbsoluteValue(tuple[2], height);
         }
     }
 
     if (tuple[1].type == TokenType.PERCENTAGE_TOKEN) {
         if (tuple[1].number == 100) {
-          absoluteY = getAbsoluteValue(tuple[1], height) - getAbsoluteValue(tuple[2], height);
+            absoluteY = getAbsoluteValue(tuple[1], height) - getAbsoluteValue(tuple[2], height);
         }
     }
 
