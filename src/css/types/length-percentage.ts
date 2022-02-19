@@ -130,6 +130,17 @@ export const getAbsoluteValue = (token: LengthPercentage, parent: number): numbe
         }
     }
 
+    // Firefox translates positions like "right 20px" as calc(100% + 20px)
+    if (token.type === TokenType.FUNCTION) {
+        if (token.name === 'calc' && token.values.length == 5) {
+            let firstValue = getAbsoluteValue(token.values[0], parent);
+            let secondValue = getAbsoluteValue(token.values[4], parent);
+
+            if (token.values[2].value == '-') return firstValue - secondValue;
+            if (token.values[2].value == '+') return firstValue + secondValue;
+        }
+    }
+
     if (isDimensionToken(token)) {
         switch (token.unit) {
             case 'rem':
