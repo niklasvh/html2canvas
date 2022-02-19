@@ -27,7 +27,15 @@
         border:1px solid #000;
       }
 
-      .small, .medium{
+      .medium-wide div{
+        width:200px;
+        height:160px;
+        float:left;
+        margin:10px;
+        border:1px solid #000;
+      }
+
+      .small, .medium, .medium-wide{
         clear:both;
       }
 
@@ -53,6 +61,13 @@
       <div style="background:url(../../assets/image.jpg) repeat-x center center;"></div>
       <div style="background:url(../../assets/image.jpg) repeat-y center center;"></div>
       <div style="background:url(../../assets/image.jpg) no-repeat center center;"></div>
+    </div>
+
+    <div class="medium-wide">
+      <div style="background:url(../../assets/image.jpg) no-repeat right 30px bottom 40px;"></div>
+      <div style="background:url(../../assets/image.jpg) no-repeat left bottom -40px;"></div>
+      <div style="background:url(../../assets/image.jpg) no-repeat right 30% top 20%;"></div>
+      <div style="background:url(../../assets/image.jpg) no-repeat right 20px center;"></div>
     </div>
 
     <div class="medium">

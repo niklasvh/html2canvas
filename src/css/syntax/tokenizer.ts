@@ -97,6 +97,17 @@ export interface DimensionToken extends IToken {
     number: number;
 }
 
+export interface IdentToken extends IToken {
+    type: TokenType.IDENT_TOKEN;
+    value: string;
+}
+
+export interface FunctionToken extends IToken {
+    type: TokenType.FUNCTION;
+    name: string;
+    values: Array<CSSToken>;
+}
+
 export interface UnicodeRangeToken extends IToken {
     type: TokenType.UNICODE_RANGE_TOKEN;
     start: number;
