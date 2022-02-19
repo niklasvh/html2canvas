@@ -123,6 +123,25 @@ export const resolveThreeValueSyntax = (
         }
     }
 
+    // Older Internet Explorer will translate e.g. "center bottom -40px" into "50%", "100%", "-40px"
+    if (tuple[0].type == TokenType.PERCENTAGE_TOKEN) {
+        absoluteX = getAbsoluteValue(tuple[0], width);
+
+        if (tuple[1].type == TokenType.DIMENSION_TOKEN && tuple[0].number == 100) {
+          absoluteX = getAbsoluteValue(tuple[0], width) - getAbsoluteValue(tuple[1], width);
+        }
+
+        if (tuple[2].type == TokenType.PERCENTAGE_TOKEN) {
+          absoluteY = getAbsoluteValue(tuple[2], height);
+        }
+    }
+
+    if (tuple[1].type == TokenType.PERCENTAGE_TOKEN) {
+        if (tuple[1].number == 100) {
+          absoluteY = getAbsoluteValue(tuple[1], height) - getAbsoluteValue(tuple[2], height);
+        }
+    }
+
     if (
         (tuple[1].type == TokenType.IDENT_TOKEN && tuple[1].value == 'center') ||
         (tuple[2].type == TokenType.IDENT_TOKEN && tuple[2].value == 'center')
@@ -159,6 +178,20 @@ export const resolveFourValueSyntax = (
         if (tuple[2].value == 'bottom') absoluteY = height - getAbsoluteValue(tuple[3], height);
         if (tuple[2].value == 'left') absoluteX = getAbsoluteValue(tuple[3], width);
         if (tuple[2].value == 'right') absoluteX = width - getAbsoluteValue(tuple[3], width);
+    }
+
+    if (tuple[0].type == TokenType.PERCENTAGE_TOKEN || isDimensionToken(tuple[0])) {
+        absoluteX = getAbsoluteValue(tuple[0], width) + getAbsoluteValue(tuple[1], width);
+        if (tuple[0].number == 100) {
+            absoluteX = getAbsoluteValue(tuple[0], width) - getAbsoluteValue(tuple[1], width);
+        }
+    }
+
+    if (tuple[2].type == TokenType.PERCENTAGE_TOKEN || isDimensionToken(tuple[2])) {
+        absoluteY = getAbsoluteValue(tuple[2], height) + getAbsoluteValue(tuple[3], height);
+        if (tuple[2].number == 100) {
+            absoluteY = getAbsoluteValue(tuple[2], height) - getAbsoluteValue(tuple[3], height);
+        }
     }
 
     return [absoluteX, absoluteY];
