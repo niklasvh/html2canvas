@@ -24,6 +24,7 @@ import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/in
 import {getQuote} from '../css/property-descriptors/quotes';
 import {Context} from '../core/context';
 import {DebuggerType, isDebugging} from '../core/debugger';
+import {serializeDoctype} from './serialize-doctype';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
@@ -130,7 +131,7 @@ export class DocumentCloner {
         });
 
         documentClone.open();
-        documentClone.write(`${serializeDoctype(document.doctype)}<html></html>`);
+        documentClone.write(serializeDoctype(document.doctype));
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         restoreOwnerScroll(this.referenceElement.ownerDocument, scrollX, scrollY);
         documentClone.replaceChild(documentClone.adoptNode(this.documentElement), documentClone.documentElement);
@@ -566,32 +567,6 @@ export const copyCSSStyles = <T extends HTMLElement | SVGElement>(style: CSSStyl
         }
     }
     return target;
-};
-
-const serializeDoctype = (doctype?: DocumentType | null): string => {
-    let str = '';
-    if (doctype) {
-        str += '<!DOCTYPE ';
-        if (doctype.name) {
-            str += doctype.name;
-        }
-
-        if (doctype.internalSubset) {
-            str += doctype.internalSubset;
-        }
-
-        if (doctype.publicId) {
-            str += `"${doctype.publicId}"`;
-        }
-
-        if (doctype.systemId) {
-            str += `"${doctype.systemId}"`;
-        }
-
-        str += '>';
-    }
-
-    return str;
 };
 
 const restoreOwnerScroll = (ownerDocument: Document | null, x: number, y: number) => {
