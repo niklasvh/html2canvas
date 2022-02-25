@@ -4,7 +4,7 @@ const htmlEscape = (str: string | null): string => {
   if (!str)
     return '';
 
-  const escaped = [];
+  let escaped: string = '';
   str.split('').forEach(char => {
     if (char == '&') {
       char = '&amp;';
@@ -17,13 +17,14 @@ const htmlEscape = (str: string | null): string => {
     } else if (char == '>') {
       char = '&gt;';
     }
-    escaped.push(char);
+    escaped += char;
   });
 
-  return escaped.join('');
+  return escaped;
 }
 
 const docRule: TrustedTypePolicyOptions = {
+  // @ts-ignore
   createHTML: (ignored: string, doctype?: DocumentType | null): string => {
     if (!doctype)
       return '<html></html>';
@@ -37,13 +38,11 @@ const docRule: TrustedTypePolicyOptions = {
   }
 }
 
-let doctypePolicy: TrustedTypePolicy | TrustedTypePolicyOptions;
+let doctypePolicy: TrustedTypePolicy | TrustedTypePolicyOptions = docRule;
 if ((window as any).trustedTypes) {
   doctypePolicy = (window as any).trustedTypes.createPolicy('html2canvas', docRule);
-} else {
-  doctypePolicy = docRule;
 }
 
 export const serializeDoctype = (doctype?: DocumentType | null): string => {
-  doctypePolicy.createHTML('', doctype);
+  return doctypePolicy.createHTML('', doctype);
 }
