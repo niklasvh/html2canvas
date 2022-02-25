@@ -23,9 +23,7 @@ const htmlEscape = (str: string | null): string => {
   return escaped;
 }
 
-const docRule: TrustedTypePolicyOptions = {
-  // @ts-ignore
-  createHTML: (ignored: string, doctype?: DocumentType | null): string => {
+const createDocType = (ignored: string, doctype?: DocumentType | null): string => {
     if (!doctype)
       return '<html></html>';
 
@@ -33,16 +31,21 @@ const docRule: TrustedTypePolicyOptions = {
     const internalSubset = htmlEscape(doctype.internalSubset);
     const publicId = `"${htmlEscape(doctype.publicId)}"`;
     const systemId = `"${htmlEscape(doctype.systemId)}"`;
-    
+
     return `<!DOCTYPE ${name}${internalSubset}${publicId}${systemId}><html></html>`;
-  }
 }
 
-let doctypePolicy: TrustedTypePolicy | TrustedTypePolicyOptions = docRule;
+let doctypePolicy: TrustedTypePolicy;
 if ((window as any).trustedTypes) {
-  doctypePolicy = (window as any).trustedTypes.createPolicy('html2canvas', docRule);
+  doctypePolicy = (window as any).trustedTypes.createPolicy('html2canvas', {
+    createHTML: createDocType
+  });
 }
 
-export const serializeDoctype = (doctype?: DocumentType | null): string => {
-  return doctypePolicy.createHTML('', doctype);
+export const serializeDoctype = (doctype?: DocumentType | null): string | TrustedHTML => {
+  if (doctypePolicy !== undefined) {
+    return doctypePolicy.createHTML('', doctype);
+  } else {
+    return createDocType('', doctype);
+  }
 }
