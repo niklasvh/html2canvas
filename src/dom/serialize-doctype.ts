@@ -38,7 +38,8 @@ const createDocType = (doctype?: DocumentType | null): string => {
 let doctypePolicy: TrustedTypePolicy;
 if ((window as any).trustedTypes) {
   doctypePolicy = (window as any).trustedTypes.createPolicy('html2canvas', {
-    createHTML: (ignored: string, doctype?: DocumentType | null): TrustedHTML => {
+    // @ts-ignore
+    createHTML: (ignored: string, doctype?: DocumentType | null): string => {
         return createDocType(doctype);
     }
   });
