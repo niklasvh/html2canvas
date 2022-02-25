@@ -23,8 +23,7 @@ const htmlEscape = (str: string | null): string => {
   return escaped;
 }
 
-// @ts-ignore
-const createDocType = (ignored: string, doctype?: DocumentType | null): string => {
+const createDocType = (doctype?: DocumentType | null): string => {
     if (!doctype)
       return '<html></html>';
 
@@ -39,7 +38,9 @@ const createDocType = (ignored: string, doctype?: DocumentType | null): string =
 let doctypePolicy: TrustedTypePolicy;
 if ((window as any).trustedTypes) {
   doctypePolicy = (window as any).trustedTypes.createPolicy('html2canvas', {
-    createHTML: createDocType
+    createHTML: (ignored: string, doctype?: DocumentType | null): TrustedHTML => {
+        return createDocType(doctype);
+    }
   });
 }
 
@@ -47,6 +48,6 @@ export const serializeDoctype = (doctype?: DocumentType | null): string | Truste
   if (doctypePolicy !== undefined) {
     return doctypePolicy.createHTML('', doctype);
   } else {
-    return createDocType('', doctype);
+    return createDocType(doctype);
   }
 }
