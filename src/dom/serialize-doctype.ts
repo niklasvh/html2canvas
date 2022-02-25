@@ -23,6 +23,7 @@ const htmlEscape = (str: string | null): string => {
   return escaped;
 }
 
+// @ts-ignore
 const createDocType = (ignored: string, doctype?: DocumentType | null): string => {
     if (!doctype)
       return '<html></html>';
