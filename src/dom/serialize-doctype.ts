@@ -30,8 +30,8 @@ const createDocType = (ignored: string, doctype?: DocumentType | null): string =
 
     const name = htmlEscape(doctype.name);
     const internalSubset = htmlEscape(doctype.internalSubset);
-    const publicId = `"${htmlEscape(doctype.publicId)}"`;
-    const systemId = `"${htmlEscape(doctype.systemId)}"`;
+    const publicId = doctype.publicId ? `"${htmlEscape(doctype.publicId)}"` : '';
+    const systemId = doctype.systemId ? `"${htmlEscape(doctype.systemId)}"` : '';
 
     return `<!DOCTYPE ${name}${internalSubset}${publicId}${systemId}><html></html>`;
 }
