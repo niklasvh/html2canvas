@@ -174,6 +174,7 @@ export class DocumentCloner {
 
     createCustomElementClone(node: HTMLElement): HTMLElement {
         const clone = document.createElement('html2canvascustomelement');
+        clone.setAttribute('html2-canvas-original-tag-name', node.tagName);
         copyCSSStyles(node.style, clone);
 
         return clone;
