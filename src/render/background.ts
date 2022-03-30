@@ -226,34 +226,34 @@ export const calculateBackgroundRepeatPath = (
     switch (repeat) {
         case BACKGROUND_REPEAT.REPEAT_X:
             return [
-                new Vector(Math.round(backgroundPositioningArea.left), Math.round(backgroundPositioningArea.top + y)),
+                new Vector(Math.round(backgroundPaintingArea.left), Math.round(backgroundPositioningArea.top + y)),
                 new Vector(
-                    Math.round(backgroundPositioningArea.left + backgroundPositioningArea.width),
+                    Math.round(backgroundPaintingArea.left + backgroundPaintingArea.width),
                     Math.round(backgroundPositioningArea.top + y)
                 ),
                 new Vector(
-                    Math.round(backgroundPositioningArea.left + backgroundPositioningArea.width),
+                    Math.round(backgroundPaintingArea.left + backgroundPaintingArea.width),
                     Math.round(height + backgroundPositioningArea.top + y)
                 ),
                 new Vector(
-                    Math.round(backgroundPositioningArea.left),
+                    Math.round(backgroundPaintingArea.left),
                     Math.round(height + backgroundPositioningArea.top + y)
                 )
             ];
         case BACKGROUND_REPEAT.REPEAT_Y:
             return [
-                new Vector(Math.round(backgroundPositioningArea.left + x), Math.round(backgroundPositioningArea.top)),
+                new Vector(Math.round(backgroundPositioningArea.left + x), Math.round(backgroundPaintingArea.top)),
                 new Vector(
                     Math.round(backgroundPositioningArea.left + x + width),
-                    Math.round(backgroundPositioningArea.top)
+                    Math.round(backgroundPaintingArea.top)
                 ),
                 new Vector(
                     Math.round(backgroundPositioningArea.left + x + width),
-                    Math.round(backgroundPositioningArea.height + backgroundPositioningArea.top)
+                    Math.round(backgroundPaintingArea.height + backgroundPaintingArea.top)
                 ),
                 new Vector(
                     Math.round(backgroundPositioningArea.left + x),
-                    Math.round(backgroundPositioningArea.height + backgroundPositioningArea.top)
+                    Math.round(backgroundPaintingArea.height + backgroundPaintingArea.top)
                 )
             ];
         case BACKGROUND_REPEAT.NO_REPEAT:
