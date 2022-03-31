@@ -25,7 +25,7 @@ const parseNodeTree = (context: Context, node: Node, parent: ElementContainer, r
                 childNode.assignedNodes().forEach((childNode) => parseNodeTree(context, childNode, parent, root));
             } else {
                 const container = createContainer(context, childNode);
-                if (container.styles.isVisible()) {
+                if (container.styles.isChildVisible()) {
                     if (createsRealStackingContext(childNode, container, root)) {
                         container.flags |= FLAGS.CREATES_REAL_STACKING_CONTEXT;
                     } else if (createsStackingContext(container.styles)) {
