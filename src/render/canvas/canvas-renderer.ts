@@ -128,7 +128,7 @@ export class CanvasRenderer extends Renderer {
 
     async renderStack(stack: StackingContext): Promise<void> {
         const styles = stack.element.container.styles;
-        if (styles.isVisible()) {
+        if (styles.isChildVisible()) {
             await this.renderStackContent(stack);
         }
     }
@@ -476,7 +476,10 @@ export class CanvasRenderer extends Renderer {
         }
         // https://www.w3.org/TR/css-position-3/#painting-order
         // 1. the background and borders of the element forming the stacking context.
-        await this.renderNodeBackgroundAndBorders(stack.element);
+        const styles = stack.element.container.styles;
+        if (styles.isVisible()) {
+            await this.renderNodeBackgroundAndBorders(stack.element);
+        }
         // 2. the child stacking contexts with negative stack levels (most negative first).
         for (const child of stack.negativeZIndex) {
             await this.renderStack(child);

@@ -231,6 +231,10 @@ export class CSSParsedDeclaration {
         return this.display > 0 && this.opacity > 0 && this.visibility === VISIBILITY.VISIBLE;
     }
 
+    isChildVisible(): boolean {
+        return this.display > 0 && this.opacity > 0;
+    }
+
     isTransparent(): boolean {
         return isTransparent(this.backgroundColor);
     }
