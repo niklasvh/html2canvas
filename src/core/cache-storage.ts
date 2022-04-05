@@ -172,6 +172,6 @@ const INLINE_IMG = /^data:image\/.*/i;
 const isRenderable = (src: string): boolean => FEATURES.SUPPORT_SVG_DRAWING || !isSVG(src);
 const isInlineImage = (src: string): boolean => INLINE_IMG.test(src);
 const isInlineBase64Image = (src: string): boolean => INLINE_BASE64.test(src);
-const isBlobImage = (src: string): boolean => src.substr(0, 4) === 'blob';
+const isBlobImage = (src: string): boolean => src.slice(0, 4) === 'blob';
 
-const isSVG = (src: string): boolean => src.substr(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
+const isSVG = (src: string): boolean => src.slice(-3).toLowerCase() === 'svg' || INLINE_SVG.test(src);
