@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/niklasvh/html2canvas/compare/v1.4.0...v1.4.1) (2022-01-22)
+
+
+### deps
+
+* fix source maps (#2812) ([67c5e8d](https://github.com/niklasvh/html2canvas/commit/67c5e8dec4b2af9260a2b5b75b3399495fd1fee9)), closes [#2812](https://github.com/niklasvh/html2canvas/issues/2812)
+
+### feat
+
+* add support for `<video>` elements (#2788) ([181d1b1](https://github.com/niklasvh/html2canvas/commit/181d1b1103910d6e1b5277d5c007fc5e3006c6bf)), closes [#2788](https://github.com/niklasvh/html2canvas/issues/2788)
+
+### fix
+
+* Properties x and y of BoundingRect is undefined in old browser (#2797) ([e587a82](https://github.com/niklasvh/html2canvas/commit/e587a82dca01d9ada78cae34fd1bdb934e547f9b)), closes [#2797](https://github.com/niklasvh/html2canvas/issues/2797)
+* source maps (#2787) ([46db867](https://github.com/niklasvh/html2canvas/commit/46db86755f064828559a4b0b37310f3ae94f5494)), closes [#2787](https://github.com/niklasvh/html2canvas/issues/2787)
+
+
+
+# [1.4.0](https://github.com/niklasvh/html2canvas/compare/v1.3.4...v1.4.0) (2022-01-01)
+
+
+### feat
+
+* use native text segmenter where available (#2782) ([6521a48](https://github.com/niklasvh/html2canvas/commit/6521a487d78172f7179f7c973c1a3af40eb92009)), closes [#2782](https://github.com/niklasvh/html2canvas/issues/2782)
+
+### fix
+
+* adopted stylesheets (#2785) ([74696fa](https://github.com/niklasvh/html2canvas/commit/74696faf47c07b48b9c9587db0b999da1c08a8be)), closes [#2785](https://github.com/niklasvh/html2canvas/issues/2785)
+* ios text wrapping with 0 width rect (#2786) ([0476d06](https://github.com/niklasvh/html2canvas/commit/0476d065158c33d2020a9f602b3043e5e2f90c75)), closes [#2786](https://github.com/niklasvh/html2canvas/issues/2786)
+* reduce SLICE_STACK_SIZE to 50k (#2784) ([1cc853a](https://github.com/niklasvh/html2canvas/commit/1cc853a3186853eaca00af060f651697dc3497a9)), closes [#2784](https://github.com/niklasvh/html2canvas/issues/2784)
+
+
+
+## [1.3.4](https://github.com/niklasvh/html2canvas/compare/v1.3.3...v1.3.4) (2021-12-29)
+
+
+### ci
+
+* add ios 15.0 testing (#2780) ([d922207](https://github.com/niklasvh/html2canvas/commit/d9222075daaed08884491b0563fc899ee0ced731)), closes [#2780](https://github.com/niklasvh/html2canvas/issues/2780)
+
+### fix
+
+* ios 15 font rendering crash (#2645) ([ba2b1cd](https://github.com/niklasvh/html2canvas/commit/ba2b1cd8e9a9d7932675d7abffce1526a609e769)), closes [#2645](https://github.com/niklasvh/html2canvas/issues/2645)
+
+
+
 ## [1.3.3](https://github.com/niklasvh/html2canvas/compare/v1.3.2...v1.3.3) (2021-11-23)
 
 

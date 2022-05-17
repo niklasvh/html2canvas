@@ -30,7 +30,7 @@ export default {
         // Allow json resolution
         json(),
         // Compile TypeScript files
-        typescript(),
+        typescript({ sourceMap: true, inlineSources: true }),
         // Allow bundling cjs modules (unlike webpack, rollup doesn't understand cjs)
         commonjs({
             include: 'node_modules/**'

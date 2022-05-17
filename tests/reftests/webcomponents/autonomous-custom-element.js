@@ -40,6 +40,10 @@ class AutonomousCustomElement extends HTMLElement {
         wrapper.appendChild(img);
         wrapper.appendChild(info);
     }
+
+    connectedCallback() {
+        this.shadowRoot.adoptedStyleSheets = [sheet];
+    }
 }
 
 customElements.define('autonomous-custom-element', AutonomousCustomElement);
