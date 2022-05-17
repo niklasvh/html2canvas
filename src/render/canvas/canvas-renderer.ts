@@ -189,6 +189,7 @@ export class CanvasRenderer extends Renderer {
                 switch (paintOrderLayer) {
                     case PAINT_ORDER_LAYER.FILL:
                         this.ctx.fillStyle = asString(styles.color);
+                        this.ctx.globalCompositeOperation = styles.mixBlendMode;
                         this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
                         const textShadows: TextShadow = styles.textShadow;
 
@@ -276,6 +277,7 @@ export class CanvasRenderer extends Renderer {
             this.path(path);
             this.ctx.save();
             this.ctx.clip();
+            this.ctx.globalCompositeOperation = container.styles.mixBlendMode;
             this.ctx.drawImage(
                 image,
                 0,
@@ -714,6 +716,7 @@ export class CanvasRenderer extends Renderer {
 
             if (!isTransparent(styles.backgroundColor)) {
                 this.ctx.fillStyle = asString(styles.backgroundColor);
+                this.ctx.globalCompositeOperation = styles.mixBlendMode;
                 this.ctx.fill();
             }
 

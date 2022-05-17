@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mix Blend Mode tests</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script type="text/javascript" src="../test.js"></script>
+        <style>
+            .circle {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                position: absolute;
+            }
+            .circle-1 {
+                background: red;
+            }
+            .circle-2 {
+                background: green;
+                left: 40px;
+            }
+            .circle-3 {
+                background: skyblue;
+                left: 20px;
+                top: 40px;
+            }
+            .container {
+                position: relative;
+                border: 1px solid purple;
+                margin-bottom: 5px;
+            }
+            .bg-image {
+                position: relative;
+                background-image: url('../assets/image.jpg');
+                width: 120px;
+                height: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <p>Green circle: mix-blend-mode: screen</p>
+            <p>Blue circle: mix-blend-mode: color-burn</p>
+            <div style="height: 120px; position: relative; background-color: gray;">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2" style="mix-blend-mode: screen"></div>
+                <div class="circle circle-3" style="mix-blend-mode: color-burn"></div>
+            </div>
+        </div>
+        <div class="container">
+            <p>Red background with mix-blend-mode: overlay over a background image</p>
+            <div class="bg-image">
+                <div
+                    style="
+                        position: absolute;
+                        height: 100%;
+                        width: 100%;
+                        background-color: red;
+                        mix-blend-mode: overlay;
+                    "
+                ></div>
+            </div>
+        </div>
+        <div class="container" style="background-color: green">
+            <p>Image with mix-blend-mode: multiply</p>
+            <img src="../assets/image2.jpg" style="mix-blend-mode: multiply" />
+        </div>
+        <div class="container" style="height: 120px; background-color: white;">
+            <div class="circle" style="position: relative; display: inline-block; background-color: red"></div>
+            <div class="circle" style="position: relative; display: inline-block; background-color: blue"></div>
+            <div class="circle" style="position: relative; display: inline-block; background-color: green"></div>
+            <div class="circle" style="position: relative; display: inline-block; background-color: yellow"></div>
+            <div class="circle" style="position: relative; display: inline-block; background-color: darkblue"></div>
+            <div class="circle" style="position: relative; display: inline-block; background-image: url('../assets/image2_1.jpg')"></div>
+            <p style="mix-blend-mode: color; font-weight: 900; font-size: x-large; position: absolute; top: 0;">
+                mix-blend-mode: color; Large text over background colors.
+            </p>
+        </div>
+    </body>
+</html>

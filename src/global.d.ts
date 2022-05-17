@@ -2,6 +2,7 @@ interface CSSStyleDeclaration {
     textDecorationColor: string;
     textDecorationLine: string;
     overflowWrap: string;
+    mixBlendMode: string;
 }
 
 interface DocumentType extends Node, ChildNode {
