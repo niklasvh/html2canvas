@@ -37,25 +37,24 @@ export class FontMetrics {
 
         img.style.margin = '0';
         img.style.padding = '0';
+        img.style.display = 'inline';
         img.style.verticalAlign = 'baseline';
 
         span.style.fontFamily = fontFamily;
         span.style.fontSize = fontSize;
         span.style.margin = '0';
         span.style.padding = '0';
+        span.style.display = 'inline';
 
         span.appendChild(this._document.createTextNode(SAMPLE_TEXT));
         container.appendChild(span);
         container.appendChild(img);
         const baseline = img.offsetTop - span.offsetTop + 2;
 
-        container.removeChild(span);
-        container.appendChild(this._document.createTextNode(SAMPLE_TEXT));
-
         container.style.lineHeight = 'normal';
         img.style.verticalAlign = 'super';
 
-        const middle = img.offsetTop - container.offsetTop + 2;
+        const middle = img.offsetTop - span.offsetTop + 2;
 
         body.removeChild(container);
 
