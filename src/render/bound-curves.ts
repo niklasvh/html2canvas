@@ -1,8 +1,9 @@
 import {ElementContainer} from '../dom/element-container';
-import {getAbsoluteValue, getAbsoluteValueForTuple, getAbsoluteValueForDimension} from '../css/types/length-percentage';
+import {getAbsoluteValue, getAbsoluteValueForDimension, getAbsoluteValueForTuple} from '../css/types/length-percentage';
 import {Vector} from './vector';
 import {BezierCurve} from './bezier-curve';
 import {Path} from './path';
+import {TokenType} from '../css/syntax/tokenizer';
 
 export class BoundCurves {
     readonly topLeftBorderDoubleOuterBox: Path;
@@ -76,16 +77,19 @@ export class BoundCurves {
         const paddingBottom = getAbsoluteValue(styles.paddingBottom, element.bounds.width);
         const paddingLeft = getAbsoluteValue(styles.paddingLeft, element.bounds.width);
 
-        let rectClipTop = 0;
-        let rectClipRight = 0;
-        let rectClipBottom = 0;
-        let rectClipLeft = 0;
-        if (styles.clip) {
-            rectClipTop = getAbsoluteValueForDimension(styles.clip.top);
-            rectClipRight = getAbsoluteValueForDimension(styles.clip.right);
-            rectClipBottom = getAbsoluteValueForDimension(styles.clip.bottom);
-            rectClipLeft = getAbsoluteValueForDimension(styles.clip.left);
-        }
+        const rectClipTop =
+            styles.clip?.top.type == TokenType.DIMENSION_TOKEN ? getAbsoluteValueForDimension(styles.clip.top) : 0;
+        const rectClipLeft =
+            styles.clip?.left.type == TokenType.DIMENSION_TOKEN ? getAbsoluteValueForDimension(styles.clip.left) : 0;
+
+        const rectClipBottom =
+            styles.clip?.bottom.type == TokenType.DIMENSION_TOKEN
+                ? getAbsoluteValueForDimension(styles.clip.bottom)
+                : bounds.height;
+        const rectClipRight =
+            styles.clip?.right.type == TokenType.DIMENSION_TOKEN
+                ? getAbsoluteValueForDimension(styles.clip.right)
+                : bounds.width;
 
         this.topLeftBorderDoubleOuterBox =
             tlh > 0 || tlv > 0

@@ -97,6 +97,11 @@ export interface DimensionToken extends IToken {
     number: number;
 }
 
+export interface AutoIdentToken extends IToken {
+    type: TokenType.IDENT_TOKEN;
+    value: 'auto';
+}
+
 export interface UnicodeRangeToken extends IToken {
     type: TokenType.UNICODE_RANGE_TOKEN;
     start: number;
