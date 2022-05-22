@@ -1,6 +1,6 @@
 import {ElementContainer, FLAGS} from '../dom/element-container';
 import {contains} from '../core/bitwise';
-import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
+import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath, calculateRectClipPath} from './bound-curves';
 import {ClipEffect, EffectTarget, IElementEffect, isClipEffect, OpacityEffect, TransformEffect} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
@@ -61,6 +61,12 @@ export class ElementPaint {
                 this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
             }
         }
+
+        if (this.container.styles.clip) {
+            const clipBox = calculateRectClipPath(this.curves);
+            const clipEffect = new ClipEffect(clipBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT);
+            this.effects.push(clipEffect);
+        }
     }
 
     getEffects(target: EffectTarget): IElementEffect[] {
@@ -80,6 +86,11 @@ export class ElementPaint {
                             new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
                         );
                     }
+                }
+                if (parent.container.styles.clip) {
+                    const clipBox = calculateRectClipPath(parent.curves);
+                    const clipEffect = new ClipEffect(clipBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT);
+                    effects.unshift(clipEffect);
                 }
             } else {
                 effects.unshift(...croplessEffects);

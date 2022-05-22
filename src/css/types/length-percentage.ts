@@ -40,15 +40,18 @@ export const getAbsoluteValue = (token: LengthPercentage, parent: number): numbe
     }
 
     if (isDimensionToken(token)) {
-        switch (token.unit) {
-            case 'rem':
-            case 'em':
-                return 16 * token.number; // TODO use correct font-size
-            case 'px':
-            default:
-                return token.number;
-        }
+        return getAbsoluteValueForDimension(token);
     }
 
     return token.number;
+};
+export const getAbsoluteValueForDimension = (token: DimensionToken): number => {
+    switch (token.unit) {
+        case 'rem':
+        case 'em':
+            return 16 * token.number; // TODO use correct font-size
+        case 'px':
+        default:
+            return token.number;
+    }
 };

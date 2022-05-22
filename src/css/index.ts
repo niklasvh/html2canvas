@@ -30,6 +30,7 @@ import {
     borderRightWidth,
     borderTopWidth
 } from './property-descriptors/border-width';
+import {clip} from './property-descriptors/clip';
 import {color} from './property-descriptors/color';
 import {direction} from './property-descriptors/direction';
 import {display, DISPLAY} from './property-descriptors/display';
@@ -107,6 +108,7 @@ export class CSSParsedDeclaration {
     borderBottomWidth: ReturnType<typeof borderBottomWidth.parse>;
     borderLeftWidth: ReturnType<typeof borderLeftWidth.parse>;
     boxShadow: ReturnType<typeof boxShadow.parse>;
+    clip: ReturnType<typeof clip.parse>;
     color: Color;
     direction: ReturnType<typeof direction.parse>;
     display: ReturnType<typeof display.parse>;
@@ -225,6 +227,12 @@ export class CSSParsedDeclaration {
         this.webkitTextStrokeWidth = parse(context, webkitTextStrokeWidth, declaration.webkitTextStrokeWidth);
         this.wordBreak = parse(context, wordBreak, declaration.wordBreak);
         this.zIndex = parse(context, zIndex, declaration.zIndex);
+
+        if (this.position == POSITION.ABSOLUTE || this.position == POSITION.FIXED) {
+            this.clip = parse(context, clip, declaration.clip);
+        } else {
+            this.clip = null;
+        }
     }
 
     isVisible(): boolean {

@@ -1,5 +1,5 @@
 import {ElementContainer} from '../dom/element-container';
-import {getAbsoluteValue, getAbsoluteValueForTuple} from '../css/types/length-percentage';
+import {getAbsoluteValue, getAbsoluteValueForTuple, getAbsoluteValueForDimension} from '../css/types/length-percentage';
 import {Vector} from './vector';
 import {BezierCurve} from './bezier-curve';
 import {Path} from './path';
@@ -21,6 +21,10 @@ export class BoundCurves {
     readonly topRightBorderBox: Path;
     readonly bottomRightBorderBox: Path;
     readonly bottomLeftBorderBox: Path;
+    readonly topLeftClipBox: Path;
+    readonly topRightClipBox: Path;
+    readonly bottomRightClipBox: Path;
+    readonly bottomLeftClipBox: Path;
     readonly topLeftPaddingBox: Path;
     readonly topRightPaddingBox: Path;
     readonly bottomRightPaddingBox: Path;
@@ -71,6 +75,17 @@ export class BoundCurves {
         const paddingRight = getAbsoluteValue(styles.paddingRight, element.bounds.width);
         const paddingBottom = getAbsoluteValue(styles.paddingBottom, element.bounds.width);
         const paddingLeft = getAbsoluteValue(styles.paddingLeft, element.bounds.width);
+
+        let rectClipTop = 0;
+        let rectClipRight = 0;
+        let rectClipBottom = 0;
+        let rectClipLeft = 0;
+        if (styles.clip) {
+            rectClipTop = getAbsoluteValueForDimension(styles.clip.top);
+            rectClipRight = getAbsoluteValueForDimension(styles.clip.right);
+            rectClipBottom = getAbsoluteValueForDimension(styles.clip.bottom);
+            rectClipLeft = getAbsoluteValueForDimension(styles.clip.left);
+        }
 
         this.topLeftBorderDoubleOuterBox =
             tlh > 0 || tlv > 0
@@ -223,6 +238,10 @@ export class BoundCurves {
             blh > 0 || blv > 0
                 ? getCurvePoints(bounds.left, bounds.top + leftHeight, blh, blv, CORNER.BOTTOM_LEFT)
                 : new Vector(bounds.left, bounds.top + bounds.height);
+        this.topLeftClipBox = new Vector(bounds.left + rectClipLeft, bounds.top + rectClipTop);
+        this.topRightClipBox = new Vector(bounds.left + rectClipRight, bounds.top + rectClipTop);
+        this.bottomRightClipBox = new Vector(bounds.left + rectClipRight, bounds.top + rectClipBottom);
+        this.bottomLeftClipBox = new Vector(bounds.left + rectClipLeft, bounds.top + rectClipBottom);
         this.topLeftPaddingBox =
             tlh > 0 || tlv > 0
                 ? getCurvePoints(
@@ -367,6 +386,10 @@ const getCurvePoints = (x: number, y: number, r1: number, r2: number, position: 
 
 export const calculateBorderBoxPath = (curves: BoundCurves): Path[] => {
     return [curves.topLeftBorderBox, curves.topRightBorderBox, curves.bottomRightBorderBox, curves.bottomLeftBorderBox];
+};
+
+export const calculateRectClipPath = (curves: BoundCurves): Path[] => {
+    return [curves.topLeftClipBox, curves.topRightClipBox, curves.bottomRightClipBox, curves.bottomLeftClipBox];
 };
 
 export const calculateContentBoxPath = (curves: BoundCurves): Path[] => {
