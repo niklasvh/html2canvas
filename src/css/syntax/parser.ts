@@ -1,4 +1,5 @@
 import {
+    AutoIdentToken,
     CSSToken,
     DimensionToken,
     EOF_TOKEN,
@@ -145,6 +146,7 @@ export const isDimensionToken = (token: CSSValue): token is DimensionToken => to
 export const isNumberToken = (token: CSSValue): token is NumberValueToken => token.type === TokenType.NUMBER_TOKEN;
 export const isIdentToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.IDENT_TOKEN;
 export const isStringToken = (token: CSSValue): token is StringValueToken => token.type === TokenType.STRING_TOKEN;
+export const isAutoIdentToken = (token: CSSValue): token is AutoIdentToken => isIdentWithValue(token, 'auto');
 export const isIdentWithValue = (token: CSSValue, value: string): boolean =>
     isIdentToken(token) && token.value === value;
 

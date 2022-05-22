@@ -24,6 +24,7 @@ Below is a list of all the supported CSS properties and values.
  - box-sizing
  - content
  - color
+ - clip
  - display
  - flex
  - float
