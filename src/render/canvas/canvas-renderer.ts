@@ -44,6 +44,7 @@ import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
 import {DIRECTION} from '../../css/property-descriptors/direction';
+import {calculateObjectFitBounds} from '../object-fit';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -274,18 +275,25 @@ export class CanvasRenderer extends Renderer {
             const box = contentBox(container);
             const path = calculatePaddingBoxPath(curves);
             this.path(path);
+            const {src, dest} = calculateObjectFitBounds(
+                container.styles.objectFit,
+                container.intrinsicWidth,
+                container.intrinsicHeight,
+                box.width,
+                box.height
+            );
             this.ctx.save();
             this.ctx.clip();
             this.ctx.drawImage(
                 image,
-                0,
-                0,
-                container.intrinsicWidth,
-                container.intrinsicHeight,
-                box.left,
-                box.top,
-                box.width,
-                box.height
+                src.left,
+                src.top,
+                src.width,
+                src.height,
+                box.left + dest.left,
+                box.top + dest.top,
+                dest.width,
+                dest.height
             );
             this.ctx.restore();
         }

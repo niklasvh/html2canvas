@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image tests for 'object-fit'</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../test.js"></script>
+  </head>
+  <body>
+    <!-- same size -->
+    <img src="../../assets/image.jpg" style="object-fit: contain;width:75px;height:75px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: cover;width:75px;height:75px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: fill;width:75px;height:75px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: none;width:75px;height:75px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: scale-down;width:75px;height:75px;border:5px solid black;" />
+
+    <!-- larger size -->
+    <img src="../../assets/image.jpg" style="object-fit: contain;width:250px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: cover;width:250px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: fill;width:250px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: none;width:250px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: scale-down;width:250px;height:150px;border:5px solid black;" />
+
+    <!-- larger width, smaller height -->
+    <img src="../../assets/image.jpg" style="object-fit: contain;width:250px;height:50px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: cover;width:250px;height:50px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: fill;width:250px;height:50px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: none;width:250px;height:50px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: scale-down;width:250px;height:50px;border:5px solid black;" />
+
+    <!-- smaller width, larger height -->
+    <img src="../../assets/image.jpg" style="object-fit: contain;width:50px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: cover;width:50px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: fill;width:50px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: none;width:50px;height:150px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: scale-down;width:50px;height:150px;border:5px solid black;" />
+
+    <!-- smaller size -->
+    <img src="../../assets/image.jpg" style="object-fit: contain;width:60px;height:40px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: cover;width:60px;height:40px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: fill;width:60px;height:40px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: none;width:60px;height:40px;border:5px solid black;" />
+    <img src="../../assets/image.jpg" style="object-fit: scale-down;width:60px;height:40px;border:5px solid black;" />
+  </body>
+</html>
