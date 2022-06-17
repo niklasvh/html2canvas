@@ -28,7 +28,7 @@ export const calculateObjectFitBounds = (
         objectFit =
             naturalWidth < clientWidth && naturalHeight < clientHeight
                 ? OBJECT_FIT.NONE // src is smaller on both axes
-                : OBJECT_FIT.CONTAIN; // at least one axes is greater or equal in size
+                : OBJECT_FIT.CONTAIN; // at least one axis is greater or equal in size
     }
 
     switch (objectFit) {
