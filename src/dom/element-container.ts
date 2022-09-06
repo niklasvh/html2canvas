@@ -16,7 +16,7 @@ export class ElementContainer {
     readonly styles: CSSParsedDeclaration;
     readonly textNodes: TextContainer[] = [];
     readonly elements: ElementContainer[] = [];
-    bounds: Bounds;
+    bounds: Bounds[];
     flags = 0;
 
     constructor(protected readonly context: Context, element: Element) {

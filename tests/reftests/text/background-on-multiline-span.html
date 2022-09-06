@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Background on multiline span</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script type="text/javascript" src="../../test.js"></script>
+  <style>
+    div {
+      padding: 20px;
+      margin: 0 auto;
+      border: 5px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <p class="MsoNormal"><span style="font-weight: 700;"><span style="font-size: 12pt;">bold 1 no
+          highlighting&nbsp;</span></span><span style="font-weight: 700;"><span style="font-size: 12pt;">bold 2 still no
+          highlighting</span></span><span style="font-size: 12pt; color: black;">&nbsp;<span
+          style="background: rgb(200, 193, 49);border-radius: 16px;border: 1px solid;">test inline stuff with background
+          that is long enough to go onto a
+          second line. this is just some extra stuff to get it to flow over to a new line.</span>&nbsp; stuff that is
+        being blanked out. <span style="font-weight: 700;">More bold stuff that shouldn't be highlighted</span></span>
+    </p>
+  </div>
+</body>
+
+</html>

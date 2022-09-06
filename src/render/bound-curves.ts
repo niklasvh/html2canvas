@@ -1,8 +1,11 @@
 import {ElementContainer} from '../dom/element-container';
-import {getAbsoluteValue, getAbsoluteValueForTuple} from '../css/types/length-percentage';
+import {getAbsoluteValue, getAbsoluteValueForTuple, parseLengthPercentageTuple} from '../css/types/length-percentage';
 import {Vector} from './vector';
 import {BezierCurve} from './bezier-curve';
 import {Path} from './path';
+import {Bounds} from '../css/layout/bounds';
+import {CSSParsedDeclaration} from '../css';
+import {TokenType} from '../css/syntax/tokenizer';
 
 export class BoundCurves {
     readonly topLeftBorderDoubleOuterBox: Path;
@@ -29,15 +32,53 @@ export class BoundCurves {
     readonly topRightContentBox: Path;
     readonly bottomRightContentBox: Path;
     readonly bottomLeftContentBox: Path;
+    readonly isFirstBoundOfElement: boolean;
+    readonly isLastBoundOfElement: boolean;
 
-    constructor(element: ElementContainer) {
-        const styles = element.styles;
-        const bounds = element.bounds;
+    static fromElementContainer(element: ElementContainer): BoundCurves[] {
+        const lastIndex = element.bounds.length - 1;
+        return element.bounds.map((bound, index) => {
+            return new BoundCurves(bound, element.styles, index === 0, index === lastIndex);
+        });
+    }
 
-        let [tlh, tlv] = getAbsoluteValueForTuple(styles.borderTopLeftRadius, bounds.width, bounds.height);
-        let [trh, trv] = getAbsoluteValueForTuple(styles.borderTopRightRadius, bounds.width, bounds.height);
-        let [brh, brv] = getAbsoluteValueForTuple(styles.borderBottomRightRadius, bounds.width, bounds.height);
-        let [blh, blv] = getAbsoluteValueForTuple(styles.borderBottomLeftRadius, bounds.width, bounds.height);
+    private static NoRadiusPercentage = parseLengthPercentageTuple([
+        {
+            type: TokenType.DIMENSION_TOKEN,
+            flags: 0,
+            unit: 'px',
+            number: 0
+        }
+    ]);
+
+    constructor(
+        bounds: Bounds,
+        styles: CSSParsedDeclaration,
+        isFirstBoundOfElement: boolean,
+        isLastBoundOfElement: boolean
+    ) {
+        this.isFirstBoundOfElement = isFirstBoundOfElement;
+        this.isLastBoundOfElement = isLastBoundOfElement;
+        let [tlh, tlv] = getAbsoluteValueForTuple(
+            this.isFirstBoundOfElement ? styles.borderTopLeftRadius : BoundCurves.NoRadiusPercentage,
+            bounds.width,
+            bounds.height
+        );
+        let [trh, trv] = getAbsoluteValueForTuple(
+            this.isLastBoundOfElement ? styles.borderTopRightRadius : BoundCurves.NoRadiusPercentage,
+            bounds.width,
+            bounds.height
+        );
+        let [brh, brv] = getAbsoluteValueForTuple(
+            this.isLastBoundOfElement ? styles.borderBottomRightRadius : BoundCurves.NoRadiusPercentage,
+            bounds.width,
+            bounds.height
+        );
+        let [blh, blv] = getAbsoluteValueForTuple(
+            this.isFirstBoundOfElement ? styles.borderBottomLeftRadius : BoundCurves.NoRadiusPercentage,
+            bounds.width,
+            bounds.height
+        );
 
         const factors = [];
         factors.push((tlh + trh) / bounds.width);
@@ -67,10 +108,10 @@ export class BoundCurves {
         const borderBottomWidth = styles.borderBottomWidth;
         const borderLeftWidth = styles.borderLeftWidth;
 
-        const paddingTop = getAbsoluteValue(styles.paddingTop, element.bounds.width);
-        const paddingRight = getAbsoluteValue(styles.paddingRight, element.bounds.width);
-        const paddingBottom = getAbsoluteValue(styles.paddingBottom, element.bounds.width);
-        const paddingLeft = getAbsoluteValue(styles.paddingLeft, element.bounds.width);
+        const paddingTop = getAbsoluteValue(styles.paddingTop, bounds.width);
+        const paddingRight = getAbsoluteValue(styles.paddingRight, bounds.width);
+        const paddingBottom = getAbsoluteValue(styles.paddingBottom, bounds.width);
+        const paddingLeft = getAbsoluteValue(styles.paddingLeft, bounds.width);
 
         this.topLeftBorderDoubleOuterBox =
             tlh > 0 || tlv > 0

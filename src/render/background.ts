@@ -13,7 +13,7 @@ import {BACKGROUND_CLIP} from '../css/property-descriptors/background-clip';
 export const calculateBackgroundPositioningArea = (
     backgroundOrigin: BACKGROUND_ORIGIN,
     element: ElementContainer
-): Bounds => {
+): Bounds[] => {
     if (backgroundOrigin === BACKGROUND_ORIGIN.BORDER_BOX) {
         return element.bounds;
     }
@@ -25,7 +25,10 @@ export const calculateBackgroundPositioningArea = (
     return paddingBox(element);
 };
 
-export const calculateBackgroundPaintingArea = (backgroundClip: BACKGROUND_CLIP, element: ElementContainer): Bounds => {
+export const calculateBackgroundPaintingArea = (
+    backgroundClip: BACKGROUND_CLIP,
+    element: ElementContainer
+): Bounds[] => {
     if (backgroundClip === BACKGROUND_CLIP.BORDER_BOX) {
         return element.bounds;
     }
@@ -41,43 +44,46 @@ export const calculateBackgroundRendering = (
     container: ElementContainer,
     index: number,
     intrinsicSize: [number | null, number | null, number | null]
-): [Path[], number, number, number, number] => {
-    const backgroundPositioningArea = calculateBackgroundPositioningArea(
+): [Path[], number, number, number, number][] => {
+    const backgroundPositioningAreas = calculateBackgroundPositioningArea(
         getBackgroundValueForIndex(container.styles.backgroundOrigin, index),
         container
     );
 
-    const backgroundPaintingArea = calculateBackgroundPaintingArea(
+    const backgroundPaintingAreas = calculateBackgroundPaintingArea(
         getBackgroundValueForIndex(container.styles.backgroundClip, index),
         container
     );
 
-    const backgroundImageSize = calculateBackgroundSize(
+    const backgroundImageSizes = calculateBackgroundSize(
         getBackgroundValueForIndex(container.styles.backgroundSize, index),
         intrinsicSize,
-        backgroundPositioningArea
+        backgroundPositioningAreas
     );
 
-    const [sizeWidth, sizeHeight] = backgroundImageSize;
+    return backgroundPositioningAreas.map((backgroundPositioningArea, positionIndex) => {
+        const backgroundImageSize = backgroundImageSizes[positionIndex];
+        const [sizeWidth, sizeHeight] = backgroundImageSize;
 
-    const position = getAbsoluteValueForTuple(
-        getBackgroundValueForIndex(container.styles.backgroundPosition, index),
-        backgroundPositioningArea.width - sizeWidth,
-        backgroundPositioningArea.height - sizeHeight
-    );
+        const position = getAbsoluteValueForTuple(
+            getBackgroundValueForIndex(container.styles.backgroundPosition, index),
+            backgroundPositioningArea.width - sizeWidth,
+            backgroundPositioningArea.height - sizeHeight
+        );
 
-    const path = calculateBackgroundRepeatPath(
-        getBackgroundValueForIndex(container.styles.backgroundRepeat, index),
-        position,
-        backgroundImageSize,
-        backgroundPositioningArea,
-        backgroundPaintingArea
-    );
+        const path = calculateBackgroundRepeatPath(
+            getBackgroundValueForIndex(container.styles.backgroundRepeat, index),
+            position,
+            backgroundImageSize,
+            backgroundPositioningArea,
+            backgroundPaintingAreas[positionIndex]
+        );
 
-    const offsetX = Math.round(backgroundPositioningArea.left + position[0]);
-    const offsetY = Math.round(backgroundPositioningArea.top + position[1]);
+        const offsetX = Math.round(backgroundPositioningArea.left + position[0]);
+        const offsetY = Math.round(backgroundPositioningArea.top + position[1]);
 
-    return [path, offsetX, offsetY, sizeWidth, sizeHeight];
+        return [path, offsetX, offsetY, sizeWidth, sizeHeight];
+    });
 };
 
 export const isAuto = (token: CSSValue): boolean => isIdentToken(token) && token.value === BACKGROUND_SIZE.AUTO;
@@ -87,30 +93,34 @@ const hasIntrinsicValue = (value: number | null): value is number => typeof valu
 export const calculateBackgroundSize = (
     size: BackgroundSizeInfo[],
     [intrinsicWidth, intrinsicHeight, intrinsicProportion]: [number | null, number | null, number | null],
-    bounds: Bounds
-): [number, number] => {
+    bounds: Bounds[]
+): [number, number][] => {
     const [first, second] = size;
 
     if (!first) {
-        return [0, 0];
+        return bounds.map(() => [0, 0]);
     }
 
     if (isLengthPercentage(first) && second && isLengthPercentage(second)) {
-        return [getAbsoluteValue(first, bounds.width), getAbsoluteValue(second, bounds.height)];
+        return bounds.map((bound) => {
+            return [getAbsoluteValue(first, bound.width), getAbsoluteValue(second, bound.height)];
+        });
     }
 
     const hasIntrinsicProportion = hasIntrinsicValue(intrinsicProportion);
 
     if (isIdentToken(first) && (first.value === BACKGROUND_SIZE.CONTAIN || first.value === BACKGROUND_SIZE.COVER)) {
         if (hasIntrinsicValue(intrinsicProportion)) {
-            const targetRatio = bounds.width / bounds.height;
+            return bounds.map((bound) => {
+                const targetRatio = bound.width / bound.height;
 
-            return targetRatio < intrinsicProportion !== (first.value === BACKGROUND_SIZE.COVER)
-                ? [bounds.width, bounds.width / intrinsicProportion]
-                : [bounds.height * intrinsicProportion, bounds.height];
+                return targetRatio < intrinsicProportion !== (first.value === BACKGROUND_SIZE.COVER)
+                    ? [bound.width, bound.width / intrinsicProportion]
+                    : [bound.height * intrinsicProportion, bound.height];
+            });
         }
 
-        return [bounds.width, bounds.height];
+        return bounds.map((bound) => [bound.width, bound.height]);
     }
 
     const hasIntrinsicWidth = hasIntrinsicValue(intrinsicWidth);
@@ -121,14 +131,14 @@ export const calculateBackgroundSize = (
     if (isAuto(first) && (!second || isAuto(second))) {
         // If the image has both horizontal and vertical intrinsic dimensions, it's rendered at that size.
         if (hasIntrinsicWidth && hasIntrinsicHeight) {
-            return [intrinsicWidth as number, intrinsicHeight as number];
+            return bounds.map(() => [intrinsicWidth as number, intrinsicHeight as number]);
         }
 
         // If the image has no intrinsic dimensions and has no intrinsic proportions,
         // it's rendered at the size of the background positioning area.
 
         if (!hasIntrinsicProportion && !hasIntrinsicDimensions) {
-            return [bounds.width, bounds.height];
+            return bounds.map((bound) => [bound.width, bound.height]);
         }
 
         // TODO If the image has no intrinsic dimensions but has intrinsic proportions, it's rendered as if contain had been specified instead.
@@ -142,69 +152,73 @@ export const calculateBackgroundSize = (
             const height = hasIntrinsicHeight
                 ? (intrinsicHeight as number)
                 : (intrinsicWidth as number) / (intrinsicProportion as number);
-            return [width, height];
+            return bounds.map(() => [width, height]);
         }
 
         // If the image has only one intrinsic dimension but has no intrinsic proportions,
         // it's rendered using the specified dimension and the other dimension of the background positioning area.
-        const width = hasIntrinsicWidth ? (intrinsicWidth as number) : bounds.width;
-        const height = hasIntrinsicHeight ? (intrinsicHeight as number) : bounds.height;
-        return [width, height];
+        return bounds.map((bound) => {
+            const width = hasIntrinsicWidth ? (intrinsicWidth as number) : bound.width;
+            const height = hasIntrinsicHeight ? (intrinsicHeight as number) : bound.height;
+            return [width, height];
+        });
     }
 
     // If the image has intrinsic proportions, it's stretched to the specified dimension.
     // The unspecified dimension is computed using the specified dimension and the intrinsic proportions.
     if (hasIntrinsicProportion) {
-        let width = 0;
-        let height = 0;
-        if (isLengthPercentage(first)) {
-            width = getAbsoluteValue(first, bounds.width);
-        } else if (isLengthPercentage(second)) {
-            height = getAbsoluteValue(second, bounds.height);
-        }
+        return bounds.map((bound) => {
+            let width = 0;
+            let height = 0;
+            if (isLengthPercentage(first)) {
+                width = getAbsoluteValue(first, bound.width);
+            } else if (isLengthPercentage(second)) {
+                height = getAbsoluteValue(second, bound.height);
+            }
 
-        if (isAuto(first)) {
-            width = height * (intrinsicProportion as number);
-        } else if (!second || isAuto(second)) {
-            height = width / (intrinsicProportion as number);
-        }
+            if (isAuto(first)) {
+                width = height * (intrinsicProportion as number);
+            } else if (!second || isAuto(second)) {
+                height = width / (intrinsicProportion as number);
+            }
 
-        return [width, height];
+            return [width, height];
+        });
     }
 
     // If the image has no intrinsic proportions, it's stretched to the specified dimension.
     // The unspecified dimension is computed using the image's corresponding intrinsic dimension,
     // if there is one. If there is no such intrinsic dimension,
     // it becomes the corresponding dimension of the background positioning area.
+    return bounds.map((bound) => {
+        let width = null;
+        let height = null;
 
-    let width = null;
-    let height = null;
+        if (isLengthPercentage(first)) {
+            width = getAbsoluteValue(first, bound.width);
+        } else if (second && isLengthPercentage(second)) {
+            height = getAbsoluteValue(second, bound.height);
+        }
 
-    if (isLengthPercentage(first)) {
-        width = getAbsoluteValue(first, bounds.width);
-    } else if (second && isLengthPercentage(second)) {
-        height = getAbsoluteValue(second, bounds.height);
-    }
+        if (width !== null && (!second || isAuto(second))) {
+            height =
+                hasIntrinsicWidth && hasIntrinsicHeight
+                    ? (width / (intrinsicWidth as number)) * (intrinsicHeight as number)
+                    : bound.height;
+        }
 
-    if (width !== null && (!second || isAuto(second))) {
-        height =
-            hasIntrinsicWidth && hasIntrinsicHeight
-                ? (width / (intrinsicWidth as number)) * (intrinsicHeight as number)
-                : bounds.height;
-    }
+        if (height !== null && isAuto(first)) {
+            width =
+                hasIntrinsicWidth && hasIntrinsicHeight
+                    ? (height / (intrinsicHeight as number)) * (intrinsicWidth as number)
+                    : bound.width;
+        }
 
-    if (height !== null && isAuto(first)) {
-        width =
-            hasIntrinsicWidth && hasIntrinsicHeight
-                ? (height / (intrinsicHeight as number)) * (intrinsicWidth as number)
-                : bounds.width;
-    }
-
-    if (width !== null && height !== null) {
+        if (width === null || height === null) {
+            throw new Error(`Unable to calculate background-size for element`);
+        }
         return [width, height];
-    }
-
-    throw new Error(`Unable to calculate background-size for element`);
+    });
 };
 
 export const getBackgroundValueForIndex = <T>(values: T[], index: number): T => {

@@ -14,7 +14,8 @@ import {
     parsePathForBorder,
     parsePathForBorderDoubleInner,
     parsePathForBorderDoubleOuter,
-    parsePathForBorderStroke
+    parsePathForBorderStroke,
+    BORDER_SIDE
 } from '../border';
 import {calculateBackgroundRendering, getBackgroundValueForIndex} from '../background';
 import {isDimensionToken} from '../../css/syntax/parser';
@@ -267,12 +268,19 @@ export class CanvasRenderer extends Renderer {
 
     renderReplacedElement(
         container: ReplacedElementContainer,
-        curves: BoundCurves,
+        curves: BoundCurves[],
         image: HTMLImageElement | HTMLCanvasElement
     ): void {
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
-            const box = contentBox(container);
-            const path = calculatePaddingBoxPath(curves);
+            const boxes = contentBox(container);
+            if (boxes.length !== 1) {
+                throw new Error(`Expecting a single bounding box but got ${boxes.length} for image replacement.`);
+            }
+            if (curves.length !== 1) {
+                throw new Error(`Expecting a single bounding box but got ${boxes.length} for image replacement.`);
+            }
+            const box = boxes[0];
+            const path = calculatePaddingBoxPath(curves[0]);
             this.path(path);
             this.ctx.save();
             this.ctx.clip();
@@ -334,55 +342,56 @@ export class CanvasRenderer extends Renderer {
 
             const canvas = await iframeRenderer.render(container.tree);
             if (container.width && container.height) {
+                const bound = container.bounds[0];
                 this.ctx.drawImage(
                     canvas,
                     0,
                     0,
                     container.width,
                     container.height,
-                    container.bounds.left,
-                    container.bounds.top,
-                    container.bounds.width,
-                    container.bounds.height
+                    bound.left,
+                    bound.top,
+                    bound.width,
+                    bound.height
                 );
             }
         }
 
         if (container instanceof InputElementContainer) {
-            const size = Math.min(container.bounds.width, container.bounds.height);
+            //Should use flat map if target is updated.
+            const size = Math.min(
+                ...container.bounds.map((b) => b.width).concat(container.bounds.map((b) => b.height))
+            );
 
             if (container.type === CHECKBOX) {
                 if (container.checked) {
-                    this.ctx.save();
-                    this.path([
-                        new Vector(container.bounds.left + size * 0.39363, container.bounds.top + size * 0.79),
-                        new Vector(container.bounds.left + size * 0.16, container.bounds.top + size * 0.5549),
-                        new Vector(container.bounds.left + size * 0.27347, container.bounds.top + size * 0.44071),
-                        new Vector(container.bounds.left + size * 0.39694, container.bounds.top + size * 0.5649),
-                        new Vector(container.bounds.left + size * 0.72983, container.bounds.top + size * 0.23),
-                        new Vector(container.bounds.left + size * 0.84, container.bounds.top + size * 0.34085),
-                        new Vector(container.bounds.left + size * 0.39363, container.bounds.top + size * 0.79)
-                    ]);
+                    container.bounds.forEach((bound) => {
+                        this.ctx.save();
+                        this.path([
+                            new Vector(bound.left + size * 0.39363, bound.top + size * 0.79),
+                            new Vector(bound.left + size * 0.16, bound.top + size * 0.5549),
+                            new Vector(bound.left + size * 0.27347, bound.top + size * 0.44071),
+                            new Vector(bound.left + size * 0.39694, bound.top + size * 0.5649),
+                            new Vector(bound.left + size * 0.72983, bound.top + size * 0.23),
+                            new Vector(bound.left + size * 0.84, bound.top + size * 0.34085),
+                            new Vector(bound.left + size * 0.39363, bound.top + size * 0.79)
+                        ]);
 
-                    this.ctx.fillStyle = asString(INPUT_COLOR);
-                    this.ctx.fill();
-                    this.ctx.restore();
+                        this.ctx.fillStyle = asString(INPUT_COLOR);
+                        this.ctx.fill();
+                        this.ctx.restore();
+                    });
                 }
             } else if (container.type === RADIO) {
                 if (container.checked) {
-                    this.ctx.save();
-                    this.ctx.beginPath();
-                    this.ctx.arc(
-                        container.bounds.left + size / 2,
-                        container.bounds.top + size / 2,
-                        size / 4,
-                        0,
-                        Math.PI * 2,
-                        true
-                    );
-                    this.ctx.fillStyle = asString(INPUT_COLOR);
-                    this.ctx.fill();
-                    this.ctx.restore();
+                    container.bounds.forEach((bound) => {
+                        this.ctx.save();
+                        this.ctx.beginPath();
+                        this.ctx.arc(bound.left + size / 2, bound.top + size / 2, size / 4, 0, Math.PI * 2, true);
+                        this.ctx.fillStyle = asString(INPUT_COLOR);
+                        this.ctx.fill();
+                        this.ctx.restore();
+                    });
                 }
             }
         }
@@ -397,7 +406,7 @@ export class CanvasRenderer extends Renderer {
             this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = canvasTextAlign(container.styles.textAlign);
 
-            const bounds = contentBox(container);
+            const bounds = contentBox(container)[0];
 
             let x = 0;
 
@@ -439,7 +448,11 @@ export class CanvasRenderer extends Renderer {
                     const url = (img as CSSURLImage).url;
                     try {
                         image = await this.context.cache.match(url);
-                        this.ctx.drawImage(image, container.bounds.left - (image.width + 10), container.bounds.top);
+                        this.ctx.drawImage(
+                            image,
+                            Math.min(...container.bounds.map((b) => b.left)) - (image.width + 10),
+                            Math.min(...container.bounds.map((b) => b.top))
+                        );
                     } catch (e) {
                         this.context.logger.error(`Error loading list-style-image ${url}`);
                     }
@@ -452,10 +465,12 @@ export class CanvasRenderer extends Renderer {
 
                 this.ctx.textBaseline = 'middle';
                 this.ctx.textAlign = 'right';
+                const width = Math.max(...container.bounds.map((b) => b.width));
                 const bounds = new Bounds(
-                    container.bounds.left,
-                    container.bounds.top + getAbsoluteValue(container.styles.paddingTop, container.bounds.width),
-                    container.bounds.width,
+                    Math.min(...container.bounds.map((b) => b.left)),
+                    Math.min(...container.bounds.map((b) => b.top)) +
+                        getAbsoluteValue(container.styles.paddingTop, width),
+                    width,
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
@@ -586,7 +601,7 @@ export class CanvasRenderer extends Renderer {
         let index = container.styles.backgroundImage.length - 1;
         for (const backgroundImage of container.styles.backgroundImage.slice(0).reverse()) {
             if (backgroundImage.type === CSSImageType.URL) {
-                let image;
+                let image: HTMLImageElement | null = null;
                 const url = (backgroundImage as CSSURLImage).url;
                 try {
                     image = await this.context.cache.match(url);
@@ -595,75 +610,93 @@ export class CanvasRenderer extends Renderer {
                 }
 
                 if (image) {
-                    const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [
+                    const areas = calculateBackgroundRendering(container, index, [
                         image.width,
                         image.height,
                         image.width / image.height
                     ]);
-                    const pattern = this.ctx.createPattern(
-                        this.resizeImage(image, width, height),
-                        'repeat'
-                    ) as CanvasPattern;
-                    this.renderRepeat(path, pattern, x, y);
+                    areas.forEach((area) => {
+                        const [path, x, y, width, height] = area;
+                        if (image) {
+                            const pattern = this.ctx.createPattern(
+                                this.resizeImage(image, width, height),
+                                'repeat'
+                            ) as CanvasPattern;
+                            this.renderRepeat(path, pattern, x, y);
+                        }
+                    });
                 }
             } else if (isLinearGradient(backgroundImage)) {
-                const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
-                const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(backgroundImage.angle, width, height);
-
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-                const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-
-                processColorStops(backgroundImage.stops, lineLength).forEach((colorStop) =>
-                    gradient.addColorStop(colorStop.stop, asString(colorStop.color))
-                );
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, width, height);
-                if (width > 0 && height > 0) {
-                    const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
-                    this.renderRepeat(path, pattern, x, y);
-                }
-            } else if (isRadialGradient(backgroundImage)) {
-                const [path, left, top, width, height] = calculateBackgroundRendering(container, index, [
-                    null,
-                    null,
-                    null
-                ]);
-                const position = backgroundImage.position.length === 0 ? [FIFTY_PERCENT] : backgroundImage.position;
-                const x = getAbsoluteValue(position[0], width);
-                const y = getAbsoluteValue(position[position.length - 1], height);
-
-                const [rx, ry] = calculateRadius(backgroundImage, x, y, width, height);
-                if (rx > 0 && ry > 0) {
-                    const radialGradient = this.ctx.createRadialGradient(left + x, top + y, 0, left + x, top + y, rx);
-
-                    processColorStops(backgroundImage.stops, rx * 2).forEach((colorStop) =>
-                        radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                const areas = calculateBackgroundRendering(container, index, [null, null, null]);
+                areas.forEach((area) => {
+                    const [path, x, y, width, height] = area;
+                    const [lineLength, x0, x1, y0, y1] = calculateGradientDirection(
+                        backgroundImage.angle,
+                        width,
+                        height
                     );
 
-                    this.path(path);
-                    this.ctx.fillStyle = radialGradient;
-                    if (rx !== ry) {
-                        // transforms for elliptical radial gradient
-                        const midX = container.bounds.left + 0.5 * container.bounds.width;
-                        const midY = container.bounds.top + 0.5 * container.bounds.height;
-                        const f = ry / rx;
-                        const invF = 1 / f;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+                    const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 
-                        this.ctx.save();
-                        this.ctx.translate(midX, midY);
-                        this.ctx.transform(1, 0, 0, f, 0, 0);
-                        this.ctx.translate(-midX, -midY);
+                    processColorStops(backgroundImage.stops, lineLength).forEach((colorStop) =>
+                        gradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                    );
 
-                        this.ctx.fillRect(left, invF * (top - midY) + midY, width, height * invF);
-                        this.ctx.restore();
-                    } else {
-                        this.ctx.fill();
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, width, height);
+                    if (width > 0 && height > 0) {
+                        const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                        this.renderRepeat(path, pattern, x, y);
                     }
-                }
+                });
+            } else if (isRadialGradient(backgroundImage)) {
+                const areas = calculateBackgroundRendering(container, index, [null, null, null]);
+                const position = backgroundImage.position.length === 0 ? [FIFTY_PERCENT] : backgroundImage.position;
+                areas.forEach((area, areaindex) => {
+                    const [path, left, top, width, height] = area;
+                    const x = getAbsoluteValue(position[0], width);
+                    const y = getAbsoluteValue(position[position.length - 1], height);
+
+                    const [rx, ry] = calculateRadius(backgroundImage, x, y, width, height);
+                    if (rx > 0 && ry > 0) {
+                        const radialGradient = this.ctx.createRadialGradient(
+                            left + x,
+                            top + y,
+                            0,
+                            left + x,
+                            top + y,
+                            rx
+                        );
+
+                        processColorStops(backgroundImage.stops, rx * 2).forEach((colorStop) =>
+                            radialGradient.addColorStop(colorStop.stop, asString(colorStop.color))
+                        );
+
+                        this.path(path);
+                        this.ctx.fillStyle = radialGradient;
+                        if (rx !== ry) {
+                            // transforms for elliptical radial gradient
+                            const midX = container.bounds[areaindex].left + 0.5 * container.bounds[areaindex].width;
+                            const midY = container.bounds[areaindex].top + 0.5 * container.bounds[areaindex].height;
+                            const f = ry / rx;
+                            const invF = 1 / f;
+
+                            this.ctx.save();
+                            this.ctx.translate(midX, midY);
+                            this.ctx.transform(1, 0, 0, f, 0, 0);
+                            this.ctx.translate(-midX, -midY);
+
+                            this.ctx.fillRect(left, invF * (top - midY) + midY, width, height * invF);
+                            this.ctx.restore();
+                        } else {
+                            this.ctx.fill();
+                        }
+                    }
+                });
             }
             index--;
         }
@@ -701,88 +734,95 @@ export class CanvasRenderer extends Renderer {
             {style: styles.borderBottomStyle, color: styles.borderBottomColor, width: styles.borderBottomWidth},
             {style: styles.borderLeftStyle, color: styles.borderLeftColor, width: styles.borderLeftWidth}
         ];
+        for (const curve of paint.curves) {
+            const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
+                getBackgroundValueForIndex(styles.backgroundClip, 0),
+                curve
+            );
 
-        const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
-            getBackgroundValueForIndex(styles.backgroundClip, 0),
-            paint.curves
-        );
+            if (hasBackground || styles.boxShadow.length) {
+                this.ctx.save();
+                this.path(backgroundPaintingArea);
+                this.ctx.clip();
 
-        if (hasBackground || styles.boxShadow.length) {
-            this.ctx.save();
-            this.path(backgroundPaintingArea);
-            this.ctx.clip();
-
-            if (!isTransparent(styles.backgroundColor)) {
-                this.ctx.fillStyle = asString(styles.backgroundColor);
-                this.ctx.fill();
-            }
-
-            await this.renderBackgroundImage(paint.container);
-
-            this.ctx.restore();
-
-            styles.boxShadow
-                .slice(0)
-                .reverse()
-                .forEach((shadow) => {
-                    this.ctx.save();
-                    const borderBoxArea = calculateBorderBoxPath(paint.curves);
-                    const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
-                    const shadowPaintingArea = transformPath(
-                        borderBoxArea,
-                        -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
-                        (shadow.inset ? 1 : -1) * shadow.spread.number,
-                        shadow.spread.number * (shadow.inset ? -2 : 2),
-                        shadow.spread.number * (shadow.inset ? -2 : 2)
-                    );
-
-                    if (shadow.inset) {
-                        this.path(borderBoxArea);
-                        this.ctx.clip();
-                        this.mask(shadowPaintingArea);
-                    } else {
-                        this.mask(borderBoxArea);
-                        this.ctx.clip();
-                        this.path(shadowPaintingArea);
-                    }
-
-                    this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
-                    this.ctx.shadowOffsetY = shadow.offsetY.number;
-                    this.ctx.shadowColor = asString(shadow.color);
-                    this.ctx.shadowBlur = shadow.blur.number;
-                    this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
-
+                if (!isTransparent(styles.backgroundColor)) {
+                    this.ctx.fillStyle = asString(styles.backgroundColor);
                     this.ctx.fill();
-                    this.ctx.restore();
-                });
-        }
-
-        let side = 0;
-        for (const border of borders) {
-            if (border.style !== BORDER_STYLE.NONE && !isTransparent(border.color) && border.width > 0) {
-                if (border.style === BORDER_STYLE.DASHED) {
-                    await this.renderDashedDottedBorder(
-                        border.color,
-                        border.width,
-                        side,
-                        paint.curves,
-                        BORDER_STYLE.DASHED
-                    );
-                } else if (border.style === BORDER_STYLE.DOTTED) {
-                    await this.renderDashedDottedBorder(
-                        border.color,
-                        border.width,
-                        side,
-                        paint.curves,
-                        BORDER_STYLE.DOTTED
-                    );
-                } else if (border.style === BORDER_STYLE.DOUBLE) {
-                    await this.renderDoubleBorder(border.color, border.width, side, paint.curves);
-                } else {
-                    await this.renderSolidBorder(border.color, side, paint.curves);
                 }
+
+                await this.renderBackgroundImage(paint.container);
+
+                this.ctx.restore();
+
+                styles.boxShadow
+                    .slice(0)
+                    .reverse()
+                    .forEach((shadow) => {
+                        this.ctx.save();
+                        const borderBoxArea = calculateBorderBoxPath(curve);
+                        const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
+                        const shadowPaintingArea = transformPath(
+                            borderBoxArea,
+                            -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
+                            (shadow.inset ? 1 : -1) * shadow.spread.number,
+                            shadow.spread.number * (shadow.inset ? -2 : 2),
+                            shadow.spread.number * (shadow.inset ? -2 : 2)
+                        );
+
+                        if (shadow.inset) {
+                            this.path(borderBoxArea);
+                            this.ctx.clip();
+                            this.mask(shadowPaintingArea);
+                        } else {
+                            this.mask(borderBoxArea);
+                            this.ctx.clip();
+                            this.path(shadowPaintingArea);
+                        }
+
+                        this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
+                        this.ctx.shadowOffsetY = shadow.offsetY.number;
+                        this.ctx.shadowColor = asString(shadow.color);
+                        this.ctx.shadowBlur = shadow.blur.number;
+                        this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
+
+                        this.ctx.fill();
+                        this.ctx.restore();
+                    });
             }
-            side++;
+
+            let side = 0;
+            for (const border of borders) {
+                if (
+                    border.style !== BORDER_STYLE.NONE &&
+                    !isTransparent(border.color) &&
+                    border.width > 0 &&
+                    (curve.isFirstBoundOfElement || side !== BORDER_SIDE.LEFT) &&
+                    (curve.isLastBoundOfElement || side !== BORDER_SIDE.RIGHT)
+                ) {
+                    if (border.style === BORDER_STYLE.DASHED) {
+                        await this.renderDashedDottedBorder(
+                            border.color,
+                            border.width,
+                            side,
+                            curve,
+                            BORDER_STYLE.DASHED
+                        );
+                    } else if (border.style === BORDER_STYLE.DOTTED) {
+                        await this.renderDashedDottedBorder(
+                            border.color,
+                            border.width,
+                            side,
+                            curve,
+                            BORDER_STYLE.DOTTED
+                        );
+                    } else if (border.style === BORDER_STYLE.DOUBLE) {
+                        await this.renderDoubleBorder(border.color, border.width, side, curve);
+                    } else {
+                        await this.renderSolidBorder(border.color, side, curve);
+                    }
+                }
+                side++;
+            }
         }
     }
 
