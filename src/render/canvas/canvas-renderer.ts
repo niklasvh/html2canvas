@@ -617,11 +617,13 @@ export class CanvasRenderer extends Renderer {
                     ]);
                     areas.forEach((area) => {
                         const [path, x, y, width, height] = area;
-                        const pattern = this.ctx.createPattern(
-                            this.resizeImage(image!, width, height),
-                            'repeat'
-                        ) as CanvasPattern;
-                        this.renderRepeat(path, pattern, x, y);
+                        if (image) {
+                            const pattern = this.ctx.createPattern(
+                                this.resizeImage(image, width, height),
+                                'repeat'
+                            ) as CanvasPattern;
+                            this.renderRepeat(path, pattern, x, y);
+                        }
                     });
                 }
             } else if (isLinearGradient(backgroundImage)) {
