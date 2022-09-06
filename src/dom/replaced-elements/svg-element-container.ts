@@ -1,6 +1,7 @@
 import {ElementContainer} from '../element-container';
 import {parseBounds} from '../../css/layout/bounds';
 import {Context} from '../../core/context';
+import {serializeSvg} from '../../core/features';
 
 export class SVGElementContainer extends ElementContainer {
     svg: string;
@@ -9,12 +10,12 @@ export class SVGElementContainer extends ElementContainer {
 
     constructor(context: Context, img: SVGSVGElement) {
         super(context, img);
-        const s = new XMLSerializer();
+
         const bounds = parseBounds(context, img);
         img.setAttribute('width', `${bounds.width}px`);
         img.setAttribute('height', `${bounds.height}px`);
 
-        this.svg = `data:image/svg+xml,${encodeURIComponent(s.serializeToString(img))}`;
+        this.svg = serializeSvg(img);
         this.intrinsicWidth = img.width.baseVal.value;
         this.intrinsicHeight = img.height.baseVal.value;
 

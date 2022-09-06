@@ -122,6 +122,7 @@ export const isOLElement = (node: Element): node is HTMLOListElement => node.tag
 export const isInputElement = (node: Element): node is HTMLInputElement => node.tagName === 'INPUT';
 export const isHTMLElement = (node: Element): node is HTMLHtmlElement => node.tagName === 'HTML';
 export const isSVGElement = (node: Element): node is SVGSVGElement => node.tagName === 'svg';
+export const isSVGForeignObjectElement = (node: Element): node is SVGSVGElement => node.tagName === 'foreignObject';
 export const isBodyElement = (node: Element): node is HTMLBodyElement => node.tagName === 'BODY';
 export const isCanvasElement = (node: Element): node is HTMLCanvasElement => node.tagName === 'CANVAS';
 export const isVideoElement = (node: Element): node is HTMLVideoElement => node.tagName === 'VIDEO';
