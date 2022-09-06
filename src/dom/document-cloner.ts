@@ -480,15 +480,15 @@ export class DocumentCloner {
 
     static destroy(container: HTMLIFrameElement): boolean {
         // cleanup iframe first to prevent memory leaks, see #1609
-        try{
-            const iframe=container.contentWindow;
-            container.src='about:blank';
-            if(iframe) {
+        try {
+            const iframe = container.contentWindow;
+            container.src = 'about:blank';
+            if (iframe) {
                 iframe.document.write('');
                 iframe.document.clear();
                 iframe.close();
             }
-        }catch {}
+        } catch {}
         if (container.parentNode) {
             container.parentNode.removeChild(container);
             return true;
