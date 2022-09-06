@@ -49,7 +49,9 @@ export const parseTextBounds = (
                 }
             } else {
                 const replacementNode = node.splitText(text.length);
-                textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
+                getWrapperBounds(context, node).forEach((wrapperBound) => {
+                    textBounds.push(new TextBounds(text, wrapperBound));
+                });
                 node = replacementNode;
             }
         } else if (!FEATURES.SUPPORT_RANGE_BOUNDS) {
@@ -61,7 +63,7 @@ export const parseTextBounds = (
     return textBounds;
 };
 
-const getWrapperBounds = (context: Context, node: Text): Bounds => {
+const getWrapperBounds = (context: Context, node: Text): Bounds[] => {
     const ownerDocument = node.ownerDocument;
     if (ownerDocument) {
         const wrapper = ownerDocument.createElement('html2canvaswrapper');
@@ -77,7 +79,7 @@ const getWrapperBounds = (context: Context, node: Text): Bounds => {
         }
     }
 
-    return Bounds.EMPTY;
+    return [Bounds.EMPTY];
 };
 
 const createRange = (node: Text, offset: number, length: number): Range => {

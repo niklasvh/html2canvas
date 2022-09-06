@@ -74,7 +74,7 @@ export class InputElementContainer extends ElementContainer {
                     BORDER_STYLE.SOLID;
             this.styles.backgroundClip = [BACKGROUND_CLIP.BORDER_BOX];
             this.styles.backgroundOrigin = [BACKGROUND_ORIGIN.BORDER_BOX];
-            this.bounds = reformatInputBounds(this.bounds);
+            this.bounds = this.bounds.map(reformatInputBounds);
         }
 
         switch (this.type) {

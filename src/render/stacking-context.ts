@@ -34,32 +34,38 @@ export class StackingContext {
 
 export class ElementPaint {
     readonly effects: IElementEffect[] = [];
-    readonly curves: BoundCurves;
+    readonly curves: BoundCurves[];
     listValue?: string;
 
     constructor(readonly container: ElementContainer, readonly parent: ElementPaint | null) {
-        this.curves = new BoundCurves(this.container);
+        this.curves = BoundCurves.fromElementContainer(this.container);
         if (this.container.styles.opacity < 1) {
             this.effects.push(new OpacityEffect(this.container.styles.opacity));
         }
 
         if (this.container.styles.transform !== null) {
-            const offsetX = this.container.bounds.left + this.container.styles.transformOrigin[0].number;
-            const offsetY = this.container.bounds.top + this.container.styles.transformOrigin[1].number;
-            const matrix = this.container.styles.transform;
+            const matrix = this.container.styles.transform,
+                originZero = this.container.styles.transformOrigin[0].number,
+                originOne = this.container.styles.transformOrigin[1].number,
+                offsetX = Math.min(...this.container.bounds.map((b) => b.left)) + originZero,
+                offsetY = Math.min(...this.container.bounds.map((b) => b.top)) + originOne;
             this.effects.push(new TransformEffect(offsetX, offsetY, matrix));
         }
 
         if (this.container.styles.overflowX !== OVERFLOW.VISIBLE) {
-            const borderBox = calculateBorderBoxPath(this.curves);
-            const paddingBox = calculatePaddingBoxPath(this.curves);
+            this.curves.forEach((curve) => {
+                const borderBox = calculateBorderBoxPath(curve);
+                const paddingBox = calculatePaddingBoxPath(curve);
 
-            if (equalPath(borderBox, paddingBox)) {
-                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT));
-            } else {
-                this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
-                this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
-            }
+                if (equalPath(borderBox, paddingBox)) {
+                    this.effects.push(
+                        new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
+                    );
+                } else {
+                    this.effects.push(new ClipEffect(borderBox, EffectTarget.BACKGROUND_BORDERS));
+                    this.effects.push(new ClipEffect(paddingBox, EffectTarget.CONTENT));
+                }
+            });
         }
     }
 
@@ -73,13 +79,15 @@ export class ElementPaint {
                 effects.unshift(...croplessEffects);
                 inFlow = [POSITION.ABSOLUTE, POSITION.FIXED].indexOf(parent.container.styles.position) === -1;
                 if (parent.container.styles.overflowX !== OVERFLOW.VISIBLE) {
-                    const borderBox = calculateBorderBoxPath(parent.curves);
-                    const paddingBox = calculatePaddingBoxPath(parent.curves);
-                    if (!equalPath(borderBox, paddingBox)) {
-                        effects.unshift(
-                            new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
-                        );
-                    }
+                    this.curves.forEach((curve) => {
+                        const borderBox = calculateBorderBoxPath(curve);
+                        const paddingBox = calculatePaddingBoxPath(curve);
+                        if (!equalPath(borderBox, paddingBox)) {
+                            effects.unshift(
+                                new ClipEffect(paddingBox, EffectTarget.BACKGROUND_BORDERS | EffectTarget.CONTENT)
+                            );
+                        }
+                    });
                 }
             } else {
                 effects.unshift(...croplessEffects);

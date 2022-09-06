@@ -1,4 +1,4 @@
-import {Bounds, parseBounds, parseDocumentSize} from './css/layout/bounds';
+import {Bounds, parseBound, parseDocumentSize} from './css/layout/bounds';
 import {COLORS, isTransparent, parseColor} from './css/types/color';
 import {CloneConfigurations, CloneOptions, DocumentCloner, WindowOptions} from './dom/document-cloner';
 import {isBodyElement, isHTMLElement, parseTree} from './dom/node-parser';
@@ -98,7 +98,7 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     const {width, height, left, top} =
         isBodyElement(clonedElement) || isHTMLElement(clonedElement)
             ? parseDocumentSize(clonedElement.ownerDocument)
-            : parseBounds(context, clonedElement);
+            : parseBound(context, clonedElement);
 
     const backgroundColor = parseBackgroundColor(context, clonedElement, opts.backgroundColor);
 

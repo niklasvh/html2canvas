@@ -2,30 +2,36 @@ import {Path} from './path';
 import {BoundCurves} from './bound-curves';
 import {isBezierCurve} from './bezier-curve';
 
-export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Path[] => {
+export enum BORDER_SIDE {
+    TOP = 0,
+    RIGHT = 1,
+    BOTTOM = 2,
+    LEFT = 3
+}
+export const parsePathForBorder = (curves: BoundCurves, borderSide: BORDER_SIDE): Path[] => {
     switch (borderSide) {
-        case 0:
+        case BORDER_SIDE.TOP:
             return createPathFromCurves(
                 curves.topLeftBorderBox,
                 curves.topLeftPaddingBox,
                 curves.topRightBorderBox,
                 curves.topRightPaddingBox
             );
-        case 1:
+        case BORDER_SIDE.RIGHT:
             return createPathFromCurves(
                 curves.topRightBorderBox,
                 curves.topRightPaddingBox,
                 curves.bottomRightBorderBox,
                 curves.bottomRightPaddingBox
             );
-        case 2:
+        case BORDER_SIDE.BOTTOM:
             return createPathFromCurves(
                 curves.bottomRightBorderBox,
                 curves.bottomRightPaddingBox,
                 curves.bottomLeftBorderBox,
                 curves.bottomLeftPaddingBox
             );
-        case 3:
+        case BORDER_SIDE.LEFT:
         default:
             return createPathFromCurves(
                 curves.bottomLeftBorderBox,
@@ -36,30 +42,30 @@ export const parsePathForBorder = (curves: BoundCurves, borderSide: number): Pat
     }
 };
 
-export const parsePathForBorderDoubleOuter = (curves: BoundCurves, borderSide: number): Path[] => {
+export const parsePathForBorderDoubleOuter = (curves: BoundCurves, borderSide: BORDER_SIDE): Path[] => {
     switch (borderSide) {
-        case 0:
+        case BORDER_SIDE.TOP:
             return createPathFromCurves(
                 curves.topLeftBorderBox,
                 curves.topLeftBorderDoubleOuterBox,
                 curves.topRightBorderBox,
                 curves.topRightBorderDoubleOuterBox
             );
-        case 1:
+        case BORDER_SIDE.RIGHT:
             return createPathFromCurves(
                 curves.topRightBorderBox,
                 curves.topRightBorderDoubleOuterBox,
                 curves.bottomRightBorderBox,
                 curves.bottomRightBorderDoubleOuterBox
             );
-        case 2:
+        case BORDER_SIDE.BOTTOM:
             return createPathFromCurves(
                 curves.bottomRightBorderBox,
                 curves.bottomRightBorderDoubleOuterBox,
                 curves.bottomLeftBorderBox,
                 curves.bottomLeftBorderDoubleOuterBox
             );
-        case 3:
+        case BORDER_SIDE.LEFT:
         default:
             return createPathFromCurves(
                 curves.bottomLeftBorderBox,
@@ -70,30 +76,30 @@ export const parsePathForBorderDoubleOuter = (curves: BoundCurves, borderSide: n
     }
 };
 
-export const parsePathForBorderDoubleInner = (curves: BoundCurves, borderSide: number): Path[] => {
+export const parsePathForBorderDoubleInner = (curves: BoundCurves, borderSide: BORDER_SIDE): Path[] => {
     switch (borderSide) {
-        case 0:
+        case BORDER_SIDE.TOP:
             return createPathFromCurves(
                 curves.topLeftBorderDoubleInnerBox,
                 curves.topLeftPaddingBox,
                 curves.topRightBorderDoubleInnerBox,
                 curves.topRightPaddingBox
             );
-        case 1:
+        case BORDER_SIDE.RIGHT:
             return createPathFromCurves(
                 curves.topRightBorderDoubleInnerBox,
                 curves.topRightPaddingBox,
                 curves.bottomRightBorderDoubleInnerBox,
                 curves.bottomRightPaddingBox
             );
-        case 2:
+        case BORDER_SIDE.BOTTOM:
             return createPathFromCurves(
                 curves.bottomRightBorderDoubleInnerBox,
                 curves.bottomRightPaddingBox,
                 curves.bottomLeftBorderDoubleInnerBox,
                 curves.bottomLeftPaddingBox
             );
-        case 3:
+        case BORDER_SIDE.LEFT:
         default:
             return createPathFromCurves(
                 curves.bottomLeftBorderDoubleInnerBox,
@@ -104,15 +110,15 @@ export const parsePathForBorderDoubleInner = (curves: BoundCurves, borderSide: n
     }
 };
 
-export const parsePathForBorderStroke = (curves: BoundCurves, borderSide: number): Path[] => {
+export const parsePathForBorderStroke = (curves: BoundCurves, borderSide: BORDER_SIDE): Path[] => {
     switch (borderSide) {
-        case 0:
+        case BORDER_SIDE.TOP:
             return createStrokePathFromCurves(curves.topLeftBorderStroke, curves.topRightBorderStroke);
-        case 1:
+        case BORDER_SIDE.RIGHT:
             return createStrokePathFromCurves(curves.topRightBorderStroke, curves.bottomRightBorderStroke);
-        case 2:
+        case BORDER_SIDE.BOTTOM:
             return createStrokePathFromCurves(curves.bottomRightBorderStroke, curves.bottomLeftBorderStroke);
-        case 3:
+        case BORDER_SIDE.LEFT:
         default:
             return createStrokePathFromCurves(curves.bottomLeftBorderStroke, curves.topLeftBorderStroke);
     }

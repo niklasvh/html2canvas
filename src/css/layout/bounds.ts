@@ -7,17 +7,19 @@ export class Bounds {
         return new Bounds(this.left + x, this.top + y, this.width + w, this.height + h);
     }
 
-    static fromClientRect(context: Context, clientRect: ClientRect): Bounds {
-        return new Bounds(
-            clientRect.left + context.windowBounds.left,
-            clientRect.top + context.windowBounds.top,
-            clientRect.width,
-            clientRect.height
-        );
+    static fromDomRect(context: Context, domRect: DOMRect): Bounds {
+        return domRect.width !== 0 && domRect.height !== 0
+            ? new Bounds(
+                  domRect.left + context.windowBounds.left,
+                  domRect.top + context.windowBounds.top,
+                  domRect.width,
+                  domRect.height
+              )
+            : Bounds.EMPTY;
     }
 
     static fromDOMRectList(context: Context, domRectList: DOMRectList): Bounds {
-        const domRect = Array.from(domRectList).find((rect) => rect.width !== 0);
+        const domRect = Array.from(domRectList).find((rect) => rect.width !== 0 && rect.height !== 0);
         return domRect
             ? new Bounds(
                   domRect.left + context.windowBounds.left,
@@ -30,9 +32,12 @@ export class Bounds {
 
     static EMPTY = new Bounds(0, 0, 0, 0);
 }
+export const parseBound = (context: Context, node: Element): Bounds => {
+    return Bounds.fromDomRect(context, node.getBoundingClientRect());
+};
 
-export const parseBounds = (context: Context, node: Element): Bounds => {
-    return Bounds.fromClientRect(context, node.getBoundingClientRect());
+export const parseBounds = (context: Context, node: Element): Bounds[] => {
+    return Array.from(node.getClientRects()).map((b) => Bounds.fromDomRect(context, b));
 };
 
 export const parseDocumentSize = (document: Document): Bounds => {
