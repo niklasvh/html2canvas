@@ -13,8 +13,8 @@ export class IFrameElementContainer extends ElementContainer {
     constructor(context: Context, iframe: HTMLIFrameElement) {
         super(context, iframe);
         this.src = iframe.src;
-        this.width = parseInt(iframe.width, 10) || 0;
-        this.height = parseInt(iframe.height, 10) || 0;
+        this.width = parseInt(iframe.width, 10) || iframe.offsetWidth || 0;
+        this.height = parseInt(iframe.height, 10) || iframe.offsetHeight || 0;
         this.backgroundColor = this.styles.backgroundColor;
         try {
             if (
