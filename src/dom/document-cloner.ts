@@ -29,6 +29,8 @@ export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
     onclone?: (document: Document, element: HTMLElement) => void;
     allowTaint?: boolean;
+    hide_selector?: string;
+    masked_class?: string;
 }
 
 export interface WindowOptions {
@@ -274,15 +276,21 @@ export class DocumentCloner {
     }
 
     appendChildNode(clone: HTMLElement | SVGElement, child: Node, copyStyles: boolean): void {
+        const {ignoreElements, hide_selector, masked_class = ''} = this.options;
         if (
             !isElementNode(child) ||
             (!isScriptElement(child) &&
                 !child.hasAttribute(IGNORE_ATTRIBUTE) &&
-                (typeof this.options.ignoreElements !== 'function' || !this.options.ignoreElements(child)))
+                (typeof ignoreElements !== 'function' || !ignoreElements(child)))
         ) {
-            if (!this.options.copyStyles || !isElementNode(child) || !isStyleElement(child)) {
-                clone.appendChild(this.cloneNode(child, copyStyles));
+            const clonedNode = this.cloneNode(child, copyStyles);
+            if (hide_selector && isElementNode(clonedNode) && clonedNode.matches(hide_selector)) {
+                if (isImageElement(clonedNode)) {
+                    clonedNode.style.visibility = 'hidden';
+                }
+                clonedNode.classList.add(masked_class);
             }
+            clone.appendChild(clonedNode);
         }
     }
 

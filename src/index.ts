@@ -78,7 +78,9 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         onclone: opts.onclone,
         ignoreElements: opts.ignoreElements,
         inlineImages: foreignObjectRendering,
-        copyStyles: foreignObjectRendering
+        copyStyles: foreignObjectRendering,
+        hide_selector: opts.hide_selector,
+        masked_class: opts.masked_class
     };
 
     context.logger.debug(
