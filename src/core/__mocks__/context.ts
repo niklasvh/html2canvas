@@ -9,10 +9,9 @@ export class Context {
 
     constructor() {
         this.cache = {
-            addImage: jest.fn().mockImplementation((src: string): Promise<void> => {
-                const result = Promise.resolve();
-                this._cache[src] = result;
-                return result;
+            addImage: jest.fn().mockImplementation((src: string): boolean => {
+                this._cache[src] = Promise.resolve();
+                return true;
             })
         };
     }

@@ -157,7 +157,7 @@ export const createForeignObjectSVG = (
     return svg;
 };
 
-export const serializeSvg = (svg: SVGSVGElement | SVGForeignObjectElement, encoding: string = ''): string => {
+export const serializeSvg = (svg: SVGSVGElement | SVGForeignObjectElement, encoding = ''): string => {
     const svgPrefix = 'data:image/svg+xml';
     const selializedSvg = new XMLSerializer().serializeToString(svg);
     const encodedSvg = encoding === 'base64' ? btoa(selializedSvg) : encodeURIComponent(selializedSvg);
@@ -171,6 +171,7 @@ export const deserializeSvg = (svg: string): SVGSVGElement | SVGForeignObjectEle
     const document = domParser.parseFromString(encodedSvg, 'image/svg+xml');
     const parserError = document.querySelector('parsererror');
     if (parserError) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore: Expected 0-1 arguments, but got 2.
         throw new Error('Deserialisation failed', {cause: parserError});
     }
