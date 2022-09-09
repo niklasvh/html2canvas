@@ -22,6 +22,5 @@
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/class-name-casing": "off",
         "prettier/prettier": "error"
-    },
-    "root": true
+    }
 }
