@@ -8,7 +8,7 @@ export class ImageElementContainer extends ElementContainer {
     intrinsicHeight: number = 0;
     isSVG: boolean;
 
-    private static SVG = /\.svg$/i;
+    private static SVG = /\.svg(?:\?.*)?$/i;
     private static INLINED_SVG = /^data:image\/svg\+xml/i;
     private static IS_FIRE_FOX = /firefox/i.test(navigator?.userAgent);
 
