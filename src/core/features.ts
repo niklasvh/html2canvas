@@ -1,4 +1,5 @@
 import {fromCodePoint, toCodePoints} from 'css-line-break';
+import {isSVGForeignObjectElement} from '../dom/node-parser';
 
 const testRangeBounds = (document: Document) => {
     const TEST_HEIGHT = 123;
@@ -156,15 +157,38 @@ export const createForeignObjectSVG = (
     return svg;
 };
 
-export const loadSerializedSVG = (svg: Node): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
+export const serializeSvg = (svg: SVGSVGElement | SVGForeignObjectElement, encoding = ''): string => {
+    const svgPrefix = 'data:image/svg+xml';
+    const selializedSvg = new XMLSerializer().serializeToString(svg);
+    const encodedSvg = encoding === 'base64' ? btoa(selializedSvg) : encodeURIComponent(selializedSvg);
+    return `${svgPrefix}${encoding && `;${encoding}`},${encodedSvg}`;
+};
+
+const INLINE_BASE64 = /^data:image\/.*;base64,/i;
+export const deserializeSvg = (svg: string): SVGSVGElement | SVGForeignObjectElement => {
+    const encodedSvg = INLINE_BASE64.test(svg) ? atob(svg) : decodeURIComponent(svg);
+    const domParser = new DOMParser();
+    const document = domParser.parseFromString(encodedSvg, 'image/svg+xml');
+    const parserError = document.querySelector('parsererror');
+    if (parserError) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: Expected 0-1 arguments, but got 2.
+        throw new Error('Deserialisation failed', {cause: parserError});
+    }
+    const {documentElement} = document;
+    const firstSvgChild = documentElement.firstElementChild;
+    return firstSvgChild && isSVGForeignObjectElement(firstSvgChild)
+        ? (documentElement as unknown as SVGForeignObjectElement)
+        : (documentElement as unknown as SVGSVGElement);
+};
+
+export const loadSerializedSVG = (svg: SVGSVGElement | SVGForeignObjectElement): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
-
-        img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}`;
+        img.src = serializeSvg(svg, 'charset=utf-8');
     });
-};
 
 export const FEATURES = {
     get SUPPORT_RANGE_BOUNDS(): boolean {

@@ -125,88 +125,88 @@ describe('cache-storage', () => {
         xhr.splice(0, xhr.length);
         images.splice(0, images.length);
     });
-    it('addImage adds images to cache', async () => {
+    it('addImage adds images to cache', () => {
         const {cache} = createMockContext('http://example.com', {proxy: null});
-        await cache.addImage('http://example.com/test.jpg');
-        await cache.addImage('http://example.com/test2.jpg');
+        cache.addImage('http://example.com/test.jpg');
+        cache.addImage('http://example.com/test2.jpg');
 
         deepStrictEqual(images.length, 2);
         deepStrictEqual(images[0].src, 'http://example.com/test.jpg');
         deepStrictEqual(images[1].src, 'http://example.com/test2.jpg');
     });
 
-    it('addImage should not add duplicate entries', async () => {
+    it('addImage should not add duplicate entries', () => {
         const {cache} = createMockContext('http://example.com');
-        await cache.addImage('http://example.com/test.jpg');
-        await cache.addImage('http://example.com/test.jpg');
+        cache.addImage('http://example.com/test.jpg');
+        cache.addImage('http://example.com/test.jpg');
 
         deepStrictEqual(images.length, 1);
         deepStrictEqual(images[0].src, 'http://example.com/test.jpg');
     });
 
     describe('svg', () => {
-        it('should add svg images correctly', async () => {
+        it('should add svg images correctly', () => {
             const {cache} = createMockContext('http://example.com');
-            await cache.addImage('http://example.com/test.svg');
-            await cache.addImage('http://example.com/test2.svg');
+            cache.addImage('http://example.com/test.svg');
+            cache.addImage('http://example.com/test2.svg');
 
             deepStrictEqual(images.length, 2);
             deepStrictEqual(images[0].src, 'http://example.com/test.svg');
             deepStrictEqual(images[1].src, 'http://example.com/test2.svg');
         });
 
-        it('should omit svg images if not supported', async () => {
+        it('should omit svg images if not supported', () => {
             setFeatures({SUPPORT_SVG_DRAWING: false});
             const {cache} = createMockContext('http://example.com');
-            await cache.addImage('http://example.com/test.svg');
-            await cache.addImage('http://example.com/test2.svg');
+            cache.addImage('http://example.com/test.svg');
+            cache.addImage('http://example.com/test2.svg');
 
             deepStrictEqual(images.length, 0);
         });
     });
 
     describe('cross-origin', () => {
-        it('addImage should not add images it cannot load/render', async () => {
+        it('addImage should not add images it cannot load/render', () => {
             const {cache} = createMockContext('http://example.com', {
                 proxy: undefined
             });
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 0);
         });
 
-        it('addImage should add images if tainting enabled', async () => {
+        it('addImage should add images if tainting enabled', () => {
             const {cache} = createMockContext('http://example.com', {
                 allowTaint: true,
                 proxy: undefined
             });
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images[0].crossOrigin, undefined);
         });
 
-        it('addImage should add images if cors enabled', async () => {
+        it('addImage should add images if cors enabled', () => {
             const {cache} = createMockContext('http://example.com', {useCORS: true});
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images[0].crossOrigin, 'anonymous');
         });
 
-        it('addImage should not add images if cors enabled but not supported', async () => {
+        it('addImage should not add images if cors enabled but not supported', () => {
             setFeatures({SUPPORT_CORS_IMAGES: false});
 
             const {cache} = createMockContext('http://example.com', {
                 useCORS: true,
                 proxy: undefined
             });
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 0);
         });
 
-        it('addImage should not add images to proxy if cors enabled', async () => {
+        it('addImage should not add images to proxy if cors enabled', () => {
             const {cache} = createMockContext('http://example.com', {useCORS: true});
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images.length, 1);
             deepStrictEqual(images[0].src, 'http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(images[0].crossOrigin, 'anonymous');
@@ -214,7 +214,7 @@ describe('cache-storage', () => {
 
         it('addImage should use proxy ', async () => {
             const {cache} = createMockContext('http://example.com');
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
             deepStrictEqual(xhr.length, 1);
             deepStrictEqual(
                 xhr[0].url,
@@ -230,7 +230,7 @@ describe('cache-storage', () => {
             const {cache} = createMockContext('http://example.com', {
                 imageTimeout: 10
             });
-            await cache.addImage('http://html2canvas.hertzen.com/test.jpg');
+            cache.addImage('http://html2canvas.hertzen.com/test.jpg');
 
             deepStrictEqual(xhr.length, 1);
             deepStrictEqual(
@@ -250,7 +250,7 @@ describe('cache-storage', () => {
 
     it('match should return cache entry', async () => {
         const {cache} = createMockContext('http://example.com');
-        await cache.addImage('http://example.com/test.jpg');
+        cache.addImage('http://example.com/test.jpg');
 
         if (images[0].onload) {
             images[0].onload();
@@ -269,5 +269,15 @@ describe('cache-storage', () => {
             await cache.match('http://example.com/test.jpg');
             fail('Expected result to timeout');
         } catch (e) {}
+    });
+
+    it('addImage should add an inlined image', async () => {
+        const {cache} = createMockContext('http://example.com', {imageTimeout: 10});
+        const inlinedImg = `data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub/
+/ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcpp
+V0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7`;
+        cache.addImage(inlinedImg);
+
+        await cache.match(inlinedImg);
     });
 });
