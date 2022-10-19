@@ -276,17 +276,7 @@ export class CanvasRenderer extends Renderer {
             this.path(path);
             this.ctx.save();
             this.ctx.clip();
-            this.ctx.drawImage(
-                image,
-                0,
-                0,
-                container.intrinsicWidth,
-                container.intrinsicHeight,
-                box.left,
-                box.top,
-                box.width,
-                box.height
-            );
+            this.ctx.drawImage(image, box.left, box.top, box.width, box.height);
             this.ctx.restore();
         }
     }
@@ -568,8 +558,13 @@ export class CanvasRenderer extends Renderer {
         this.ctx.translate(-offsetX, -offsetY);
     }
 
-    resizeImage(image: HTMLImageElement, width: number, height: number): HTMLCanvasElement | HTMLImageElement {
-        if (image.width === width && image.height === height) {
+    resizeImage(
+        container: ElementContainer,
+        image: HTMLImageElement,
+        width: number,
+        height: number
+    ): HTMLCanvasElement | HTMLImageElement {
+        if (container instanceof ImageElementContainer && image.width === width && image.height === height) {
             return image;
         }
 
@@ -578,7 +573,7 @@ export class CanvasRenderer extends Renderer {
         canvas.width = Math.max(1, width);
         canvas.height = Math.max(1, height);
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
+        ctx.drawImage(image, 0, 0, width, height);
         return canvas;
     }
 
@@ -601,7 +596,7 @@ export class CanvasRenderer extends Renderer {
                         image.width / image.height
                     ]);
                     const pattern = this.ctx.createPattern(
-                        this.resizeImage(image, width, height),
+                        this.resizeImage(container, image, width, height),
                         'repeat'
                     ) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
