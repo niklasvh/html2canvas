@@ -46,6 +46,7 @@ Below is a list of all the supported CSS properties and values.
  - max-width
  - min-height
  - min-width
+ - mix-blend-mode (**Limited support**)
  - opacity
  - overflow
  - overflow-wrap
@@ -79,7 +80,6 @@ These CSS properties are **NOT** currently supported
  - [box-shadow](https://github.com/niklasvh/html2canvas/pull/1086)
  - [filter](https://github.com/niklasvh/html2canvas/issues/493)
  - [font-variant-ligatures](https://github.com/niklasvh/html2canvas/pull/1085)
- - [mix-blend-mode](https://github.com/niklasvh/html2canvas/issues/580)
  - [object-fit](https://github.com/niklasvh/html2canvas/issues/1064)
  - [repeating-linear-gradient()](https://github.com/niklasvh/html2canvas/issues/1162)
  - [writing-mode](https://github.com/niklasvh/html2canvas/issues/1258)
