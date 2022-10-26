@@ -1,77 +1,55 @@
 import {IPropertyIdentValueDescriptor, PropertyDescriptorParsingType} from '../IPropertyDescriptor';
 import {Context} from '../../core/context';
 
-export const enum MIX_BLEND_MODE {
-    NORMAL = 'normal',
-    MULTIPLY = 'multiply',
-    SCREEN = 'screen',
-    OVERLAY = 'overlay',
-    DARKEN = 'darken',
-    LIGHTEN = 'lighten',
-    COLOR_DODGE = 'color-dodge',
-    COLOR_BURN = 'color-burn',
-    HARD_LIGHT = 'hard-light',
-    SOFT_LIGHT = 'soft-light',
-    DIFFERENCE = 'difference',
-    EXCLUSION = 'exclusion',
-    HUE = 'hue',
-    SATURATION = 'saturation',
-    COLOR = 'color',
-    LUMINOSITY = 'luminosity',
-    INITIAL = 'initial',
-    INHERIT = 'inherit',
-    REVERT = 'revert',
-    UNSET = 'unset'
+/**
+ * Guard function for checking validity of mode and casting as
+ * GlobalCompositeOperation if it's a valid value
+ *
+ * @param mode String value of the css mix-blend-mode
+ * @returns boolean
+ */
+function isGlobalCompositeOperation(mode: string): mode is GlobalCompositeOperation {
+    const globalCompositeModes = [
+        'color',
+        'color-burn',
+        'color-dodge',
+        'copy',
+        'darken',
+        'destination-atop',
+        'destination-in',
+        'destination-out',
+        'destination-over',
+        'difference',
+        'exclusion',
+        'hard-light',
+        'hue',
+        'lighten',
+        'lighter',
+        'luminosity',
+        'multiply',
+        'overlay',
+        'saturation',
+        'screen',
+        'soft-light',
+        'source-atop',
+        'source-in',
+        'source-out',
+        'source-over',
+        'xor'
+    ];
+    return globalCompositeModes.indexOf(mode) !== -1;
 }
 
-export const mixBlendMode: IPropertyIdentValueDescriptor<MIX_BLEND_MODE> = {
+export const mixBlendMode: IPropertyIdentValueDescriptor<GlobalCompositeOperation> = {
     name: 'mix-blend-mode',
     initialValue: 'normal',
     prefix: false,
     type: PropertyDescriptorParsingType.IDENT_VALUE,
     parse: (_context: Context, mode: string) => {
-        switch (mode) {
-            case 'multiply':
-                return MIX_BLEND_MODE.MULTIPLY;
-            case 'screen':
-                return MIX_BLEND_MODE.SCREEN;
-            case 'overlay':
-                return MIX_BLEND_MODE.OVERLAY;
-            case 'darken':
-                return MIX_BLEND_MODE.DARKEN;
-            case 'lighten':
-                return MIX_BLEND_MODE.LIGHTEN;
-            case 'color-dodge':
-                return MIX_BLEND_MODE.COLOR_DODGE;
-            case 'color-burn':
-                return MIX_BLEND_MODE.COLOR_BURN;
-            case 'hard-light':
-                return MIX_BLEND_MODE.HARD_LIGHT;
-            case 'soft-light':
-                return MIX_BLEND_MODE.SOFT_LIGHT;
-            case 'difference':
-                return MIX_BLEND_MODE.DIFFERENCE;
-            case 'exclusion':
-                return MIX_BLEND_MODE.EXCLUSION;
-            case 'hue':
-                return MIX_BLEND_MODE.HUE;
-            case 'saturation':
-                return MIX_BLEND_MODE.SATURATION;
-            case 'color':
-                return MIX_BLEND_MODE.COLOR;
-            case 'luminosity':
-                return MIX_BLEND_MODE.LUMINOSITY;
-            case 'initial':
-                return MIX_BLEND_MODE.INITIAL;
-            case 'inherit':
-                return MIX_BLEND_MODE.INHERIT;
-            case 'revert':
-                return MIX_BLEND_MODE.REVERT;
-            case 'unset':
-                return MIX_BLEND_MODE.UNSET;
-            case 'normal':
-            default:
-                return MIX_BLEND_MODE.NORMAL;
+        if (isGlobalCompositeOperation(mode)) {
+            return mode;
         }
+        // This is the default in css
+        return 'source-over';
     }
 };
