@@ -58,7 +58,7 @@ export const calculateBackgroundRendering = (
         backgroundPositioningArea
     );
 
-    const [sizeWidth, sizeHeight] = backgroundImageSize;
+    let [sizeWidth, sizeHeight] = backgroundImageSize;
 
     const position = getAbsoluteValueForTuple(
         getBackgroundValueForIndex(container.styles.backgroundPosition, index),
@@ -76,6 +76,9 @@ export const calculateBackgroundRendering = (
 
     const offsetX = Math.round(backgroundPositioningArea.left + position[0]);
     const offsetY = Math.round(backgroundPositioningArea.top + position[1]);
+
+    sizeWidth = Math.max(1,sizeWidth)
+    sizeHeight = Math.max(1,sizeHeight)
 
     return [path, offsetX, offsetY, sizeWidth, sizeHeight];
 };
