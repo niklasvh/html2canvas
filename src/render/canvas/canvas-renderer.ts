@@ -584,6 +584,7 @@ export class CanvasRenderer extends Renderer {
 
     async renderBackgroundImage(container: ElementContainer): Promise<void> {
         let index = container.styles.backgroundImage.length - 1;
+        const repeatTypes = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
         for (const backgroundImage of container.styles.backgroundImage.slice(0).reverse()) {
             if (backgroundImage.type === CSSImageType.URL) {
                 let image;
@@ -602,7 +603,7 @@ export class CanvasRenderer extends Renderer {
                     ]);
                     const pattern = this.ctx.createPattern(
                         this.resizeImage(image, width, height),
-                        'repeat'
+                        repeatTypes[+container.styles.backgroundRepeat]
                     ) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
                 }
@@ -623,7 +624,7 @@ export class CanvasRenderer extends Renderer {
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, width, height);
                 if (width > 0 && height > 0) {
-                    const pattern = this.ctx.createPattern(canvas, 'repeat') as CanvasPattern;
+                    const pattern = this.ctx.createPattern(canvas, repeatTypes[+container.styles.backgroundRepeat]) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
                 }
             } else if (isRadialGradient(backgroundImage)) {
