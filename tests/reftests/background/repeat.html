@@ -35,6 +35,26 @@
                 display:block;
             }
 
+            .shared-area {
+                text-align: center;
+                border: solid .5em #0d47a1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                background-color: white;
+            }
+
+            .edges {
+                width: 80%;
+                height: 50%;
+                background-size: contain;
+                background-position: center center;
+                background-image: url('../../assets/edges.png');
+                background-color: white;
+                background-repeat: no-repeat;
+            }
+
         </style>
 
     </head>
@@ -45,12 +65,20 @@
             <div style="background:url(../../assets/image.jpg) repeat-x;"></div>
             <div style="background:url(../../assets/image.jpg) repeat-y;"></div>
             <div style="background:url(../../assets/image.jpg) no-repeat;"></div>
+            <div class="shared-area">
+                <p class="edges"></p>
+                <p class="caption">Edges</p>
+            </div>
         </div>
         <div class="small">
             <div style="background:url(../../assets/image.jpg);"></div>
             <div style="background:url(../../assets/image.jpg) repeat-x;"></div>
             <div style="background:url(../../assets/image.jpg) repeat-y;"></div>
             <div style="background:url(../../assets/image.jpg) no-repeat;"></div>
+            <div class="shared-area">
+                <p class="edges"></p>
+                <p class="caption">Edges</p>
+            </div>
         </div>
 
     </body>
