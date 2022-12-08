@@ -603,7 +603,7 @@ export class CanvasRenderer extends Renderer {
                     ]);
                     const pattern = this.ctx.createPattern(
                         this.resizeImage(image, width, height),
-                        repeatTypes[+container.styles.backgroundRepeat]
+                        repeatTypes[+container.styles.backgroundRepeat || 0]
                     ) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
                 }
@@ -626,7 +626,7 @@ export class CanvasRenderer extends Renderer {
                 if (width > 0 && height > 0) {
                     const pattern = this.ctx.createPattern(
                         canvas,
-                        repeatTypes[+container.styles.backgroundRepeat]
+                        repeatTypes[+container.styles.backgroundRepeat || 0]
                     ) as CanvasPattern;
                     this.renderRepeat(path, pattern, x, y);
                 }
