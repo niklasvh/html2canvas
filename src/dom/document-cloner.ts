@@ -136,7 +136,6 @@ export class DocumentCloner {
         }
         // Chrome scrolls the parent document for some reason after the write to the cloned window???
         restoreOwnerScroll(this.referenceElement.ownerDocument, scrollX, scrollY);
-        documentClone.replaceChild(documentClone.adoptNode(this.documentElement), documentClone.documentElement);
         documentClone.append(documentClone.adoptNode(this.documentElement));
         documentClone.close();
 
