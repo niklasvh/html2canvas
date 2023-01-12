@@ -265,29 +265,68 @@ export class CanvasRenderer extends Renderer {
         });
     }
 
-    renderReplacedElement(
+    sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    async fixSVGImage(
+        container: ReplacedElementContainer,
+        image: HTMLImageElement | HTMLCanvasElement
+    ): Promise<HTMLImageElement | HTMLCanvasElement> {
+        if (image instanceof HTMLImageElement && container.intrinsicWidth == 0 && container.intrinsicHeight == 0) {
+            // in such case we will to use the viewport attribute
+            // and we preprocess the svg image and add the width/height svg attributes to it so that drawImage works on firefox
+            // See https://bugzilla.mozilla.org/show_bug.cgi?id=700533 and https://webcompat.com/issues/64352
+            var img: HTMLImageElement = image;
+            var response = await fetch(img.src);
+            var str = await response.text();
+            var doc = new window.DOMParser().parseFromString(str, 'text/xml');
+            var svgElem = doc.documentElement;
+            if (svgElem) {
+                var viewBox = svgElem.getAttribute('viewBox');
+                var match = viewBox?.match(/\w+ \w+ (\w+) (\w+)/);
+                if (match) {
+                    var viewBoxWidth = match[1];
+                    var viewBoxHeight = match[2];
+                    container.intrinsicWidth = +viewBoxWidth;
+                    container.intrinsicHeight = +viewBoxHeight;
+                    svgElem.setAttribute('width', viewBoxWidth);
+                    svgElem.setAttribute('height', viewBoxHeight);
+                    var svgData = new XMLSerializer().serializeToString(svgElem);
+                    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+                }
+            }
+        }
+        return image;
+    }
+
+    async renderReplacedElement(
         container: ReplacedElementContainer,
         curves: BoundCurves,
         image: HTMLImageElement | HTMLCanvasElement
-    ): void {
-        if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
-            const box = contentBox(container);
-            const path = calculatePaddingBoxPath(curves);
-            this.path(path);
-            this.ctx.save();
-            this.ctx.clip();
-            this.ctx.drawImage(
-                image,
-                0,
-                0,
-                container.intrinsicWidth,
-                container.intrinsicHeight,
-                box.left,
-                box.top,
-                box.width,
-                box.height
-            );
-            this.ctx.restore();
+    ) {
+        if (image) {
+            // Special fix for displaying svg images with no width/height attributes
+            var img = await this.fixSVGImage(container, image);
+            if (container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
+                const box = contentBox(container);
+                const path = calculatePaddingBoxPath(curves);
+                this.path(path);
+                this.ctx.save();
+                this.ctx.clip();
+                await this.sleep(100);
+                this.ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    container.intrinsicWidth,
+                    container.intrinsicHeight,
+                    box.left,
+                    box.top,
+                    box.width,
+                    box.height
+                );
+                this.ctx.restore();
+            }
         }
     }
 
@@ -303,20 +342,20 @@ export class CanvasRenderer extends Renderer {
         if (container instanceof ImageElementContainer) {
             try {
                 const image = await this.context.cache.match(container.src);
-                this.renderReplacedElement(container, curves, image);
+                await this.renderReplacedElement(container, curves, image);
             } catch (e) {
                 this.context.logger.error(`Error loading image ${container.src}`);
             }
         }
 
         if (container instanceof CanvasElementContainer) {
-            this.renderReplacedElement(container, curves, container.canvas);
+            await this.renderReplacedElement(container, curves, container.canvas);
         }
 
         if (container instanceof SVGElementContainer) {
             try {
                 const image = await this.context.cache.match(container.svg);
-                this.renderReplacedElement(container, curves, image);
+                await this.renderReplacedElement(container, curves, image);
             } catch (e) {
                 this.context.logger.error(`Error loading svg ${container.svg.substring(0, 255)}`);
             }
@@ -903,7 +942,6 @@ export class CanvasRenderer extends Renderer {
         }
 
         const stack = parseStackingContexts(element);
-
         await this.renderStack(stack);
         this.applyEffects([]);
         return this.canvas;
