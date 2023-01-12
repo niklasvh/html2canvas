@@ -265,6 +265,9 @@ export class CanvasRenderer extends Renderer {
         });
     }
 
+    sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
     async fixSVGImage(
         container: ReplacedElementContainer,
         image: HTMLImageElement | HTMLCanvasElement
@@ -310,6 +313,7 @@ export class CanvasRenderer extends Renderer {
                 this.path(path);
                 this.ctx.save();
                 this.ctx.clip();
+                await this.sleep(100);
                 this.ctx.drawImage(
                     img,
                     0,
