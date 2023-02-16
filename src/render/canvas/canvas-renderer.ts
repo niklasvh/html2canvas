@@ -569,10 +569,6 @@ export class CanvasRenderer extends Renderer {
     }
 
     resizeImage(image: HTMLImageElement, width: number, height: number): HTMLCanvasElement | HTMLImageElement {
-        if (image.width === width && image.height === height) {
-            return image;
-        }
-
         const ownerDocument = this.canvas.ownerDocument ?? document;
         const canvas = ownerDocument.createElement('canvas');
         canvas.width = Math.max(1, width);
