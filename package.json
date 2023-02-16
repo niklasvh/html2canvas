@@ -1,27 +1,17 @@
 {
   "title": "html2canvas",
-  "name": "html2canvas",
+  "name": "@eqworks/html2canvas",
   "description": "Screenshots with JavaScript",
   "main": "dist/html2canvas.js",
   "module": "dist/html2canvas.esm.js",
   "typings": "dist/types/index.d.ts",
   "browser": "dist/html2canvas.js",
-  "version": "1.4.1",
-  "author": {
-    "name": "Niklas von Hertzen",
-    "email": "niklasvh@gmail.com",
-    "url": "https://hertzen.com"
-  },
+  "version": "1.0.4",
+  "author": "EQ Devs <dev@eqworks.com>",
   "engines": {
     "node": ">=8.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:niklasvh/html2canvas.git"
-  },
-  "bugs": {
-    "url": "https://github.com/niklasvh/html2canvas/issues"
-  },
+  "repository": "git@github.com:EQWorks/html2canvas.git",
   "devDependencies": {
     "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
@@ -115,7 +105,6 @@
     "watch:unittest": "mocha --require ts-node/register --watch-extensions ts -w src/**/__tests__/*.ts",
     "start": "ts-node tests/server --port=8080 --cors=8081"
   },
-  "homepage": "https://html2canvas.hertzen.com",
   "license": "MIT",
   "dependencies": {
     "css-line-break": "^2.1.0",

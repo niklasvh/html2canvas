@@ -1,0 +1,42 @@
+name: Node.js Package
+
+on:
+  push:
+    tags:
+      - 'v*' # proceeds eg: v1.0
+      - '!v*-*' # skips eg: v1.2.99-beta1, v3.5.0-test, etc.
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout designated tagged commit
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+          scope: '@eqworks'
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CD_NPM_TOKEN_PUBLISH }}
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          registry-url: https://npm.pkg.github.com/
+          scope: '@eqworks'
+          always-auth: true
+      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
