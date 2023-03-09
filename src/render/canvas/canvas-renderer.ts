@@ -906,6 +906,7 @@ export class CanvasRenderer extends Renderer {
 
         await this.renderStack(stack);
         this.applyEffects([]);
+        this.ctx.translate(this.options.x, this.options.y);
         return this.canvas;
     }
 }
