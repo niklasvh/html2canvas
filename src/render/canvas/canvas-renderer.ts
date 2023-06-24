@@ -200,7 +200,7 @@ export class CanvasRenderer extends Renderer {
                                     this.ctx.shadowColor = asString(textShadow.color);
                                     this.ctx.shadowOffsetX = textShadow.offsetX.number * this.options.scale;
                                     this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
-                                    this.ctx.shadowBlur = textShadow.blur.number;
+                                    this.ctx.shadowBlur = textShadow.blur.number * this.options.scale;;
 
                                     this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
                                 });
