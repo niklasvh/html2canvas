@@ -714,7 +714,21 @@ export class CanvasRenderer extends Renderer {
 
             if (!isTransparent(styles.backgroundColor)) {
                 this.ctx.fillStyle = asString(styles.backgroundColor);
-                this.ctx.fill();
+
+                if (styles.display === DISPLAY.INLINE) {
+                    for (const textNode of paint.container.textNodes) {
+                        for (const textBound of textNode.textBounds) {
+                            this.ctx.fillRect(
+                                textBound.bounds.left,
+                                textBound.bounds.top,
+                                textBound.bounds.width,
+                                textBound.bounds.height
+                            );
+                        }
+                    }
+                } else {
+                    this.ctx.fill();
+                }
             }
 
             await this.renderBackgroundImage(paint.container);
