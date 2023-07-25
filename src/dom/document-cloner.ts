@@ -503,6 +503,8 @@ const createIFrameContainer = (ownerDocument: Document, bounds: Bounds): HTMLIFr
     cloneIframeContainer.style.border = '0';
     cloneIframeContainer.width = bounds.width.toString();
     cloneIframeContainer.height = bounds.height.toString();
+    cloneIframeContainer.style.width = bounds.width.toString() + 'px';
+    cloneIframeContainer.style.height = bounds.height.toString() + 'px';
     cloneIframeContainer.scrolling = 'no'; // ios won't scroll without it
     cloneIframeContainer.setAttribute(IGNORE_ATTRIBUTE, 'true');
     ownerDocument.body.appendChild(cloneIframeContainer);
