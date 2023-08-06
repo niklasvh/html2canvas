@@ -600,11 +600,24 @@ export class CanvasRenderer extends Renderer {
                         image.height,
                         image.width / image.height
                     ]);
-                    const pattern = this.ctx.createPattern(
-                        this.resizeImage(image, width, height),
-                        'repeat'
-                    ) as CanvasPattern;
-                    this.renderRepeat(path, pattern, x, y);
+                    // const pattern = this.ctx.createPattern(
+                    //     this.resizeImage(image, width, height),
+                    //     'repeat'
+                    // ) as CanvasPattern;
+                    // this.renderRepeat(path, pattern, x, y);
+                    const scaleX = width / image.naturalWidth;
+                    const scaleY = height / image.naturalHeight;
+                    const pattern = this.ctx.createPattern(image, "repeat") as CanvasPattern;
+                    const scaledPath = (path as Vector[]).map((item) => {
+                        item.x = item.x / scaleX;
+                        item.y = item.y / scaleY;
+                        return item;
+                    });
+                    const scaledOffsetX = x / scaleX;
+                    const scaledOffsetY = y / scaleY;
+                    this.ctx.scale(scaleX, scaleY);
+                    this.renderRepeat(scaledPath, pattern, scaledOffsetX, scaledOffsetY);
+                    this.ctx.scale(1 / scaleX, 1 / scaleY);
                 }
             } else if (isLinearGradient(backgroundImage)) {
                 const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
