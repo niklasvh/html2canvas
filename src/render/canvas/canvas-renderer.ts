@@ -610,9 +610,10 @@ export class CanvasRenderer extends Renderer {
                     });
                     const scaledOffsetX = x / scaleX;
                     const scaledOffsetY = y / scaleY;
+                    this.ctx.save();
                     this.ctx.scale(scaleX, scaleY);
                     this.renderRepeat(scaledPath, pattern, scaledOffsetX, scaledOffsetY);
-                    this.ctx.scale(1 / scaleX, 1 / scaleY);
+                    this.ctx.restore();
                 }
             } else if (isLinearGradient(backgroundImage)) {
                 const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [null, null, null]);
