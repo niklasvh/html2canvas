@@ -34,6 +34,7 @@ export class ElementContainer {
             if (this.styles.transform !== null) {
                 // getBoundingClientRect takes transforms into account
                 element.style.transform = 'none';
+                console.log('isHTMLElementNode')
             }
         }
 

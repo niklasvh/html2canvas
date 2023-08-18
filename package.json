@@ -119,6 +119,7 @@
   "license": "MIT",
   "dependencies": {
     "css-line-break": "^2.1.0",
+    "less": "^4.2.0",
     "text-segmentation": "^1.0.3"
   }
 }

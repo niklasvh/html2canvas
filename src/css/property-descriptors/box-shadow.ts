@@ -22,6 +22,9 @@ export const boxShadow: IPropertyListDescriptor<BoxShadow> = {
     prefix: false,
     parse: (context: Context, tokens: CSSValue[]): BoxShadow => {
         if (tokens.length === 1 && isIdentWithValue(tokens[0], 'none')) {
+            // console.log('shadow-box');
+            // console.log('context',context)
+            // console.log('tokens',tokens)
             return [];
         }
 
