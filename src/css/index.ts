@@ -175,6 +175,11 @@ export class CSSParsedDeclaration {
         this.borderBottomWidth = parse(context, borderBottomWidth, declaration.borderBottomWidth);
         this.borderLeftWidth = parse(context, borderLeftWidth, declaration.borderLeftWidth);
         this.boxShadow = parse(context, boxShadow, declaration.boxShadow);
+        console.log('this.boxShadow',this.boxShadow)
+        // console.log('context',context)
+        // console.log('boxShadow',boxShadow)
+        // console.log('declaration.boxShadow',declaration.boxShadow)
+
         this.color = parse(context, color, declaration.color);
         this.direction = parse(context, direction, declaration.direction);
         this.display = parse(context, display, declaration.display);
