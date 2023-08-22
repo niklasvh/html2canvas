@@ -758,6 +758,7 @@ export class CanvasRenderer extends Renderer {
                     this.ctx.shadowColor = asString(shadow.color);
                     this.ctx.shadowBlur = shadow.blur.number;
                     this.ctx.fillStyle = asString(shadow.color);
+                    // this.ctx.fillStyle = !shadow.blur.number ? asString(shadow.color) : 'rgba(0,0,0,1)';
 
                     this.ctx.fill();
                     this.ctx.restore();
