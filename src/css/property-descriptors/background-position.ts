@@ -11,7 +11,7 @@ export const backgroundPosition: IPropertyListDescriptor<BackgroundPosition> = {
     initialValue: '0% 0%',
     type: PropertyDescriptorParsingType.LIST,
     prefix: false,
-    parse: (_context: Context, tokens: CSSValue[]): BackgroundPosition => {
+    parse: (_context: Context, tokens: CSSValue[]): BackgroundPosition => {        
         return parseFunctionArgs(tokens)
             .map((values: CSSValue[]) => values.filter(isLengthPercentage))
             .map(parseLengthPercentageTuple);

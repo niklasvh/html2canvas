@@ -1,0 +1,10 @@
+.first-box {
+  width: 500px;
+  height: 500px;
+  background-color: green;
+  background: url('./blue-box.png') no-repeat;
+  /* background-size: contain; */
+  /* background-position: 150px 15px; */
+  /* text-shadow: 5px 5px #558ABB; */
+  box-shadow: 10px 5px 5px 1px rgb(255, 0, 0);
+}

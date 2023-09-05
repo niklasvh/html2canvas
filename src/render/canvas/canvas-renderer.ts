@@ -4,7 +4,7 @@ import {ElementContainer, FLAGS} from '../../dom/element-container';
 import {BORDER_STYLE} from '../../css/property-descriptors/border-style';
 import {CSSParsedDeclaration} from '../../css';
 import {TextContainer} from '../../dom/text-container';
-import {Path, transformPath} from '../path';
+import {Path, transformPath,reversePath} from '../path';
 import {BACKGROUND_CLIP} from '../../css/property-descriptors/background-clip';
 import {BoundCurves, calculateBorderBoxPath, calculateContentBoxPath, calculatePaddingBoxPath} from '../bound-curves';
 import {BezierCurve, isBezierCurve} from '../bezier-curve';
@@ -523,12 +523,16 @@ export class CanvasRenderer extends Renderer {
 
     mask(paths: Path[]): void {
         this.ctx.beginPath();
+        this.ctx.save();
+        // reset tranform to identity
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(this.canvas.width, 0);
         this.ctx.lineTo(this.canvas.width, this.canvas.height);
         this.ctx.lineTo(0, this.canvas.height);
         this.ctx.lineTo(0, 0);
-        this.formatPath(paths.slice(0).reverse());
+        this.ctx.restore();
+        this.formatPath(reversePath(paths)); 
         this.ctx.closePath();
     }
 
@@ -546,7 +550,6 @@ export class CanvasRenderer extends Renderer {
             } else {
                 this.ctx.lineTo(start.x, start.y);
             }
-
             if (isBezierCurve(point)) {
                 this.ctx.bezierCurveTo(
                     point.startControl.x,
@@ -701,12 +704,10 @@ export class CanvasRenderer extends Renderer {
             {style: styles.borderBottomStyle, color: styles.borderBottomColor, width: styles.borderBottomWidth},
             {style: styles.borderLeftStyle, color: styles.borderLeftColor, width: styles.borderLeftWidth}
         ];
-
         const backgroundPaintingArea = calculateBackgroundCurvedPaintingArea(
             getBackgroundValueForIndex(styles.backgroundClip, 0),
             paint.curves
         );
-
         if (hasBackground || styles.boxShadow.length) {
             this.ctx.save();
             this.path(backgroundPaintingArea);
@@ -714,7 +715,7 @@ export class CanvasRenderer extends Renderer {
 
             if (!isTransparent(styles.backgroundColor)) {
                 this.ctx.fillStyle = asString(styles.backgroundColor);
-                this.ctx.fill();
+                this.ctx.fill();                
             }
 
             await this.renderBackgroundImage(paint.container);
@@ -730,12 +731,11 @@ export class CanvasRenderer extends Renderer {
                     const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
                     const shadowPaintingArea = transformPath(
                         borderBoxArea,
-                        -maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
-                        (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.offsetX.number - maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,
+                        shadow.offsetY.number + (shadow.inset ? 1 : -1) * shadow.spread.number,
                         shadow.spread.number * (shadow.inset ? -2 : 2),
                         shadow.spread.number * (shadow.inset ? -2 : 2)
                     );
-
                     if (shadow.inset) {
                         this.path(borderBoxArea);
                         this.ctx.clip();
@@ -745,15 +745,18 @@ export class CanvasRenderer extends Renderer {
                         this.ctx.clip();
                         this.path(shadowPaintingArea);
                     }
-
-                    this.ctx.shadowOffsetX = shadow.offsetX.number + maskOffset;
-                    this.ctx.shadowOffsetY = shadow.offsetY.number;
+                    this.ctx.shadowOffsetX =  maskOffset;
+                    this.ctx.shadowOffsetY = 0;
                     this.ctx.shadowColor = asString(shadow.color);
                     this.ctx.shadowBlur = shadow.blur.number;
-                    this.ctx.fillStyle = shadow.inset ? asString(shadow.color) : 'rgba(0,0,0,1)';
+                    this.ctx.fillStyle = asString(shadow.color);
+                    if(shadow.blur.number){
+                        this.ctx.filter = `blur(${shadow.blur.number}px)`
+                    }
+                    this.ctx.fill()
+                    this.ctx.restore()
+                    
 
-                    this.ctx.fill();
-                    this.ctx.restore();
                 });
         }
 
