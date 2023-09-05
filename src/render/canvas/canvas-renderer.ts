@@ -58,6 +58,7 @@ export interface RenderOptions {
     height: number;
 }
 
+const MASK_OFFSET = 10000;
 
 export class CanvasRenderer extends Renderer {
     canvas: HTMLCanvasElement;
@@ -727,7 +728,7 @@ export class CanvasRenderer extends Renderer {
                 .forEach((shadow) => {
                     this.ctx.save();
                     const borderBoxArea = calculateBorderBoxPath(paint.curves);
-                    const maskOffset = shadow.inset ? 0 : 1;
+                    const maskOffset = shadow.inset ? 0 : MASK_OFFSET;
                     const shadowPaintingArea = transformPath(
                         borderBoxArea,
                         shadow.offsetX.number - maskOffset + (shadow.inset ? 1 : -1) * shadow.spread.number,

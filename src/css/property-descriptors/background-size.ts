@@ -19,9 +19,6 @@ export const backgroundSize: IPropertyListDescriptor<BackgroundSize> = {
     prefix: false,
     type: PropertyDescriptorParsingType.LIST,
     parse: (_context: Context, tokens: CSSValue[]): BackgroundSize => {
-        // console.log('bakground-size')
-        // console.log('_context',_context)
-        // console.log('tokens',tokens)
         return parseFunctionArgs(tokens).map((values) => values.filter(isBackgroundSizeInfoToken));
     }
 };

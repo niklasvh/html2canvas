@@ -24,7 +24,7 @@ export const boxShadow: IPropertyListDescriptor<BoxShadow> = {
         if (tokens.length === 1 && isIdentWithValue(tokens[0], 'none')) {
             return [];
         }
-        let c = parseFunctionArgs(tokens).map((values: CSSValue[]) => {
+        return parseFunctionArgs(tokens).map((values: CSSValue[]) => {
             const shadow: BoxShadowItem = {
                 color: 0x000000ff,
                 offsetX: ZERO_LENGTH,
@@ -55,6 +55,5 @@ export const boxShadow: IPropertyListDescriptor<BoxShadow> = {
             }
             return shadow;
         });
-        return c
     }
 };
