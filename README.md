@@ -1,4 +1,4 @@
-html2canvas
+HTML2canvas
 ===========
 
 [Homepage](https://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](https://github.com/niklasvh/html2canvas/discussions/categories/q-a)
@@ -60,7 +60,7 @@ Install dependencies:
 
     $ npm install
 
-Build browser bundle
+Build browser bundle:
 
     $ npm run build
 
