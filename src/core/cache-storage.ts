@@ -31,6 +31,7 @@ export interface ResourceOptions {
     useCORS: boolean;
     allowTaint: boolean;
     proxy?: string;
+    withCredentials?: boolean;
 }
 
 export class Cache {
@@ -145,6 +146,9 @@ export class Cache {
                     reject(`Failed to proxy resource ${key} with status code ${xhr.status}`);
                 }
             };
+            if (this._options.withCredentials) {
+                xhr.withCredentials = true;
+            }
 
             xhr.onerror = reject;
             const queryString = proxy.indexOf('?') > -1 ? '&' : '?';
