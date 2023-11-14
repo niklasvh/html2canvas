@@ -569,9 +569,10 @@ export class CanvasRenderer extends Renderer {
     }
 
     resizeImage(image: HTMLImageElement, width: number, height: number): HTMLCanvasElement | HTMLImageElement {
-        if (image.width === width && image.height === height) {
-            return image;
-        }
+        // Problème sous Safari (operation is insecure) : appliquer le fix trouvé ici https://github.com/niklasvh/html2canvas/pull/2911/commits/aca527a9afb217a78351ced1b790c776ebd6a17c
+        // if (image.width === width && image.height === height) {
+        //     return image;
+        // }
 
         const ownerDocument = this.canvas.ownerDocument ?? document;
         const canvas = ownerDocument.createElement('canvas');
