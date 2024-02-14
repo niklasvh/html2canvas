@@ -422,10 +422,7 @@ export class CanvasRenderer extends Renderer {
             ]);
 
             this.ctx.clip();
-            this.renderTextWithLetterSpacing(
-                new TextBounds(container.value, textBounds),
-                styles
-            );
+            this.renderTextWithLetterSpacing(new TextBounds(container.value, textBounds), styles);
             this.ctx.restore();
             this.ctx.textBaseline = 'alphabetic';
             this.ctx.textAlign = 'left';
@@ -459,10 +456,7 @@ export class CanvasRenderer extends Renderer {
                     computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 1
                 );
 
-                this.renderTextWithLetterSpacing(
-                    new TextBounds(paint.listValue, bounds),
-                    styles
-                );
+                this.renderTextWithLetterSpacing(new TextBounds(paint.listValue, bounds), styles);
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
             }
