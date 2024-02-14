@@ -144,13 +144,15 @@ export class CanvasRenderer extends Renderer {
         }
     }
 
-    renderTextWithLetterSpacing(text: TextBounds, letterSpacing: number, baseline: number): void {
+    renderTextWithLetterSpacing(text: TextBounds, styles: CSSParsedDeclaration): void {
+        const letterSpacing = styles.letterSpacing;
+        const offset = styles.fontSize.number;
         if (letterSpacing === 0) {
-            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + baseline);
+            this.ctx.fillText(text.text, text.bounds.left, text.bounds.top + offset);
         } else {
             const letters = segmentGraphemes(text.text);
             letters.reduce((left, letter) => {
-                this.ctx.fillText(letter, left, text.bounds.top + baseline);
+                this.ctx.fillText(letter, left, text.bounds.top + offset);
 
                 return left + this.ctx.measureText(letter).width;
             }, text.bounds.left);
@@ -189,7 +191,7 @@ export class CanvasRenderer extends Renderer {
                 switch (paintOrderLayer) {
                     case PAINT_ORDER_LAYER.FILL:
                         this.ctx.fillStyle = asString(styles.color);
-                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                        this.renderTextWithLetterSpacing(text, styles);
                         const textShadows: TextShadow = styles.textShadow;
 
                         if (textShadows.length && text.text.trim().length) {
@@ -202,7 +204,7 @@ export class CanvasRenderer extends Renderer {
                                     this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
                                     this.ctx.shadowBlur = textShadow.blur.number;
 
-                                    this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                                    this.renderTextWithLetterSpacing(text, styles);
                                 });
 
                             this.ctx.shadowColor = '';
@@ -388,8 +390,7 @@ export class CanvasRenderer extends Renderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            const [fontFamily, fontSize] = this.createFontStyle(styles);
-            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+            const [fontFamily] = this.createFontStyle(styles);
 
             this.ctx.font = fontFamily;
             this.ctx.fillStyle = asString(styles.color);
@@ -423,8 +424,7 @@ export class CanvasRenderer extends Renderer {
             this.ctx.clip();
             this.renderTextWithLetterSpacing(
                 new TextBounds(container.value, textBounds),
-                styles.letterSpacing,
-                baseline
+                styles
             );
             this.ctx.restore();
             this.ctx.textBaseline = 'alphabetic';
@@ -461,8 +461,7 @@ export class CanvasRenderer extends Renderer {
 
                 this.renderTextWithLetterSpacing(
                     new TextBounds(paint.listValue, bounds),
-                    styles.letterSpacing,
-                    computeLineHeight(styles.lineHeight, styles.fontSize.number) / 2 + 2
+                    styles
                 );
                 this.ctx.textBaseline = 'bottom';
                 this.ctx.textAlign = 'left';
