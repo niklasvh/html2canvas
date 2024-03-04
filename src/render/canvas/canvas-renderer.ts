@@ -189,7 +189,7 @@ export class CanvasRenderer extends Renderer {
                 switch (paintOrderLayer) {
                     case PAINT_ORDER_LAYER.FILL:
                         this.ctx.fillStyle = asString(styles.color);
-                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                        this.renderTextWithLetterSpacing(text, styles.letterSpacing, styles.fontSize.number);
                         const textShadows: TextShadow = styles.textShadow;
 
                         if (textShadows.length && text.text.trim().length) {
@@ -202,7 +202,11 @@ export class CanvasRenderer extends Renderer {
                                     this.ctx.shadowOffsetY = textShadow.offsetY.number * this.options.scale;
                                     this.ctx.shadowBlur = textShadow.blur.number;
 
-                                    this.renderTextWithLetterSpacing(text, styles.letterSpacing, baseline);
+                                    this.renderTextWithLetterSpacing(
+                                        text,
+                                        styles.letterSpacing,
+                                        styles.fontSize.number
+                                    );
                                 });
 
                             this.ctx.shadowColor = '';
