@@ -595,10 +595,12 @@ export class CanvasRenderer extends Renderer {
                 }
 
                 if (image) {
+                    const imageWidth = isNaN(image.width) || image.width === 0 ? 1 : image.width;
+                    const imageHeight = isNaN(image.height) || image.height === 0 ? 1 : image.height;
                     const [path, x, y, width, height] = calculateBackgroundRendering(container, index, [
-                        image.width,
-                        image.height,
-                        image.width / image.height
+                        imageWidth,
+                        imageHeight,
+                        imageWidth / imageHeight
                     ]);
                     const pattern = this.ctx.createPattern(
                         this.resizeImage(image, width, height),
