@@ -27,7 +27,7 @@ import {DebuggerType, isDebugging} from '../core/debugger';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
-    onclone?: (document: Document, element: HTMLElement) => void;
+    onclone?: (document: Document, element: HTMLElement) => void | Promise<void>;
     allowTaint?: boolean;
 }
 
