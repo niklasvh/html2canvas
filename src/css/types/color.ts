@@ -4,6 +4,7 @@ import {ITypeDescriptor} from '../ITypeDescriptor';
 import {angle, deg} from './angle';
 import {getAbsoluteValue, isLengthPercentage} from './length-percentage';
 import {Context} from '../../core/context';
+
 export type Color = number;
 
 export const color: ITypeDescriptor<Color> = {
@@ -121,15 +122,7 @@ function hue2rgb(t1: number, t2: number, hue: number): number {
     }
 }
 
-const hsl = (context: Context, args: CSSValue[]): number => {
-    const tokens = args.filter(nonFunctionArgSeparator);
-    const [hue, saturation, lightness, alpha] = tokens;
-
-    const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(context, hue)) / (Math.PI * 2);
-    const s = isLengthPercentage(saturation) ? saturation.number / 100 : 0;
-    const l = isLengthPercentage(lightness) ? lightness.number / 100 : 0;
-    const a = typeof alpha !== 'undefined' && isLengthPercentage(alpha) ? getAbsoluteValue(alpha, 1) : 1;
-
+function hsl2rgb(h: number, s: number, l: number, a: number): number {
     if (s === 0) {
         return pack(l * 255, l * 255, l * 255, 1);
     }
@@ -141,7 +134,78 @@ const hsl = (context: Context, args: CSSValue[]): number => {
     const g = hue2rgb(t1, t2, h);
     const b = hue2rgb(t1, t2, h - 1 / 3);
     return pack(r * 255, g * 255, b * 255, a);
+}
+
+const hsl = (context: Context, args: CSSValue[]): number => {
+    const tokens = args.filter(nonFunctionArgSeparator);
+    const [hue, saturation, lightness, alpha] = tokens;
+
+    const h = (hue.type === TokenType.NUMBER_TOKEN ? deg(hue.number) : angle.parse(context, hue)) / (Math.PI * 2);
+    const s = isLengthPercentage(saturation) ? saturation.number / 100 : 0;
+    const l = isLengthPercentage(lightness) ? lightness.number / 100 : 0;
+    const a = typeof alpha !== 'undefined' && isLengthPercentage(alpha) ? getAbsoluteValue(alpha, 1) : 1;
+
+    return hsl2rgb(h, s, l, a);
 };
+
+const lch = (_context: Context, args: CSSValue[]): number => {
+    const tokens = args.filter(nonFunctionArgSeparator);
+
+    if (tokens.length === 4) {
+        const [lightness, chroma, hue, alpha] = tokens.map(getTokenColorValue);
+        const [r, g, b] = lchToRgb(lightness, chroma, hue);
+        return pack(r, g, b, alpha);
+    }
+
+    if (tokens.length === 3) {
+        const [lightness, chroma, hue] = tokens.map(getTokenColorValue);
+        const [r, g, b] = lchToRgb(lightness, chroma, hue);
+        return pack(r, g, b, 1);
+    }
+
+    return pack(255, 255, 255, 1);
+};
+
+function lchToRgb(l: number, c: number, h: number): [number, number, number] {
+    // Convert degrees to radians for hue
+    const rad = (h * Math.PI) / 180;
+
+    // Convert LCH to LAB
+    const a = c * Math.cos(rad);
+    const b = c * Math.sin(rad);
+
+    // Convert LAB to XYZ
+    const y = (l + 16) / 116;
+    const x = a / 500 + y;
+    const z = y - b / 200;
+
+    // Convert XYZ to RGB
+    const red = pivotRgb(x) * 3.2406 + pivotRgb(y) * -1.5372 + pivotRgb(z) * -0.4986;
+    const green = pivotRgb(x) * -0.9689 + pivotRgb(y) * 1.8758 + pivotRgb(z) * 0.0415;
+    const blue = pivotRgb(x) * 0.0557 + pivotRgb(y) * -0.204 + pivotRgb(z) * 1.057;
+
+    // Convert to sRGB
+    const sRgbR = red > 0.0031308 ? 1.055 * Math.pow(red, 1 / 2.4) - 0.055 : 12.92 * red;
+    const sRgbG = green > 0.0031308 ? 1.055 * Math.pow(green, 1 / 2.4) - 0.055 : 12.92 * green;
+    const sRgbB = blue > 0.0031308 ? 1.055 * Math.pow(blue, 1 / 2.4) - 0.055 : 12.92 * blue;
+
+    // Clamp RGB values to [0, 1] range
+    const rgbR = Math.min(Math.max(0, sRgbR), 1);
+    const rgbG = Math.min(Math.max(0, sRgbG), 1);
+    const rgbB = Math.min(Math.max(0, sRgbB), 1);
+
+    // Scale to [0, 255] range and round to integers
+    const finalR = Math.round(rgbR * 255);
+    const finalG = Math.round(rgbG * 255);
+    const finalB = Math.round(rgbB * 255);
+
+    // Return RGB values as an array
+    return [finalR, finalG, finalB];
+}
+
+function pivotRgb(value: number): number {
+    return value > 0.206893034 ? Math.pow(value, 3) : (value - 4 / 29) / 7.787037;
+}
 
 const SUPPORTED_COLOR_FUNCTIONS: {
     [key: string]: (context: Context, args: CSSValue[]) => number;
@@ -149,7 +213,8 @@ const SUPPORTED_COLOR_FUNCTIONS: {
     hsl: hsl,
     hsla: hsl,
     rgb: rgb,
-    rgba: rgb
+    rgba: rgb,
+    lch: lch
 };
 
 export const parseColor = (context: Context, value: string): Color =>

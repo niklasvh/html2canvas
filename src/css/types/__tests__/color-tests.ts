@@ -40,6 +40,9 @@ describe('types', () => {
             it('hsl(.75turn, 60%, 70%)', () => strictEqual(parse('hsl(.75turn, 60%, 70%)'), parse('rgb(178,132,224)')));
             it('hsla(.75turn, 60%, 70%, 50%)', () =>
                 strictEqual(parse('hsl(.75turn, 60%, 70%, 50%)'), parse('rgba(178,132,224, 0.5)')));
+            it('lch(29.2345% 44.2 27 / 0.2)', () =>
+                strictEqual(parse('lch(29.2345% 44.2 27 / 0.2)'), pack(255, 148, 143, 0.2)));
+            it('lch(76.5 4.24 49.5)', () => strictEqual(parse('lch(76.5 4.24 49.5)'), pack(212, 182, 175, 1)));
         });
         describe('util', () => {
             describe('isTransparent', () => {

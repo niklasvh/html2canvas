@@ -150,7 +150,9 @@ export const isIdentWithValue = (token: CSSValue, value: string): boolean =>
 
 export const nonWhiteSpace = (token: CSSValue): boolean => token.type !== TokenType.WHITESPACE_TOKEN;
 export const nonFunctionArgSeparator = (token: CSSValue): boolean =>
-    token.type !== TokenType.WHITESPACE_TOKEN && token.type !== TokenType.COMMA_TOKEN;
+    token.type !== TokenType.WHITESPACE_TOKEN &&
+    token.type !== TokenType.COMMA_TOKEN &&
+    token.type !== TokenType.DELIM_TOKEN;
 
 export const parseFunctionArgs = (tokens: CSSValue[]): CSSValue[][] => {
     const args: CSSValue[][] = [];
