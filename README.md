@@ -71,3 +71,11 @@ For more information and examples, please visit the [homepage](https://html2canv
 ### Contributing ###
 
 If you wish to contribute to the project, please send the pull requests to the develop branch. Before submitting any changes, try and test that the changes work with all the support browsers. If some CSS property isn't supported or is incomplete, please create appropriate tests for it as well before submitting any code changes.
+### Change
+- https://indonesiaguides.github.io/Exploring-Bandung-A-Comprehensive-Travel-Guide/
+- https://indonesiaguides.github.io/Exploring-Lake-Toba-A-Hidden-Gem-of-Indonesia/
+- https://indonesiaguides.github.io/Exploring-Southeast-Asia-A-Comprehensive-Travel-Guide/
+- https://indonesiaguides.github.io/Exploring-Southeast-Asia-A-Traveler-s-Guide-to-Bali-Lombok-and-Thailand/
+- https://indonesiaguides.github.io/Exploring-the-Wonders-of-Sumatra/
+- https://indonesiaguides.github.io/Journey-from-Flores-Indonesia-to-Timor-Leste-An-Adventurer-s-Guide/
+- https://indonesiaguides.github.io/The-State-of-Highways-in-Indonesia-Challenges-and-Improvements/
