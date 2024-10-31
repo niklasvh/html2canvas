@@ -388,10 +388,10 @@ export class CanvasRenderer extends Renderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            const [fontFamily, fontSize] = this.createFontStyle(styles);
+            const [font, fontFamily, fontSize] = this.createFontStyle(styles);
             const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
 
-            this.ctx.font = fontFamily;
+            this.ctx.font = font;
             this.ctx.fillStyle = asString(styles.color);
 
             this.ctx.textBaseline = 'alphabetic';
@@ -445,9 +445,9 @@ export class CanvasRenderer extends Renderer {
                     }
                 }
             } else if (paint.listValue && container.styles.listStyleType !== LIST_STYLE_TYPE.NONE) {
-                const [fontFamily] = this.createFontStyle(styles);
+                const [font] = this.createFontStyle(styles);
 
-                this.ctx.font = fontFamily;
+                this.ctx.font = font;
                 this.ctx.fillStyle = asString(styles.color);
 
                 this.ctx.textBaseline = 'middle';
