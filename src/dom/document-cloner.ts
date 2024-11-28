@@ -24,6 +24,7 @@ import {CSSParsedCounterDeclaration, CSSParsedPseudoDeclaration} from '../css/in
 import {getQuote} from '../css/property-descriptors/quotes';
 import {Context} from '../core/context';
 import {DebuggerType, isDebugging} from '../core/debugger';
+import {getObjectFitSize, OBJECT_FIT, objectFit} from '../css/property-descriptors/object-fit';
 
 export interface CloneOptions {
     ignoreElements?: (element: Element) => boolean;
@@ -256,9 +257,38 @@ export class DocumentCloner {
 
         try {
             if (ctx) {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                if (!this.options.allowTaint) {
-                    ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const elObjectFit = objectFit.parse(
+                    this.context,
+                    video.ownerDocument.defaultView?.getComputedStyle(video).objectFit ?? ''
+                );
+                if (elObjectFit == OBJECT_FIT.CONTAIN || elObjectFit == OBJECT_FIT.COVER) {
+                    const dimension = getObjectFitSize(
+                        elObjectFit == OBJECT_FIT.CONTAIN,
+                        video.offsetWidth,
+                        video.offsetHeight,
+                        video.videoWidth,
+                        video.videoHeight
+                    );
+
+                    ctx.drawImage(
+                        video,
+                        0,
+                        0,
+                        video.videoWidth,
+                        video.videoHeight,
+                        dimension.x,
+                        dimension.y,
+                        dimension.width,
+                        dimension.height
+                    );
+                    if (!this.options.allowTaint) {
+                        ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    }
+                } else {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    if (!this.options.allowTaint) {
+                        ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    }
                 }
             }
             return canvas;

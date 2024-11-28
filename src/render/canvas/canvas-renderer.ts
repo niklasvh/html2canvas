@@ -44,6 +44,7 @@ import {PAINT_ORDER_LAYER} from '../../css/property-descriptors/paint-order';
 import {Renderer} from '../renderer';
 import {Context} from '../../core/context';
 import {DIRECTION} from '../../css/property-descriptors/direction';
+import {getObjectFitSize} from '../../css/property-descriptors/object-fit';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
@@ -270,23 +271,53 @@ export class CanvasRenderer extends Renderer {
         curves: BoundCurves,
         image: HTMLImageElement | HTMLCanvasElement
     ): void {
+        const objectFit = container.styles.objectFit;
         if (image && container.intrinsicWidth > 0 && container.intrinsicHeight > 0) {
             const box = contentBox(container);
             const path = calculatePaddingBoxPath(curves);
             this.path(path);
             this.ctx.save();
             this.ctx.clip();
-            this.ctx.drawImage(
-                image,
-                0,
-                0,
-                container.intrinsicWidth,
-                container.intrinsicHeight,
-                box.left,
-                box.top,
-                box.width,
-                box.height
-            );
+
+            let newWidth;
+            let newHeight;
+            const newX = box.left;
+            const newY = box.top;
+
+            if (objectFit === 'contain' || objectFit === 'cover') {
+                const {width, height, x, y} = getObjectFitSize(
+                    objectFit === 'contain',
+                    box.width,
+                    box.height,
+                    image.width,
+                    image.height
+                );
+                newWidth = width;
+                newHeight = height;
+                this.ctx.drawImage(
+                    image,
+                    0,
+                    0,
+                    container.intrinsicWidth,
+                    container.intrinsicHeight,
+                    newX + x,
+                    newY + y,
+                    newWidth,
+                    newHeight
+                );
+            } else {
+                this.ctx.drawImage(
+                    image,
+                    0,
+                    0,
+                    container.intrinsicWidth,
+                    container.intrinsicHeight,
+                    box.left,
+                    box.top,
+                    box.width,
+                    box.height
+                );
+            }
             this.ctx.restore();
         }
     }

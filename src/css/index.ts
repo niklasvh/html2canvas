@@ -80,6 +80,7 @@ import {paintOrder} from './property-descriptors/paint-order';
 import {webkitTextStrokeColor} from './property-descriptors/webkit-text-stroke-color';
 import {webkitTextStrokeWidth} from './property-descriptors/webkit-text-stroke-width';
 import {Context} from '../core/context';
+import {objectFit} from './property-descriptors/object-fit';
 
 export class CSSParsedDeclaration {
     animationDuration: ReturnType<typeof duration.parse>;
@@ -130,6 +131,7 @@ export class CSSParsedDeclaration {
     overflowX: OVERFLOW;
     overflowY: OVERFLOW;
     overflowWrap: ReturnType<typeof overflowWrap.parse>;
+    objectFit: ReturnType<typeof objectFit.parse>;
     paddingTop: LengthPercentage;
     paddingRight: LengthPercentage;
     paddingBottom: LengthPercentage;
@@ -199,6 +201,7 @@ export class CSSParsedDeclaration {
         this.overflowX = overflowTuple[0];
         this.overflowY = overflowTuple[overflowTuple.length > 1 ? 1 : 0];
         this.overflowWrap = parse(context, overflowWrap, declaration.overflowWrap);
+        this.objectFit = parse(context, objectFit, declaration.objectFit);
         this.paddingTop = parse(context, paddingTop, declaration.paddingTop);
         this.paddingRight = parse(context, paddingRight, declaration.paddingRight);
         this.paddingBottom = parse(context, paddingBottom, declaration.paddingBottom);
