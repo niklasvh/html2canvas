@@ -141,6 +141,60 @@ const hsl = (context: Context, args: CSSValue[]): number => {
     const g = hue2rgb(t1, t2, h);
     const b = hue2rgb(t1, t2, h - 1 / 3);
     return pack(r * 255, g * 255, b * 255, a);
+}
+
+function oklchToSRGB(l: number, c: number, h: number): [number, number, number] {
+    // Convert hue from degrees to radians.
+    const H = h * Math.PI / 180;
+    const a_ = c * Math.cos(H);
+    const b_ = c * Math.sin(H);
+
+    // Convert OKLCH to OKLab.
+    const L_ = l + 0.3963377774 * a_ + 0.2158037573 * b_;
+    const M_ = l - 0.1055613458 * a_ - 0.0638541728 * b_;
+    const S_ = l - 0.0894841775 * a_ - 1.2914855480 * b_;
+
+    // Cube the values.
+    const L = L_ * L_ * L_;
+    const M = M_ * M_ * M_;
+    const S = S_ * S_ * S_;
+
+    // Convert to linear sRGB.
+    let r = 4.0767416621 * L - 3.3077115913 * M + 0.2309699292 * S;
+    let g = -1.2684380046 * L + 2.6097574011 * M - 0.3413193965 * S;
+    let b = -0.0041960863 * L - 0.7034186147 * M + 1.7076147010 * S;
+
+    // Clamp the values to [0,1].
+    r = Math.min(Math.max(r, 0), 1);
+    g = Math.min(Math.max(g, 0), 1);
+    b = Math.min(Math.max(b, 0), 1);
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+const oklch = (context: Context, args: (CSSValue & { number: number })[]): number => {
+    const tokens = args.filter(nonFunctionArgSeparator);
+
+    if (tokens.length < 3) {
+        throw new Error("oklch() requires at least 3 arguments");
+    }
+    // The first token is lightness. If it’s a percentage, convert to fraction.
+    const l = isLengthPercentage(tokens[0]) ? tokens[0].number / 100 : tokens[0].number;
+    // The second token is chroma (assumed unitless).
+    const c = tokens[1].number;
+    // The third token is hue; it can be a number or an angle.
+    const hueToken = tokens[2];
+    let h_deg: number;
+    if (hueToken.type === TokenType.NUMBER_TOKEN) {
+        h_deg = deg(hueToken.number);
+    } else {
+        h_deg = angle.parse(context, hueToken);
+    }
+    // Optional alpha value.
+    const a = tokens.length >= 4 ? (isLengthPercentage(tokens[3]) ? getAbsoluteValue(tokens[3], 1) : tokens[3].number) : 1;
+
+    const [r, g, b] = oklchToSRGB(l, c, h_deg);
+    return pack(r, g, b, a);
 };
 
 const SUPPORTED_COLOR_FUNCTIONS: {
@@ -149,7 +203,8 @@ const SUPPORTED_COLOR_FUNCTIONS: {
     hsl: hsl,
     hsla: hsl,
     rgb: rgb,
-    rgba: rgb
+    rgba: rgb,
+    oklch: oklch
 };
 
 export const parseColor = (context: Context, value: string): Color =>
