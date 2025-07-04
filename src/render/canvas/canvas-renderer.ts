@@ -24,7 +24,8 @@ import {contentBox} from '../box-sizing';
 import {CanvasElementContainer} from '../../dom/replaced-elements/canvas-element-container';
 import {SVGElementContainer} from '../../dom/replaced-elements/svg-element-container';
 import {ReplacedElementContainer} from '../../dom/replaced-elements';
-import {EffectTarget, IElementEffect, isClipEffect, isOpacityEffect, isTransformEffect} from '../effects';
+import {EffectTarget, IElementEffect, isClipEffect, isOpacityEffect, isTransformEffect, isFilterEffect} from '../effects';
+import {Filter} from '../../css/property-descriptors/filter';
 import {contains} from '../../core/bitwise';
 import {calculateGradientDirection, calculateRadius, processColorStops} from '../../css/types/functions/gradient';
 import {FIFTY_PERCENT, getAbsoluteValue} from '../../css/types/length-percentage';
@@ -116,6 +117,10 @@ export class CanvasRenderer extends Renderer {
         if (isClipEffect(effect)) {
             this.path(effect.path);
             this.ctx.clip();
+        }
+
+        if (isFilterEffect(effect)) {
+            this.applyCanvasFilter(effect.filter);
         }
 
         this._activeEffects.push(effect);
@@ -709,12 +714,29 @@ export class CanvasRenderer extends Renderer {
 
         if (hasBackground || styles.boxShadow.length) {
             this.ctx.save();
-            this.path(backgroundPaintingArea);
-            this.ctx.clip();
-
-            if (!isTransparent(styles.backgroundColor)) {
+            
+            // For pure inline elements (not inline-block) with background color, render background for each text line separately
+            if (styles.display === DISPLAY.INLINE && !isTransparent(styles.backgroundColor) && paint.container.textNodes.length > 0) {
+                // Use text bounds instead of element bounds for inline elements
                 this.ctx.fillStyle = asString(styles.backgroundColor);
-                this.ctx.fill();
+                for (const textNode of paint.container.textNodes) {
+                    for (const textBounds of textNode.textBounds) {
+                        this.ctx.fillRect(
+                            textBounds.bounds.left,
+                            textBounds.bounds.top,
+                            textBounds.bounds.width,
+                            textBounds.bounds.height
+                        );
+                    }
+                }
+            } else {
+                this.path(backgroundPaintingArea);
+                this.ctx.clip();
+
+                if (!isTransparent(styles.backgroundColor)) {
+                    this.ctx.fillStyle = asString(styles.backgroundColor);
+                    this.ctx.fill();
+                }
             }
 
             await this.renderBackgroundImage(paint.container);
@@ -894,6 +916,75 @@ export class CanvasRenderer extends Renderer {
         }
 
         this.ctx.restore();
+    }
+
+    applyCanvasFilter(filter: Filter): void {
+        if (!filter) {
+            return;
+        }
+
+        // Build the filter string for canvas
+        const filterParts: string[] = [];
+        
+        for (const filterFunction of filter) {
+            switch (filterFunction.name) {
+                case 'blur':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`blur(${filterFunction.values[0]}px)`);
+                    }
+                    break;
+                case 'brightness':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`brightness(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'contrast':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`contrast(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'grayscale':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`grayscale(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'hue-rotate':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`hue-rotate(${filterFunction.values[0]}deg)`);
+                    }
+                    break;
+                case 'invert':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`invert(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'opacity':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`opacity(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'saturate':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`saturate(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'sepia':
+                    if (filterFunction.values.length >= 1) {
+                        filterParts.push(`sepia(${filterFunction.values[0]})`);
+                    }
+                    break;
+                case 'drop-shadow':
+                    if (filterFunction.values.length >= 3) {
+                        const [x, y, blur] = filterFunction.values;
+                        filterParts.push(`drop-shadow(${x}px ${y}px ${blur}px rgba(0,0,0,0.5))`);
+                    }
+                    break;
+            }
+        }
+
+        if (filterParts.length > 0) {
+            this.ctx.filter = filterParts.join(' ');
+        }
     }
 
     async render(element: ElementContainer): Promise<HTMLCanvasElement> {

@@ -60,6 +60,7 @@ import {angle} from './types/angle';
 import {image} from './types/image';
 import {time} from './types/time';
 import {opacity} from './property-descriptors/opacity';
+import {filter} from './property-descriptors/filter';
 import {textDecorationColor} from './property-descriptors/text-decoration-color';
 import {textDecorationLine} from './property-descriptors/text-decoration-line';
 import {isLengthPercentage, LengthPercentage, ZERO_LENGTH} from './types/length-percentage';
@@ -127,6 +128,7 @@ export class CSSParsedDeclaration {
     marginBottom: CSSValue;
     marginLeft: CSSValue;
     opacity: ReturnType<typeof opacity.parse>;
+    filter: ReturnType<typeof filter.parse>;
     overflowX: OVERFLOW;
     overflowY: OVERFLOW;
     overflowWrap: ReturnType<typeof overflowWrap.parse>;
@@ -195,6 +197,7 @@ export class CSSParsedDeclaration {
         this.marginBottom = parse(context, marginBottom, declaration.marginBottom);
         this.marginLeft = parse(context, marginLeft, declaration.marginLeft);
         this.opacity = parse(context, opacity, declaration.opacity);
+        this.filter = parse(context, filter, declaration.filter);
         const overflowTuple = parse(context, overflow, declaration.overflow);
         this.overflowX = overflowTuple[0];
         this.overflowY = overflowTuple[overflowTuple.length > 1 ? 1 : 0];

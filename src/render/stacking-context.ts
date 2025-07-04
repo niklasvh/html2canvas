@@ -1,7 +1,15 @@
 import {ElementContainer, FLAGS} from '../dom/element-container';
 import {contains} from '../core/bitwise';
 import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
-import {ClipEffect, EffectTarget, IElementEffect, isClipEffect, OpacityEffect, TransformEffect} from './effects';
+import {
+    ClipEffect,
+    EffectTarget,
+    IElementEffect,
+    isClipEffect,
+    OpacityEffect,
+    TransformEffect,
+    FilterEffect
+} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
 import {DISPLAY} from '../css/property-descriptors/display';
@@ -48,6 +56,10 @@ export class ElementPaint {
             const offsetY = this.container.bounds.top + this.container.styles.transformOrigin[1].number;
             const matrix = this.container.styles.transform;
             this.effects.push(new TransformEffect(offsetX, offsetY, matrix));
+        }
+
+        if (this.container.styles.filter !== null) {
+            this.effects.push(new FilterEffect(this.container.styles.filter));
         }
 
         if (this.container.styles.overflowX !== OVERFLOW.VISIBLE) {

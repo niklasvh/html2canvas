@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Filter Effects Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../test.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        h1 {
+            font-weight: normal;
+            font-size: 30px;
+        }
+        .test-container {
+            display: inline-block;
+            margin: 10px;
+        }
+        .original {
+            filter: none;
+        }
+        .blur {
+            filter: blur(3px);
+        }
+        .brightness {
+            filter: brightness(150%);
+        }
+        .contrast {
+            filter: contrast(200%);
+        }
+        .grayscale {
+            filter: grayscale(80%);
+        }
+        .hue-rotate {
+            filter: hue-rotate(90deg);
+        }
+        .invert {
+            filter: invert(75%);
+        }
+        .opacity {
+            filter: opacity(50%);
+        }
+        .saturate {
+            filter: saturate(200%);
+        }
+        .sepia {
+            filter: sepia(100%);
+        }
+        .drop-shadow {
+            filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.5));
+        }
+        .multiple-filters {
+            filter: brightness(120%) contrast(120%) saturate(150%);
+        }
+        .complex-filters {
+            filter: blur(1px) brightness(110%) contrast(130%) hue-rotate(45deg);
+        }
+        .image-test {
+            width: 150px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Filter Effects Test</h1>
+    
+    <div class="test-container original">
+        <div class="image-test">Original</div>
+    </div>
+    
+    <div class="test-container blur">
+        <div class="image-test">Blur 3px</div>
+    </div>
+    
+    <div class="test-container brightness">
+        <div class="image-test">Brightness 150%</div>
+    </div>
+    
+    <div class="test-container contrast">
+        <div class="image-test">Contrast 200%</div>
+    </div>
+    
+    <div class="test-container grayscale">
+        <div class="image-test">Grayscale 80%</div>
+    </div>
+    
+    <div class="test-container hue-rotate">
+        <div class="image-test">Hue Rotate 90deg</div>
+    </div>
+    
+    <div class="test-container invert">
+        <div class="image-test">Invert 75%</div>
+    </div>
+    
+    <div class="test-container opacity">
+        <div class="image-test">Opacity 50%</div>
+    </div>
+    
+    <div class="test-container saturate">
+        <div class="image-test">Saturate 200%</div>
+    </div>
+    
+    <div class="test-container sepia">
+        <div class="image-test">Sepia 100%</div>
+    </div>
+    
+    <div class="test-container drop-shadow">
+        <div class="image-test">Drop Shadow</div>
+    </div>
+    
+    <div class="test-container multiple-filters">
+        <div class="image-test">Multiple Filters</div>
+    </div>
+    
+    <div class="test-container complex-filters">
+        <div class="image-test">Complex Filters</div>
+    </div>
+</body>
+</html>
