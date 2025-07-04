@@ -1,7 +1,15 @@
 import {ElementContainer, FLAGS} from '../dom/element-container';
 import {contains} from '../core/bitwise';
 import {BoundCurves, calculateBorderBoxPath, calculatePaddingBoxPath} from './bound-curves';
-import {ClipEffect, EffectTarget, IElementEffect, isClipEffect, OpacityEffect, TransformEffect, FilterEffect} from './effects';
+import {
+    ClipEffect,
+    EffectTarget,
+    IElementEffect,
+    isClipEffect,
+    OpacityEffect,
+    TransformEffect,
+    FilterEffect
+} from './effects';
 import {OVERFLOW} from '../css/property-descriptors/overflow';
 import {equalPath} from './path';
 import {DISPLAY} from '../css/property-descriptors/display';
