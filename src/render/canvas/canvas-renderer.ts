@@ -709,12 +709,29 @@ export class CanvasRenderer extends Renderer {
 
         if (hasBackground || styles.boxShadow.length) {
             this.ctx.save();
-            this.path(backgroundPaintingArea);
-            this.ctx.clip();
-
-            if (!isTransparent(styles.backgroundColor)) {
+            
+            // For pure inline elements (not inline-block) with background color, render background for each text line separately
+            if (styles.display === DISPLAY.INLINE && !isTransparent(styles.backgroundColor) && paint.container.textNodes.length > 0) {
+                // Use text bounds instead of element bounds for inline elements
                 this.ctx.fillStyle = asString(styles.backgroundColor);
-                this.ctx.fill();
+                for (const textNode of paint.container.textNodes) {
+                    for (const textBounds of textNode.textBounds) {
+                        this.ctx.fillRect(
+                            textBounds.bounds.left,
+                            textBounds.bounds.top,
+                            textBounds.bounds.width,
+                            textBounds.bounds.height
+                        );
+                    }
+                }
+            } else {
+                this.path(backgroundPaintingArea);
+                this.ctx.clip();
+
+                if (!isTransparent(styles.backgroundColor)) {
+                    this.ctx.fillStyle = asString(styles.backgroundColor);
+                    this.ctx.fill();
+                }
             }
 
             await this.renderBackgroundImage(paint.container);

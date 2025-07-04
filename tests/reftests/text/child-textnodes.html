@@ -7,12 +7,22 @@
         <style>
         span {
             color:blue;
+            background-color: yellow;
         }
         p {
             background-color: green;
         }
         body {
             font-family: "Helvetica Neue", Arial, sans-serif;
+        }
+        div {
+            width: 200px;
+            border: 1px solid gray;
+        }
+        .inline-block {
+            display: inline-block;
+            background-color: cyan;
+            padding: 5px;
         }
         </style>
 
@@ -21,5 +31,7 @@
         Some inline text <span> followed by text in span </span> followed by more inline text.
         <p>Then a block level element.</p>
         Then more inline text.
+
+        <div>When the inline text has <span>some background</span>, it should not be overflowed. This is another test, with <span class="inline-block">inline block with 15px padding</span> crossing the line.</div>
     </body>
 </html>
