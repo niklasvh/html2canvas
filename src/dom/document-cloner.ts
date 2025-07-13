@@ -561,7 +561,8 @@ export const copyCSSStyles = <T extends HTMLElement | SVGElement>(style: CSSStyl
     // Edge does not provide value for cssText
     for (let i = style.length - 1; i >= 0; i--) {
         const property = style.item(i);
-        if (ignoredStyleProperties.indexOf(property) === -1) {
+        // fix: Chrome_138 ignore custom properties
+        if (ignoredStyleProperties.indexOf(property) === -1 && !property.startsWith('--')) {
             target.style.setProperty(property, style.getPropertyValue(property));
         }
     }
