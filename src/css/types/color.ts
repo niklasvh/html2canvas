@@ -86,6 +86,19 @@ const getTokenColorValue = (token: CSSValue, i: number): number => {
     return 0;
 };
 
+// Helper function for color() function values (0-1 range)
+const getColorFunctionValue = (token: CSSValue): number => {
+    if (token.type === TokenType.NUMBER_TOKEN) {
+        return token.number;
+    }
+
+    if (token.type === TokenType.PERCENTAGE_TOKEN) {
+        return token.number / 100;
+    }
+
+    return 0;
+};
+
 const rgb = (_context: Context, args: CSSValue[]): number => {
     const tokens = args.filter(nonFunctionArgSeparator);
 
@@ -143,13 +156,98 @@ const hsl = (context: Context, args: CSSValue[]): number => {
     return pack(r * 255, g * 255, b * 255, a);
 };
 
+// CSS Color Module Level 4 color() function
+const colorFunction = (_context: Context, args: CSSValue[]): number => {
+    const tokens = args.filter(nonFunctionArgSeparator);
+    
+    if (tokens.length < 4) {
+        return 0; // Invalid color function
+    }
+
+    // First token should be the color space identifier
+    const colorSpace = tokens[0];
+    if (colorSpace.type !== TokenType.IDENT_TOKEN) {
+        return 0;
+    }
+
+    const colorSpaceName = colorSpace.value.toLowerCase();
+    
+    // For now, we'll support srgb, srgb-linear, display-p3, a98-rgb, prophoto-rgb, rec2020
+    // All will be converted to sRGB for display
+    const [c1, c2, c3] = tokens.slice(1, 4).map(token => getColorFunctionValue(token));
+    
+    // Handle alpha channel if present (after slash)
+    let alpha = 1;
+    if (tokens.length >= 6) {
+        // Look for slash separator and alpha value
+        const slashIndex = tokens.findIndex((token, index) => 
+            index >= 4 && token.type === TokenType.DELIM_TOKEN && token.value === '/'
+        );
+        if (slashIndex !== -1 && slashIndex + 1 < tokens.length) {
+            const alphaToken = tokens[slashIndex + 1];
+            alpha = getColorFunctionValue(alphaToken);
+        }
+    }
+
+    let r: number, g: number, b: number;
+
+    switch (colorSpaceName) {
+        case 'srgb':
+            // sRGB values are already in 0-1 range
+            r = Math.round(c1 * 255);
+            g = Math.round(c2 * 255);
+            b = Math.round(c3 * 255);
+            break;
+        case 'srgb-linear':
+            // Convert from linear RGB to sRGB
+            r = Math.round(linearToSrgb(c1) * 255);
+            g = Math.round(linearToSrgb(c2) * 255);
+            b = Math.round(linearToSrgb(c3) * 255);
+            break;
+        case 'display-p3':
+        case 'a98-rgb':
+        case 'prophoto-rgb':
+        case 'rec2020':
+            // For simplicity, treat these color spaces as sRGB
+            // In a full implementation, proper color space conversion would be needed
+            r = Math.round(c1 * 255);
+            g = Math.round(c2 * 255);
+            b = Math.round(c3 * 255);
+            break;
+        default:
+            // Unsupported color space, fallback to treating as sRGB
+            r = Math.round(c1 * 255);
+            g = Math.round(c2 * 255);
+            b = Math.round(c3 * 255);
+            break;
+    }
+
+    // Clamp values to valid range
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    alpha = Math.max(0, Math.min(1, alpha));
+
+    return pack(r, g, b, alpha);
+};
+
+// Helper function to convert linear RGB to sRGB
+const linearToSrgb = (value: number): number => {
+    if (value <= 0.0031308) {
+        return value * 12.92;
+    } else {
+        return 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+    }
+};
+
 const SUPPORTED_COLOR_FUNCTIONS: {
     [key: string]: (context: Context, args: CSSValue[]) => number;
 } = {
     hsl: hsl,
     hsla: hsl,
     rgb: rgb,
-    rgba: rgb
+    rgba: rgb,
+    color: colorFunction
 };
 
 export const parseColor = (context: Context, value: string): Color =>

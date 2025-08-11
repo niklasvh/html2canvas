@@ -40,6 +40,17 @@ describe('types', () => {
             it('hsl(.75turn, 60%, 70%)', () => strictEqual(parse('hsl(.75turn, 60%, 70%)'), parse('rgb(178,132,224)')));
             it('hsla(.75turn, 60%, 70%, 50%)', () =>
                 strictEqual(parse('hsl(.75turn, 60%, 70%, 50%)'), parse('rgba(178,132,224, 0.5)')));
+            
+            // CSS Color Module Level 4 color() function tests
+            it('color(srgb 0 0 0)', () => strictEqual(parse('color(srgb 0 0 0)'), pack(0, 0, 0, 1)));
+            it('color(srgb 1 1 1)', () => strictEqual(parse('color(srgb 1 1 1)'), pack(255, 255, 255, 1)));
+            it('color(srgb 0.5 0.5 0.5)', () => strictEqual(parse('color(srgb 0.5 0.5 0.5)'), pack(128, 128, 128, 1)));
+            it('color(srgb 0 0 0 / 0.5)', () => strictEqual(parse('color(srgb 0 0 0 / 0.5)'), pack(0, 0, 0, 0.5)));
+            it('color(srgb 0 0 0 / 0.85)', () => strictEqual(parse('color(srgb 0 0 0 / 0.85)'), pack(0, 0, 0, 0.85)));
+            it('color(srgb 1 0.5 0)', () => strictEqual(parse('color(srgb 1 0.5 0)'), pack(255, 128, 0, 1)));
+            it('color(display-p3 1 0 0)', () => strictEqual(parse('color(display-p3 1 0 0)'), pack(255, 0, 0, 1)));
+            it('color(srgb 100% 0% 50%)', () => strictEqual(parse('color(srgb 100% 0% 50%)'), pack(255, 0, 128, 1)));
+            it('color(srgb 50% 50% 50% / 25%)', () => strictEqual(parse('color(srgb 50% 50% 50% / 25%)'), pack(128, 128, 128, 0.25)));
         });
         describe('util', () => {
             describe('isTransparent', () => {
