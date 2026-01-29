@@ -47,7 +47,7 @@ const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 
 export class DocumentCloner {
     private readonly scrolledElements: [Element, number, number][];
-    private readonly referenceElement: HTMLElement;
+    private readonly referenceElement: HTMLElement | null;
     clonedReferenceElement?: HTMLElement;
     private readonly documentElement: HTMLElement;
     private readonly counters: CounterState;
@@ -55,18 +55,26 @@ export class DocumentCloner {
 
     constructor(
         private readonly context: Context,
-        element: HTMLElement,
-        private readonly options: CloneConfigurations
+        element: HTMLElement | null | undefined,
+        private readonly options: CloneConfigurations,
+        ownerDocument?: Document
     ) {
         this.scrolledElements = [];
-        this.referenceElement = element;
         this.counters = new CounterState();
         this.quoteDepth = 0;
-        if (!element.ownerDocument) {
-            throw new Error('Cloned element does not have an owner document');
+        this.referenceElement = element ?? null;
+        let derivedOwnerDocument: Document;
+        if (ownerDocument != null) {
+            derivedOwnerDocument = ownerDocument;
+        } else if (element != null) {
+            if (!element.ownerDocument) {
+                throw new Error('Cloned element does not have an owner document');
+            }
+            derivedOwnerDocument = element.ownerDocument;
+        } else {
+            throw new Error('Either element or provided owner document should be defined');
         }
-
-        this.documentElement = this.cloneNode(element.ownerDocument.documentElement, false) as HTMLElement;
+        this.documentElement = this.cloneNode(derivedOwnerDocument.documentElement, false) as HTMLElement;
     }
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
@@ -108,7 +116,7 @@ export class DocumentCloner {
 
             const referenceElement = this.clonedReferenceElement;
 
-            if (typeof referenceElement === 'undefined') {
+            if (typeof referenceElement === 'undefined' && this.referenceElement != null) {
                 return Promise.reject(`Error finding the ${this.referenceElement.nodeName} in the cloned document`);
             }
 
@@ -120,7 +128,7 @@ export class DocumentCloner {
                 await imagesReady(documentClone);
             }
 
-            if (typeof onclone === 'function') {
+            if (typeof onclone === 'function' && referenceElement) {
                 return Promise.resolve()
                     .then(() => onclone(documentClone, referenceElement))
                     .then(() => iframe);
@@ -131,8 +139,10 @@ export class DocumentCloner {
 
         documentClone.open();
         documentClone.write(`${serializeDoctype(document.doctype)}<html></html>`);
-        // Chrome scrolls the parent document for some reason after the write to the cloned window???
-        restoreOwnerScroll(this.referenceElement.ownerDocument, scrollX, scrollY);
+        if (this.referenceElement != null) {
+            // Chrome scrolls the parent document for some reason after the write to the cloned window???
+            restoreOwnerScroll(this.referenceElement.ownerDocument, scrollX, scrollY);
+        }
         documentClone.replaceChild(documentClone.adoptNode(this.documentElement), documentClone.documentElement);
         documentClone.close();
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style>
+            .container {
+                padding: 20px;
+                border: 1px dashed red;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .toRender {
+                background: darkseagreen;
+                border: 1px solid green;
+                padding: 20px;
+            }
+        </style>
+
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <h2>Demo of rendering multiple elements to canvas</h2>
+        <h3>Source container</h3>
+        <div class="container" id="source">
+            <div class="toRender" >
+                First element to render
+            </div>
+            <div class="toRender" >
+                Second element to render
+            </div>
+        </div>
+        <h3>Target container</h3>
+        <div class="container" id="target"></div>
+        <script type="text/javascript" src="../dist/html2canvas.js"></script>
+        <script type="text/javascript">
+            async function main() {
+                const renderer = html2canvas.makeRenderer(document, {})
+
+                const canvasIter = renderer.renderElements((clonedContainer) => {
+                    return [...clonedContainer.ownerDocument.querySelectorAll('#source .toRender')]
+                })
+                for await (const canvas of canvasIter) {
+                    document.getElementById('target').appendChild(canvas)
+                }
+            }
+            main().catch(e => {
+                console.error(e);
+            })
+        </script>
+    </body>
+</html>
