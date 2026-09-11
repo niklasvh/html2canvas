@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Quoted font family names</title>
+    <script type="text/javascript" src="../../test.js"></script>
+    <style>
+        @font-face {
+            font-family: "123font";
+            src: local("Arial"), local("Liberation Sans"), local("DejaVu Sans");
+        }
+        @font-face {
+            font-family: "control-font";
+            src: local("Arial"), local("Liberation Sans"), local("DejaVu Sans");
+        }
+        body { font-family: Arial, sans-serif; }
+        .sample { font-size: 48px; line-height: 1.3; }
+        .tracked { font-weight: bold; letter-spacing: 3px; }
+        .numeric { font-family: "123font", Arial, sans-serif; }
+        .control { font-family: "control-font", Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>Quoted font family names must preserve the text size</h1>
+    <p>The numeric alias and control alias use the same local font and should match.</p>
+    <div class="sample numeric">Large text 123</div>
+    <div class="sample control">Large text 123</div>
+    <div class="sample tracked numeric">Tracked text 123</div>
+    <div class="sample tracked control">Tracked text 123</div>
+    <p>The following unavailable families should use the fallback at 48px.</p>
+    <div class="sample" style="font-family: 'font!missing', Arial, sans-serif">Punctuation fallback</div>
+    <div class="sample" style="font-family: 'font,missing', Arial, sans-serif">Comma fallback</div>
+    <div class="sample" style="font-family: &quot;O'Brien&quot;, Arial, sans-serif">Apostrophe fallback</div>
+    <div class="sample" style="font-family: 'font\\missing', Arial, sans-serif">Backslash fallback</div>
+</body>
+</html>

@@ -15,10 +15,15 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
     parse: (_context: Context, tokens: CSSValue[]) => {
         const accumulator: string[] = [];
         const results: string[] = [];
+        const quoted: boolean[] = [];
+        let isQuoted = false;
         tokens.forEach((token) => {
             switch (token.type) {
                 case TokenType.IDENT_TOKEN:
+                    accumulator.push(token.value);
+                    break;
                 case TokenType.STRING_TOKEN:
+                    isQuoted = true;
                     accumulator.push(token.value);
                     break;
                 case TokenType.NUMBER_TOKEN:
@@ -26,13 +31,25 @@ export const fontFamily: IPropertyListDescriptor<FontFamily> = {
                     break;
                 case TokenType.COMMA_TOKEN:
                     results.push(accumulator.join(' '));
+                    quoted.push(isQuoted);
+                    isQuoted = false;
                     accumulator.length = 0;
                     break;
             }
         });
         if (accumulator.length) {
             results.push(accumulator.join(' '));
+            quoted.push(isQuoted);
         }
-        return results.map((result) => (result.indexOf(' ') === -1 ? result : `'${result}'`));
+        return results.map((result, index) =>
+            quoted[index] || result.indexOf(' ') !== -1
+                ? `'${result
+                      .replace(/\\/g, '\\\\')
+                      .replace(/'/g, "\\'")
+                      .replace(/\n/g, '\\a ')
+                      .replace(/\r/g, '\\d ')
+                      .replace(/\f/g, '\\c ')}'`
+                : result
+        );
     }
 };
